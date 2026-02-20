@@ -16,13 +16,14 @@
     <link rel="shortcut icon" href="https://oracle-livelabs.github.io/common/redwood-hol/img/favicon.ico" />
     <script>
         // Example: capturing clicks, form submissions, custom events
-  document.addEventListener('click', function(e) {
+// On your GitHub Pages site — send events to parent APEX page
+document.addEventListener('click', function(e) {
   window.parent.postMessage({
     eventType: 'click',
     target: e.target.tagName,
-    targetId: e.target.id,
+    targetId: e.target.id || '',
     timestamp: new Date().toISOString()
-  }, '*'); // Replace '*' with your parent origin for security
+  }, 'https://livelabs-dev.oracle.com'); // your APEX origin
 });
     </script>
 </head>
