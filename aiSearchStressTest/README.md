@@ -43,6 +43,11 @@ SMOKE=1 k6 run loadtest.js
 k6 run loadtest.js
 ```
 
+```bash
+LOG_SAMPLE_RATE=1 \                                                                      
+  k6 run --log-format raw --console-output results.jsonl --summary-export summary.json loadtest.js
+```
+
 Default stages:
 - 30s ramp to 10 VUs
 - 2m hold at 50 VUs
