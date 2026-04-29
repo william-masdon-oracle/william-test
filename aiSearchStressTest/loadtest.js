@@ -14,8 +14,8 @@ const VECTOR_FIELD = __ENV.VECTOR_FIELD; // optional, e.g. "vector" or "embeddin
 const LOG_SAMPLE_RATE = Number(__ENV.LOG_SAMPLE_RATE || 0); // 0 disables, 1 logs all, 0.1 logs 10%
 
 const DEFAULT_STAGES = [
-  { duration: '30s', target: 10 },
-  { duration: '2m', target: 50 },
+  { duration: '30s', target: 600 },
+  { duration: '10m', target: 600 },
   { duration: '30s', target: 0 },
 ];
 

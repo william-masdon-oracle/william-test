@@ -49,8 +49,8 @@ k6 run loadtest.js
 ```
 
 ```bash
-LOG_SAMPLE_RATE=1 \                                                                      
-  k6 run --log-format raw --console-output results.jsonl --summary-export summary.json loadtest.js
+LOG_SAMPLE_RATE=0.01 \                                                                      
+  k6 run --log-format raw --console-output results7.jsonl --summary-export summary.json loadtest.js
 ```
 
 Default stages:
