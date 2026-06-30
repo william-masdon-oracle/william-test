@@ -536,16 +536,28 @@ page 400 (
                            e.entry_name,
                            e.entry_desc,
                            e.entry_time_hours,
-                           nvl(p.completed_flg, 'N') as completed_flg
+                           nvl(p.completed_flg, 'N') as completed_flg,
+                           lev.voucher_id as entry_event_id,
+                           v.voucher_code as entry_event_code
                       from ll_livestack_entries_vw e
                       left join ll_livestack_user_progress p
                         on e.id = p.entry_id
                         and p.user_email = :APP_USER
+                      left join ll_livestack_event_vouchers lev
+                        on lev.livestack_event_id = :P400_EVENT_ID
+                        and lev.livestack_entry_id = e.id
+                        and lev.active_flg = 'Y'
+                      left join ll_vouchers v
+                        on v.id = lev.voucher_id
                      where e.livestack_id = :P400_ID
                 )
                 select 
                     cd.*,
                     ll_pkg_admin.hours_readable(cd.entry_time_hours) as time_hours_readable,
+                    case
+                        when cd.entry_event_code is not null and cd.entry_type = 'WORKSHOP' then null
+                        else cd.entry_id
+                    end as entry_workshop_id,
                     case cd.completed_flg
                         when 'Y' then 'Completed'
                         else 'Not Completed'
@@ -556,7 +568,7 @@ page 400 (
                     end as badge_class
                 from col_data cd
                 ```
-            pageItemsToSubmit: P400_ID
+            pageItemsToSubmit: P400_ID,P400_EVENT_ID
         }
         orderBy {
             type: staticValue
@@ -620,6 +632,7 @@ page 400 (
                         P420_WID: &ENTRY_ID.
                         P420_LIVESTACK_ID: &LIVESTACK_ID.
                         P420_LIVESTACK_ENTRY_ID: &ID.
+                        P420_WEC: &ENTRY_EVENT_CODE.
                     }
                 }
             }
@@ -640,6 +653,8 @@ page 400 (
                     page: 320
                     items: {
                         P320_WORKSHOP_ID: &ENTRY_ID.
+                        P320_VOUCHER_ID: &ENTRY_EVENT_ID.
+                        WEC: &ENTRY_EVENT_CODE.
                         P320_LIVESTACK_ID: &LIVESTACK_ID.
                         P320_LIVESTACK_ENTRY_ID: &ID.
                     }
@@ -661,7 +676,8 @@ page 400 (
                 target: {
                     page: 180
                     items: {
-                        WID: &ENTRY_ID.
+                        WID: &ENTRY_WORKSHOP_ID.
+                        WEC: &ENTRY_EVENT_CODE.
                         P180_LIVESTACK_ID: &LIVESTACK_ID.
                         P180_LIVESTACK_ENTRY_ID: &ID.
                     }
@@ -744,13 +760,6 @@ page 400 (
                 margin-left-md
                 margin-right-md
             ]
-        }
-        comments {
-            comments:
-                ```
-                
-                
-                ```
         }
         componentAppearance {
             gridColumns: 4
@@ -1087,6 +1096,23 @@ page 400 (
         }
     )
 
+    pageItem P400_EVENT_ID (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 35
+            slot: body
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            sessionStateProtection: restricted
+        }
+    )
+
     pageItem P400_LIVESTACK_TYPE (
         type: hidden
         layout {
@@ -1279,8 +1305,8 @@ page 400 (
                 APEX_UTIL.HOST_URL() || 
                 apex_page.get_url(
                     p_page   => 400,
-                    p_items  => 'P400_ID',
-                    p_values => :P400_ID)
+                    p_items  => case when :WEC is not null then 'WEC' else 'P400_ID' end,
+                    p_values => case when :WEC is not null then :WEC else :P400_ID end)
                 ```
         }
         sessionState {
@@ -1305,8 +1331,8 @@ page 400 (
                 APEX_UTIL.HOST_URL() || 
                 apex_page.get_url(
                     p_page   => 400,
-                    p_items  => 'P400_ID',
-                    p_values => :P400_ID))
+                    p_items  => case when :WEC is not null then 'WEC' else 'P400_ID' end,
+                    p_values => case when :WEC is not null then :WEC else :P400_ID end))
                 ```
         }
         sessionState {
@@ -1408,6 +1434,20 @@ page 400 (
         }
     )
 
+    pageItem WEC (
+        type: hidden
+        layout {
+            sequence: 20
+            slot: body
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            restrictedChars: noSpecialCharNoNewline
+        }
+    )
+
     button hide-assets (
         buttonName: Hide_Assets
         label: Internal Assets
@@ -1433,6 +1473,7 @@ page 400 (
                 page: 400
                 items: {
                     P400_ID: &P400_ID.
+                    WEC: &WEC.
                     P400_PRESENTATION_MODE: Y
                 }
             }
@@ -1495,6 +1536,7 @@ page 400 (
                 page: 400
                 items: {
                     P400_ID: &P400_ID.
+                    WEC: &WEC.
                     P400_PRESENTATION_MODE: N
                 }
             }
@@ -1810,34 +1852,101 @@ page 400 (
         source {
             plsqlCode:
                 ```plsql
+                declare
+                  l_event_id           ll_livestack_events.id%type;
+                  l_livestack_id       ll_livestack_events.livestack_id%type;
+                  l_event_admin        varchar2(1) := 'N';
+                  e_apex_engine_stop   exception;
+                  pragma exception_init(e_apex_engine_stop, -20876);
                 begin
-                select
-                    name, 
-                    desc_long, 
-                    outline, 
-                    prereqs,
-                    length_override,
-                    livestack_type,
-                    video_link,
-                    (select sum(entry_time_hours) from ll_livestack_entries_vw where livestack_id = :P400_ID),
-                    (select count(*) from ll_livestack_users where livestack_id = :P400_ID and user_email = :APP_USER and subscribed_flg = 'Y')
-                into 
-                    :P400_TITLE,
-                    :P400_DESC_LONG,
-                    :P400_OUTLINE,
-                    :P400_PREREQS,
-                    :P400_WORKSHOP_TIME_OVERRIDE,
-                    :P400_LIVESTACK_TYPE,
-                    :P400_VIDEO_LINK,
-                    :P400_WORKSHOP_TIME,
-                    :P400_SUBSCRIBED_FLG
-                from ll_livestacks
-                where id = :P400_ID;
+                  if :P400_ID is not null and :P400_ID <> regexp_replace(:P400_ID, '[^0-9]', '') then
+                    :P400_ID := regexp_replace(:P400_ID, '[^0-9]', '');
+                  end if;
                 
+                  if :WEC is not null and :WEC <> regexp_replace(:WEC, '[^A-Z0-9-]', '') then
+                    :WEC := regexp_replace(upper(:WEC), '[^A-Z0-9-]', '');
+                  end if;
                 
+                  if :WEC is not null then
+                    begin
+                      select id,
+                             livestack_id,
+                             case
+                               when instr(upper(email_requestor), upper(:APP_USER)) > 0
+                                 or instr(upper(email_creator), upper(:APP_USER)) > 0
+                                 or ll_pkg_security.am_i_allowed(
+                                      p_apex_user    => :APP_USER,
+                                      p_access_type  => 'LIVESTACK_EVENT_CODE_ADMIN',
+                                      p_access_value => id) = 'Y'
+                               then 'Y'
+                               else 'N'
+                             end
+                        into l_event_id,
+                             l_livestack_id,
+                             l_event_admin
+                        from ll_livestack_events
+                       where event_code = :WEC
+                         and active_flg = 'Y'
+                         and (
+                               (sysdate between nvl(valid_from, sysdate) and nvl(valid_to, sysdate))
+                               or instr(upper(email_requestor), upper(:APP_USER)) > 0
+                               or instr(upper(email_creator), upper(:APP_USER)) > 0
+                               or ll_pkg_security.am_i_allowed(
+                                    p_apex_user    => :APP_USER,
+                                    p_access_type  => 'LIVESTACK_EVENT_CODE_ADMIN',
+                                    p_access_value => id) = 'Y'
+                             );
                 
+                      :P400_EVENT_ID := l_event_id;
+                      :P400_ID := l_livestack_id;
+                    exception
+                      when no_data_found then
+                        apex_util.redirect_url (
+                          p_url => apex_util.host_url() || apex_page.get_url(
+                                     p_page   => 1,
+                                     p_items  => 'P1_INVALID_EVENT_CODE',
+                                     p_values => :WEC));
+                    end;
+                  end if;
+                
+                  select name,
+                         desc_long,
+                         outline,
+                         prereqs,
+                         length_override,
+                         livestack_type,
+                         video_link,
+                         (select sum(entry_time_hours) from ll_livestack_entries_vw where livestack_id = :P400_ID),
+                         (select count(*) from ll_livestack_users where livestack_id = :P400_ID and user_email = :APP_USER and subscribed_flg = 'Y')
+                    into :P400_TITLE,
+                         :P400_DESC_LONG,
+                         :P400_OUTLINE,
+                         :P400_PREREQS,
+                         :P400_WORKSHOP_TIME_OVERRIDE,
+                         :P400_LIVESTACK_TYPE,
+                         :P400_VIDEO_LINK,
+                         :P400_WORKSHOP_TIME,
+                         :P400_SUBSCRIBED_FLG
+                    from ll_livestacks
+                   where id = :P400_ID
+                     and (
+                           active_flg in ('Y', 'U')
+                           or ll_pkg_security.am_i_allowed(
+                                p_apex_user    => :APP_USER,
+                                p_access_type  => 'LIVESTACK_VIEW',
+                                p_access_value => id) = 'Y'
+                           or l_event_admin = 'Y'
+                         );
+                exception
+                  when e_apex_engine_stop then
+                    raise;
+                  when no_data_found then
+                    apex_util.redirect_url (
+                      p_url => apex_util.host_url() || apex_page.get_url(
+                                 p_page   => 1,
+                                 p_items  => case when :WEC is not null then 'P1_INVALID_EVENT_CODE' else 'P1_INVALID_WORKSHOP_ID' end,
+                                 p_values => case when :WEC is not null then :WEC else :P400_ID end));
                 end;
-                
                 
                 ```
         }
@@ -1863,4 +1972,3 @@ page 400 (
     )
 
 )
-

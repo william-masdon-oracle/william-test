@@ -183,6 +183,47 @@ page 150 (
             displayLocation: inlineWithField
             associatedItem: @P150_EVENT_CODE
         }
+        comments {
+            comments:
+                ```
+                declare
+                cursor c_id (v_id number) is select 'x' from ll_vouchers where id = v_id;
+                cursor c_ec (v_ec varchar2) is select 'x' from ll_vouchers where VOUCHER_CODE = v_ec;
+                v_hold varchar2(1);
+                begin
+                -- trim whitespace
+                :P25_EVENT_ID := trim(:P25_EVENT_ID);
+                if :P25_EVENT_ID is not null then 
+                    IF REGEXP_LIKE(:P25_EVENT_ID, '^[0-9]+$') THEN
+                        open c_id (:P25_EVENT_ID);
+                        fetch c_id into v_hold;
+                        if c_id%notfound then
+                            close c_id;
+                            return false;
+                        else 
+                            close c_id;
+                            return true;
+                        end if;
+                    else
+                        open c_ec (:P25_EVENT_ID);
+                        fetch c_ec into v_hold;
+                        if c_ec%notfound then 
+                            close c_ec;
+                            return false;
+                        else
+                            close c_ec;
+                            return true;
+                        end if;
+                    end if;
+                
+                else
+                    return false;
+                end if;
+                exception when others then 
+                    return false;
+                end;
+                ```
+        }
     )
 
     branch (

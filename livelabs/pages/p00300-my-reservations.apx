@@ -247,6 +247,44 @@ page 300 (
                 
                 ```
         }
+        comments {
+            comments:
+                ```
+                old SQL Query:
+                
+                select llr.ID,
+                       null view_reservation,
+                       NVL((select llw.name from ll_workshops llw where llw.id = llr.workshop_id),llr.title) as title,
+                       ll_pkg_reservation.date_full (p_start_gmt => llr.START_GMT, p_timezone => START_TIMEZONE) as description,
+                       ll_pkg_reservation.reservation_status(p_reservation_id => llr.ID) status, 
+                       case when ll_pkg_reservation.reservation_status(p_reservation_id => llr.ID) not in ('Completed', 'Terminating', 'Available', 'Scheduled') then ll_pkg_reservation.reservation_status(p_reservation_id => llr.ID) else '' end as countdown,
+                       llr.REASON,
+                       llr.FOCUS_AREA,
+                       llr.OWNER1,
+                       llr.WORKSHOP_ID, 
+                       llr.STOP_DATE,
+                       llr.ENVIRONMENTS,
+                       llr.ACTIVE_FLG,
+                       llr.STOP_TIME,
+                       llv.voucher_code,
+                       ll_pkg_apex.getWorkshopCardIcon(llr.workshop_id) as ICON_BLOB,
+                       ll_pkg_apex.my_reservation_links( p_workshop_id => llr.WORKSHOP_ID, 
+                                                         p_reservation_id => llr.ID, 
+                                                         p_status => ll_pkg_reservation.reservation_status(p_reservation_id => llr.ID), 
+                                                         p_voucher_code => llv.voucher_code)  as actions
+                  from LL_RESERVATIONS_VW llr, LL_VOUCHERS LLV
+                where llr.voucher_id = llv.id (+)
+                and llr.owner1 = v('APP_USER')
+                and llr.ACTIVE_FLG = 'Y'
+                order by case ll_pkg_reservation.reservation_status(p_reservation_id => llr.ID) 
+                                   when 'Scheduled' then 10
+                                   when 'Completed' then 99
+                                   else 1 end, 
+                         case ll_pkg_reservation.reservation_status(p_reservation_id => llr.ID) 
+                                   when 'Scheduled' then (start_gmt - sysdate)
+                                   else (sysdate - start_gmt) end 
+                ```
+        }
         card {
             primaryKeyColumn1: ID
         }

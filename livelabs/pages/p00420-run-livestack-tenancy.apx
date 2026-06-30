@@ -270,6 +270,57 @@ page 420 (
             slot: fullWidthContent
             rowCssClasses: height100
         }
+        comments {
+            comments:
+                ```
+                was a server side condition for function body: 
+                declare
+                
+                  cursor c_workshop is select active_flg from ll_workshops where ID = :P420_WID;
+                
+                  v_status        varchar2(1);
+                  v_return_value  BOOLEAN;
+                  v_is_public_ws  varchar2(1);
+                
+                begin
+                
+                  ll_pkg_log.log(40,'P420 - Begin Serverside Enablement of regions');
+                
+                  open c_workshop;
+                  fetch c_workshop into v_is_public_ws;
+                  close c_workshop;
+                
+                  ll_pkg_log.log(40,'P420 - Status of workshop is: '||v_is_public_ws);
+                
+                  if v_is_public_ws = 'Y' then
+                    v_status:='Y';
+                  else 
+                    ll_pkg_log.log(40,'P420 - Status <> Y, Workshop ID is '||:P420_WID);
+                    if :P420_WID is not null then
+                      v_status := ll_pkg_security.am_i_allowed(p_apex_user => :APP_USER, 
+                                                               p_access_type  => 'WORKSHOP_VIEW',
+                                                               p_access_value => :P420_WID );
+                      ll_pkg_log.log(40,'P420 - Status of am_i_allowed is '||v_status||' for P420_WS_ID '||:P420_WID||' and user '||:APP_USER);                                               
+                    else
+                      v_status:='N';
+                    end if;
+                  end if;
+                
+                  v_status := nvl(v_status,'N');
+                
+                  ll_pkg_log.log(40,'P420 - End of check, current status is '||v_status);                                               
+                
+                
+                  if v_status = 'Y' then
+                    ll_pkg_log.log(40,'P420 - Sending status TRUE');
+                    return (TRUE);
+                  else
+                    ll_pkg_log.log(40,'P420 - Sending status FALSE');
+                    return (FALSE);
+                  end if;
+                end;
+                ```
+        }
         settings {
             url: &P420_WORKSHOP_LOCATION.
             iframeAttrs: " allowfullscreen=\"true\" class=\"workshop-iframe\""

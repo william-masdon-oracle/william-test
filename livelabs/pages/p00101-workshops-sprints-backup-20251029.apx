@@ -628,6 +628,9 @@ page 101 (
         security {
             restrictedChars: alphanumWithSpace
         }
+        comments {
+            comments: this is an unused variable. it existed in an old version of livelabs and the app will throw an error if someone uses a link that sets the variable if it wasn't here. It used to be the 'clear' variable for clearing out other variables.  Used to be called just 'C'
+        }
     )
 
     pageItem 101_ME (
@@ -642,6 +645,9 @@ page 101 (
         security {
             restrictedChars: alphanumWithSpace
         }
+        comments {
+            comments: this is an unused variable. it existed in an old version of livelabs and the app will throw an error if someone uses a link that sets the variable if it wasn't here. It used to be the 'menu' variable for the dropdown under 'Workshops and Sprints'. Used to be called just 'ME'
+        }
     )
 
     pageItem 101_SEARCH (
@@ -652,6 +658,9 @@ page 101 (
         }
         security {
             restrictedChars: webSafe
+        }
+        comments {
+            comments: used to be called just 'SEARCH'
         }
     )
 

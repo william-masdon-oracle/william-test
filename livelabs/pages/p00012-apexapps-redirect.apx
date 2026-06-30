@@ -65,6 +65,15 @@ page 12 (
             type: staticValue
             staticValue: #APP_FILES#redirect.webp
         }
+        comments {
+            comments:
+                ```
+                SELECT file_content
+                FROM apex_application_static_files
+                where file_name = 'redirect.webp'
+                and rownum = 1
+                ```
+        }
     )
 
     pageItem P12_WEC (

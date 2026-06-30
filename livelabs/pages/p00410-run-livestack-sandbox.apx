@@ -1005,24 +1005,6 @@ page 410 (
 
     )
 
-    dynamicAction hide-footer-links (
-        name: Hide Footer Links
-        execution {
-            sequence: 10
-        }
-        when {
-            event: ready
-        }
-
-        action native-hide (
-            action: hide
-            execution {
-                sequence: 10
-            }
-        )
-
-    )
-
     dynamicAction mark-complete (
         name: Mark Complete
         execution {

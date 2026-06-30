@@ -890,114 +890,6 @@ page 1 (
         }
     )
 
-    region banner (
-        name: BANNER_4
-        type: staticContent
-        source {
-            htmlCode:
-                ```html
-                
-                
-                ```
-        }
-        layout {
-            sequence: 40
-            parentRegion: @home-page-carousel
-            slot: slides
-        }
-        appearance {
-            template: 82600886833990578
-            templateOptions: #DEFAULT#
-        }
-        advanced {
-            customAttributes: href = "&P1_URL_4." target="_blank" aria-label="Banner 4"
-        }
-        serverSideCondition {
-            type: rowsReturned
-            sqlQuery: select * from ll_home_page_banners where position=4 and active='Y'
-        }
-    )
-
-    region banner-2 (
-        name: BANNER_3
-        type: staticContent
-        source {
-            htmlCode:
-                ```html
-                
-                
-                ```
-        }
-        layout {
-            sequence: 30
-            parentRegion: @home-page-carousel
-            slot: slides
-        }
-        appearance {
-            template: 82600886833990578
-            templateOptions: #DEFAULT#
-        }
-        advanced {
-            customAttributes: href = "&P1_URL_3." target="_blank"
-        }
-        serverSideCondition {
-            type: rowsReturned
-            sqlQuery: select * from ll_home_page_banners where position=3 and active='Y'
-        }
-    )
-
-    region banner-3 (
-        name: BANNER_2
-        type: staticContent
-        source {
-            htmlCode:
-                ```html
-                
-                
-                ```
-        }
-        layout {
-            sequence: 20
-            parentRegion: @home-page-carousel
-            slot: slides
-        }
-        appearance {
-            template: 82600886833990578
-            templateOptions: #DEFAULT#
-        }
-        advanced {
-            customAttributes: href = "&P1_URL_2." target="_blank"
-        }
-        serverSideCondition {
-            type: rowsReturned
-            sqlQuery: select * from ll_home_page_banners where position=2 and active='Y'
-        }
-    )
-
-    region banner-4 (
-        name: BANNER_1
-        type: staticContent
-        source {
-            htmlCode:
-                ```html
-                
-                
-                ```
-        }
-        layout {
-            sequence: 10
-            parentRegion: @home-page-carousel
-            slot: slides
-        }
-        advanced {
-            customAttributes: href = "&P1_URL_1." target="_blank"
-        }
-        serverSideCondition {
-            type: rowsReturned
-            sqlQuery: select * from ll_home_page_banners where position=1 and active='Y'
-        }
-    )
-
     region events (
         name: Events
         type: staticContent
@@ -1349,39 +1241,6 @@ page 1 (
         }
         advanced {
             customAttributes: style = "justify-self:center;"
-        }
-    )
-
-    region home-page-carousel (
-        name: Home Page Carousel
-        type: staticContent
-        layout {
-            sequence: 40
-            slot: body
-            columnSpan: 12
-        }
-        appearance {
-            template: @/carousel-container
-            templateOptions: [
-                t-Region--noPadding
-                js-cycle10s
-                t-Region--carouselSlide
-                t-Region--removeHeader js-removeLandmark
-                t-Region--noBorder
-                t-Region--hiddenOverflow
-                margin-top-none
-                margin-bottom-none
-                margin-left-none
-                margin-right-none
-            ]
-        }
-        advanced {
-            htmlDomId: carousel
-            customAttributes: aria-label="Home Page Carousel 1"
-            regionDisplaySelector: true
-        }
-        serverSideCondition {
-            type: never
         }
     )
 
@@ -1753,42 +1612,6 @@ page 1 (
         }
     )
 
-    pageItem P1_ALT_TEXT_1 (
-        type: hidden
-        layout {
-            sequence: 30
-            region: @banner-4
-            slot: regionBody
-        }
-    )
-
-    pageItem P1_ALT_TEXT_2 (
-        type: hidden
-        layout {
-            sequence: 30
-            region: @banner-3
-            slot: regionBody
-        }
-    )
-
-    pageItem P1_ALT_TEXT_3 (
-        type: hidden
-        layout {
-            sequence: 30
-            region: @banner-2
-            slot: regionBody
-        }
-    )
-
-    pageItem P1_ALT_TEXT_4 (
-        type: hidden
-        layout {
-            sequence: 30
-            region: @banner
-            slot: regionBody
-        }
-    )
-
     pageItem P1_AVAILABLE_WORKSHOP_COUNT (
         type: hidden
         layout {
@@ -1826,118 +1649,6 @@ page 1 (
         }
         security {
             restrictedChars: alphanumWithSpace
-        }
-    )
-
-    pageItem P1_BANNER_1 (
-        type: displayImage
-        label {
-            alignment: left
-        }
-        settings {
-            basedOn: blobColSql
-            sqlQuery: select image from ll_home_page_banners where position=1
-        }
-        layout {
-            sequence: 10
-            region: @banner-4
-            slot: regionBody
-            alignment: left
-        }
-        appearance {
-            template: @global-search-bar
-            templateOptions: #DEFAULT#
-        }
-        advanced {
-            customAttributes: alt = "&P1_ALT_TEXT_1."
-        }
-        source {
-            type: sqlQuerySingleValue
-            sqlQuery: select image from ll_home_page_banners where position=1
-        }
-    )
-
-    pageItem P1_BANNER_2 (
-        type: displayImage
-        label {
-            alignment: left
-        }
-        settings {
-            basedOn: blobColSql
-            sqlQuery: select image from ll_home_page_banners where position=2
-        }
-        layout {
-            sequence: 10
-            region: @banner-3
-            slot: regionBody
-            alignment: left
-        }
-        appearance {
-            template: @global-search-bar
-            templateOptions: #DEFAULT#
-        }
-        advanced {
-            customAttributes: "alt = \"&P1_ALT_TEXT_2.\" "
-        }
-        source {
-            type: sqlQuerySingleValue
-            sqlQuery: select image from ll_home_page_banners where position=2
-        }
-    )
-
-    pageItem P1_BANNER_3 (
-        type: displayImage
-        label {
-            alignment: left
-        }
-        settings {
-            basedOn: blobColSql
-            sqlQuery: select image from ll_home_page_banners where position=3
-        }
-        layout {
-            sequence: 10
-            region: @banner-2
-            slot: regionBody
-            alignment: left
-        }
-        appearance {
-            template: @global-search-bar
-            templateOptions: #DEFAULT#
-        }
-        advanced {
-            customAttributes: alt = "&P1_ALT_TEXT_3."
-        }
-        source {
-            type: sqlQuerySingleValue
-            sqlQuery: select image from ll_home_page_banners where position=3
-        }
-    )
-
-    pageItem P1_BANNER_4 (
-        type: displayImage
-        label {
-            alignment: left
-        }
-        settings {
-            basedOn: blobColSql
-            sqlQuery: select image from ll_home_page_banners where position=4
-        }
-        layout {
-            sequence: 10
-            region: @banner
-            slot: regionBody
-            alignment: left
-        }
-        appearance {
-            template: @global-search-bar
-            templateOptions: #DEFAULT#
-        }
-        advanced {
-            customAttributes: alt = "&P1_ALT_TEXT_4."
-        }
-        source {
-            type: sqlQuerySingleValue
-            sqlQuery: select image from ll_home_page_banners where position=4
         }
     )
 
@@ -2066,34 +1777,6 @@ page 1 (
         }
     )
 
-    pageItem P1_MOBILE_HEADER (
-        type: displayImage
-        label {
-            alignment: left
-        }
-        settings {
-            basedOn: blobColSql
-            sqlQuery: select image from ll_home_page_banners where position=1
-        }
-        layout {
-            sequence: 10
-            slot: body
-            alignment: left
-            rowCssClasses: mobile-header
-            columnCssClasses: mobile-header
-        }
-        appearance {
-            template: @global-search-bar
-            templateOptions: [
-                #DEFAULT#
-                margin-bottom-none
-            ]
-        }
-        serverSideCondition {
-            type: never
-        }
-    )
-
     pageItem P1_SEARCH_BAR (
         type: combobox
         label {
@@ -2170,58 +1853,6 @@ page 1 (
         }
         security {
             sessionStateProtection: restricted
-        }
-    )
-
-    pageItem P1_URL_1 (
-        type: hidden
-        layout {
-            sequence: 50
-            region: @banner-4
-            slot: regionBody
-        }
-        source {
-            type: sqlQuerySingleValue
-            sqlQuery: select url from ll_home_page_banners where position=1
-        }
-    )
-
-    pageItem P1_URL_2 (
-        type: hidden
-        layout {
-            sequence: 50
-            region: @banner-3
-            slot: regionBody
-        }
-        source {
-            type: sqlQuerySingleValue
-            sqlQuery: select url from ll_home_page_banners where position=2
-        }
-    )
-
-    pageItem P1_URL_3 (
-        type: hidden
-        layout {
-            sequence: 50
-            region: @banner-2
-            slot: regionBody
-        }
-        source {
-            type: sqlQuerySingleValue
-            sqlQuery: select url from ll_home_page_banners where position=3
-        }
-    )
-
-    pageItem P1_URL_4 (
-        type: hidden
-        layout {
-            sequence: 20
-            region: @banner
-            slot: regionBody
-        }
-        source {
-            type: sqlQuerySingleValue
-            sqlQuery: select url from ll_home_page_banners where position=4
         }
     )
 

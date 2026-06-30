@@ -40,6 +40,9 @@ regionTemplate collapsible-custom (
     advanced {
         identifier: COLLAPSIBLE_CUSTOM
     }
+    comments {
+        comments: Red Theme
+    }
 
     templateOption 240px (
         name: 240px

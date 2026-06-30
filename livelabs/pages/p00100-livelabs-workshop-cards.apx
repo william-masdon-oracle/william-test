@@ -1097,6 +1097,9 @@ page 100 (
         security {
             restrictedChars: alphanumWithSpace
         }
+        comments {
+            comments: this is an unused variable. it existed in an old version of livelabs and the app will throw an error if someone uses a link that sets the variable if it wasn't here. It used to be the 'clear' variable for clearing out other variables
+        }
     )
 
     pageItem ME (
@@ -1110,6 +1113,9 @@ page 100 (
         }
         security {
             restrictedChars: alphanumWithSpace
+        }
+        comments {
+            comments: this is an unused variable. it existed in an old version of livelabs and the app will throw an error if someone uses a link that sets the variable if it wasn't here. It used to be the 'menu' variable for the dropdown under 'Workshops and Sprints'
         }
     )
 

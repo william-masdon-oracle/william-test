@@ -40,6 +40,9 @@ regionTemplate collapsible-workshop-custom (
     advanced {
         identifier: COLLAPSIBLE_WORKSHOP_CUSTOM
     }
+    comments {
+        comments: Red Theme
+    }
 
     templateOption 240px (
         name: 240px

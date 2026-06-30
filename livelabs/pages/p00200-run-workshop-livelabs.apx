@@ -301,24 +301,6 @@ page 200 (
 
     )
 
-    dynamicAction hide-footer-links (
-        name: Hide Footer Links
-        execution {
-            sequence: 10
-        }
-        when {
-            event: ready
-        }
-
-        action native-hide (
-            action: hide
-            execution {
-                sequence: 10
-            }
-        )
-
-    )
-
     process count-page-and-workshop (
         name: Count page and workshop
         type: executeCode

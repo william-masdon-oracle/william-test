@@ -799,6 +799,9 @@ page 201 (
         security {
             sessionStateProtection: restricted
         }
+        comments {
+            comments: ll_pkg_create.is_genai_workshop(:P201_RES_ID) = 'Y'
+        }
     )
 
     pageItem P201_LOGIN_URL (
@@ -844,6 +847,9 @@ page 201 (
         }
         security {
             sessionStateProtection: restricted
+        }
+        comments {
+            comments: style="word-break: break-all;   word-break: break-word;"
         }
     )
 
@@ -1304,6 +1310,9 @@ page 201 (
                     where JSON_VALUE(flow_step_param,'$.type') = 'ociGenAI'
                     and reservation_id = :P201_RES_ID;
                 ```
+        }
+        comments {
+            comments: ll_pkg_create.is_genai_workshop(:P201_RES_ID) = 'Y'
         }
     )
 

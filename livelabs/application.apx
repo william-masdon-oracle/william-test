@@ -39,14 +39,14 @@ app LIVELABS (
     }
     javaScript {
         fileUrls: [
-            #APP_IMAGES#js/livelabs#MIN#.js?version=#APP_VERSION#
-            #APP_IMAGES#js/turl#MIN#.js
+            #APP_FILES#js/livelabs.js
+            #APP_FILES#js/turl.js
         ]
     }
     css {
         fileUrls: [
-            #APP_IMAGES#app-icon.css?version=#APP_VERSION#
-            #APP_IMAGES#css/livelabs#MIN#.css?version=#APP_VERSION#
+            #APP_FILES#app-icon.css
+            #APP_FILES#css/livelabs.css
         ]
     }
     authentication {
@@ -92,6 +92,9 @@ app LIVELABS (
     advanced {
         passEcid: false
         modernizeApp: true
+    }
+    comments {
+        comments: Application created from create application wizard 2020.06.09.
     }
 
     substitution APP_NAME (

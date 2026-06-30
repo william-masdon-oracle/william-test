@@ -22,6 +22,9 @@ appItem SOURCE (
         sessionStateProtection: unrestricted
         escapeSpecialChars: false
     }
+    comments {
+        comments: MRM tracking parameter
+    }
 )
 
 appItem SOURCETYPE (
@@ -29,12 +32,18 @@ appItem SOURCETYPE (
         sessionStateProtection: unrestricted
         escapeSpecialChars: false
     }
+    comments {
+        comments: "MRM tracking parameter "
+    }
 )
 
 appItem SRC1 (
     security {
         sessionStateProtection: unrestricted
         escapeSpecialChars: false
+    }
+    comments {
+        comments: "MRM tracking parameter "
     }
 )
 

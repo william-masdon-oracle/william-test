@@ -398,6 +398,9 @@ page 320 (
                 Need help? <a href="https://livelabs.oracle.com/cdn/common/labs/generate-ssh-key/index.html" target="_blank">Learn how to generate SSH keys</a>
                 ```
         }
+        comments {
+            comments: <span class="t-Form-inlineHelp">To find out more about generating SSH keys, see <a href="https://oracle-livelabs.github.io/common/labs/generate-ssh-key/" target="_blank">Create SSH Keys</a></span>
+        }
     )
 
     pageItem P320_REASON (

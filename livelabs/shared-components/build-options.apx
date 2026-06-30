@@ -6,6 +6,9 @@ buildOption feature-about-page (
     advanced {
         featureIdentifier: APPLICATION_ABOUT_PAGE
     }
+    comments {
+        comments: About this application page.
+    }
 )
 
 buildOption feature-activity-reporting (
@@ -15,6 +18,9 @@ buildOption feature-activity-reporting (
     }
     advanced {
         featureIdentifier: APPLICATION_ACTIVITY_REPORTING
+    }
+    comments {
+        comments: Include numerous reports and charts on end user activity.
     }
 )
 
@@ -26,6 +32,9 @@ buildOption feature-configuration-options (
     advanced {
         featureIdentifier: APPLICATION_CONFIGURATION
     }
+    comments {
+        comments: Allow application administrators to enable or disable specific functionality, associated with an Application Express build option, from within the application.
+    }
 )
 
 buildOption feature-feedback (
@@ -35,6 +44,9 @@ buildOption feature-feedback (
     }
     advanced {
         featureIdentifier: APPLICATION_FEEDBACK
+    }
+    comments {
+        comments: Provide a mechanism for end users to post general comments back to the application administrators and developers.
     }
 )
 
