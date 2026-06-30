@@ -1,0 +1,418 @@
+page 200 (
+    name: Run Workshop
+    alias: RUN-WORKSHOP-LIVELABS
+    title: Run Workshop - &P200_WORKSHOP_NAME.
+    appearance {
+        pageTemplate: @standard-trustarc-redesign
+        templateOptions: [
+            #DEFAULT#
+            t-PageBody--noContentPadding
+        ]
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+        warnOnUnsavedChanges: false
+    }
+    css {
+        inline:
+            ```css
+            body {
+              overflow: hidden;
+            } 
+            
+            .rw-layout--contained:not(.rw-layout--edge-to-edge):not(.rw-layout--fixed):not(.rw-layout--foldout) .t-Body-main {
+              width: 100%;
+            }
+            
+            .rw-layout--contained:not(.rw-layout--edge-to-edge):not(.rw-layout--fixed):not(.rw-layout--foldout) {
+                --ut-body-content-max-width: 100%;
+            }
+            
+            .t-Body-fullContent {
+                height: 100%;
+            }
+            .t-Body-fullContent .container {
+                display: flex;
+                flex-direction: column;
+                height: 100%;
+            }
+            .height100 {
+                height: 100%;
+            }
+            .workshop-iframe {
+                width: 100%;
+                height: 100%;
+                display: block;
+                margin: 0;
+            }
+            
+            .t-Footer {
+                display: none;
+            }
+            
+            
+            
+            .workshop-details {
+                background-color: #fceddc;
+                color: #161513;
+                padding: 10px 16px 8px 16px;
+                font-size: 14px;
+                line-height: 20px;
+                font-weight: 600;
+                text-align: center;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 1rem;
+                flex-wrap: wrap;
+            }
+            ```
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region workshop-details (
+        name: Workshop Details
+        type: plSqlDynamicContent
+        source {
+            plsqlCode:
+                ```plsql
+                declare
+                v_hold varchar2(4000);
+                v_time number;
+                v_live_sql varchar2(500);
+                begin
+                v_time := ll_pkg_reservation.time_remaining(p_reservation_id => :P200_ID);
+                v_hold := ll_pkg_apex.javascript_countdown(p_hours_remaining => v_time, p_id => 'demo');
+                
+                htp.script(v_hold, 'Javascript');
+                htp.p('<div class="workshop-details-actions"><a href="'|| :P200_RES_INFO_URL || '">View Login Info</a></div><div class="workshop-details-timer"><span id="demo"></span><br><a id="extend-res" href="#">Extend Workshop Reservation</a></div>');
+                end;
+                ```
+        }
+        layout {
+            sequence: 20
+            slot: fullWidthContent
+        }
+        appearance {
+            template: @/blank-with-attributes
+            templateOptions: #DEFAULT#
+            cssClasses: workshop-details
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region workshop-instructions (
+        name: Workshop Instructions
+        type: url
+        layout {
+            sequence: 110
+            slot: fullWidthContent
+            rowCssClasses: height100
+        }
+        serverSideCondition {
+            type: item=value
+            item: P200_VALID_REQUEST
+            value: Y
+        }
+        settings {
+            url: &P200_WORKSHOP_LOCATION.
+            iframeAttrs: " allowfullscreen=\"true\" class=\"workshop-iframe\""
+        }
+    )
+
+    pageItem P200_DESC_SHORT (
+        type: hidden
+        layout {
+            sequence: 60
+            slot: body
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            sessionStateProtection: restricted
+        }
+    )
+
+    pageItem P200_DISPLAY_OCI_INSTRUCTIONS (
+        type: hidden
+        layout {
+            sequence: 90
+            slot: body
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            sessionStateProtection: restricted
+        }
+    )
+
+    pageItem P200_ID (
+        type: hidden
+        layout {
+            sequence: 20
+            slot: body
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            restrictedChars: alphanumWithSpace
+        }
+    )
+
+    pageItem P200_RES_INFO_URL (
+        type: hidden
+        layout {
+            sequence: 70
+            slot: body
+        }
+        security {
+            sessionStateProtection: restricted
+        }
+    )
+
+    pageItem P200_VALID_REQUEST (
+        type: hidden
+        layout {
+            sequence: 80
+            slot: body
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            sessionStateProtection: restricted
+        }
+    )
+
+    pageItem P200_WORKSHOP_ID (
+        type: hidden
+        layout {
+            sequence: 30
+            slot: body
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            restrictedChars: alphanumWithSpace
+        }
+    )
+
+    pageItem P200_WORKSHOP_LOCATION (
+        type: hidden
+        layout {
+            sequence: 40
+            slot: body
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            sessionStateProtection: restricted
+        }
+    )
+
+    pageItem P200_WORKSHOP_NAME (
+        type: hidden
+        layout {
+            sequence: 50
+            slot: body
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            sessionStateProtection: restricted
+        }
+    )
+
+    dynamicAction extend-reservation (
+        name: Extend Reservation
+        execution {
+            sequence: 20
+        }
+        when {
+            event: click
+            selectionType: jQuerySelector
+            jquerySelector: #extend-res
+        }
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    begin
+                      ll_pkg_reservation.extend_reservation (p_reservation_id => :P200_ID);
+                    end;
+                    ```
+                itemsToSubmit: P200_ID
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode: location.reload();
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction hide-extend-reservation (
+        name: Hide Extend Reservation
+        execution {
+            sequence: 30
+        }
+        when {
+            event: ready
+        }
+        serverSideCondition {
+            type: expression
+            plsqlExpression: ll_pkg_reservation.extend_allowed (p_reservation_id => :P200_ID) != 'Y'
+        }
+
+        action native-hide (
+            action: hide
+            affectedElements {
+                selectionType: jquerySelector
+                jquerySelector: #extend-res
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    dynamicAction hide-footer-links (
+        name: Hide Footer Links
+        execution {
+            sequence: 10
+        }
+        when {
+            event: ready
+        }
+
+        action native-hide (
+            action: hide
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    process count-page-and-workshop (
+        name: Count page and workshop
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                begin
+                  insert into ll_page_visits (page_id, workshop_id, app_session) values (200,:P200_WORKSHOP_ID, :APP_SESSION);
+                  commit;
+                exception
+                  when others then
+                    ll_pkg_log.log(1,'Error during insert on ll_page_visits for page_id 200, workshop_id '||V(:P200_WORKSHOP_ID)||', app_session '||:APP_SESSION);
+                end;
+                ```
+        }
+        execution {
+            sequence: 10
+            point: afterFooter
+        }
+        advanced {
+            executionMappingIdentifier: 185716989188384220
+        }
+    )
+
+    process retrieve-information (
+        name: RETRIEVE_INFORMATION
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                declare
+                  cursor c_reservation is select llr.workshop_id, llr.voucher_id, llw.name, llw.lab_url, desc_short, llw.workshop_json
+                                          from ll_reservations llr, ll_workshops llw
+                                          where llr.workshop_id = llw.id
+                                          and llr.id = :P200_ID;
+                
+                  cursor c_event (p_event_id number) is 
+                                    select alt_url, alt_desc_short
+                                    from ll_vouchers
+                                    where id = p_event_id;
+                
+                  v_lab_url       varchar2(4000);
+                  v_desc_short    varchar2(4000);
+                  v_voucher_id    number;
+                  v_time number;
+                  v_hold varchar2(4000);
+                
+                
+                begin
+                
+                  if :P200_ID is not null then
+                
+                    for x in c_reservation loop
+                
+                      if x.voucher_id is not null then
+                        open c_event(x.voucher_id);
+                        fetch c_event into v_lab_url, v_desc_short;
+                        close c_event;
+                
+                        v_voucher_id := x.voucher_id;
+                      end if;
+                
+                      v_lab_url := nvl(v_lab_url, x.lab_url);
+                 
+                      :P200_WORKSHOP_LOCATION := nvl(json_value(v_lab_url,'$.GITHUB_URL'),  json_value(v_lab_url,'$.LIVELABS_URL'));
+                      :P200_DISPLAY_OCI_INSTRUCTIONS := nvl(json_value(x.workshop_json,'$.DisplayOciInstructions'), 'Y');
+                      :P200_WORKSHOP_ID := x.workshop_id;
+                      :P200_WORKSHOP_NAME := x.name;
+                      :P200_DESC_SHORT := nvl(v_desc_short, x.desc_short);
+                      :P200_VALID_REQUEST :=  ll_pkg_security.am_i_allowed(p_apex_user => :APP_USER, 
+                                                                           p_access_type  => 'RESERVATION_VIEW',
+                                                                           p_access_value => :P200_ID );
+                      :P200_RES_INFO_URL := APEX_PAGE.GET_URL (
+                            p_page   => 201,
+                            p_items  => 'P201_RES_ID',
+                            p_values => :P200_ID );
+                
+                
+                    end loop;
+                  else
+                    :P200_VALID_REQUEST := 'N';
+                  end if;
+                
+                end;
+                ```
+        }
+        execution {
+            sequence: 10
+            point: beforeHeader
+        }
+        advanced {
+            executionMappingIdentifier: 183906878545028491
+        }
+    )
+
+)
+

@@ -1,0 +1,3094 @@
+page 1 (
+    name: Home
+    alias: HOME
+    title: LiveLabs Home
+    appearance {
+        pageTemplate: @standard-trustarc-redesign
+        templateOptions: [
+            #DEFAULT#
+            t-PageBody--noContentPadding
+        ]
+        cssClasses: home-page
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+        warnOnUnsavedChanges: false
+    }
+    javaScript {
+        executeWhenPageLoads:
+            ```javascript-browser
+            // (function fixComboBoxDirection() {
+            //   const targetId = '#P1_SEARCH_BAR';
+            //   const popupSelector = '#CS_1_P1_SEARCH_BAR';
+            
+            //   const repositionPopup = () => {
+            //     const $trigger = apex.jQuery(targetId);
+            //     const $popup = apex.jQuery(popupSelector).closest('.ui-dialog-comboSelect');
+            
+            //     if ($trigger.length && $popup.length) {
+            //       const offset = $trigger.offset();
+            //       const height = $trigger.outerHeight();
+            
+            
+            //       $popup.css({
+            //         position: 'absolute',
+            //         top: (offset.top + height) + 'px',
+            //         left: offset.left + 'px',
+            //         bottom: '', // Remove APEX's bottom style
+            //         'z-index': 10000
+            //       });
+            //     }
+            //   };
+            
+            //   // Observe DOM for popup changes
+            //   const observer = new MutationObserver(() => {
+            //     repositionPopup();
+            //   });
+            
+            //   // Watch the entire body for added nodes (APEX injects popups here)
+            //   observer.observe(document.body, {
+            //     childList: true,
+            //     subtree: true
+            //   });
+            
+            //   // Reapply on interactions just in case
+            //   apex.jQuery(document).on('focus click', targetId, () => {
+            //     setTimeout(repositionPopup, 50);
+            //   });
+            // })();
+            
+            // Setting unique Aria Labels.
+            document.querySelector('#user-role-cards_Cards > .a-GV-footer[aria-label="Grid Footer"]').setAttribute('aria-label', 'Grid Footer 1');
+            document.querySelector('#carousel').setAttribute('aria-label', 'Home Page Carousel 1');
+            document.querySelector('div[aria-label="Grid Footer 1"] > div[aria-label="Grid Status"]').setAttribute('aria-label', 'Grid Status 1');
+            document.querySelector('div[aria-label="Grid Footer 1"] > .a-GV-pagination[aria-label="Pagination"]').setAttribute('aria-label', 'Pagination 1');
+            
+            //Setting proper element nesting.
+            
+            
+            
+            
+            
+            
+            ```
+    }
+    css {
+        inline:
+            ```css
+            /* #P1_SEARCH_BAR input {
+                anchor-name: --search-bar-homepage;
+            }
+            .ui-dialog.ui-dialog-comboSelect.ui-dialog-combobox.ui-widget.ui-widget-content.ui-front.ui-dialog--popup.ui-dialog--popup {
+                width: anchor-size(--search-bar-homepage width) !important;
+                margin: 5px 0px !important;
+            } */
+            
+            
+            /* Homepage search combo box - APEX 26.1 */
+            #P1_SEARCH_BAR_CONTAINER {
+              width: min(990px, calc(100vw - 48px));
+              max-width: 100%;
+              justify-self: center;
+              anchor-name: --search-bar-homepage;
+            }
+            
+            #P1_SEARCH_BAR_CONTAINER .t-Form-inputContainer,
+            #P1_SEARCH_BAR_CONTAINER .t-Form-itemWrapper,
+            #P1_SEARCH_BAR {
+              width: 100% !important;
+              max-width: 100%;
+            }
+            
+            #P1_SEARCH_BAR_CONTAINER .t-Form-inputContainer {
+              flex-basis: 100%;
+            }
+            
+            #P1_SEARCH_BAR .apex-item-comboselect,
+            #P1_SEARCH_BAR input {
+              width: 100% !important;
+              min-width: 0;
+            }
+            
+            #P1_SEARCH_BAR .apex-item-comboselect {
+              display: grid !important;
+              grid-template-columns: 1fr auto;
+            }
+            
+            /* Keep the dropdown aligned with the visual search box */
+            .ui-dialog.ui-dialog-comboSelect.ui-dialog-combobox.ui-widget.ui-widget-content.ui-front.ui-dialog--popup.ui-dialog--popup {
+              width: calc(anchor-size(--search-bar-homepage width) - 15px) !important;
+            }
+            
+            /* hide dropdown arrow */
+            #P1_SEARCH_BAR .apex-item-comboselect .a-Button--comboSelect {
+              display: none;
+            }
+            
+            
+            
+            
+            
+            
+            
+            #banner-ads-region {
+                background-image: url('#APP_FILES#banner-bkgd-11-y.webp');
+                background-size: cover;
+            }
+            
+            @media (max-width: 1280px){
+                .a-CardView-items--grid4col {
+                    grid-template-columns: repeat(2, minmax(0, 1fr));
+                }
+            }
+            @media (max-width: 990px){
+                .a-CardView-items--grid4col {
+                    grid-template-columns: repeat(1, minmax(0, 1fr));
+                }
+            }
+            
+            .search-button-row {
+                display: flex;
+                justify-content: center;
+            }
+            .view-all-button-col {
+                display: flex;
+                justify-content: flex-end;
+            }
+            .search-ai-button-col {
+                display: flex;
+            }
+            @media (max-width: 479px){
+                .view-all-button-col {
+                    justify-content: center;
+                    order: 2;
+                    margin-bottom: 10px;
+                }
+                .search-ai-button-col {
+                    justify-content: center;
+                    order: 1;
+                }
+            }
+            
+            
+            :root { 
+                --a-cv-media-overlay-color: transparent; 
+            }
+            .column-stuff {
+                display: grid;
+            }
+             .a-CardView-media .workshop-use-cases {
+                background-color: black;
+             }
+            
+             .a-CardView-media .featured-workshop-cards {
+                background-color: black;
+             }
+            
+             .a-CardView-subTitle {
+                hyphens: none;
+             }
+             
+            .a-CardView-iconWrap--top, .column-stuff {
+                display: grid;
+            }
+            #P0_GLOBAL_SEARCH {
+                display:none !important;
+            }
+            .home-page {
+                background-color: white;
+            }
+            #footer_links a {
+                display: inline-block;
+                min-width: 24px !important;
+                min-height: 24px !important;
+            }
+            .a-CardView-header { 
+                align-items: start; 
+                padding-block-end: 8px;
+            }
+            .a-CardView-body {padding-block-start: 0px;}
+            
+             .mobile-header {
+                display: none;
+            }
+            .row-grid {
+                display: grid;
+            }
+            
+            .column-center-justify {
+                justify-self: center;
+            }
+            
+            .apex-item-text {
+                width: 900px;
+            }
+            /* Browser Size Adaptions */
+            @media (max-width: 1280px){
+                
+                #carousel,   #statistics-region {
+                    display: none !important;
+                    .workshop-use-cases {
+                        justify-items: center;
+                    }
+                }
+            
+            
+                .mobile-header {
+                display: block;
+                padding: 0px 0px;
+                }
+            
+                #P1_MOBILE_HEADER {
+                    width: 100%
+                }
+            
+                #P1_MOBILE_HEADER, #P1_MOBILE_HEADER_CONTAINER {
+                    padding: 0px 0px;
+                }
+            
+                .a-CardView-items.workshop-use-cases {
+                    justify-items: center;
+                }
+            /* 
+                #use-case-cards {
+                    margin-top: 17%;
+                } */
+                #use-case-cards li {
+                    max-width: 85%;
+                }
+                #P0_MOBILE_SEARCH_CONTAINER {
+                    max-width: 90vw;
+                }
+                #statistics-region {
+                    padding-top: 17% !important;
+                    padding-bottom: 17% !important;
+                }
+                .home-page-header {
+                    justify-items: center;
+                    text-align: center;
+                }
+            }
+            @media (max-width: 990px){
+                .apex-item-text{
+                    width: 80vw !important;
+                }
+            }
+            
+                .home-page-header {
+                    justify-items: center;
+                    text-align: center;
+                }
+            /* CAROUSEL */
+            /* Remove rounding from all parent containers */
+            #carousel .t-Region, 
+            .t-Region-carouselItems, 
+            .t-Region-carouselItem, 
+            .a-Region-carouselItem, 
+            .t-Region--scrollBody {
+                border-radius: 0 !important;
+                overflow: hidden !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+            
+            #carousel {
+                border-radius: 0px;
+            }
+            /* Remove scrollBody constraints */
+            #carousel .t-Region--scrollBody {
+                height: 100% !important;
+            }
+            
+            /* Ensure image stretches and stays clean */
+            .t-Region-body img {
+                width: 100% !important;
+                height: 100%;
+                display: block;
+                border-radius: 0 !important;
+            }
+            
+            /* WORKSHOP USE CASES */
+            #workshop-use-cases-region .t-Region-body {
+                background-image: url('#APP_FILES#homepage-region-bg-dark.webp');
+                display: flex;
+                align-items: center;
+                min-height: 400px;
+            }
+            .workshop-use-case-cards {
+                box-shadow: 6px 6px 4px rgba(0, 0, 0, 0.3);
+                
+            }
+            .workshop-use-case-cards {
+                display: flex;
+                justify-self: center;
+                text-align: center;
+                justify-items: center;
+                border-width: 0px;
+            }
+            #use-case-cards {
+                max-width: 85%;
+                justify-self: center;
+            }
+            
+            #use-case-cards .a-CardView-items li {
+                /* width: 26.7% !important; */
+                /* height: fit-content; */
+                margin-right: 4px;
+            }
+            #use-case-cards .a-CardView-items li .a-CardView-header{
+                padding-top: 10px;
+                padding-bottom: 12px;
+            }
+            #use-case-cards .workshop-use-case-icons {
+                /* background-color: #606c6d; */
+                justify-self: center;
+                border-radius: 50%;
+                font-size: 24px;
+                height: 50px;
+                width: 50px;
+            
+            }
+            #use-case-cards .workshop-use-case-icons.fa-tools {
+                background-color: #94afaf;
+            }
+            #use-case-cards .workshop-use-case-icons.fa-flask {
+                background-color: #f9d260;
+            }
+            #use-case-cards .workshop-use-case-icons.fa-person-running-fast {
+                background-color: #d34c3e;
+            }
+            
+            .ui-dialog.ui-dialog-comboSelect.ui-dialog-combobox.ui-widget.ui-widget-content.ui-front.ui-dialog--popup {
+                width:  990px !important;
+            }
+            /* Search Bar */
+            
+            #P1_SEARCH_BAR {
+                display: flex;
+                justify-items: center;
+            }
+            #P1_SEARCH_BAR_CONTAINER {
+                justify-self: center;
+            }
+            #P1_SEARCH_BAR_CONTAINER .t-Form-labelContainer {
+                display: none;
+            }
+            
+            
+            /* STATISTIC WALL */
+            #statistics-region .t-Region-body {
+                background-image: url('#APP_FILES#custom-bg11i.webp');
+                background-size: 75%;
+                display: flex;
+                align-content: center;
+                justify-content: space-between;
+            }
+            #statistics-region .statistic-wall-item .t-Region-body {
+                display: block;
+                background-image: none;
+            }
+            .statistic-wall-item {
+                display: flex;
+                justify-content: center;
+            }
+            #available-workshops-region {
+                color:#697778;
+                width: max-content;
+            }
+            #unique-visitors-region {
+                color:#697778;
+                width: max-content;
+            }
+            #events-region {
+                color:#697778;
+                width: max-content;
+            }
+            .statistic-title {
+                font-size: 65px;
+                font-weight: bold;
+            }
+            .statistic-subtitle {
+                line-height: 30px;
+                font-size: 25px;
+                font-weight: bold;
+                margin-top: 8px;
+                justify-self: center;
+            }
+            
+            
+            /* FEATURED WORKSHOPS */
+            #featured-workshops-region {
+                background-color: white;
+            }
+            .featured-workshop-cards {
+                color: black;
+                background-color: white;
+            }
+            .featured-workshop-cards .a-CardView-mediaImg {
+                content: url('#APP_FILES#card-bg-brown.webp');
+            }
+            
+            #featured-workshops-region .a-CardView-item {
+                height: 225px;
+            }
+            #featured-workshops-region .t-Region-body {
+                background-color: white;
+            }
+            .featured-ws-row {
+                display: flex;
+                justify-content: center;
+            }
+            .home-page-header-text {
+                margin-bottom: 0px !important;
+            }
+            
+            
+            
+            /* USER ROLES */
+            #user-roles-region {
+                padding-bottom: 20px;
+            }
+            #user-roles-region .a-CardView-iconWrap {
+                padding-top: 8px;
+            }
+            #user-role-cards .a-CardView-header {
+                padding-left: 0px;
+                padding-right: 0px;
+            }
+            
+            #welcome-title-mobile {
+                display: none;
+            }
+            .top-right {
+                position: float;
+                margin: 0px 0px 5px 5px;
+                float: right;
+            }
+            
+            .homepage-cate {
+                --a-cv-background-color: transparent;
+                --a-cv-border-width: 0px;
+                --a-cv-shadow: none;
+                --a-cv-icon-image-size: 80px;
+                background-color: #f1efed;
+            }
+            
+            
+            .a-CardView-header { align-items: start; }
+            
+            .a-CardView-media {
+                background-color: white;
+            }
+            
+            .workshop-cate {
+                background-color: #312D2A;
+            }
+            
+            #HOMEPAGE-CAROUSEL{
+                color: white;
+                background: url(#APP_FILES#sprints_bg.webp);
+                /* background-color: lightgray; */
+                /* border-radius: 5px; */
+            }
+            
+            .sprintbutton {  
+                padding:10px 15px 10px 15px;
+                border-radius:5px;
+                border:2px solid #000;
+                background-color: #e4e1dd;
+                color: black;
+                box-shadow: 2px 2px 4px black;
+            }
+            
+            button.sprintbutton:hover {
+                /* background:#40553b;  */
+                color: black;
+                border:2px solid black;
+                box-shadow: none;
+                cursor: pointer;
+            }
+            
+            
+            .t-Region--carousel .a-Region-carouselLink {
+                background-color: white;
+                /* border-radius: 100%; */
+                box-shadow: 0 0 0 1px #fcfbfa inset;
+            }
+            .t-Region--carousel .a-Region-carouselNavItem.a-Tabs-selected .a-Region-carouselLink {
+                background-color: white;
+            }
+            .t-Region--carousel .t-Region-body {
+                height: 220px;
+            }
+            
+            
+            
+            .a-Region-carouselItems div {
+                height: 100%;
+            }
+            ```
+    }
+    htmlHeader {
+        htmlHeader:
+            ```html
+            <!-- Verifying ownership for Google Search Console where sitemap maintained-->
+            
+            <!-- https://apexapps.oracle.com/pls/apex/r/dbpm/livelabs/ site prefix and https://livelabs.oracle.com domain-->
+            <meta name="google-site-verification" content="kQP9w32yDSXTyde2tHp9P-tkRg_RpmhLqSiaNXPwNZo" />
+            ```
+    }
+    security {
+        authentication: public
+        formAutoComplete: false
+    }
+
+    region ads-banner (
+        name: Ads Banner
+        type: dynamicContent
+        source {
+            plsqlFunctionBody:
+                ```plsql
+                -- ============================================================
+                -- APEX Rotating Banner - Oracle Redwood Style
+                -- Place this in a "PL/SQL Dynamic Content" region
+                -- positioned at the very top of your page (before header).
+                -- ============================================================
+                DECLARE
+                    l_html      CLOB := '';
+                    l_items     CLOB := '';
+                    l_count     NUMBER := 0;
+                
+                    CURSOR c_banners IS
+                        SELECT banner_text,
+                               button_label,
+                               button_link
+                        FROM   ll_banners
+                        WHERE  active_flg = 'Y'
+                        ORDER  BY banner_order;
+                
+                BEGIN
+                    FOR r IN c_banners LOOP
+                        l_count := l_count + 1;
+                
+                        -- Text and button wrapped together for centered static layout.
+                        -- JS will move the button to the pinned zone when scrolling activates.
+                        l_items := l_items ||
+                            '<div class="apx-banner-slide' ||
+                            CASE WHEN l_count = 1 THEN ' apx-banner-active' ELSE '' END ||
+                            '">' ||
+                            '<div class="apx-banner-text-zone">' ||
+                            '<span class="apx-banner-text">' ||
+                            apex_escape.html(r.banner_text) ||
+                            '</span>' ||
+                            '</div>';
+                
+                        IF r.button_label IS NOT NULL THEN
+                            l_items := l_items ||
+                                '<div class="apx-banner-btn-zone">' ||
+                                '<a href="' || apex_escape.html(r.button_link) || '"' ||
+                                ' class="t-Button t-Button--xsmall t-Button--primary apx-banner-btn" target="_blank">' ||
+                                apex_escape.html(r.button_label) ||
+                                '</a>' ||
+                                '</div>';
+                        END IF;
+                
+                        l_items := l_items || '</div>';
+                    END LOOP;
+                
+                    IF l_count = 0 THEN
+                        RETURN '';
+                    END IF;
+                
+                    l_html :=
+                '<style>
+                @keyframes apx-marquee {
+                    0%   { transform: translateX(0); }
+                    100% { transform: translateX(-50%); }
+                }
+                
+                .apx-banner-wrap {
+                    position: relative;
+                    width: 100%;
+                    color: #3A3A3A;
+                    font-family: "Oracle Sans", "Helvetica Neue", Arial, sans-serif;
+                    font-size: 0.8125rem;
+                    font-weight: 500;
+                    letter-spacing: 0.01em;
+                    line-height: 1;
+                    padding: 0;
+                    overflow: hidden;
+                    z-index: 1000;
+                }
+                
+                .apx-banner-inner {
+                    display: flex;
+                    align-items: center;
+                    height: 36px;
+                    padding: 0 8px 0 16px;
+                    position: relative;
+                    gap: 8px;
+                }
+                
+                /* --- Slides --- */
+                .apx-banner-slide {
+                    display: none;
+                    align-items: center;
+                    justify-content: center;      /* center content when static */
+                    flex: 1 1 0;
+                    min-width: 0;
+                    opacity: 0;
+                    transition: opacity 0.35s ease;
+                    gap: 10px;
+                }
+                
+                .apx-banner-slide.apx-banner-active {
+                    display: flex;
+                    opacity: 1;
+                }
+                
+                .apx-banner-slide.apx-banner-exit {
+                    display: flex;
+                    opacity: 0;
+                    position: absolute;
+                    pointer-events: none;
+                    /* match inner padding so it overlays correctly during fade */
+                    left: 16px;
+                    right: 72px;
+                    top: 0;
+                    bottom: 0;
+                    align-items: center;
+                    justify-content: center;
+                }
+                
+                /* --- Text zone --- */
+                /* Static: shrinks to fit content, centered with button beside it */
+                .apx-banner-text-zone {
+                    flex: 0 1 auto;               /* shrink-to-fit in static mode */
+                    min-width: 0;
+                    overflow-x: hidden;           /* clip horizontally only — preserves descenders */
+                    overflow-y: visible;
+                    white-space: nowrap;
+                    padding-bottom: 2px;          /* breathing room for g, y, p descenders */
+                }
+                
+                /* Scrolling: expand to fill all available space */
+                .apx-banner-slide.is-scrolling .apx-banner-text-zone {
+                    flex: 1 1 0;
+                }
+                
+                .apx-banner-text {
+                    display: inline-block;
+                    white-space: nowrap;
+                }
+                
+                .apx-banner-text-zone.is-scrolling .apx-banner-text {
+                    animation: apx-marquee var(--marquee-duration, 30s) linear var(--marquee-delay, 3s) infinite;
+                }
+                
+                /* Pause scroll on hover */
+                .apx-banner-wrap:hover .apx-banner-text-zone.is-scrolling .apx-banner-text {
+                    animation-play-state: paused;
+                }
+                
+                /* --- Button zone ---
+                     Static:   inline next to text (inside the slide flex row)
+                     Scrolling: pinned right (flex: 0 0 auto on the slide, button floats to right edge)
+                */
+                .apx-banner-btn-zone {
+                    flex: 0 0 auto;
+                }
+                
+                /* --- Nav arrows cluster --- */
+                .apx-banner-nav-cluster {
+                    flex: 0 0 auto;
+                    display: flex;
+                    align-items: center;
+                    gap: 2px;
+                }
+                
+                .apx-banner-nav {
+                    background: none;
+                    border: none;
+                    color: rgba(0,0,0,0.4);
+                    cursor: pointer;
+                    font-size: 1.1rem;
+                    padding: 0 6px;
+                    line-height: 1;
+                    transition: color 0.2s;
+                }
+                .apx-banner-nav:hover { color: #3A3A3A; }
+                </style>
+                
+                <div class="apx-banner-wrap" role="banner" aria-label="Announcements">
+                  <div class="apx-banner-inner" id="apxBannerInner">
+                    ' || l_items || '
+                    <div class="apx-banner-nav-cluster">
+                      <button type="button" class="apx-banner-nav apx-banner-prev" onclick="apxBannerNav(-1)" aria-label="Previous announcement">&#8249;</button>
+                      <button type="button" class="apx-banner-nav apx-banner-next" onclick="apxBannerNav(1)"  aria-label="Next announcement">&#8250;</button>
+                    </div>
+                  </div>
+                </div>
+                
+                <script>
+                (function () {
+                    var slides      = document.querySelectorAll(".apx-banner-slide");
+                    var current     = 0;
+                    var total       = slides.length;
+                    var timer       = null;
+                    var PX_PER_SEC  = 45;          /* scroll speed — increase to go faster */
+                    var STATIC_MS   = 6000;        /* interval for non-scrolling slides */
+                    var SCROLL_DELAY_S = 3;        /* seconds to hold before scrolling starts */
+                
+                    // ── Overflow detection & marquee setup ──────────────────────────────────
+                    function checkOverflow(slide) {
+                        var zone = slide.querySelector(".apx-banner-text-zone");
+                        var text = slide.querySelector(".apx-banner-text");
+                        if (!zone || !text) return;
+                
+                        // Reset to static state for a clean measurement
+                        zone.classList.remove("is-scrolling");
+                        slide.classList.remove("is-scrolling");
+                        text.style.removeProperty("animation-duration");
+                
+                        // Restore original text if we previously duplicated it
+                        if (text.dataset.original) {
+                            text.innerHTML = text.dataset.original;
+                        }
+                
+                        requestAnimationFrame(function () {
+                            // Store original once
+                            if (!text.dataset.original) {
+                                text.dataset.original = text.innerHTML;
+                            }
+                
+                            if (text.scrollWidth > zone.clientWidth) {
+                                // Calculate duration so speed stays constant regardless of text length
+                                var contentWidth = text.scrollWidth;
+                                var duration     = Math.round(contentWidth / PX_PER_SEC);
+                
+                                // Duplicate for seamless loop
+                                text.innerHTML = text.dataset.original +
+                                    "\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0" +
+                                    text.dataset.original;
+                
+                                zone.style.setProperty("--marquee-duration", duration + "s");
+                                zone.style.setProperty("--marquee-delay", SCROLL_DELAY_S + "s");
+                                zone.classList.add("is-scrolling");
+                                slide.classList.add("is-scrolling");
+                
+                                // Total interval = delay + one full scroll cycle
+                                slide.dataset.intervalMs = ((duration + SCROLL_DELAY_S) * 1000).toString();
+                            } else {
+                                // Static: use fixed interval
+                                slide.dataset.intervalMs = STATIC_MS.toString();
+                            }
+                
+                            // Schedule AFTER interval is calculated, not before
+                            if (slide === slides[current]) {
+                                scheduleNext();
+                            }
+                        });
+                    }
+                
+                    // ── Slide transition (opacity fade only — no transform) ─────────────────
+                    function goTo(idx) {
+                        var exitSlide = slides[current];
+                        exitSlide.classList.remove("apx-banner-active");
+                        exitSlide.classList.add("apx-banner-exit");
+                        setTimeout(function () {
+                            exitSlide.classList.remove("apx-banner-exit");
+                        }, 350);
+                
+                        current = (idx + total) % total;
+                        slides[current].classList.add("apx-banner-active");
+                        checkOverflow(slides[current]);
+                        // scheduleNext is called inside checkOverflow once interval is known
+                    }
+                
+                    // ── Timer — waits for the current slide''s own interval ─────────────────
+                    function scheduleNext() {
+                        clearTimeout(timer);
+                        if (total <= 1) return;
+                        var ms = parseInt(slides[current].dataset.intervalMs || STATIC_MS, 10);
+                        timer = setTimeout(function () { goTo(current + 1); }, ms);
+                    }
+                
+                    window.apxBannerNav = function (dir) {
+                        goTo(current + dir);
+                    };
+                
+                    // Pause on hover
+                    var wrap = document.querySelector(".apx-banner-wrap");
+                    if (wrap) {
+                        wrap.addEventListener("mouseenter", function () { clearTimeout(timer); });
+                        wrap.addEventListener("mouseleave", scheduleNext);
+                    }
+                
+                    // Re-check on resize (handles rotation / window resize)
+                    var resizeTimer;
+                    window.addEventListener("resize", function () {
+                        clearTimeout(resizeTimer);
+                        resizeTimer = setTimeout(function () {
+                            checkOverflow(slides[current]);
+                            // scheduleNext is called inside checkOverflow
+                        }, 150);
+                    });
+                
+                    // Kick off
+                    checkOverflow(slides[0]);
+                    scheduleNext();
+                }());
+                </script>';
+                
+                    RETURN l_html;
+                END;
+                ```
+        }
+        layout {
+            sequence: 10
+            slot: banner
+        }
+        appearance {
+            template: @/blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            htmlDomId: banner-ads-region
+        }
+    )
+
+    region available-workshops (
+        name: Available Workshops
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <span class="statistic-title" style="color:#697778;">&P1_AVAILABLE_WORKSHOP_COUNT.+</span> <br>
+                <div class="statistic-subtitle" style="color:#697778; max-width: 320px;">&P1_AVAILABLE_WORKSHOP_SUBTITLE.</div>
+                ```
+        }
+        layout {
+            sequence: 10
+            parentRegion: @statistics-wall
+            slot: subRegions
+            columnCssClasses: statistic-wall-item
+        }
+        appearance {
+            template: @/standard
+            templateOptions: [
+                #DEFAULT#
+                i-h320
+                t-Region--removeHeader js-removeLandmark
+                t-Region--textContent
+                t-Region--scrollBody
+                margin-top-md
+            ]
+            cssClasses: statistic-wall-item
+        }
+        advanced {
+            htmlDomId: available-workshops-region
+        }
+    )
+
+    region banner (
+        name: BANNER_4
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                
+                
+                ```
+        }
+        layout {
+            sequence: 40
+            parentRegion: @home-page-carousel
+            slot: slides
+        }
+        appearance {
+            template: 82600886833990578
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            customAttributes: href = "&P1_URL_4." target="_blank" aria-label="Banner 4"
+        }
+        serverSideCondition {
+            type: rowsReturned
+            sqlQuery: select * from ll_home_page_banners where position=4 and active='Y'
+        }
+    )
+
+    region banner-2 (
+        name: BANNER_3
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                
+                
+                ```
+        }
+        layout {
+            sequence: 30
+            parentRegion: @home-page-carousel
+            slot: slides
+        }
+        appearance {
+            template: 82600886833990578
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            customAttributes: href = "&P1_URL_3." target="_blank"
+        }
+        serverSideCondition {
+            type: rowsReturned
+            sqlQuery: select * from ll_home_page_banners where position=3 and active='Y'
+        }
+    )
+
+    region banner-3 (
+        name: BANNER_2
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                
+                
+                ```
+        }
+        layout {
+            sequence: 20
+            parentRegion: @home-page-carousel
+            slot: slides
+        }
+        appearance {
+            template: 82600886833990578
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            customAttributes: href = "&P1_URL_2." target="_blank"
+        }
+        serverSideCondition {
+            type: rowsReturned
+            sqlQuery: select * from ll_home_page_banners where position=2 and active='Y'
+        }
+    )
+
+    region banner-4 (
+        name: BANNER_1
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                
+                
+                ```
+        }
+        layout {
+            sequence: 10
+            parentRegion: @home-page-carousel
+            slot: slides
+        }
+        advanced {
+            customAttributes: href = "&P1_URL_1." target="_blank"
+        }
+        serverSideCondition {
+            type: rowsReturned
+            sqlQuery: select * from ll_home_page_banners where position=1 and active='Y'
+        }
+    )
+
+    region events (
+        name: Events
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <span class="statistic-title" style="color:#697778;">&P1_EVENT_COUNT.+</span> <br>
+                <div class="statistic-subtitle" style="color:#697778; max-width: 250px;">&P1_EVENT_SUBTITLE.</div>
+                ```
+        }
+        layout {
+            sequence: 30
+            parentRegion: @statistics-wall
+            slot: subRegions
+            startNewRow: false
+            columnCssClasses: statistic-wall-item
+        }
+        appearance {
+            template: @/standard
+            templateOptions: [
+                #DEFAULT#
+                i-h320
+                t-Region--removeHeader js-removeLandmark
+                t-Region--textContent
+                t-Region--scrollBody
+                margin-top-md
+                margin-left-sm
+            ]
+        }
+        advanced {
+            htmlDomId: events-region
+        }
+    )
+
+    region featured-livestack-cards (
+        name: Featured LiveStack Cards
+        type: cards
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select a.ID,
+                       a.NAME,
+                       a.DESC_SHORT,
+                       'https://c4u02.objectstorage.us-ashburn-1.oci.customer-oci.com/p/x98DkHyJNR5jQwArE-oPVJ0wPo5REH3qscX8wlXahgmFdp7UVwLEBDwsODjEHWDg/n/c4u02/b/WorkshopIcons/o/livestack.png' as ICON_BLOB,
+                       to_char((select count(*) from ll_livestack_entries where livestack_id = a.id)) || ' Steps' as WORKSHOP_TIME,
+                       'fa fa-list' as TIME_ICON
+                       
+                  from LL_livestacks_vw a
+                  where a.active_flg = 'Y'
+                order by dbms_random.value
+                ```
+        }
+        layout {
+            sequence: 60
+            parentRegion: @featured-livestacks
+            slot: regionBody
+        }
+        appearance {
+            template: @/cards-container
+            templateOptions: [
+                #DEFAULT#
+                margin-top-md
+                margin-left-md
+                margin-right-md
+            ]
+        }
+        componentAppearance {
+            gridColumns: 4
+        }
+        card {
+            cssClasses: featured-workshop-cards
+        }
+        title {
+            advancedFormatting: true
+            htmlExpression:
+                ```html
+                <span class="u-lineclamp-2" style="color: white; font-weight:700; min-height:2.5em;">&NAME.</span>
+                <!-- <div class="Featured" style="color:#FFCC00; font-weight:bold; font-size: 12px; margin-top: 2px;">Featured Workshop
+                    <i class="fa fa-badge-check" style="color:#FFCC00; font-weight:bold; font-size: 12px; vertical-align:baseline"></i>
+                </div> -->
+                ```
+        }
+        body {
+            advancedFormatting: true
+            htmlExpression: <span class="u-lineclamp-3" style= "color:white; min-height:3.75em;">&DESC_SHORT.</span>
+        }
+        secondaryBody {
+            advancedFormatting: true
+            htmlExpression:
+                ```html
+                <span class="&TIME_ICON." style="font-size:1em;vertical-align:baseline;">&nbsp;&nbsp;&WORKSHOP_TIME.</span>
+                <span style="float:right;">&CARD_VIEWS.</span>
+                ```
+        }
+        iconAndBadge {
+            iconSource: imageUrl
+            imageUrl: &ICON_BLOB.
+            iconPosition: end
+            iconDescription: Workshop Icon
+        }
+        media {
+            source: imageUrl
+            url: #APP_FILES#test-background.webp
+            position: background
+            sizing: cover
+            imageDescription: Workshop Background
+        }
+        pagination {
+            type: page
+            cardsPerPage: 4
+        }
+        messages {
+            whenNoDataFound: No LiveStacks were found matching your criteria
+        }
+
+        action action (
+            type: fullCard
+            layout {
+                sequence: 10
+            }
+            behavior {
+                target: {
+                    page: 400
+                    items: {
+                        P400_ID: &ID.
+                    }
+                    clearCache: 400
+                    action: resetRegions
+                }
+            }
+        )
+
+    )
+
+    region featured-livestacks (
+        name: Featured LiveStacks
+        type: staticContent
+        layout {
+            sequence: 69
+            slot: body
+        }
+        appearance {
+            template: @/buttons-container
+            templateOptions: [
+                #DEFAULT#
+                t-ButtonRegion--noUI
+                margin-bottom-none
+            ]
+        }
+        advanced {
+            customAttributes: aria-label="Featured Workshops"
+        }
+    )
+
+    region featured-workshops (
+        name: Featured Workshops
+        type: staticContent
+        layout {
+            sequence: 110
+            slot: body
+        }
+        appearance {
+            template: @/buttons-container
+            templateOptions: [
+                #DEFAULT#
+                t-ButtonRegion--noUI
+                margin-bottom-none
+            ]
+        }
+        advanced {
+            htmlDomId: featured-workshops-region
+            customAttributes: aria-label="Featured Workshops"
+        }
+    )
+
+    region featured-workshops-cards (
+        name: Featured Workshops Cards
+        type: cards
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select a.ID,
+                       a.NAME,
+                       a.DESC_SHORT,
+                       ll_pkg_apex.getWorkshopCardIcon(a.ID) as ICON_BLOB,
+                       ll_pkg_admin.hours_readable (a.TIME_IN_HOURS, 'SHORT', 'N') AS WORKSHOP_TIME,
+                       Nvl2(a.TIME_IN_HOURS, 'fa fa-clock-o', null) as TIME_ICON
+                       
+                  from LL_WORKSHOPS a
+                  where a.active_flg = 'Y'
+                  and a.featured_flg = 'Y'
+                order by dbms_random.value
+                ```
+        }
+        layout {
+            sequence: 50
+            parentRegion: @featured-workshops
+            slot: regionBody
+        }
+        appearance {
+            template: @/cards-container
+            templateOptions: [
+                #DEFAULT#
+                margin-top-md
+                margin-left-md
+                margin-right-md
+            ]
+        }
+        advanced {
+            htmlDomId: featured-cards
+        }
+        componentAppearance {
+            gridColumns: 4
+        }
+        card {
+            cssClasses: featured-workshop-cards
+            primaryKeyColumn1: ID
+        }
+        title {
+            advancedFormatting: true
+            htmlExpression:
+                ```html
+                <span class="u-lineclamp-2" style="color: white; font-weight:700; min-height:2.5em;">&NAME.</span>
+                <!-- <div class="Featured" style="color:#FFCC00; font-weight:bold; font-size: 12px; margin-top: 2px;">Featured Workshop
+                    <i class="fa fa-badge-check" style="color:#FFCC00; font-weight:bold; font-size: 12px; vertical-align:baseline"></i>
+                </div> -->
+                ```
+        }
+        body {
+            advancedFormatting: true
+            htmlExpression: <span class="u-lineclamp-3" style= "color:white; min-height:3.75em;">&DESC_SHORT.</span>
+        }
+        secondaryBody {
+            advancedFormatting: true
+            htmlExpression:
+                ```html
+                <span class="&TIME_ICON." style="font-size:1em;vertical-align:baseline;">&nbsp;&nbsp;&WORKSHOP_TIME.</span>
+                <span style="float:right;">&CARD_VIEWS.</span>
+                ```
+        }
+        iconAndBadge {
+            iconSource: imageBlobColumn
+            imageColumn: ICON_BLOB
+            iconPosition: end
+            iconDescription: Workshop Icon
+        }
+        media {
+            source: imageUrl
+            url: #APP_FILES#test-background.webp
+            position: background
+            sizing: cover
+            imageDescription: Workshop Background
+        }
+        pagination {
+            type: page
+            cardsPerPage: 4
+        }
+        messages {
+            whenNoDataFound: No Workshops or Sprints were found matching your criteria
+        }
+
+        action action (
+            type: fullCard
+            layout {
+                sequence: 10
+            }
+            behavior {
+                target: {
+                    page: 180
+                    items: {
+                        WID: &ID.
+                    }
+                    clearCache: 180
+                    action: resetRegions
+                }
+            }
+        )
+
+    )
+
+    region header (
+        name: Header
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <div class="home-page-header">
+                    <h1 style="font-weight: bold;">Featured LiveStacks</h1>
+                    <hr style="width: 60px; height: 4px; background-color: #f9d260; border: none; margin-bottom: 18px; justify-self:center;">
+                    <span class="home-page-header">Try one of our NEW LiveStacks to get you hands-on with solutions.</span>
+                </div>
+                ```
+        }
+        layout {
+            sequence: 40
+            parentRegion: @featured-livestacks
+            slot: regionBody
+            rowCssClasses: featured-ws-row
+        }
+        advanced {
+            customAttributes: style = "justify-self:center;"
+        }
+    )
+
+    region header-2 (
+        name: Header2
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <div class="home-page-header">
+                    <h1 style="font-weight: bold;">Learning for Everyone</h1>
+                    <hr style="width: 60px; height: 4px; background-color: #f9d260; border: none; margin-bottom: 18px; justify-self:center;">
+                    <p>Regardless of your job role or technical expertise, we’ve got you.</p> 
+                </div>
+                
+                
+                ```
+        }
+        layout {
+            sequence: 10
+            parentRegion: @user-roles
+            slot: subRegions
+        }
+    )
+
+    region header-3 (
+        name: Header
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <div class="home-page-header">
+                    <h1 style="font-weight: bold;">Featured Workshops</h1>
+                    <hr style="width: 60px; height: 4px; background-color: #f9d260; border: none; margin-bottom: 18px; justify-self:center;">
+                    <span class="home-page-header">Try one of our recent stand-out workshops.</span>
+                </div>
+                ```
+        }
+        layout {
+            sequence: 30
+            parentRegion: @featured-workshops
+            slot: regionBody
+            rowCssClasses: featured-ws-row
+        }
+        advanced {
+            customAttributes: style = "justify-self:center;"
+        }
+    )
+
+    region home-page-carousel (
+        name: Home Page Carousel
+        type: staticContent
+        layout {
+            sequence: 40
+            slot: body
+            columnSpan: 12
+        }
+        appearance {
+            template: @/carousel-container
+            templateOptions: [
+                t-Region--noPadding
+                js-cycle10s
+                t-Region--carouselSlide
+                t-Region--removeHeader js-removeLandmark
+                t-Region--noBorder
+                t-Region--hiddenOverflow
+                margin-top-none
+                margin-bottom-none
+                margin-left-none
+                margin-right-none
+            ]
+        }
+        advanced {
+            htmlDomId: carousel
+            customAttributes: aria-label="Home Page Carousel 1"
+            regionDisplaySelector: true
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    region homepage-search-region (
+        name: Homepage Search Region
+        type: staticContent
+        layout {
+            sequence: 50
+            slot: body
+        }
+        appearance {
+            template: @/standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader js-removeLandmark
+                t-Region--noUI
+                t-Region--hiddenOverflow
+                margin-top-none
+                margin-bottom-none
+                margin-left-none
+                margin-right-none
+            ]
+        }
+        advanced {
+            htmlDomId: workshop-use-cases-region
+            customAttributes: aria-label="Workshop Use Cases"
+        }
+    )
+
+    region invalid-event-popup (
+        name: Invalid Event Popup
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <div style="padding: 15px; max-width: 550px; width: calc(100vw - 60px); margin: 0 auto; box-sizing: border-box;">
+                    <h2 id="invalidEventTitle" style="margin-top: 0; margin-bottom: 15px; color: #f57c00; font-size: 20px;">Event Not Available</h2>
+                    <p id="invalidEventSubTitle" style="font-size: 14px; line-height: 1.6; margin-bottom: 20px;">
+                        This event is no longer available.
+                    </p>
+                    <div style="background-color: #fff3e0; border-left: 4px solid #f57c00; padding: 15px; margin: 20px 0; border-radius: 4px; box-sizing: border-box;">
+                        <strong style="color: #e65100;">What can you do?</strong>
+                        <p id="invalidEventMessage" style="font-size: 14px; margin: 10px 0 0 0; line-height: 1.5;">
+                            Click below to find a workshop that might interest you:
+                        </p>
+                        <div style="margin-top: 15px;">
+                            <a id="invalidEventRecsLink" href="" style="display: inline-block; padding: 10px 20px; background: #2196F3; color: white; text-decoration: none; border-radius: 4px; font-size: 14px; font-weight: bold;">Browse All Workshops</a>
+                        </div>
+                    </div>
+                    <p id="invalidEventPS" style="font-size: 13px; color: #666; margin-bottom: 0;">
+                        You can also browse featured workshops on the <a href="https://livelabs.oracle.com" style="color: #2196F3;">LiveLabs homepage</a>.
+                    </p>
+                </div>
+                ```
+        }
+        layout {
+            sequence: 160
+            slot: body
+        }
+        appearance {
+            template: @/inline-popup
+            templateOptions: [
+                #DEFAULT#
+                js-dialog-autoheight
+                t-DialogRegion--noPadding
+                js-dialog-size600x400
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region invalid-url (
+        name: Invalid URL
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                Your URL is invalid. Please check to make sure you have a current and valid URL by searching for the workshop and update your bookmark with the new URL. 
+                
+                ```
+        }
+        layout {
+            sequence: 140
+            slot: body
+        }
+        appearance {
+            template: @/inline-dialog
+            templateOptions: [
+                js-dialog-autoheight
+                js-modal
+                js-dialog-size600x400
+            ]
+            icon: fa-exclamation-triangle-o
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region invalid-workshop-popup (
+        name: Invalid Workshop Popup
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <div style="padding: 15px; max-width: 550px; width: calc(100vw - 60px); margin: 0 auto; box-sizing: border-box;">
+                    <h2 id="invalidWorkshopTitle" style="margin-top: 0; margin-bottom: 15px; color: #f57c00; font-size: 20px;">Workshop Not Available</h2>
+                    <p id="invalidWorkshopSubTitle" style="font-size: 14px; line-height: 1.6; margin-bottom: 20px;">
+                        The workshop you're trying to access is no longer available. This may be because the workshop has been deactivated by its author or removed from LiveLabs.
+                    </p>
+                    <div style="background-color: #fff3e0; border-left: 4px solid #f57c00; padding: 15px; margin: 20px 0; border-radius: 4px; box-sizing: border-box;">
+                        <strong style="color: #e65100;">What can you do?</strong>
+                        <p id="invalidWorkshopMessage" style="font-size: 14px; margin: 10px 0 0 0; line-height: 1.5;">
+                            We've found similar workshops that might interest you. Click below to explore alternatives:
+                        </p>
+                        <div style="margin-top: 15px;">
+                            <a id="invalidWorkshopRecsLink" href="" style="display: inline-block; padding: 10px 20px; background: #2196F3; color: white; text-decoration: none; border-radius: 4px; font-size: 14px; font-weight: bold;">View Similar Workshops</a>
+                        </div>
+                    </div>
+                    <p id="invalidWorkshopPS" style="font-size: 13px; color: #666; margin-bottom: 0;">
+                        You can also browse featured workshops on the <a href="https://livelabs.oracle.com" style="color: #2196F3;">LiveLabs homepage</a>.
+                    </p>
+                </div>
+                
+                ```
+        }
+        layout {
+            sequence: 150
+            slot: body
+        }
+        appearance {
+            template: @/inline-popup
+            templateOptions: [
+                #DEFAULT#
+                js-dialog-autoheight
+                t-DialogRegion--noPadding
+                js-dialog-size600x400
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region search-header (
+        name: Search Header
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <div>
+                    <img src="#APP_FILES#livelabs-logo-nonoracle.png" style="margin-top: 5px; max-height: 100px; object-fit: contain;">
+                </div>
+                <div class = "home-page-header">
+                    <h1 style="color: rgb(255, 255, 255); font-weight: bold;">&P1_HOMEPAGE_WELCOME_TEXT.</h1>
+                    <hr style="width: 60px; height: 4px; background-color: #f9d260; border: none; margin-bottom:25px; margin-top:6px;">
+                </div>
+                ```
+        }
+        layout {
+            sequence: 20
+            parentRegion: @homepage-search-region
+            slot: regionBody
+            rowCssClasses: workshop-use-cases
+            columnCssClasses: column-stuff
+        }
+        appearance {
+            template: @/cards-container
+            templateOptions: [
+                #DEFAULT#
+                t-CardsRegion--hideHeader js-addHiddenHeadingRoleDesc
+                margin-bottom-none
+                margin-left-md
+                margin-right-md
+            ]
+        }
+        advanced {
+            htmlDomId: use-case-cards
+        }
+    )
+
+    region statistics-wall (
+        name: Statistics Wall
+        type: staticContent
+        layout {
+            sequence: 100
+            slot: body
+            rowCssClasses: u-margin-top-lg
+            columnAttributes: [
+                style="text-align:
+                center;"
+            ]
+        }
+        appearance {
+            template: @/standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader js-removeLandmark
+                t-Region--noUI
+                t-Region--scrollBody
+                margin-top-lg
+                margin-left-none
+                margin-right-none
+            ]
+        }
+        advanced {
+            htmlDomId: statistics-region
+            customAttributes: aria-label="Statistics"
+        }
+    )
+
+    region unique-visitors (
+        name: Unique Visitors
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <span class="statistic-title" style="color:#697778;">&P1_VISITOR_COUNT.</span> <br>
+                <div class="statistic-subtitle" style="color:#697778; max-width: 320px;">&P1_VISITOR_SUBTITLE.</div>
+                ```
+        }
+        layout {
+            sequence: 20
+            parentRegion: @statistics-wall
+            slot: subRegions
+            startNewRow: false
+            columnCssClasses: statistic-wall-item
+        }
+        appearance {
+            template: @/standard
+            templateOptions: [
+                #DEFAULT#
+                i-h320
+                t-Region--removeHeader js-removeLandmark
+                t-Region--textContent
+                t-Region--scrollBody
+                margin-top-md
+            ]
+        }
+    )
+
+    region user-role-cards (
+        name: User Role Cards
+        type: cards
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select id, 
+                       level2,
+                       display_image,
+                       (case when level1 = 'Role' then 'p100_role:'||id when level1 = 'Level' then 'p100_level:'||id end) facet_value      
+                from ll_tags 
+                where home_pg_flg = 'Y'
+                and active_flg = 'Y'
+                
+                ```
+        }
+        layout {
+            sequence: 30
+            parentRegion: @user-roles
+            slot: subRegions
+            rowCssClasses: column-stuff
+        }
+        appearance {
+            template: @/cards-container
+            templateOptions: [
+                #DEFAULT#
+                t-CardsRegion--styleB
+                t-Form--xlarge
+                t-Form--stretchInputs
+                margin-top-md
+                margin-left-md
+                margin-right-md
+            ]
+        }
+        advanced {
+            htmlDomId: user-role-cards
+        }
+        componentAppearance {
+            gridColumns: 4
+        }
+        card {
+            cssClasses: cards-class
+            primaryKeyColumn1: ID
+        }
+        title {
+            column: LEVEL2
+        }
+        iconAndBadge {
+            iconSource: imageBlobColumn
+            imageColumn: DISPLAY_IMAGE
+            iconPosition: top
+        }
+        pagination {
+            type: page
+            cardsPerPage: 4
+        }
+        messages {
+            whenNoDataFound: No Workshops or Sprints were found matching your criteria
+        }
+
+        action action (
+            type: fullCard
+            layout {
+                sequence: 10
+            }
+            behavior {
+                target: {
+                    page: 100
+                    items: {
+                        "&FACET_VALUE.":
+                    }
+                    clearCache: 100
+                }
+            }
+        )
+
+    )
+
+    region user-roles (
+        name: User Roles
+        type: staticContent
+        layout {
+            sequence: 70
+            slot: body
+            rowCssClasses: use-cases-region
+        }
+        appearance {
+            template: @/blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            htmlDomId: user-roles-region
+            customAttributes: aria-label="User Roles"
+        }
+    )
+
+    region workshop-or-event-not-found (
+        name: " Workshop or Event Not Found"
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                The workshop or event code you entered could not be found.
+                
+                Please confirm you have the correct workshop link or Event Code, or search for the workshop using the search bar. 
+                
+                ```
+        }
+        layout {
+            sequence: 130
+            slot: body
+        }
+        appearance {
+            template: @/inline-dialog
+            templateOptions: [
+                js-dialog-autoheight
+                js-modal
+                js-dialog-size600x400
+            ]
+            icon: fa-exclamation-triangle-o
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    pageItem P1_ALT_TEXT_1 (
+        type: hidden
+        layout {
+            sequence: 30
+            region: @banner-4
+            slot: regionBody
+        }
+    )
+
+    pageItem P1_ALT_TEXT_2 (
+        type: hidden
+        layout {
+            sequence: 30
+            region: @banner-3
+            slot: regionBody
+        }
+    )
+
+    pageItem P1_ALT_TEXT_3 (
+        type: hidden
+        layout {
+            sequence: 30
+            region: @banner-2
+            slot: regionBody
+        }
+    )
+
+    pageItem P1_ALT_TEXT_4 (
+        type: hidden
+        layout {
+            sequence: 30
+            region: @banner
+            slot: regionBody
+        }
+    )
+
+    pageItem P1_AVAILABLE_WORKSHOP_COUNT (
+        type: hidden
+        layout {
+            sequence: 10
+            region: @statistics-wall
+            slot: regionBody
+        }
+        default {
+            type: sqlQuerySingleValue
+            sqlQuerySingleValue: select value from ll_system_parameters where name = 'AVAILABLE_WORKSHOP_COUNT'
+        }
+    )
+
+    pageItem P1_AVAILABLE_WORKSHOP_SUBTITLE (
+        type: hidden
+        layout {
+            sequence: 20
+            region: @statistics-wall
+            slot: regionBody
+        }
+        default {
+            type: sqlQuerySingleValue
+            sqlQuerySingleValue: select value from ll_system_parameters where name = 'AVAILABLE_WORKSHOP_SUBTITLE'
+        }
+    )
+
+    pageItem P1_BADURL (
+        type: hidden
+        layout {
+            sequence: 180
+            slot: body
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            restrictedChars: alphanumWithSpace
+        }
+    )
+
+    pageItem P1_BANNER_1 (
+        type: displayImage
+        label {
+            alignment: left
+        }
+        settings {
+            basedOn: blobColSql
+            sqlQuery: select image from ll_home_page_banners where position=1
+        }
+        layout {
+            sequence: 10
+            region: @banner-4
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @global-search-bar
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            customAttributes: alt = "&P1_ALT_TEXT_1."
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery: select image from ll_home_page_banners where position=1
+        }
+    )
+
+    pageItem P1_BANNER_2 (
+        type: displayImage
+        label {
+            alignment: left
+        }
+        settings {
+            basedOn: blobColSql
+            sqlQuery: select image from ll_home_page_banners where position=2
+        }
+        layout {
+            sequence: 10
+            region: @banner-3
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @global-search-bar
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            customAttributes: "alt = \"&P1_ALT_TEXT_2.\" "
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery: select image from ll_home_page_banners where position=2
+        }
+    )
+
+    pageItem P1_BANNER_3 (
+        type: displayImage
+        label {
+            alignment: left
+        }
+        settings {
+            basedOn: blobColSql
+            sqlQuery: select image from ll_home_page_banners where position=3
+        }
+        layout {
+            sequence: 10
+            region: @banner-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @global-search-bar
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            customAttributes: alt = "&P1_ALT_TEXT_3."
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery: select image from ll_home_page_banners where position=3
+        }
+    )
+
+    pageItem P1_BANNER_4 (
+        type: displayImage
+        label {
+            alignment: left
+        }
+        settings {
+            basedOn: blobColSql
+            sqlQuery: select image from ll_home_page_banners where position=4
+        }
+        layout {
+            sequence: 10
+            region: @banner
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @global-search-bar
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            customAttributes: alt = "&P1_ALT_TEXT_4."
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery: select image from ll_home_page_banners where position=4
+        }
+    )
+
+    pageItem P1_EVENT_COUNT (
+        type: hidden
+        layout {
+            sequence: 50
+            region: @statistics-wall
+            slot: regionBody
+        }
+        default {
+            type: sqlQuerySingleValue
+            sqlQuerySingleValue: select value from ll_system_parameters where name = 'EVENT_COUNT'
+        }
+    )
+
+    pageItem P1_EVENT_SUBTITLE (
+        type: hidden
+        layout {
+            sequence: 60
+            region: @statistics-wall
+            slot: regionBody
+        }
+        default {
+            type: sqlQuerySingleValue
+            sqlQuerySingleValue: select value from ll_system_parameters where name = 'EVENT_SUBTITLE'
+        }
+    )
+
+    pageItem P1_HOMEPAGE_WELCOME_TEXT (
+        type: hidden
+        layout {
+            sequence: 90
+            region: @homepage-search-region
+            slot: regionBody
+        }
+        default {
+            type: sqlQuerySingleValue
+            sqlQuerySingleValue: select value from ll_system_parameters where name = 'HOMEPAGE_WELCOME_TEXT'
+        }
+        sessionState {
+            storage: request
+        }
+    )
+
+    pageItem P1_INVALID (
+        type: hidden
+        layout {
+            sequence: 170
+            slot: body
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            restrictedChars: alphanumWithSpace
+        }
+    )
+
+    pageItem P1_INVALID_EVENT_CODE (
+        type: hidden
+        layout {
+            sequence: 10
+            region: @invalid-event-popup
+            slot: regionBody
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            restrictedChars: noSpecialCharNoNewline
+        }
+    )
+
+    pageItem P1_INVALID_EVENT_RECS_LINK (
+        type: hidden
+        layout {
+            sequence: 20
+            region: @invalid-event-popup
+            slot: regionBody
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            restrictedChars: webSafe
+        }
+    )
+
+    pageItem P1_INVALID_WORKSHOP_ID (
+        type: hidden
+        layout {
+            sequence: 20
+            region: @invalid-workshop-popup
+            slot: regionBody
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            restrictedChars: alphanumWithSpace
+        }
+    )
+
+    pageItem P1_INVALID_WORKSHOP_RECS_LINK (
+        type: hidden
+        layout {
+            sequence: 40
+            region: @invalid-workshop-popup
+            slot: regionBody
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            restrictedChars: webSafe
+        }
+    )
+
+    pageItem P1_MANUAL_ENTRIES (
+        type: hidden
+        layout {
+            sequence: 60
+            region: @homepage-search-region
+            slot: regionBody
+        }
+    )
+
+    pageItem P1_MOBILE_HEADER (
+        type: displayImage
+        label {
+            alignment: left
+        }
+        settings {
+            basedOn: blobColSql
+            sqlQuery: select image from ll_home_page_banners where position=1
+        }
+        layout {
+            sequence: 10
+            slot: body
+            alignment: left
+            rowCssClasses: mobile-header
+            columnCssClasses: mobile-header
+        }
+        appearance {
+            template: @global-search-bar
+            templateOptions: [
+                #DEFAULT#
+                margin-bottom-none
+            ]
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    pageItem P1_SEARCH_BAR (
+        type: combobox
+        label {
+            alignment: left
+        }
+        settings {
+            infiniteScroll: false
+            manualEntriesItem: P1_MANUAL_ENTRIES
+            valueHtmlExpression:
+                ```html
+                <div class="search-result-container" style="display: flex; align-items: center;">
+                   <img class="a-CardView-iconImg" src="&PAR_LINK." loading="lazy" style="margin-right: 8px;">
+                   <span>&DISPLAY_VAL.</span>
+                </div>
+                ```
+        }
+        lov {
+            type: sharedComponent
+            lov: @copy-of-ll-workshops-active
+        }
+        layout {
+            sequence: 40
+            region: @homepage-search-region
+            slot: regionBody
+            alignment: left
+            rowCssClasses: row-grid
+            columnCssClasses: [
+                column-stuff
+                column-center-justify
+            ]
+        }
+        appearance {
+            template: @/hidden
+            templateOptions: #DEFAULT#
+            icon: fa-search
+            valuePlaceholder: Ask a question or search for a workshop with natural language...
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            used: always
+        }
+        security {
+            restrictedChars: webSafe
+        }
+    )
+
+    pageItem P1_SPRINTS_URL (
+        type: hidden
+        layout {
+            sequence: 190
+            slot: body
+        }
+        source {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                declare
+                  v_url     varchar2(4000); 
+                    
+                begin
+                
+                    v_url := substr( APEX_PAGE.GET_URL ( p_page   => 100,
+                                                         p_items  => 'p100_workshop_type',
+                                                       p_values => '225'
+                                                                    ),2);
+                                                       
+                    v_url := replace(v_url,'&session','&clear=100&session');
+                
+                    return apex_util.host_url('NULL') || v_url;
+                end;
+                ```
+        }
+        security {
+            sessionStateProtection: restricted
+        }
+    )
+
+    pageItem P1_URL_1 (
+        type: hidden
+        layout {
+            sequence: 50
+            region: @banner-4
+            slot: regionBody
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery: select url from ll_home_page_banners where position=1
+        }
+    )
+
+    pageItem P1_URL_2 (
+        type: hidden
+        layout {
+            sequence: 50
+            region: @banner-3
+            slot: regionBody
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery: select url from ll_home_page_banners where position=2
+        }
+    )
+
+    pageItem P1_URL_3 (
+        type: hidden
+        layout {
+            sequence: 50
+            region: @banner-2
+            slot: regionBody
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery: select url from ll_home_page_banners where position=3
+        }
+    )
+
+    pageItem P1_URL_4 (
+        type: hidden
+        layout {
+            sequence: 20
+            region: @banner
+            slot: regionBody
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery: select url from ll_home_page_banners where position=4
+        }
+    )
+
+    pageItem P1_VISITOR_COUNT (
+        type: hidden
+        layout {
+            sequence: 30
+            region: @statistics-wall
+            slot: regionBody
+        }
+        default {
+            type: sqlQuerySingleValue
+            sqlQuerySingleValue: select value from ll_system_parameters where name = 'VISITOR_COUNT'
+        }
+    )
+
+    pageItem P1_VISITOR_SUBTITLE (
+        type: hidden
+        layout {
+            sequence: 40
+            region: @statistics-wall
+            slot: regionBody
+        }
+        default {
+            type: sqlQuerySingleValue
+            sqlQuerySingleValue: select value from ll_system_parameters where name = 'VISITOR_SUBTITLE'
+        }
+    )
+
+    button search-with-ai (
+        buttonName: search-with-ai
+        label: Search with AI
+        layout {
+            sequence: 80
+            region: @homepage-search-region
+            slot: regionBody
+            startNewRow: false
+            columnCssClasses: search-ai-button-col
+        }
+        appearance {
+            buttonTemplate: @/text-with-icon
+            templateOptions: [
+                #DEFAULT#
+                t-Button--large
+                t-Button--success
+                t-Button--iconLeft
+                t-Button--gapTop
+                t-Button--padBottom
+            ]
+            icon: fa-sparkles
+        }
+        behavior {
+            action: definedByDynamicAction
+            executeValidations: false
+        }
+        advanced {
+            customAttributes: style="width: 200px;"
+        }
+    )
+
+    button view-all-workshops (
+        buttonName: view-all-workshops
+        label: View All Workshops
+        layout {
+            sequence: 70
+            region: @homepage-search-region
+            slot: regionBody
+            rowCssClasses: search-button-row
+            columnCssClasses: view-all-button-col
+        }
+        appearance {
+            buttonTemplate: @/text-with-icon
+            templateOptions: [
+                #DEFAULT#
+                t-Button--large
+                t-Button--primary
+                t-Button--iconLeft
+                t-Button--gapTop
+                t-Button--padBottom
+            ]
+            icon: fa-list
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 100
+                clearCache: 100
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+        advanced {
+            customAttributes: style="width: 200px;"
+        }
+    )
+
+    dynamicAction clickbanner (
+        name: clickbanner1
+        execution {
+            sequence: 70
+        }
+        when {
+            event: click
+            selectionType: items
+            items: P1_BANNER_1
+        }
+        clientSideCondition {
+            type: itemIsNotNull
+            item: P1_URL_1
+        }
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    window.open('&P1_URL_1.', '_blank');
+                    
+                    ```
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction clickbanner-2 (
+        name: clickbanner2
+        execution {
+            sequence: 80
+        }
+        when {
+            event: click
+            selectionType: items
+            items: P1_BANNER_2
+        }
+        clientSideCondition {
+            type: itemIsNotNull
+            item: P1_URL_2
+        }
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    window.open('&P1_URL_2.', '_blank');
+                    
+                    ```
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction clickbanner-3 (
+        name: clickbanner3
+        execution {
+            sequence: 90
+        }
+        when {
+            event: click
+            selectionType: items
+            items: P1_BANNER_3
+        }
+        clientSideCondition {
+            type: itemIsNotNull
+            item: P1_URL_3
+        }
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    window.open('&P1_URL_3.', '_blank');
+                    
+                    ```
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction clickbanner-4 (
+        name: clickbanner4
+        execution {
+            sequence: 100
+        }
+        when {
+            event: click
+            selectionType: items
+            items: P1_BANNER_4
+        }
+        clientSideCondition {
+            type: itemIsNotNull
+            item: P1_URL_4
+        }
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    window.open('&P1_URL_4.', '_blank');
+                    
+                    ```
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction invalid-event-popup (
+        name: Invalid Event Popup
+        execution {
+            sequence: 120
+        }
+        when {
+            event: ready
+        }
+        clientSideCondition {
+            type: itemIsNotNull
+            item: P1_INVALID_EVENT_CODE
+        }
+
+        action generate-event-recs (
+            name: Generate Event Recs
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    declare
+                    v_tags varchar2(4000);
+                    v_hold number;
+                    v_workshop_id number;
+                    v_start_date date;
+                    v_stop_date date;
+                    v_workshop_status varchar2(1);
+                    begin
+                    :P1_INVALID_EVENT_CODE := trim(:P1_INVALID_EVENT_CODE);
+                    -- check if event is only alphanumeric and '-'
+                    IF REGEXP_LIKE(:P1_INVALID_EVENT_CODE, '^[A-Za-z0-9-]+$') THEN
+                        -- if valid format, make sure exists in table 
+                        select count(*) into v_hold from ll_vouchers where voucher_code = :P1_INVALID_EVENT_CODE;
+                        if v_hold > 0 then 
+                            -- get event info
+                            select v.workshop_id, v.valid_from_gmt, v.valid_to_gmt, w.active_flg
+                                into v_workshop_id, v_start_date, v_stop_date, v_workshop_status
+                            from ll_vouchers_vw v
+                                left join ll_workshops w on w.id = v.workshop_id 
+                            where voucher_code = :P1_INVALID_EVENT_CODE;
+                    
+                            -- if event hasn't started, tell user to wait 
+                            if sysdate < v_start_date then
+                                :P1_INVALID_EVENT_CODE := 'TOOEARLY';
+                            -- if event expired, check workshop for availability
+                            elsif sysdate > v_stop_date then 
+                                select count(*) into v_hold from ll_workshops where id = v_workshop_id and active_flg in ('Y', 'U');
+                                -- workshop is active or unlisted
+                                if v_hold > 0 then 
+                                    :P1_INVALID_EVENT_CODE := 'REDIRECT';
+                                    :P1_INVALID_EVENT_RECS_LINK := apex_util.host_url() || apex_page.get_url(
+                                        p_page   => 180,
+                                        p_items  => 'WID',
+                                        p_values => v_workshop_id,
+                                        p_clear_cache => 180 );
+                                -- workshop isn't active, find similar workshops
+                                else
+                                    begin
+                                        select listagg(wt.tag_id,':') within group (order by wt.tag_id) into v_tags
+                                            from ll_workshops w
+                                                left join ll_workshop_tags wt on w.id = wt.workshop_id
+                                            where w.id = v_workshop_id
+                                                and wt.tag_id in (select id from ll_tags where level1 = 'Product')
+                                            group by w.id;
+                                        :P1_INVALID_EVENT_CODE := 'SIMILAR';
+                                        :P1_INVALID_EVENT_RECS_LINK := apex_util.host_url() || apex_page.get_url(
+                                                p_page   => 100,
+                                                p_items  => 'P100_PRODUCT',
+                                                p_values => v_tags,
+                                                p_clear_cache => 100 );
+                                    exception when no_data_found then 
+                                        :P1_INVALID_EVENT_CODE := 'NULL';
+                                        :P1_INVALID_EVENT_RECS_LINK := apex_util.host_url() || apex_page.get_url(
+                                            p_page   => 100,
+                                            p_clear_cache => 100 );
+                                    end;
+                                end if;
+                            end if;
+                        else
+                            -- event doesn't exist 
+                            :P1_INVALID_EVENT_CODE := 'NULL';
+                        end if;
+                    else
+                        -- malformed event code
+                        :P1_INVALID_EVENT_CODE := 'NULL';
+                    end if;
+                    -- send NULL workshops to search page 
+                    if :P1_INVALID_EVENT_CODE in ('NULL', 'TOOEARLY') then 
+                        :P1_INVALID_EVENT_RECS_LINK := apex_util.host_url() || apex_page.get_url(
+                                        p_page   => 100,
+                                        p_clear_cache => 100 );
+                    end if;
+                    end; 
+                    ```
+                itemsToSubmit: P1_INVALID_EVENT_CODE
+                itemsToReturn: [
+                    P1_INVALID_EVENT_CODE
+                    P1_INVALID_EVENT_RECS_LINK
+                ]
+                showProcessing: true
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+        action native-open-region (
+            action: openRegion
+            affectedElements {
+                selectionType: region
+                region: @invalid-event-popup
+            }
+            execution {
+                sequence: 30
+            }
+        )
+
+        action update-region-html (
+            name: Update Region HTML
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    // Get page item values
+                    var eventCode = apex.item('P1_INVALID_EVENT_CODE').getValue();
+                    var recsLink = apex.item('P1_INVALID_EVENT_RECS_LINK').getValue();
+                    
+                    // Set the recommendations link
+                    document.getElementById('invalidEventRecsLink').href = recsLink;
+                    
+                    // Update content based on event code
+                    switch(eventCode) {
+                        case 'TOOEARLY':
+                            document.getElementById('invalidEventTitle').textContent = 'Event Not Yet Started';
+                            document.getElementById('invalidEventSubTitle').textContent = 'This event hasn\'t started yet. Please check back at the scheduled start time.';
+                            document.getElementById('invalidEventMessage').textContent = 'In the meantime, explore other workshops:';
+                            document.getElementById('invalidEventRecsLink').textContent = 'Browse All Workshops';
+                            break;
+                            
+                        case 'REDIRECT':
+                            document.getElementById('invalidEventTitle').textContent = 'Event Has Ended';
+                            document.getElementById('invalidEventSubTitle').textContent = 'This event has concluded. However, the event used a publicly available workshop that you can still access!';
+                            document.getElementById('invalidEventMessage').textContent = 'Access the workshop directly:';
+                            document.getElementById('invalidEventRecsLink').textContent = 'Go to Workshop';
+                            break;
+                            
+                        case 'SIMILAR':
+                            document.getElementById('invalidEventTitle').textContent = 'Event Has Ended';
+                            document.getElementById('invalidEventSubTitle').textContent = 'This event has concluded. Unfortunately, the event used a workshop that is no longer publicly available.';
+                            document.getElementById('invalidEventMessage').textContent = 'We\'ve found similar workshops that might interest you:';
+                            document.getElementById('invalidEventRecsLink').textContent = 'View Similar Workshops';
+                            break;
+                            
+                        case 'NULL':
+                            document.getElementById('invalidEventTitle').textContent = 'Event Not Found';
+                            document.getElementById('invalidEventSubTitle').textContent = 'The event you\'re trying to access does not exist. This may be because the Event Code is malformed or the event has been removed.';
+                            document.getElementById('invalidEventMessage').textContent = 'Click below to find a workshop that might interest you:';
+                            document.getElementById('invalidEventRecsLink').textContent = 'Browse All Workshops';
+                            break;
+                            
+                        default:
+                            // Fallback if code doesn't match any case
+                            document.getElementById('invalidEventTitle').textContent = 'Event Not Available';
+                            document.getElementById('invalidEventSubTitle').textContent = 'This event is currently not available.';
+                            document.getElementById('invalidEventMessage').textContent = 'Click below to find a workshop that might interest you:';
+                            document.getElementById('invalidEventRecsLink').textContent = 'Browse All Workshops';
+                            document.getElementById('invalidEventRecsLink').href = 'https://livelabs.oracle.com/pls/apex/r/dbpm/livelabs/livelabs-workshop-cards?clear=100';
+                    
+                    }
+                    ```
+            }
+            execution {
+                sequence: 20
+            }
+        )
+
+    )
+
+    dynamicAction invalid-workshop-popup (
+        name: Invalid Workshop Popup
+        execution {
+            sequence: 110
+        }
+        when {
+            event: ready
+        }
+        clientSideCondition {
+            type: itemIsNotNull
+            item: P1_INVALID_WORKSHOP_ID
+        }
+
+        action generate-workshop-recs (
+            name: Generate Workshop Recs
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    declare
+                    v_tags varchar2(4000);
+                    v_hold number;
+                    begin
+                    :P1_INVALID_WORKSHOP_ID := trim(:P1_INVALID_WORKSHOP_ID);
+                    -- check if ID is only numbers
+                    IF REGEXP_LIKE(:P1_INVALID_WORKSHOP_ID, '^[0-9]+$') THEN
+                        -- if only numbers, make sure exists in table 
+                        select count(*) into v_hold from ll_workshops where id = :P1_INVALID_WORKSHOP_ID;
+                        if v_hold > 0 then 
+                            begin
+                                -- generate similar workshops link 
+                                select listagg(wt.tag_id,':') within group (order by wt.tag_id) into v_tags
+                                    from ll_workshops w
+                                        left join ll_workshop_tags wt on w.id = wt.workshop_id
+                                    where w.id = :P1_INVALID_WORKSHOP_ID
+                                        and wt.tag_id in (select id from ll_tags where level1 = 'Product')
+                                    group by w.id;
+                                :P1_INVALID_WORKSHOP_RECS_LINK := apex_util.host_url() || apex_page.get_url(
+                                        p_page   => 100,
+                                        p_items  => 'P100_PRODUCT',
+                                        p_values => v_tags,
+                                        p_clear_cache => 100 );
+                            exception when no_data_found then 
+                                :P1_INVALID_WORKSHOP_ID := 'NULL';
+                                :P1_INVALID_WORKSHOP_RECS_LINK := apex_util.host_url() || apex_page.get_url(
+                                        p_page   => 100,
+                                        p_clear_cache => 100 );
+                            end;
+                        else
+                            -- workshop doesn't exist 
+                            :P1_INVALID_WORKSHOP_ID := 'NULL';
+                        end if;
+                    else
+                        -- ID isn't a number
+                        :P1_INVALID_WORKSHOP_ID := 'NULL';
+                    end if;
+                    -- send NULL workshops to search page 
+                    if :P1_INVALID_WORKSHOP_ID = 'NULL' then 
+                        :P1_INVALID_WORKSHOP_RECS_LINK := apex_util.host_url() || apex_page.get_url(
+                                        p_page   => 100,
+                                        p_clear_cache => 100 );
+                    end if;
+                    end; 
+                    ```
+                itemsToSubmit: P1_INVALID_WORKSHOP_ID
+                itemsToReturn: [
+                    P1_INVALID_WORKSHOP_RECS_LINK
+                    P1_INVALID_WORKSHOP_ID
+                ]
+                showProcessing: true
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+        action native-open-region (
+            action: openRegion
+            affectedElements {
+                selectionType: region
+                region: @invalid-workshop-popup
+            }
+            execution {
+                sequence: 30
+            }
+        )
+
+        action update-region-html (
+            name: Update Region HTML
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    // Set the recommendations link from the page item
+                    var workshopID = apex.item('P1_INVALID_WORKSHOP_ID').getValue();
+                    var recsLink = apex.item('P1_INVALID_WORKSHOP_RECS_LINK').getValue();
+                    
+                    document.getElementById('invalidWorkshopRecsLink').href = recsLink;
+                    
+                    // update HTML if sending to empty search page
+                    if (workshopID == 'NULL') { 
+                        document.getElementById('invalidWorkshopTitle').textContent = 'Workshop Not Found';
+                        document.getElementById('invalidWorkshopSubTitle').textContent = 'The workshop you\'re trying to access does not exist. This may be because the URL is malformed or the workshop has been removed from LiveLabs.';
+                        document.getElementById('invalidWorkshopMessage').textContent = 'Click below to find another workshop that might interest you:';
+                        document.getElementById('invalidWorkshopRecsLink').textContent = 'Browse All Workshops';
+                    }
+                    
+                    ```
+            }
+            execution {
+                sequence: 20
+            }
+        )
+
+    )
+
+    dynamicAction new (
+        name: New
+        execution {
+            sequence: 50
+        }
+        when {
+            event: ready
+        }
+        serverSideCondition {
+            type: never
+        }
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    document.addEventListener("DOMContentLoaded", function () {
+                      var input = apex.item("P1_SEARCH_BAR").node;
+                    
+                      input.addEventListener("keydown", function (e) {
+                        if (e.key === "Enter") {
+                          var typedText = input.value;
+                          console.log("User typed:", typedText);
+                        }
+                      });
+                    });
+                    ```
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    dynamicAction send-search-to-page-desktop-click (
+        name: Send search to page - desktop - click
+        execution {
+            sequence: 40
+        }
+        when {
+            event: custom
+            customEvent: input
+            selectionType: items
+            items: P1_SEARCH_BAR
+        }
+        clientSideCondition {
+            type: jsExpression
+            javaScriptExpression: this.data && this.data.action === 'ITEM_SELECTED'
+        }
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    // Get the LL ID.
+                    var wsid = apex.item( "P1_SEARCH_BAR" ).getValue(); 
+                        
+                    // Build the pretty URL dynamically
+                    // Get the base URL up to /ords/ or /pls/apex/
+                    let pathname = window.location.pathname;
+                    let baseUrl = window.location.origin;
+                    
+                    if (pathname.includes('/ords/')) {
+                        baseUrl += pathname.substring(0, pathname.indexOf('/ords/') + 6);
+                    } else if (pathname.includes('/pls/apex/')) {
+                        baseUrl += pathname.substring(0, pathname.indexOf('/pls/apex/') + 10);
+                    } else {
+                        // Fallback - shouldn't happen but just in case
+                        baseUrl += '/ords/';
+                    }
+                    // Get current session ID
+                    let sessionId = apex.env.APP_SESSION;
+                    // add value to search
+                    if (wsid != '') {
+                        if (wsid > 0) {
+                            // Redirect to the pretty URL - workshop
+                            apex.navigation.redirect(baseUrl + 'r/dbpm/livelabs/view-workshop?clear=RR,180&wid=' + wsid + '&session=' + sessionId);
+                        } else { 
+                            // Redirect to the pretty URL - livestack
+                            apex.navigation.redirect(baseUrl + 'r/dbpm/livelabs/livestack-landing-page?clear=RR,400&p400_id=' + (wsid*-1) + '&session=' + sessionId);
+                        }
+                    }
+                    ```
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction send-search-to-page-desktop-enter (
+        name: Send search to page - desktop - enter
+        execution {
+            sequence: 30
+        }
+        when {
+            event: keydown
+            selectionType: items
+            items: P1_SEARCH_BAR
+        }
+        clientSideCondition {
+            type: jsExpression
+            javaScriptExpression: event.which == 13
+        }
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    var kw = document.querySelector('#P1_SEARCH_BAR input.apex-item-text')?.value;
+                        
+                    // Build the pretty URL dynamically
+                    // Get the base URL up to /ords/ or /pls/apex/
+                    let pathname = window.location.pathname;
+                    let baseUrl = window.location.origin;
+                    let prettyUrl;
+                    
+                    if (pathname.includes('/ords/')) {
+                        baseUrl += pathname.substring(0, pathname.indexOf('/ords/') + 6);
+                    } else if (pathname.includes('/pls/apex/')) {
+                        baseUrl += pathname.substring(0, pathname.indexOf('/pls/apex/') + 10);
+                    } else {
+                        // Fallback - shouldn't happen but just in case
+                        baseUrl += '/ords/';
+                    }
+                    // Get current session ID
+                    let sessionId = apex.env.APP_SESSION;
+                    // add value to search
+                    if (kw != '') {
+                        var encodedKw = encodeURIComponent(kw);
+                        // Construct the pretty URL path
+                        prettyUrl = baseUrl + 'r/dbpm/livelabs/livelabs-workshop-cards?clear=100&search=' + encodedKw + '&session=' + sessionId;
+                    }
+                    // just go to search page 
+                    else {
+                        prettyUrl = baseUrl + 'r/dbpm/livelabs/livelabs-workshop-cards?session=' + sessionId;
+                    }
+                    // Redirect to the pretty URL
+                    apex.navigation.redirect(prettyUrl);
+                    ```
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction send-to-search-page-desktop-ai-search-button (
+        name: "send to search page - desktop - AI search button "
+        execution {
+            sequence: 130
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @search-with-ai
+        }
+
+        action native-alert (
+            action: alert
+            settings {
+                title: Search is Empty!
+                message: Before we can use AI to get a great answer, we need to know your question! Make sure you use the search bar to enter search terms or a natural-language question!
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+            clientSideCondition {
+                type: itemIsNull
+                item: P1_SEARCH_BAR
+            }
+        )
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    var kw = document.querySelector('#P1_SEARCH_BAR input.apex-item-text')?.value;
+                        
+                    // Build the pretty URL dynamically
+                    // Get the base URL up to /ords/ or /pls/apex/
+                    let pathname = window.location.pathname;
+                    let baseUrl = window.location.origin;
+                    let prettyUrl;
+                    
+                    if (pathname.includes('/ords/')) {
+                        baseUrl += pathname.substring(0, pathname.indexOf('/ords/') + 6);
+                    } else if (pathname.includes('/pls/apex/')) {
+                        baseUrl += pathname.substring(0, pathname.indexOf('/pls/apex/') + 10);
+                    } else {
+                        // Fallback - shouldn't happen but just in case
+                        baseUrl += '/ords/';
+                    }
+                    // Get current session ID
+                    let sessionId = apex.env.APP_SESSION;
+                    // add value to search
+                    if (kw != '') {
+                        var encodedKw = encodeURIComponent(kw);
+                        // Construct the pretty URL path
+                        prettyUrl = baseUrl + 'r/dbpm/livelabs/livelabs-workshop-cards?clear=100&search=' + encodedKw + '&session=' + sessionId;
+                    }
+                    // just go to search page 
+                    else {
+                        prettyUrl = baseUrl + 'r/dbpm/livelabs/livelabs-workshop-cards?session=' + sessionId;
+                    }
+                    // Redirect to the pretty URL
+                    apex.navigation.redirect(prettyUrl);
+                    ```
+            }
+            execution {
+                sequence: 30
+                fireOnInit: false
+            }
+            clientSideCondition {
+                type: itemIsNotNull
+                item: P1_SEARCH_BAR
+            }
+        )
+
+    )
+
+    dynamicAction show-bad-url-dialog (
+        name: Show bad URL dialog
+        execution {
+            sequence: 20
+        }
+        when {
+            event: ready
+        }
+
+        action native-open-region (
+            action: openRegion
+            affectedElements {
+                selectionType: region
+                region: @invalid-url
+            }
+            execution {
+                sequence: 10
+            }
+            clientSideCondition {
+                type: item=value
+                item: P1_BADURL
+                value: Y
+            }
+        )
+
+    )
+
+    dynamicAction show-invalid-dialog (
+        name: Show Invalid Dialog
+        execution {
+            sequence: 10
+        }
+        when {
+            event: ready
+        }
+
+        action native-open-region (
+            action: openRegion
+            affectedElements {
+                selectionType: region
+                region: @workshop-or-event-not-found
+            }
+            execution {
+                sequence: 100
+            }
+            clientSideCondition {
+                type: item=value
+                item: P1_INVALID
+                value: Y
+            }
+        )
+
+    )
+
+    process count-page (
+        name: "Count page "
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                begin
+                  insert into ll_page_visits (page_id, app_session) values (1, :APP_SESSION);
+                  commit;
+                exception
+                  when others then
+                    ll_pkg_log.log(1,'Error during insert on ll_page_visits for page_id 1, app_session '||:APP_SESSION);
+                end;
+                ```
+        }
+        execution {
+            sequence: 10
+            point: afterFooter
+        }
+        advanced {
+            executionMappingIdentifier: 197455275093651228
+        }
+    )
+
+    process validate-parameters (
+        name: Validate Parameters
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                begin
+                null;
+                end;
+                ```
+        }
+        execution {
+            sequence: 10
+            point: beforeHeader
+        }
+        advanced {
+            executionMappingIdentifier: 152425196131177911
+        }
+    )
+
+    branch (
+        name: Redirect apexapps.com
+        execution {
+            sequence: 10
+            point: beforeHeader
+        }
+        behavior {
+            target: {
+                type: url
+                url: https://livelabs.oracle.com
+            }
+        }
+        serverSideCondition {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                begin
+                    return instr(owa_util.get_cgi_env('HTTP_HOST'),'apexapps.oracle.com') > 0;
+                end;
+                ```
+        }
+    )
+
+)
+

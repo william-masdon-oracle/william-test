@@ -1,0 +1,463 @@
+page 210 (
+    name: Run Workshop
+    alias: RUN-WORKSHOP
+    title: Run Workshop - &P210_WORKSHOP_NAME.
+    appearance {
+        pageTemplate: @standard-trustarc-redesign
+        templateOptions: [
+            #DEFAULT#
+            t-PageBody--noContentPadding
+        ]
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+        warnOnUnsavedChanges: false
+    }
+    css {
+        inline:
+            ```css
+            body {
+              overflow: hidden;
+            } 
+            #P0_GLOBAL_SEARCH .apex-item-comboselect {
+                display: flex !important;
+            }
+            
+            .rw-layout--contained:not(.rw-layout--edge-to-edge):not(.rw-layout--fixed):not(.rw-layout--foldout) .t-Body-main {
+              width: 100%;
+            }
+            
+            .rw-layout--contained:not(.rw-layout--edge-to-edge):not(.rw-layout--fixed):not(.rw-layout--foldout) {
+                --ut-body-content-max-width: 100%;
+            }
+            
+            .t-Body-fullContent {
+                height: 100%;
+            }
+            .t-Body-fullContent .container {
+                display: flex;
+                flex-direction: column;
+                height: 100%;
+            }
+            .height100 {
+                height: 100%;
+            }
+            .workshop-iframe {
+                width: 100%;
+                height: 100%;
+                display: block;
+                margin: 0;
+            }
+            
+            .t-Footer {
+                display: none;
+            }
+            
+            .workshop-details {
+                background-color: #fceddc;
+                color: #161513;
+                padding: 10px 16px 8px 16px;
+                font-size: 14px;
+                line-height: 20px;
+                font-weight: 600;
+                text-align: center;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 1rem;
+                flex-wrap: wrap;
+            }
+            
+            ```
+    }
+    security {
+        authentication: public
+        formAutoComplete: false
+    }
+
+    region sprints-link-to-livesql (
+        name: Sprints link to LiveSQL
+        type: plSqlDynamicContent
+        source {
+            plsqlCode:
+                ```plsql
+                declare
+                v_hold varchar2(4000);
+                v_time number;
+                begin
+                
+                htp.p('<div></div><div class="livesql-demo"><a id="extend-res" href="https://freesql.com/" target="_blank">Try it in FreeSQL!</a></div>');
+                end;
+                ```
+        }
+        layout {
+            sequence: 70
+            slot: fullWidthContent
+        }
+        appearance {
+            template: @/blank-with-attributes
+            templateOptions: #DEFAULT#
+            cssClasses: workshop-details
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    region workshop-instructions (
+        name: workshop instructions
+        type: url
+        layout {
+            sequence: 80
+            slot: fullWidthContent
+            rowCssClasses: height100
+        }
+        serverSideCondition {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                declare
+                
+                  cursor c_workshop is select active_flg from ll_workshops where ID = :P210_WID;
+                
+                  v_status        varchar2(1);
+                  v_return_value  BOOLEAN;
+                  v_is_public_ws  varchar2(1);
+                
+                begin
+                
+                  ll_pkg_log.log(40,'P210 - Begin Serverside Enablement of regions');
+                
+                  open c_workshop;
+                  fetch c_workshop into v_is_public_ws;
+                  close c_workshop;
+                
+                  ll_pkg_log.log(40,'P210 - Status of workshop is: '||v_is_public_ws);
+                
+                  if v_is_public_ws = 'Y' then
+                    v_status:='Y';
+                  else 
+                    ll_pkg_log.log(40,'P210 - Status <> Y, Workshop ID is '||:P210_WID);
+                    if :P210_WID is not null then
+                      v_status := ll_pkg_security.am_i_allowed(p_apex_user => :APP_USER, 
+                                                               p_access_type  => 'WORKSHOP_VIEW',
+                                                               p_access_value => :P210_WID );
+                      ll_pkg_log.log(40,'P210 - Status of am_i_allowed is '||v_status||' for P210_WS_ID '||:P210_WID||' and user '||:APP_USER);                                               
+                    else
+                      v_status:='N';
+                    end if;
+                  end if;
+                
+                  v_status := nvl(v_status,'N');
+                
+                  ll_pkg_log.log(40,'P210 - End of check, current status is '||v_status);                                               
+                
+                
+                  if v_status = 'Y' then
+                    ll_pkg_log.log(40,'P210 - Sending status TRUE');
+                    return (TRUE);
+                  else
+                    ll_pkg_log.log(40,'P210 - Sending status FALSE');
+                    return (FALSE);
+                  end if;
+                end;
+                ```
+        }
+        settings {
+            url: &P210_WORKSHOP_LOCATION.
+            iframeAttrs: " allowfullscreen=\"true\" class=\"workshop-iframe\""
+        }
+    )
+
+    pageItem P210_SPRINT_ENABLED (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 60
+            slot: body
+        }
+    )
+
+    pageItem P210_SPRINT_EVENT_CODE (
+        type: hidden
+        layout {
+            sequence: 30
+            slot: body
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            restrictedChars: webSafe
+        }
+    )
+
+    pageItem P210_TYPE (
+        type: hidden
+        layout {
+            sequence: 40
+            slot: body
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            restrictedChars: webSafe
+        }
+    )
+
+    pageItem P210_WEC (
+        type: hidden
+        layout {
+            sequence: 20
+            slot: body
+        }
+        security {
+            restrictedChars: webSafe
+        }
+    )
+
+    pageItem P210_WID (
+        type: hidden
+        layout {
+            sequence: 10
+            slot: body
+        }
+        security {
+            restrictedChars: alphanumWithSpace
+        }
+    )
+
+    pageItem P210_WORKSHOP_LOCATION (
+        type: hidden
+        layout {
+            sequence: 50
+            slot: body
+        }
+        security {
+            sessionStateProtection: restricted
+        }
+    )
+
+    pageItem P210_WORKSHOP_NAME (
+        type: hidden
+        layout {
+            sequence: 70
+            slot: body
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            sessionStateProtection: restricted
+        }
+    )
+
+    dynamicAction hide-footer-links (
+        name: Hide Footer Links
+        execution {
+            sequence: 10
+        }
+        when {
+            event: ready
+        }
+
+        action native-hide (
+            action: hide
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    process count-page-and-workshop (
+        name: Count page and workshop
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                begin
+                  insert into ll_page_visits (page_id, workshop_id, app_session) values (210,:P210_WID, :APP_SESSION);
+                exception
+                  when others then
+                    ll_pkg_log.log(1,'Error during insert on ll_page_visits for page_id 210, workshop_id '||V(:P210_WID)||', app_session '||:APP_SESSION);
+                end;
+                ```
+        }
+        execution {
+            sequence: 10
+            point: afterFooter
+        }
+        advanced {
+            executionMappingIdentifier: 185717178378384222
+        }
+    )
+
+    process insert-ec-user-sprint-version (
+        name: Insert EC User - Sprint Version
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                declare
+                  cursor c_voucher is select llv.id, llvu.owner1, llv.users_maximum-llv.users_registered as available_seats, llvu.users_rank,
+                                             llv.email_creator, llv.email_requestor, llv.alt_url, llv.reason, llv.workshop_id
+                                      from ll_vouchers_vw llv, 
+                                           (select voucher_id, owner1, rank() over (order by id) as users_rank
+                                            from ll_voucher_users
+                                            where voucher_id = (select id from ll_vouchers where voucher_code=:P210_WEC)) llvu
+                                      where llv.id = llvu.voucher_id (+)
+                                      and llv.voucher_code = :P210_WEC
+                                      and sysdate between llv.valid_from_gmt and llv.valid_to_gmt
+                                      and :APP_USER = llvu.owner1(+);
+                                      
+                  v_voucher_id       number;
+                  v_owner1           varchar2(100);
+                  v_available_seats  number;
+                  v_email_requestor  varchar2(2000);
+                  v_email_creator    varchar2(2000);
+                  v_users_rank       number;
+                  v_alt_url          varchar2(4000);
+                  v_event_title      varchar2(1000);
+                  v_workshop_id      number;
+                
+                begin
+                
+                  ll_pkg_log.log(40, 'P210 - Insert Voucher Code begin - Sprint version');
+                
+                  if :P210_WEC is not null then
+                
+                    ll_pkg_log.log(40,'P210 - EC is not null');
+                  
+                    open c_voucher;
+                    fetch c_voucher into v_voucher_id, v_owner1, v_available_seats, v_users_rank, v_email_requestor, v_email_creator, v_alt_url, v_event_title, v_workshop_id;
+                    if    c_voucher%FOUND 
+                      and v_owner1 is null 
+                      and instr(nvl(upper(v_email_creator),'X'), upper(:app_user)) = 0
+                      and instr(nvl(upper(v_email_requestor),'X'), upper(:app_user)) = 0
+                    then
+                      ll_pkg_log.log(40,'P180 - Voucher found but no owner and no creator/requestor');
+                      insert into LL_VOUCHER_USERS ( VOUCHER_ID, OWNER1, DATE_ENTERED) values ( v_voucher_id, :APP_USER, sysdate);
+                    else
+                      ll_pkg_log.log(40,'P180 - No Voucher Found !');
+                    end if;
+                    close c_voucher;
+                    
+                  end if; 
+                
+                  :P210_WORKSHOP_LOCATION := JSON_VALUE(v_alt_url, '$.PAID_URL');
+                  :P210_WORKSHOP_NAME := v_event_title;
+                  :P210_WID := v_workshop_id;
+                
+                  ll_pkg_log.log(40,'P180 - End of call');
+                end;
+                ```
+        }
+        execution {
+            sequence: 20
+            point: beforeHeader
+        }
+        advanced {
+            executionMappingIdentifier: 3187312825316035
+        }
+        serverSideCondition {
+            type: item=value
+            item: P210_SPRINT_EVENT_CODE
+            value: Y
+        }
+    )
+
+    process retrieve-info (
+        name: RETRIEVE_INFO
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                declare
+                  cursor c_workshop is select lab_url, name
+                                       from ll_workshops
+                                       where id = :P210_WID
+                                       and ( ll_pkg_security.am_i_allowed ( p_apex_user => :APP_USER,
+                                                                            p_access_type => 'WORKSHOP_VIEW',
+                                                                            p_access_value => :P210_WID ) = 'Y'
+                                             or
+                                             active_flg = 'Y' );
+                  cursor c_event_code is select alt_url
+                                         from ll_vouchers
+                                         where voucher_code = :EC_GLOBAL
+                                         and workshop_id = :P210_WID
+                                         and ll_pkg_security.am_i_allowed ( p_apex_user => :APP_USER,
+                                                                            p_access_type => 'WORKSHOP_VIEW',
+                                                                            p_access_value => :P210_WID ) = 'Y';
+                  v_ws_lab_url     varchar2(4000);              
+                  v_ec_lab_url     varchar2(4000);
+                  v_ws_name         varchar2(4000);
+                begin
+                
+                  if :P210_WEC is not null then 
+                    open c_event_code;
+                    fetch c_event_code into v_ec_lab_url;
+                    close c_event_code;
+                  end if;
+                
+                  open c_workshop;
+                  fetch c_workshop into v_ws_lab_url, v_ws_name;
+                  close c_workshop;
+                  
+                --   begin
+                --       select ll.workshop_id into :P210_SPRINT_ENABLED from ll_workshop_tags ll, ll_tags t where t.level2 = 'Sprints' and ll.tag_id = t.id and ll.workshop_id = :P210_WID;
+                --       if :P210_SPRINT_ENABLED is not null then 
+                --         :P210_SPRINT_ENABLED := 'Y';
+                --       else 
+                --         :P210_SPRINT_ENABLED := 'N';
+                --       end if;
+                --   exception when others then 
+                --     :P210_SPRINT_ENABLED := 'N';
+                --   end;
+                
+                  :P210_WORKSHOP_NAME := v_ws_name;
+                
+                  :P210_WORKSHOP_LOCATION := nvl(JSON_VALUE(v_ec_lab_url, '$.PAID_URL'), JSON_VALUE(v_ws_lab_url, '$.PAID_URL'));
+                
+                end;
+                
+                ```
+        }
+        execution {
+            sequence: 10
+            point: beforeHeader
+        }
+        advanced {
+            executionMappingIdentifier: 183518406567504307
+        }
+    )
+
+    branch (
+        name: Bad URL Redirect
+        execution {
+            sequence: 10
+            point: beforeHeader
+        }
+        behavior {
+            target: {
+                page: 1
+                items: {
+                    P1_BADURL: Y
+                }
+                clearCache: 1
+            }
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P210_TYPE
+        }
+    )
+
+)
+

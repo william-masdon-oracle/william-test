@@ -1,0 +1,2054 @@
+page 201 (
+    name: Reservation Information
+    alias: RESERVATION-INFORMATION
+    title: Reservation Information
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @/drawer
+        templateOptions: [
+            #DEFAULT#
+            js-dialog-class-t-Drawer--pullOutEnd
+        ]
+    }
+    dialog {
+        resizable: false
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+        warnOnUnsavedChanges: false
+    }
+    javaScript {
+        functionAndGlobalVariableDeclaration:
+            ```javascript-browser
+            function copyToClipboard(text) { 
+                var dummy = document.createElement('textarea'); 
+                dummy.value = text; 
+                document.body.appendChild(dummy); 
+                dummy.select(); 
+                document.execCommand("copy"); 
+                document.body.removeChild(dummy); 
+            }
+            ```
+    }
+    css {
+        inline:
+            ```css
+            /* Variable Name column - allow wrapping */
+            td[headers="VAR_NAME"] {
+                white-space: normal !important;
+                word-wrap: break-word !important;
+            }
+            
+            /* Variable Value column - hide overflow */
+            td[headers="VAR_VALUE"] {
+                overflow: hidden !important;
+                text-overflow: ellipsis !important;
+                white-space: nowrap !important;
+                max-width: 400px !important;
+            }
+            
+            /* Action Button column - center align */
+            td[headers="ACTION_BUTTON"] {
+                text-align: center !important;
+            }
+            ```
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region instances-provisioned (
+        name: Instances Provisioned
+        type: classicReport
+        source {
+            location: localDatabase
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                DECLARE
+                    CURSOR c_instances IS 
+                        SELECT 
+                            JSON_VALUE(flow_step_result, '$.displayname') as display_name,
+                            JSON_VALUE(flow_step_result, '$.publicIp') as public_ip
+                        FROM ll_reservation_steps
+                        WHERE JSON_VALUE(flow_step_param, '$.type') = 'ociInstance'
+                            AND reservation_id = :P201_RES_ID;
+                
+                    v_sql CLOB := '';
+                    v_count NUMBER := 0;
+                BEGIN
+                    FOR inst IN c_instances LOOP
+                        -- Skip if both values are null
+                        IF inst.display_name IS NULL AND inst.public_ip IS NULL THEN
+                            CONTINUE;
+                        END IF;
+                        
+                        v_count := v_count + 1;
+                        
+                        IF v_count > 1 THEN 
+                            v_sql := v_sql || ' UNION ALL ';
+                        END IF;
+                        
+                        -- Build the SELECT statement with 3 columns
+                        v_sql := v_sql || 'SELECT ';
+                        v_sql := v_sql || '''' || REPLACE(inst.display_name, '''', '''''') || ''' as var_name, ';
+                        v_sql := v_sql || '''' || REPLACE(inst.public_ip, '''', '''''') || ''' as var_value, ';
+                        
+                        -- Create copy button for IP address
+                        v_sql := v_sql || '''<button class="copy-btn t-Button t-Button--large" ';
+                        v_sql := v_sql || 'data-clipboard-source="' || REPLACE(inst.public_ip, '''', '''''') || '" ';
+                        v_sql := v_sql || 'title="Copy to clipboard" type="button">';
+                        v_sql := v_sql || '<span class="t-Icon t-Icon--left fa fa-copy"></span><span class="t-Button-label"> Copy </span></button>''' || ' as action_button FROM dual';
+                    END LOOP;
+                
+                    -- Return default query if no results
+                    IF v_sql IS NULL OR LENGTH(v_sql) = 0 THEN 
+                        RETURN 'SELECT NULL as var_name, NULL as var_value, NULL as action_button FROM dual WHERE 1=0';
+                    ELSE
+                        RETURN v_sql;
+                    END IF;
+                END;
+                ```
+            pageItemsToSubmit: P201_RES_ID
+        }
+        layout {
+            sequence: 60
+            parentRegion: @reservation-information
+            slot: regionBody
+        }
+        appearance {
+            template: @/collapsible
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                js-useLocalStorage
+                is-expanded
+                t-Region--accent14
+                t-Region--scrollBody
+            ]
+        }
+        serverSideCondition {
+            type: rowsReturned
+            sqlQuery:
+                ```sql
+                select JSON_VALUE(flow_step_result,'$.publicIp') || ' - ' || JSON_VALUE(flow_step_result,'$.displayname')
+                                                            from ll_reservation_steps
+                                                            where JSON_VALUE(flow_step_param,'$.type') = 'ociInstance'
+                                                            and reservation_id = :P201_RES_ID
+                                                            and nvl(json_value(:P201_WORKSHOP_SANDBOX_CONFIG, '$.displayInstances'), 'Y') = 'Y'
+                ```
+        }
+        componentAppearance {
+            template: @/standard
+            templateOptions: [
+                #DEFAULT#
+                t-Report--stretch
+                t-Report--altRowsDefault
+                t-Report--rowHighlightOff
+                t-Report--hideNoPagination
+            ]
+        }
+        pagination {
+            type: nextAndPreviousLinks
+        }
+        heading {
+            type: none
+        }
+
+        column ACTION_BUTTON (
+            reportColumnQueryId: 3
+            derivedColumn: N
+            type: richText
+            heading {
+                heading: Action Button
+            }
+            layout {
+                sequence: 30
+            }
+            settings {
+                format: html
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column VAR_NAME (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            heading {
+                heading: Var Name
+            }
+            layout {
+                sequence: 10
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column VAR_VALUE (
+            reportColumnQueryId: 2
+            derivedColumn: N
+            heading {
+                heading: Var Value
+            }
+            layout {
+                sequence: 20
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+    )
+
+    region javascript-counter (
+        name: javascript counter
+        type: dynamicContent
+        source {
+            plsqlFunctionBody:
+                ```plsql
+                declare
+                v_hold varchar2(4000);
+                v_time number;
+                begin
+                v_time := ll_pkg_reservation.time_remaining(p_reservation_id => :P201_RES_ID);
+                v_hold := ll_pkg_apex.javascript_countdown(p_hours_remaining => v_time, p_id => 'demo', p_text => ' ');
+                
+                -- htp.script(v_hold, 'Javascript');
+                return '<script>' || v_hold || '</script>';
+                
+                end;
+                ```
+            pageItemsToSubmit: P201_RES_ID
+        }
+        layout {
+            sequence: 10
+            parentRegion: @reservation-time-remaining
+            slot: regionBody
+        }
+        appearance {
+            template: @/standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    region login-credentials (
+        name: Login Credentials
+        type: staticContent
+        layout {
+            sequence: 40
+            parentRegion: @reservation-information
+            slot: regionBody
+        }
+        appearance {
+            template: @/collapsible
+            templateOptions: [
+                #DEFAULT#
+                js-useLocalStorage
+                is-expanded
+                t-Region--accent3
+                t-Region--scrollBody
+            ]
+        }
+        serverSideCondition {
+            type: rowsReturned
+            sqlQuery:
+                ```sql
+                select * 
+                    from ll_reservation_steps
+                    where JSON_VALUE(flow_step_param,'$.type') in ('ociUserAuthToken', 'ociUser')
+                    and reservation_id = :P201_RES_ID
+                    and nvl(json_value(:P201_WORKSHOP_SANDBOX_CONFIG, '$.displayLogin'), 'Y') = 'Y'
+                ```
+        }
+    )
+
+    region login-credentials-button-container (
+        name: Login Credentials Button Container
+        type: staticContent
+        layout {
+            sequence: 90
+            parentRegion: @login-credentials
+            slot: regionBody
+        }
+        appearance {
+            template: @/buttons-container
+            templateOptions: [
+                #DEFAULT#
+                t-ButtonRegion--noPadding
+                t-ButtonRegion--noUI
+                margin-bottom-none
+            ]
+        }
+        serverSideCondition {
+            type: rowsReturned
+            sqlQuery:
+                ```sql
+                select * 
+                    from ll_reservation_steps
+                    where JSON_VALUE(flow_step_param,'$.type') = 'ociUser'
+                    and reservation_id = :P201_RES_ID;
+                ```
+        }
+    )
+
+    region remote-desktop-access (
+        name: Remote Desktop Access
+        type: staticContent
+        layout {
+            sequence: 20
+            parentRegion: @reservation-information
+            slot: regionBody
+        }
+        appearance {
+            template: @/collapsible
+            templateOptions: [
+                #DEFAULT#
+                js-useLocalStorage
+                is-expanded
+                t-Region--accent2
+                t-Region--scrollBody
+            ]
+        }
+        serverSideCondition {
+            type: item=value
+            item: P201_NOVNC_ENABLED
+            value: Y
+        }
+    )
+
+    region remote-desktop-buttons-container (
+        name: Remote Desktop Buttons Container
+        type: staticContent
+        layout {
+            sequence: 10
+            parentRegion: @remote-desktop-access
+            slot: regionBody
+        }
+        appearance {
+            template: @/buttons-container
+            templateOptions: [
+                #DEFAULT#
+                t-ButtonRegion--noPadding
+                t-ButtonRegion--noUI
+                margin-bottom-none
+            ]
+        }
+    )
+
+    region reservation-information (
+        name: Reservation Information
+        type: staticContent
+        layout {
+            sequence: 40
+            slot: contentBody
+        }
+        appearance {
+            template: @/standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader js-removeLandmark
+                t-Region--noUI
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region reservation-time-remaining (
+        name: Reservation Time Remaining
+        type: staticContent
+        layout {
+            sequence: 10
+            parentRegion: @reservation-information
+            slot: regionBody
+        }
+        appearance {
+            template: @/collapsible
+            templateOptions: [
+                #DEFAULT#
+                js-useLocalStorage
+                is-expanded
+                t-Region--accent1
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    region secure-desktop-button-container (
+        name: Secure Desktop Button Container
+        type: staticContent
+        layout {
+            sequence: 130
+            parentRegion: @secure-desktop-information
+            slot: regionBody
+        }
+        appearance {
+            template: @/buttons-container
+            templateOptions: [
+                #DEFAULT#
+                t-ButtonRegion--noPadding
+                t-ButtonRegion--noUI
+                margin-bottom-none
+            ]
+        }
+    )
+
+    region secure-desktop-information (
+        name: Secure Desktop Information
+        title: Secure Desktop Information
+        type: staticContent
+        layout {
+            sequence: 80
+            parentRegion: @reservation-information
+            slot: regionBody
+        }
+        appearance {
+            template: @/collapsible
+            templateOptions: [
+                #DEFAULT#
+                js-useLocalStorage
+                is-expanded
+                t-Region--accent1
+                t-Region--scrollBody
+            ]
+        }
+        serverSideCondition {
+            type: rowsReturned
+            sqlQuery:
+                ```sql
+                select * 
+                    from ll_reservation_steps
+                    where JSON_VALUE(flow_step_param,'$.type') = 'ociSecureDesktopUser'
+                    and reservation_id = :P201_RES_ID;
+                ```
+        }
+    )
+
+    region tenancy-information (
+        name: Tenancy Information
+        type: staticContent
+        layout {
+            sequence: 50
+            parentRegion: @reservation-information
+            slot: regionBody
+        }
+        appearance {
+            template: @/collapsible
+            templateOptions: [
+                #DEFAULT#
+                js-useLocalStorage
+                is-expanded
+                t-Region--accent13
+                t-Region--scrollBody
+            ]
+        }
+        serverSideCondition {
+            type: rowsReturned
+            sqlQuery:
+                ```sql
+                select * 
+                    from ll_reservation_steps
+                    where JSON_VALUE(flow_step_param,'$.type') = 'ociCompartment'
+                    and reservation_id = :P201_RES_ID
+                    and nvl(json_value(:P201_WORKSHOP_SANDBOX_CONFIG, '$.displayTenancy'), 'Y') = 'Y'
+                ```
+        }
+    )
+
+    region terraform-outputs (
+        name: Terraform Outputs
+        type: classicReport
+        source {
+            location: localDatabase
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                declare
+                     CURSOR c_tf_vars IS 
+                        SELECT 
+                            tfvars.variable_name,
+                            tfvars.variable_source,
+                            rs.flow_step_result as json_output
+                        FROM ll_reservation_steps rs
+                        JOIN ll_tf_script_variables tfvars 
+                            ON TO_NUMBER(JSON_VALUE(rs.flow_step_param, '$.param1')) = tfvars.tf_script_id
+                        WHERE rs.reservation_id = :P201_RES_ID
+                            AND rs.flow_step_id = (SELECT id FROM ll_flow_steps WHERE step_code = 'ociTfCheckStatus')
+                        ORDER BY tfvars.variable_name;
+                
+                    v_sql clob := '';
+                    v_count NUMBER := 0;
+                    v_tf_value varchar2(4000);
+                BEGIN
+                    for var in c_tf_vars loop
+                        -- v_tf_value := json_value(var.json_output, '$.' || var.variable_source || '.value[0]');
+                        -- -- Skip null or empty values
+                        -- IF v_tf_value IS NULL OR LENGTH(TRIM(v_tf_value)) = 0 THEN
+                        --     v_tf_value := json_value(var.json_output, '$.' || var.variable_source || '.value[0][0]');
+                        --     IF v_tf_value IS NULL OR LENGTH(TRIM(v_tf_value)) = 0 THEN
+                        --         CONTINUE;
+                        --     END IF;
+                        -- END IF;
+                        v_tf_value := json_query(var.json_output, '$.' || var.variable_source || '.value');
+                        v_tf_value := replace(v_tf_value,'[','');
+                        v_tf_value := replace(v_tf_value,']','');
+                        v_tf_value := replace(v_tf_value,'"','');
+                
+                        v_count := v_count + 1;
+                        if v_count > 1 then 
+                            v_sql := v_sql || ' UNION ALL ';
+                        end if;
+                        
+                        -- Build the SELECT statement with 3 columns
+                        v_sql := v_sql || 'SELECT ';
+                        v_sql := v_sql || '''' || REPLACE(var.variable_name, '''', '''''') || ''' as var_name, ';
+                        v_sql := v_sql || '''<span id="tfVal' || v_count || '">' || REPLACE(v_tf_value, '''', '''''') || '</span>'' as var_value, ';
+                        
+                        -- Check if it's a URL (http/https) - create link button
+                        IF REGEXP_LIKE(v_tf_value, '^https?://') THEN
+                            v_sql := v_sql || '''<a href="' || REPLACE(v_tf_value, '''', '''''') || '" target="_blank" class="t-Button t-Button--large">';
+                            v_sql := v_sql || '<span class="t-Icon t-Icon--left fa fa-external-link"></span><span class="t-Button-label"> Open Link </span></a>''' || ' as action_button FROM dual';
+                        ELSE
+                            -- For non-URLs, create copy button
+                            v_sql := v_sql || '''<button class="copy-btn t-Button t-Button--large" ';
+                            -- v_sql := v_sql || 'data-clipboard-source="' || REPLACE(v_tf_value, '''', '''''') || '" ';
+                            v_sql := v_sql || 'data-clipboard-source="#tfVal' || v_count || '" ';
+                            v_sql := v_sql || 'title="Copy to clipboard" type="button">';
+                            v_sql := v_sql || '<span class="t-Icon t-Icon--left fa fa-copy"></span><span class="t-Button-label"> Copy </span></button>''' || ' as action_button FROM dual';
+                        END IF;
+                        
+                    end loop;
+                
+                    -- Return default query if no results
+                    IF v_sql IS NULL OR LENGTH(v_sql) = 0 THEN 
+                        RETURN 'SELECT NULL as var_name, NULL as var_value, NULL as action_button FROM dual WHERE 1=0';
+                    ELSE
+                        RETURN v_sql;
+                    END IF;
+                END;
+                ```
+            pageItemsToSubmit: P201_RES_ID
+        }
+        layout {
+            sequence: 70
+            parentRegion: @reservation-information
+            slot: regionBody
+        }
+        appearance {
+            template: @/collapsible
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                js-useLocalStorage
+                is-expanded
+                t-Region--accent15
+                t-Region--scrollBody
+            ]
+        }
+        serverSideCondition {
+            type: rowsReturned
+            sqlQuery:
+                ```sql
+                select flow_step_result, nvl(JSON_VALUE(flow_step_param, '$.param1'),JSON_QUERY(flow_step_param, '$.param1'))  as param1, flow_step_param
+                                                            from ll_reservation_steps
+                                                            where JSON_VALUE(flow_step_param,'$.type') = 'ociTfCheckStatus'
+                                                            and reservation_id = :P201_RES_ID
+                                                            and nvl(json_value(:P201_WORKSHOP_SANDBOX_CONFIG, '$.displayTerraform'), 'Y') = 'Y'
+                ```
+        }
+        componentAppearance {
+            template: @/standard
+            templateOptions: [
+                #DEFAULT#
+                t-Report--stretch
+                t-Report--altRowsDefault
+                t-Report--rowHighlightOff
+                t-Report--inline
+                t-Report--hideNoPagination
+            ]
+        }
+        pagination {
+            type: nextAndPreviousLinks
+        }
+        heading {
+            type: none
+        }
+
+        column ACTION_BUTTON (
+            reportColumnQueryId: 3
+            derivedColumn: N
+            type: richText
+            heading {
+                heading: Action Button
+            }
+            layout {
+                sequence: 30
+            }
+            settings {
+                format: html
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column VAR_NAME (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            heading {
+                heading: Var Name
+            }
+            layout {
+                sequence: 10
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column VAR_VALUE (
+            reportColumnQueryId: 2
+            derivedColumn: N
+            type: richText
+            heading {
+                heading: Var Value
+            }
+            layout {
+                sequence: 20
+            }
+            settings {
+                format: html
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+    )
+
+    pageItem P201_AUTH_TOKEN (
+        type: displayOnly
+        label {
+            label: Auth Token
+            alignment: left
+        }
+        settings {
+            sendOnPageSubmit: false
+        }
+        layout {
+            sequence: 70
+            region: @login-credentials
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @/optional-floating
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+        }
+        advanced {
+            customAttributes: style="word-break: break-all;   word-break: break-word;"
+        }
+        source {
+            type: functionBody
+            plsqlFunctionBody: return ll_pkg_reservation.user_object_ocid (p_reservation_id => :P201_RES_ID, p_param_type     => 'ociUserAuthToken');
+        }
+        sessionState {
+            storage: request
+        }
+        serverSideCondition {
+            type: rowsReturned
+            sqlQuery:
+                ```sql
+                select * 
+                    from ll_reservation_steps
+                    where JSON_VALUE(flow_step_param,'$.type') = 'ociUserAuthToken'
+                    and reservation_id = :P201_RES_ID;
+                ```
+        }
+        security {
+            sessionStateProtection: restricted
+        }
+    )
+
+    pageItem P201_COMPARTMENT (
+        type: displayOnly
+        label {
+            label: Compartment
+            alignment: left
+        }
+        settings {
+            sendOnPageSubmit: false
+        }
+        layout {
+            sequence: 100
+            region: @tenancy-information
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @/optional-floating
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            sessionStateProtection: restricted
+        }
+    )
+
+    pageItem P201_COMPARTMENT_OCID (
+        type: displayOnly
+        label {
+            label: Compartment OCID
+            alignment: left
+        }
+        settings {
+            sendOnPageSubmit: false
+        }
+        layout {
+            sequence: 130
+            region: @tenancy-information
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @/optional-floating
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+        }
+        advanced {
+            customAttributes: style="word-break: break-all;   word-break: break-word;"
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            sessionStateProtection: restricted
+        }
+    )
+
+    pageItem P201_GEN_AI_REGION (
+        type: displayOnly
+        label {
+            label: Generative AI Endpoint Region
+            alignment: left
+        }
+        settings {
+            sendOnPageSubmit: false
+        }
+        layout {
+            sequence: 70
+            region: @tenancy-information
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @/optional-floating
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+        }
+        advanced {
+            customAttributes: style="word-break: break-all;   word-break: break-word;"
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery:
+                ```sql
+                select nvl(region_name || ' (' || region_identifier || ')', 'N/A') from ll_oci_regions 
+                where region_identifier = ll_pkg_reservation.user_object_ocid(
+                                                    p_reservation_id => :P201_RES_ID, 
+                                                    p_param_type     => 'ociGenAI' ) 
+                                                    and rownum=1
+                ```
+            used: always
+        }
+        sessionState {
+            storage: request
+        }
+        serverSideCondition {
+            type: rowsReturned
+            sqlQuery:
+                ```sql
+                select * 
+                    from ll_reservation_steps
+                    where JSON_VALUE(flow_step_param,'$.type') = 'ociGenAI'
+                    and reservation_id = :P201_RES_ID;
+                ```
+        }
+        security {
+            sessionStateProtection: restricted
+        }
+    )
+
+    pageItem P201_LOGIN_URL (
+        type: hidden
+        layout {
+            sequence: 10
+            region: @login-credentials
+            slot: regionBody
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            sessionStateProtection: restricted
+        }
+    )
+
+    pageItem P201_NOVNC_ENABLED (
+        type: hidden
+        layout {
+            sequence: 30
+            region: @remote-desktop-access
+            slot: regionBody
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            sessionStateProtection: restricted
+            restrictedChars: alphanumWithSpace
+        }
+    )
+
+    pageItem P201_NOVNC_URL (
+        type: hidden
+        layout {
+            sequence: 40
+            region: @remote-desktop-access
+            slot: regionBody
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            sessionStateProtection: restricted
+        }
+    )
+
+    pageItem P201_PASSWORD (
+        type: displayOnly
+        label {
+            label: Password
+            alignment: left
+        }
+        settings {
+            sendOnPageSubmit: false
+        }
+        layout {
+            sequence: 50
+            region: @login-credentials
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @/optional-floating
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+        }
+        advanced {
+            cssClasses: passwordFieldClass
+            customAttributes: style="word-break: break-all;   word-break: break-word;"
+        }
+        sessionState {
+            storage: request
+        }
+        serverSideCondition {
+            type: rowsReturned
+            sqlQuery:
+                ```sql
+                select * 
+                    from ll_reservation_steps
+                    where JSON_VALUE(flow_step_param,'$.type') = 'ociUser'
+                    and reservation_id = :P201_RES_ID;
+                ```
+        }
+        security {
+            sessionStateProtection: restricted
+        }
+    )
+
+    pageItem P201_REGION (
+        type: displayOnly
+        label {
+            label: Region
+            alignment: left
+        }
+        settings {
+            format: htmlUnsafe
+            sendOnPageSubmit: false
+        }
+        layout {
+            sequence: 40
+            region: @tenancy-information
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @/optional-floating
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            sessionStateProtection: restricted
+        }
+    )
+
+    pageItem P201_RES_ID (
+        type: hidden
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            restrictedChars: alphanumWithSpace
+        }
+    )
+
+    pageItem P201_SECUREDESKTOP_PASSWORD (
+        type: displayOnly
+        label {
+            label: Secure Desktop Password
+            alignment: left
+        }
+        settings {
+            sendOnPageSubmit: false
+        }
+        layout {
+            sequence: 70
+            region: @secure-desktop-information
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @/optional-floating
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+        }
+        advanced {
+            cssClasses: passwordFieldClass
+            customAttributes: style="word-break: break-all;   word-break: break-word;"
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            sessionStateProtection: restricted
+        }
+    )
+
+    pageItem P201_SECUREDESKTOP_TENANCY (
+        type: displayOnly
+        label {
+            label: Secure Desktop Tenancy
+            alignment: left
+        }
+        settings {
+            sendOnPageSubmit: false
+        }
+        layout {
+            sequence: 100
+            region: @secure-desktop-information
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @/optional-floating
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+        }
+        advanced {
+            cssClasses: passwordFieldClass
+            customAttributes: style="word-break: break-all;   word-break: break-word;"
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            sessionStateProtection: restricted
+        }
+    )
+
+    pageItem P201_SECUREDESKTOP_URL (
+        type: hidden
+        layout {
+            sequence: 20
+            region: @secure-desktop-information
+            slot: regionBody
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            sessionStateProtection: restricted
+            restrictedChars: webSafe
+        }
+    )
+
+    pageItem P201_SECUREDESKTOP_USERNAME (
+        type: displayOnly
+        label {
+            label: Secure Desktop Username
+            alignment: left
+        }
+        settings {
+            sendOnPageSubmit: false
+        }
+        layout {
+            sequence: 40
+            region: @secure-desktop-information
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @/optional-floating
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            sessionStateProtection: restricted
+        }
+    )
+
+    pageItem P201_TENANCY_NAME (
+        type: displayOnly
+        label {
+            label: Tenancy Name
+            alignment: left
+        }
+        settings {
+            sendOnPageSubmit: false
+        }
+        layout {
+            sequence: 10
+            region: @tenancy-information
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @/optional-floating
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            sessionStateProtection: restricted
+        }
+    )
+
+    pageItem P201_TIME_REMAINING (
+        type: displayOnly
+        label {
+            label: Time Remaining
+            alignment: left
+        }
+        settings {
+            format: html
+            sendOnPageSubmit: false
+        }
+        layout {
+            sequence: 20
+            region: @reservation-time-remaining
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @/optional-floating
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+        }
+        advanced {
+            cssClasses: mxh60
+        }
+        source {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                begin
+                return '<script>' || 
+                    ll_pkg_apex.javascript_countdown(p_hours_remaining => ll_pkg_reservation.time_remaining(p_reservation_id => :P201_RES_ID), p_id => 'demo')
+                    || '</script><span id="demo"></span>';
+                
+                end;
+                ```
+            used: always
+        }
+    )
+
+    pageItem P201_USERNAME (
+        type: displayOnly
+        label {
+            label: Username
+            alignment: left
+        }
+        settings {
+            sendOnPageSubmit: false
+        }
+        layout {
+            sequence: 20
+            region: @login-credentials
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @/optional-floating
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+        }
+        sessionState {
+            storage: request
+        }
+        serverSideCondition {
+            type: rowsReturned
+            sqlQuery:
+                ```sql
+                select * 
+                    from ll_reservation_steps
+                    where JSON_VALUE(flow_step_param,'$.type') = 'ociUser'
+                    and reservation_id = :P201_RES_ID;
+                ```
+        }
+        security {
+            sessionStateProtection: restricted
+        }
+    )
+
+    pageItem P201_WORKSHOP_SANDBOX_CONFIG (
+        type: hidden
+        layout {
+            sequence: 30
+            slot: contentBody
+        }
+        sessionState {
+            storage: request
+        }
+    )
+
+    button copy-auth-token (
+        buttonName: Copy_Auth_Token
+        label: Copy
+        layout {
+            sequence: 80
+            region: @login-credentials
+            slot: regionBody
+            startNewRow: false
+            column: 11
+        }
+        appearance {
+            buttonTemplate: @/text-with-icon
+            templateOptions: [
+                #DEFAULT#
+                t-Button--large
+                t-Button--iconLeft
+                t-Button--gapTop
+            ]
+            icon: fa-copy
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+        advanced {
+            customAttributes: data-clipboard-source="&P201_AUTH_TOKEN." title="Copy to clipboard"
+        }
+        serverSideCondition {
+            type: rowsReturned
+            sqlQuery:
+                ```sql
+                select * 
+                    from ll_reservation_steps
+                    where JSON_VALUE(flow_step_param,'$.type') = 'ociUserAuthToken'
+                    and reservation_id = :P201_RES_ID;
+                ```
+        }
+    )
+
+    button copy-compartment-name (
+        buttonName: Copy_Compartment_Name
+        label: Copy
+        layout {
+            sequence: 110
+            region: @tenancy-information
+            slot: regionBody
+            startNewRow: false
+            column: 11
+        }
+        appearance {
+            buttonTemplate: @/text-with-icon
+            templateOptions: [
+                #DEFAULT#
+                t-Button--large
+                t-Button--iconLeft
+                t-Button--stretch
+                t-Button--gapTop
+            ]
+            icon: fa-copy
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+        advanced {
+            customAttributes: data-clipboard-source="&P201_COMPARTMENT." title="Copy to clipboard"
+        }
+    )
+
+    button copy-compartment-ocid (
+        buttonName: Copy_Compartment_Ocid
+        label: Copy
+        layout {
+            sequence: 140
+            region: @tenancy-information
+            slot: regionBody
+            startNewRow: false
+            column: 11
+        }
+        appearance {
+            buttonTemplate: @/text-with-icon
+            templateOptions: [
+                #DEFAULT#
+                t-Button--large
+                t-Button--iconLeft
+                t-Button--stretch
+                t-Button--gapTop
+            ]
+            icon: fa-copy
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+        advanced {
+            customAttributes: data-clipboard-source="&P201_COMPARTMENT_OCID." title="Copy to clipboard"
+        }
+    )
+
+    button copy-genai-region (
+        buttonName: Copy_GenAI_Region
+        label: Copy
+        layout {
+            sequence: 80
+            region: @tenancy-information
+            slot: regionBody
+            startNewRow: false
+            column: 11
+        }
+        appearance {
+            buttonTemplate: @/text-with-icon
+            templateOptions: [
+                #DEFAULT#
+                t-Button--large
+                t-Button--iconLeft
+                t-Button--stretch
+                t-Button--gapTop
+            ]
+            icon: fa-copy
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+        advanced {
+            customAttributes: data-clipboard-source="&P201_GEN_AI_REGION." title="Copy to clipboard"
+        }
+        serverSideCondition {
+            type: rowsReturned
+            sqlQuery:
+                ```sql
+                select * 
+                    from ll_reservation_steps
+                    where JSON_VALUE(flow_step_param,'$.type') = 'ociGenAI'
+                    and reservation_id = :P201_RES_ID;
+                ```
+        }
+    )
+
+    button copy-novnc (
+        buttonName: Copy_NoVNC
+        label: Copy Desktop URL
+        layout {
+            sequence: 20
+            region: @remote-desktop-buttons-container
+            slot: previous
+        }
+        appearance {
+            buttonTemplate: @/text-with-icon
+            templateOptions: [
+                #DEFAULT#
+                t-Button--large
+                t-Button--iconLeft
+            ]
+            icon: fa-copy
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+        advanced {
+            customAttributes: data-clipboard-source="&P201_NOVNC_URL." title="Copy to clipboard"
+        }
+    )
+
+    button copy-oci-link (
+        buttonName: Copy-OCI-link
+        label: Copy OCI Link
+        layout {
+            sequence: 20
+            region: @login-credentials-button-container
+            slot: change
+        }
+        appearance {
+            buttonTemplate: @/text-with-icon
+            templateOptions: [
+                #DEFAULT#
+                t-Button--large
+                t-Button--iconLeft
+                t-Button--gapTop
+            ]
+            icon: fa-copy
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+        advanced {
+            customAttributes: data-clipboard-source="&P201_LOGIN_URL." title="Copy to clipboard"
+        }
+        serverSideCondition {
+            type: rowsReturned
+            sqlQuery:
+                ```sql
+                select * 
+                    from ll_reservation_steps
+                    where JSON_VALUE(flow_step_param,'$.type') = 'ociUser'
+                    and reservation_id = :P201_RES_ID;
+                ```
+        }
+    )
+
+    button copy-password (
+        buttonName: Copy_Password
+        label: Copy
+        layout {
+            sequence: 60
+            region: @login-credentials
+            slot: regionBody
+            startNewRow: false
+            column: 11
+        }
+        appearance {
+            buttonTemplate: @/text-with-icon
+            templateOptions: [
+                #DEFAULT#
+                t-Button--large
+                t-Button--iconLeft
+                t-Button--gapTop
+            ]
+            icon: fa-copy
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+        advanced {
+            customAttributes: data-clipboard-source="&P201_PASSWORD." title="Copy to clipboard"
+        }
+        serverSideCondition {
+            type: rowsReturned
+            sqlQuery:
+                ```sql
+                select * 
+                    from ll_reservation_steps
+                    where JSON_VALUE(flow_step_param,'$.type') = 'ociUser'
+                    and reservation_id = :P201_RES_ID;
+                ```
+        }
+    )
+
+    button copy-region (
+        buttonName: Copy_Region
+        label: Copy
+        layout {
+            sequence: 50
+            region: @tenancy-information
+            slot: regionBody
+            startNewRow: false
+            column: 11
+        }
+        appearance {
+            buttonTemplate: @/text-with-icon
+            templateOptions: [
+                #DEFAULT#
+                t-Button--large
+                t-Button--iconLeft
+                t-Button--stretch
+                t-Button--gapTop
+            ]
+            icon: fa-copy
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+        advanced {
+            customAttributes: data-clipboard-source="&P201_REGION." title="Copy to clipboard"
+        }
+    )
+
+    button copy-secure-desktop-password (
+        buttonName: Copy_Secure_Desktop_Password
+        label: Copy
+        layout {
+            sequence: 80
+            region: @secure-desktop-information
+            slot: regionBody
+            startNewRow: false
+            column: 11
+        }
+        appearance {
+            buttonTemplate: @/text-with-icon
+            templateOptions: [
+                #DEFAULT#
+                t-Button--large
+                t-Button--iconLeft
+                t-Button--gapTop
+            ]
+            icon: fa-copy
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+        advanced {
+            customAttributes: data-clipboard-source="&P201_SECUREDESKTOP_PASSWORD." title="Copy to clipboard"
+        }
+    )
+
+    button copy-secure-desktop-tenancy (
+        buttonName: Copy_Secure_Desktop_Tenancy
+        label: Copy
+        layout {
+            sequence: 110
+            region: @secure-desktop-information
+            slot: regionBody
+            startNewRow: false
+            column: 11
+        }
+        appearance {
+            buttonTemplate: @/text-with-icon
+            templateOptions: [
+                #DEFAULT#
+                t-Button--large
+                t-Button--iconLeft
+                t-Button--gapTop
+            ]
+            icon: fa-copy
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+        advanced {
+            customAttributes: data-clipboard-source="&P201_SECUREDESKTOP_TENANCY." title="Copy to clipboard"
+        }
+    )
+
+    button copy-secure-desktop-username (
+        buttonName: Copy_Secure_Desktop_Username
+        label: Copy
+        layout {
+            sequence: 50
+            region: @secure-desktop-information
+            slot: regionBody
+            startNewRow: false
+            column: 11
+        }
+        appearance {
+            buttonTemplate: @/text-with-icon
+            templateOptions: [
+                #DEFAULT#
+                t-Button--large
+                t-Button--iconLeft
+                t-Button--gapTop
+            ]
+            icon: fa-copy
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+        advanced {
+            customAttributes: data-clipboard-source="&P201_SECUREDESKTOP_USERNAME." title="Copy to clipboard"
+        }
+    )
+
+    button copy-tenancy-name (
+        buttonName: Copy_Tenancy_Name
+        label: Copy
+        layout {
+            sequence: 20
+            region: @tenancy-information
+            slot: regionBody
+            startNewRow: false
+            column: 11
+        }
+        appearance {
+            buttonTemplate: @/text-with-icon
+            templateOptions: [
+                #DEFAULT#
+                t-Button--large
+                t-Button--iconLeft
+                t-Button--stretch
+                t-Button--gapTop
+            ]
+            icon: fa-copy
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+        advanced {
+            customAttributes: data-clipboard-source="&P201_TENANCY_NAME." title="Copy to clipboard"
+        }
+    )
+
+    button copy-username (
+        buttonName: Copy_Username
+        label: Copy
+        layout {
+            sequence: 30
+            region: @login-credentials
+            slot: regionBody
+            startNewRow: false
+            column: 11
+        }
+        appearance {
+            buttonTemplate: @/text-with-icon
+            templateOptions: [
+                #DEFAULT#
+                t-Button--large
+                t-Button--iconLeft
+                t-Button--gapTop
+            ]
+            icon: fa-copy
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+        advanced {
+            customAttributes: data-clipboard-source="&P201_USERNAME." title="Copy to clipboard"
+        }
+        serverSideCondition {
+            type: rowsReturned
+            sqlQuery:
+                ```sql
+                select * 
+                    from ll_reservation_steps
+                    where JSON_VALUE(flow_step_param,'$.type') = 'ociUser'
+                    and reservation_id = :P201_RES_ID;
+                ```
+        }
+    )
+
+    button extend-res (
+        buttonName: Extend-Res
+        label: Extend Reservation
+        layout {
+            sequence: 30
+            region: @reservation-time-remaining
+            slot: regionBody
+            startNewRow: false
+            column: 9
+        }
+        appearance {
+            buttonTemplate: @/text-with-icon
+            templateOptions: [
+                #DEFAULT#
+                t-Button--large
+                t-Button--iconLeft
+                t-Button--gapTop
+            ]
+            cssClasses: u-pullRight
+            icon: fa-clock-o
+        }
+        behavior {
+            action: definedByDynamicAction
+            executeValidations: false
+        }
+        serverSideCondition {
+            type: expression
+            plsqlExpression: ll_pkg_reservation.extend_allowed (p_reservation_id => :P201_RES_ID) = 'Y'
+        }
+    )
+
+    button launch-novnc (
+        buttonName: Launch_NoVNC
+        label: Launch Desktop
+        layout {
+            sequence: 10
+            region: @remote-desktop-buttons-container
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @/text-with-icon
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--large
+                t-Button--iconLeft
+            ]
+            icon: fa-external-link
+        }
+        behavior {
+            action: redirectUrl
+            targetUrl: javascript:void(window.open("&P201_NOVNC_URL.","_blank"));
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button launch-oci (
+        buttonName: Launch_OCI
+        label: Launch OCI
+        layout {
+            sequence: 10
+            region: @login-credentials-button-container
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @/text-with-icon
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--large
+                t-Button--iconLeft
+                t-Button--gapTop
+            ]
+            icon: fa-external-link
+        }
+        behavior {
+            action: redirectUrl
+            targetUrl: javascript:void(window.open("&P201_LOGIN_URL.", "_blank"));
+            warnOnUnsavedChanges: doNotCheck
+        }
+        serverSideCondition {
+            type: rowsReturned
+            sqlQuery:
+                ```sql
+                select * 
+                    from ll_reservation_steps
+                    where JSON_VALUE(flow_step_param,'$.type') = 'ociUser'
+                    and reservation_id = :P201_RES_ID;
+                ```
+        }
+    )
+
+    button launch-secure-desktop (
+        buttonName: Launch_Secure_Desktop
+        label: Launch Secure Desktop
+        layout {
+            sequence: 20
+            region: @secure-desktop-button-container
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @/text-with-icon
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--large
+                t-Button--iconLeft
+                t-Button--gapTop
+            ]
+            icon: fa-external-link
+        }
+        behavior {
+            action: redirectUrl
+            targetUrl: javascript:void(window.open("&P201_SECUREDESKTOP_URL.","_blank"));
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button reset-password (
+        buttonName: Reset_Password
+        label: Reset Password
+        layout {
+            sequence: 20
+            region: @login-credentials-button-container
+            slot: previous
+        }
+        appearance {
+            buttonTemplate: @/text-with-icon
+            templateOptions: [
+                #DEFAULT#
+                t-Button--large
+                t-Button--iconLeft
+                t-Button--gapTop
+            ]
+            icon: fa-refresh
+        }
+        behavior {
+            action: definedByDynamicAction
+            requiresConfirmation: true
+        }
+        confirmation {
+            message:
+                ```html
+                If you are having trouble logging into OCI, you can try resetting your password by clicking <b>Reset Password</b> below.
+                <br><br> 
+                After a moment, the page will reload and the new password will be shown. 
+                <br><br>
+                If you are still having issues connecting, make sure you logging into the correct tenancy. You may need to log out of other OCI Consoles in your browser before attempting to login with this user. 
+                ```
+            style: warning
+        }
+        serverSideCondition {
+            type: rowsReturned
+            sqlQuery:
+                ```sql
+                select * 
+                    from ll_reservation_steps
+                    where JSON_VALUE(flow_step_param,'$.type') = 'ociUser'
+                    and reservation_id = :P201_RES_ID;
+                ```
+        }
+    )
+
+    button restart-remote-desktop (
+        buttonName: Restart_Remote_Desktop
+        label: Restart Desktop
+        layout {
+            sequence: 30
+            region: @remote-desktop-buttons-container
+            slot: change
+        }
+        appearance {
+            buttonTemplate: @/text-with-icon
+            templateOptions: [
+                #DEFAULT#
+                t-Button--large
+                t-Button--iconLeft
+            ]
+            icon: fa-refresh
+        }
+        behavior {
+            action: definedByDynamicAction
+            executeValidations: false
+            requiresConfirmation: true
+        }
+        confirmation {
+            message:
+                ```html
+                If you are having trouble connecting to the NoVNC desktop, you can try restarting the server by clicking <b>Restart Remote Desktop</b> below.
+                This can take anywhere from 5-20 minutes depending on the services running on the server.  <br><br>
+                When the server has finished restarting, you should be able to reconnect to it using the <b>Launch Remote Desktop</b> button.
+                ```
+            style: warning
+        }
+    )
+
+    button secure-desktops-how-to (
+        buttonName: Secure_Desktops_how_to1
+        label: How to Start with Secure Desktops
+        layout {
+            sequence: 10
+            region: @secure-desktop-button-container
+            slot: previous
+        }
+        appearance {
+            buttonTemplate: @/text-with-icon
+            templateOptions: [
+                #DEFAULT#
+                t-Button--large
+                t-Button--iconLeft
+                t-Button--gapTop
+            ]
+            icon: fa-question-circle
+        }
+        behavior {
+            action: redirectUrl
+            targetUrl: javascript:void(window.open("https://oracle-livelabs.github.io/common/support/securedesktops/index.html","_blank"));
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    dynamicAction extend-res (
+        name: extend res
+        execution {
+            sequence: 30
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @extend-res
+        }
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    begin
+                      ll_pkg_reservation.extend_reservation (p_reservation_id => :P201_RES_ID);
+                    end;
+                    ```
+                itemsToSubmit: P201_RES_ID
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode: location.reload();
+            }
+            execution {
+                sequence: 40
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction hide-js-counter-region (
+        name: hide js counter region
+        execution {
+            sequence: 40
+        }
+        when {
+            event: ready
+        }
+
+        action native-hide (
+            action: hide
+            affectedElements {
+                selectionType: region
+                region: @javascript-counter
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    dynamicAction reset-password (
+        name: reset password
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @reset-password
+        }
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    ll_pkg_reservation.reset_password (p_reservation_id => :P201_RES_ID);
+                    
+                    
+                    ```
+                itemsToSubmit: P201_RES_ID
+                itemsToReturn: P201_RES_ID
+                showProcessing: true
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode: location.reload();
+            }
+            execution {
+                sequence: 30
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction restart-novnc (
+        name: restart novnc
+        execution {
+            sequence: 20
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @restart-remote-desktop
+        }
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    ll_pkg_create.resetImage (p_reservation_id => :P201_RES_ID);
+                    
+                    ```
+                itemsToSubmit: P201_RES_ID
+                itemsToReturn: P201_RES_ID
+                showProcessing: true
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode: location.reload();
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    process get-info (
+        name: GET_INFO
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                declare
+                
+                cursor c_novnc is select JSON_VALUE(workshop_json,'$.NoVNC') as novnc 
+                                      from ll_reservations llr, ll_workshops llw
+                                      where llr.workshop_id = llw.id
+                                      and llr.id = :P201_RES_ID;
+                cursor c_sandbox_config is select llw.sandbox_config
+                                      from ll_reservations llr, ll_workshops llw
+                                      where llr.workshop_id = llw.id
+                                      and llr.id = :P201_RES_ID;
+                cursor c_securedesktops is select 'Y'
+                    from ll_reservation_steps
+                    where JSON_VALUE(flow_step_param,'$.type') = 'ociSecureDesktopUser'
+                    and reservation_id = :P201_RES_ID;
+                
+                cursor c_res_steps (p_type varchar2) is select flow_step_result, nvl(JSON_VALUE(flow_step_param, '$.param1'),JSON_QUERY(flow_step_param, '$.param1'))  as param1, flow_step_param
+                                                            from ll_reservation_steps
+                                                            where JSON_VALUE(flow_step_param,'$.type') = p_type
+                                                            and reservation_id = :P201_RES_ID;
+                
+                p_reservation_id number := :P201_RES_ID;
+                v_tenancy_id number;
+                v_novnc_pass varchar2(4000);
+                v_secure_desktops varchar2(1);
+                begin
+                v_tenancy_id := ll_pkg_admin.is_number(ll_pkg_reservation.tenancy_id (p_reservation_id => p_reservation_id));
+                :P201_TENANCY_NAME := ll_pkg_reservation.tenancy_name(p_tenancy_id => v_tenancy_id); 
+                :P201_REGION      :=   ll_pkg_admin.region_name (p_region_key => ll_pkg_reservation.region_key(p_reservation_id))
+                                    || ' (' || ll_pkg_admin.region_identifier_with_key (p_region_key => ll_pkg_reservation.region_key(p_reservation_id)) || ')';
+                
+                :P201_USERNAME    := ll_pkg_reservation.user_object_name (p_reservation_id => p_reservation_id,
+                                                                        p_param_type     => 'ociUser');
+                :P201_LOGIN_URL    := 'https://' || ll_pkg_admin.oci_endpoint( p_type => 'console', p_region_key => ll_pkg_reservation.region_key(p_reservation_id))||'&tenant='||:P201_TENANCY_NAME||'&username='||:P201_USERNAME; 
+                :P201_PASSWORD    := ll_pkg_reservation.user_object_ocid (p_reservation_id => p_reservation_id,
+                                                                          p_param_type     => 'ociUserPassword');
+                                                                        
+                :P201_COMPARTMENT := ll_pkg_reservation.user_object_name (p_reservation_id => p_reservation_id,
+                                                                        p_param_type     => 'ociCompartment');                                                       
+                :P201_COMPARTMENT_OCID := ll_pkg_reservation.user_object_ocid (p_reservation_id => p_reservation_id,
+                                                                            p_param_type     => 'ociCompartment');
+                                                                            
+                v_novnc_pass := ll_pkg_reservation.user_object_ocid (p_reservation_id => p_reservation_id,
+                                                                            p_param_type     => 'NoVncPassword');
+                
+                open c_novnc;
+                    fetch c_novnc into :P201_NOVNC_ENABLED;
+                    if c_novnc%NOTFOUND or :P201_NOVNC_ENABLED is null then
+                      :P201_NOVNC_ENABLED := 'N';
+                    end if;
+                close c_novnc;
+                open c_sandbox_config;
+                    fetch c_sandbox_config into :P201_WORKSHOP_SANDBOX_CONFIG;
+                close c_sandbox_config;
+                for x in c_res_steps ('ociInstance') loop
+                    if nvl(:P201_NOVNC_ENABLED,'N') = 'Y' and JSON_VALUE(x.param1,'$.novnc_enabled') = 'Y' then
+                        :P201_NOVNC_URL := 'http://'||JSON_VALUE(x.flow_step_result,'$.publicIp')||':6080/vnc.html?password='||v_novnc_pass||'&resize=scale&quality=9&autoconnect=true';
+                    end if;
+                end loop;
+                
+                -- secure desktop info
+                open c_securedesktops;
+                    fetch c_securedesktops into v_secure_desktops;
+                    if c_securedesktops%NOTFOUND or v_secure_desktops is null then
+                      v_secure_desktops := 'N';
+                    end if;
+                close c_securedesktops;
+                if v_secure_desktops != 'N' then 
+                    :P201_SECUREDESKTOP_USERNAME := ll_pkg_reservation.user_object_name (p_reservation_id => p_reservation_id,
+                                                                            p_param_type     => 'ociSecureDesktopUser');
+                    :P201_SECUREDESKTOP_PASSWORD := ll_pkg_reservation.flow_step_result (p_reservation_id => p_reservation_id, p_param_type => 'ociSecureDesktopUser', p_result_type => 'password'); 
+                    if :P201_SECUREDESKTOP_USERNAME is not null then
+                        select sd.link, t.tenancy_name into :P201_SECUREDESKTOP_URL, :P201_SECUREDESKTOP_TENANCY 
+                            from ll_secure_desktops sd, ll_tenancies t 
+                            where sd.id = ll_pkg_reservation.flow_step_result (p_reservation_id => p_reservation_id, p_param_type => 'ociSecureDesktopUser', p_result_type => 'secureDesktopId')
+                                and t.id = sd.tenancy_id;
+                    end if;
+                end if;
+                end;
+                ```
+        }
+        execution {
+            sequence: 10
+            point: beforeHeader
+        }
+        advanced {
+            executionMappingIdentifier: 185717729167384228
+        }
+    )
+
+)
+

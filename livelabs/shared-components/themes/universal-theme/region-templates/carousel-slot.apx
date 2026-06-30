@@ -1,0 +1,15 @@
+regionTemplate carousel-slot (
+    name: Carousel Slot
+    templateClass: custom1
+    region {
+        template:
+            ```html
+            <a #REGION_ATTRIBUTES#>#BODY#</a>
+            
+            ```
+    }
+    advanced {
+        identifier: CAROUSEL_SLOT
+    }
+)
+

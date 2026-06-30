@@ -1,0 +1,1725 @@
+page 320 (
+    name: Reserve Workshop
+    alias: RESERVE-WORKSHOP
+    title: Reserve Workshop
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @/drawer
+        templateOptions: [
+            #DEFAULT#
+            js-dialog-class-t-Drawer--pullOutEnd
+            js-dialog-class-t-Drawer--md
+        ]
+    }
+    dialog {
+        resizable: false
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    css {
+        inline:
+            ```css
+            .resource-searching {
+                /* background-color: #fceddc; */
+                color: #161513;
+                padding: 10px 16px 8px 16px;
+                font-size: 14px;
+                line-height: 20px;
+                font-weight: 600;
+                text-align: center;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 1rem;
+                flex-wrap: wrap;
+            }
+            ```
+    }
+    security {
+        deepLinking: false
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+    advanced {
+        enableDuplicatePageSubmissions: false
+    }
+
+    region checking-for-resources (
+        name: Checking for Resources
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <span style="width=10%"></span>
+                <span style="width=80%">
+                <div><img src="#APP_FILES#loading.gif" style="height:150px;width:150px;"></div>
+                <div>Searching LiveLabs for resources to run this Workshop</div>
+                </span>
+                <span style="width=10%"></span>
+                ```
+        }
+        layout {
+            sequence: 40
+            slot: contentBody
+        }
+        appearance {
+            template: @/blank-with-attributes
+            templateOptions: #DEFAULT#
+            cssClasses: resource-searching
+        }
+    )
+
+    region no-resources-found (
+        name: No Resources Found
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <span style="width=10%"></span>
+                <span style="width=80%">
+                <div>Too many attendees are using the same resources as this workshop needs. Please try again in 30 minutes. (Ref: NoResources)
+                </div>
+                <br>
+                <div>While you are waiting, use the button below to check out the Sandbox instructions!</div>
+                </span>
+                <span style="width=10%"></span>
+                ```
+        }
+        layout {
+            sequence: 50
+            slot: contentBody
+        }
+        appearance {
+            template: @/blank-with-attributes
+            templateOptions: #DEFAULT#
+            cssClasses: resource-searching
+        }
+    )
+
+    region reserve-workshop (
+        name: Reserve Workshop
+        type: staticContent
+        layout {
+            sequence: 70
+            slot: contentBody
+        }
+        appearance {
+            template: @/standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader js-removeLandmark
+                t-Region--noUI
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region reserve-workshop-form (
+        name: Reserve Workshop Form
+        type: form
+        source {
+            location: localDatabase
+            tableName: LL_RESERVATIONS
+        }
+        layout {
+            sequence: 60
+            slot: contentBody
+        }
+        appearance {
+            template: @/blank-with-attributes-no-grid
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        edit {
+            enabled: true
+            allowedOperations: [
+                add
+                update
+                delete
+            ]
+        }
+    )
+
+    pageItem P320_ACCESSED (
+        type: hidden
+        layout {
+            sequence: 220
+            region: @reserve-workshop-form
+            slot: regionBody
+        }
+        source {
+            formRegion: @reserve-workshop-form
+            column: ACCESSED
+            dataType: number
+        }
+        security {
+            sessionStateProtection: restricted
+        }
+    )
+
+    pageItem P320_ACTIVE_FLG (
+        type: hidden
+        layout {
+            sequence: 100
+            region: @reserve-workshop-form
+            slot: regionBody
+        }
+        source {
+            formRegion: @reserve-workshop-form
+            column: ACTIVE_FLG
+            dataType: varchar2
+        }
+        security {
+            sessionStateProtection: restricted
+        }
+    )
+
+    pageItem P320_EMAIL_CONSENT (
+        type: checkbox
+        label {
+            label: I consent to receive emails from LiveLabs for my reservation and I agree that I will not upload sensitive personal or company information to Oracle Cloud Infrastructure
+            alignment: left
+        }
+        layout {
+            sequence: 70
+            region: @reserve-workshop
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @/required-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+                t-Form-fieldContainer--indicatorAsterisk
+            ]
+        }
+        security {
+            sessionStateProtection: restricted
+        }
+    )
+
+    pageItem P320_ENVIRONMENTS (
+        type: hidden
+        layout {
+            sequence: 70
+            region: @reserve-workshop-form
+            slot: regionBody
+        }
+        source {
+            formRegion: @reserve-workshop-form
+            column: ENVIRONMENTS
+            dataType: number
+        }
+        security {
+            sessionStateProtection: restricted
+        }
+    )
+
+    pageItem P320_EXTENDED (
+        type: hidden
+        layout {
+            sequence: 210
+            region: @reserve-workshop-form
+            slot: regionBody
+        }
+        source {
+            formRegion: @reserve-workshop-form
+            column: EXTENDED
+            dataType: number
+        }
+        security {
+            sessionStateProtection: restricted
+        }
+    )
+
+    pageItem P320_FOCUS_AREA (
+        type: hidden
+        layout {
+            sequence: 40
+            region: @reserve-workshop-form
+            slot: regionBody
+        }
+        source {
+            formRegion: @reserve-workshop-form
+            column: FOCUS_AREA
+            dataType: varchar2
+        }
+        security {
+            sessionStateProtection: restricted
+        }
+    )
+
+    pageItem P320_ID (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 10
+            region: @reserve-workshop-form
+            slot: regionBody
+        }
+        source {
+            formRegion: @reserve-workshop-form
+            column: ID
+            dataType: number
+            primaryKey: true
+        }
+        security {
+            sessionStateProtection: checksumRequiredSessionLevel
+            restrictedChars: alphanumWithSpace
+        }
+    )
+
+    pageItem P320_LIVESTACK_ENTRY_ID (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 260
+            region: @reserve-workshop-form
+            slot: regionBody
+        }
+        source {
+            formRegion: @reserve-workshop-form
+            column: LIVESTACK_ENTRY_ID
+            dataType: number
+        }
+    )
+
+    pageItem P320_LIVESTACK_ID (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 250
+            region: @reserve-workshop-form
+            slot: regionBody
+        }
+        source {
+            formRegion: @reserve-workshop-form
+            column: LIVESTACK_ID
+            dataType: number
+        }
+    )
+
+    pageItem P320_OWNER1 (
+        type: displayOnly
+        label {
+            label: Attendee Email Address
+            alignment: left
+        }
+        layout {
+            sequence: 10
+            region: @reserve-workshop
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @/optional-above
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            cssClasses: u-textLower
+        }
+        source {
+            formRegion: @reserve-workshop-form
+            column: OWNER1
+            dataType: varchar2
+        }
+        default {
+            type: static
+            staticValue: &APP_USER.
+        }
+        security {
+            sessionStateProtection: restricted
+        }
+    )
+
+    pageItem P320_PUBLIC_KEY (
+        type: textField
+        label {
+            label: SSH Public Key
+            alignment: left
+        }
+        layout {
+            sequence: 60
+            region: @reserve-workshop
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @/required-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            valueRequired: true
+            maxLength: 4000
+        }
+        source {
+            formRegion: @reserve-workshop-form
+            column: PUBLIC_KEY
+            dataType: varchar2
+        }
+        default {
+            type: sqlQuerySingleValue
+            sqlQuerySingleValue:
+                ```sql
+                select public_key 
+                from ll_reservations a
+                where a.id = (select max(id)
+                              from ll_reservations b
+                              where owner1 = :APP_USER
+                              and public_key is not null)
+                ```
+        }
+        serverSideCondition {
+            type: expression
+            plsqlExpression: ll_pkg_apex.requires_pub_key (p_workshop_id => :P320_WORKSHOP_ID, p_event_id => :P320_VOUCHER_ID) = 'Y'
+        }
+        security {
+            sessionStateProtection: restricted
+        }
+        help {
+            helpText:
+                ```html
+                Required to access your workshop environment. Must be RSA-2048 or higher. 
+                <br>
+                Need help? <a href="https://livelabs.oracle.com/cdn/common/labs/generate-ssh-key/index.html" target="_blank">Learn how to generate SSH keys</a>
+                ```
+        }
+    )
+
+    pageItem P320_REASON (
+        type: hidden
+        layout {
+            sequence: 30
+            region: @reserve-workshop-form
+            slot: regionBody
+        }
+        source {
+            formRegion: @reserve-workshop-form
+            column: REASON
+            dataType: varchar2
+        }
+        security {
+            sessionStateProtection: restricted
+        }
+    )
+
+    pageItem P320_REGION_ID (
+        type: hidden
+        layout {
+            sequence: 60
+            region: @reserve-workshop-form
+            slot: regionBody
+        }
+        source {
+            formRegion: @reserve-workshop-form
+            column: REGION_ID
+            dataType: number
+        }
+        security {
+            sessionStateProtection: restricted
+        }
+    )
+
+    pageItem P320_REMARKS (
+        type: hidden
+        layout {
+            sequence: 180
+            region: @reserve-workshop-form
+            slot: regionBody
+        }
+        source {
+            formRegion: @reserve-workshop-form
+            column: REMARKS
+            dataType: varchar2
+        }
+        security {
+            sessionStateProtection: restricted
+        }
+    )
+
+    pageItem P320_RESOURCES_FOUND (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 240
+            region: @reserve-workshop-form
+            slot: regionBody
+        }
+        security {
+            sessionStateProtection: restricted
+        }
+    )
+
+    pageItem P320_START_DATE (
+        type: datePicker
+        label {
+            label: Choose a date to attend
+            alignment: left
+        }
+        settings {
+            minDate: static
+            minStatic: -0d
+        }
+        layout {
+            sequence: 40
+            region: @reserve-workshop
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @/required-floating
+            templateOptions: #DEFAULT#
+            formatMask: DD-MON-YYYY
+            width: 32
+        }
+        validation {
+            maxLength: 255
+        }
+        source {
+            formRegion: @reserve-workshop-form
+            column: START_DATE
+            dataType: date
+        }
+        security {
+            sessionStateProtection: restricted
+        }
+    )
+
+    pageItem P320_START_TIME (
+        type: popupLov
+        label {
+            label: Choose a time to attend
+            alignment: left
+        }
+        settings {
+            fetchOnSearch: true
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select key_name, key_value
+                from ll_keys
+                where key_type = 'STARTTIME'
+                and key_value like '%00%'
+                order by key_value;
+                ```
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 50
+            region: @reserve-workshop
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @/required-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        source {
+            formRegion: @reserve-workshop-form
+            column: START_TIME
+            dataType: varchar2
+        }
+        security {
+            sessionStateProtection: restricted
+        }
+    )
+
+    pageItem P320_START_TIMEZONE (
+        type: popupLov
+        label {
+            label: Attendee Timezone
+            alignment: left
+        }
+        settings {
+            fetchOnSearch: true
+        }
+        lov {
+            type: sharedComponent
+            lov: @timezones
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 20
+            region: @reserve-workshop
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @/required-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        source {
+            formRegion: @reserve-workshop-form
+            column: START_TIMEZONE
+            dataType: varchar2
+        }
+        default {
+            type: expression
+            plsqlExpression:
+                ```plsql
+                ll_pkg_apex.user_last_timezone (p_app_user => :APP_USER)
+                
+                ```
+        }
+        security {
+            sessionStateProtection: restricted
+        }
+    )
+
+    pageItem P320_START_WORKSHOP_NOW (
+        type: switch
+        label {
+            label: Start Workshop Now?
+            alignment: left
+        }
+        layout {
+            sequence: 30
+            region: @reserve-workshop
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @/required-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+                t-Form-fieldContainer--indicatorAsterisk
+                t-Form-fieldContainer--xlarge
+            ]
+        }
+        default {
+            type: static
+            staticValue: Y
+        }
+        security {
+            sessionStateProtection: restricted
+        }
+    )
+
+    pageItem P320_STOP_DATE (
+        type: hidden
+        layout {
+            sequence: 170
+            region: @reserve-workshop-form
+            slot: regionBody
+        }
+        source {
+            formRegion: @reserve-workshop-form
+            column: STOP_DATE
+            dataType: date
+        }
+        security {
+            sessionStateProtection: restricted
+        }
+    )
+
+    pageItem P320_STOP_TIME (
+        type: hidden
+        layout {
+            sequence: 200
+            region: @reserve-workshop-form
+            slot: regionBody
+        }
+        source {
+            formRegion: @reserve-workshop-form
+            column: STOP_TIME
+            dataType: varchar2
+        }
+        security {
+            sessionStateProtection: restricted
+        }
+    )
+
+    pageItem P320_TENANCY_ID (
+        type: hidden
+        layout {
+            sequence: 50
+            region: @reserve-workshop-form
+            slot: regionBody
+        }
+        source {
+            formRegion: @reserve-workshop-form
+            column: TENANCY_ID
+            dataType: number
+        }
+        security {
+            sessionStateProtection: restricted
+        }
+    )
+
+    pageItem P320_TITLE (
+        type: hidden
+        layout {
+            sequence: 20
+            region: @reserve-workshop-form
+            slot: regionBody
+        }
+        source {
+            formRegion: @reserve-workshop-form
+            column: TITLE
+            dataType: varchar2
+        }
+        security {
+            sessionStateProtection: restricted
+            restrictedChars: alphanumWithSpace
+        }
+    )
+
+    pageItem P320_VOUCHER_ID (
+        type: hidden
+        layout {
+            sequence: 120
+            region: @reserve-workshop-form
+            slot: regionBody
+        }
+        source {
+            formRegion: @reserve-workshop-form
+            column: VOUCHER_ID
+            dataType: number
+        }
+        security {
+            restrictedChars: alphanumWithSpace
+        }
+    )
+
+    pageItem P320_WORKSHOP_ID (
+        type: hidden
+        layout {
+            sequence: 110
+            region: @reserve-workshop-form
+            slot: regionBody
+        }
+        source {
+            formRegion: @reserve-workshop-form
+            column: WORKSHOP_ID
+            dataType: number
+        }
+        security {
+            restrictedChars: alphanumWithSpace
+        }
+    )
+
+    button preview-sandbox-instructions (
+        buttonName: Preview_Sandbox_Instructions_1
+        label: Preview Sandbox Instructions
+        layout {
+            sequence: 80
+            region: @no-resources-found
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @/text
+            templateOptions: [
+                #DEFAULT#
+                t-Button--large
+            ]
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 202
+                items: {
+                    P202_VOUCHER_ID: &P320_VOUCHER_ID.
+                    P202_WORKSHOP_ID: &P320_WORKSHOP_ID.
+                }
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button preview-sandbox-instructions-2 (
+        buttonName: Preview_Sandbox_Instructions
+        label: Preview Sandbox Instructions
+        layout {
+            sequence: 70
+            region: @reserve-workshop
+            slot: help
+        }
+        appearance {
+            buttonTemplate: @/text
+            templateOptions: [
+                #DEFAULT#
+                t-Button--large
+            ]
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 202
+                items: {
+                    P202_VOUCHER_ID: &P320_VOUCHER_ID.
+                    P202_WORKSHOP_ID: &P320_WORKSHOP_ID.
+                }
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button submit-reservation (
+        buttonName: Submit_Reservation
+        label: Submit Reservation
+        layout {
+            sequence: 60
+            region: @reserve-workshop
+            slot: create
+        }
+        appearance {
+            buttonTemplate: @/text
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--large
+                t-Button--success
+            ]
+        }
+        behavior {
+            showProcessing: true
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: insert
+        }
+        serverSideCondition {
+            type: itemIsNull
+            item: P320_ID
+        }
+    )
+
+    button update-reservation (
+        buttonName: Update_Reservation
+        label: Update Reservation
+        layout {
+            sequence: 80
+            region: @reserve-workshop
+            slot: create
+        }
+        appearance {
+            buttonTemplate: @/text
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--large
+                t-Button--success
+            ]
+        }
+        behavior {
+            showProcessing: true
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: update
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P320_ID
+        }
+    )
+
+    dynamicAction enable-submit-reservation (
+        name: Enable Submit Reservation
+        execution {
+            sequence: 30
+        }
+        when {
+            selectionType: items
+            items: P320_EMAIL_CONSENT
+        }
+        clientSideCondition {
+            type: item=value
+            item: P320_EMAIL_CONSENT
+            value: Y
+        }
+
+        action native-disable (
+            action: disable
+            affectedElements {
+                selectionType: button
+                button: @update-reservation
+            }
+            execution {
+                sequence: 20
+                fireWhenEventResultIs: false
+            }
+        )
+
+        action native-disable-2 (
+            action: disable
+            affectedElements {
+                selectionType: button
+                button: @submit-reservation
+            }
+            execution {
+                sequence: 10
+                fireWhenEventResultIs: false
+            }
+        )
+
+        action native-enable (
+            action: enable
+            affectedElements {
+                selectionType: button
+                button: @update-reservation
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+        action native-enable-2 (
+            action: enable
+            affectedElements {
+                selectionType: button
+                button: @submit-reservation
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction future-res-hide-show (
+        name: Future Res Hide/Show
+        execution {
+            sequence: 60
+        }
+        when {
+            event: ready
+        }
+        clientSideCondition {
+            type: itemIsNull
+            item: P320_ID
+        }
+
+        action native-hide (
+            action: hide
+            affectedElements {
+                selectionType: items
+                items: [
+                    P320_START_DATE
+                    P320_START_TIME
+                ]
+            }
+            execution {
+                sequence: 20
+            }
+        )
+
+        action native-hide-2 (
+            action: hide
+            affectedElements {
+                selectionType: items
+                items: P320_START_WORKSHOP_NOW
+            }
+            execution {
+                sequence: 20
+                fireWhenEventResultIs: false
+            }
+        )
+
+        action native-set-value (
+            action: setValue
+            settings {
+                type: plsqlExpression
+                plsqlExpression: null
+            }
+            affectedElements {
+                selectionType: items
+                items: [
+                    P320_START_DATE
+                    P320_START_TIME
+                ]
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+        action native-set-value-2 (
+            action: setValue
+            settings {
+                value: N
+            }
+            affectedElements {
+                selectionType: items
+                items: P320_START_WORKSHOP_NOW
+            }
+            execution {
+                sequence: 10
+                fireWhenEventResultIs: false
+            }
+        )
+
+        action native-show (
+            action: show
+            affectedElements {
+                selectionType: items
+                items: [
+                    P320_START_DATE
+                    P320_START_TIME
+                ]
+            }
+            execution {
+                sequence: 30
+                fireWhenEventResultIs: false
+            }
+        )
+
+    )
+
+    dynamicAction start-workshop-now (
+        name: Start Workshop Now
+        execution {
+            sequence: 40
+        }
+        when {
+            selectionType: items
+            items: P320_START_WORKSHOP_NOW
+        }
+        clientSideCondition {
+            type: item=value
+            item: P320_START_WORKSHOP_NOW
+            value: Y
+        }
+
+        action native-hide (
+            action: hide
+            affectedElements {
+                selectionType: items
+                items: [
+                    P320_START_DATE
+                    P320_START_TIME
+                ]
+            }
+            execution {
+                sequence: 40
+                fireOnInit: false
+            }
+        )
+
+        action native-set-value (
+            action: setValue
+            settings {
+                type: plsqlExpression
+                plsqlExpression: null
+            }
+            affectedElements {
+                selectionType: items
+                items: [
+                    P320_START_DATE
+                    P320_START_TIME
+                ]
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+        action native-show (
+            action: show
+            affectedElements {
+                selectionType: items
+                items: [
+                    P320_START_DATE
+                    P320_START_TIME
+                ]
+            }
+            execution {
+                sequence: 10
+                fireWhenEventResultIs: false
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction toggle-reserve-form (
+        name: Toggle Reserve Form
+        execution {
+            sequence: 50
+            eventScope: dynamic
+        }
+        when {
+            event: ready
+        }
+
+        action findavailtenancy (
+            name: FindAvailTenancy
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    declare
+                    v_tenancy_id number;
+                    v_region_id number;
+                    v_dummy_clob clob;
+                    
+                    cursor c_preprov is select 'Y'
+                                                from ll_reservations_vw r 
+                                                where r.voucher_id = :P320_VOUCHER_ID
+                                                    and r.owner1 = (select voucher_code from ll_vouchers where id = :P320_VOUCHER_ID)||'@LIVELABS.COM' 
+                                                    and r.start_gmt < sysdate 
+                                                    and r.stop_gmt > sysdate 
+                                                    and r.active_flg = 'Y' 
+                                                    and (select count(*) from ll_reservation_steps where reservation_id = r.id) > 0 
+                                                    and (select count(*) from ll_reservation_steps where reservation_id = r.id and create_order is not null and create_success='N') = 0 fetch first 1 rows only;
+                    
+                    begin
+                        ll_pkg_reservation.find_available_tenancy(p_workshop_id  => :P320_WORKSHOP_ID,
+                                                                  p_event_id       => :P320_VOUCHER_ID,
+                                                                  p_tenancy_id     => v_tenancy_id,
+                                                                  p_region_id      => v_region_id,
+                                                                  p_available_json => v_dummy_clob);
+                    
+                        if v_tenancy_id is null or v_region_id is null then
+                            -- check to see if there are preprovs available if user has an event code
+                            if :P320_VOUCHER_ID is not null then 
+                                open c_preprov;
+                                -- this will set resources_found = Y if there is a preprov available
+                                fetch c_preprov into :P320_RESOURCES_FOUND;
+                                -- if no preprovs are available, then resources are truly gone, set to N 
+                                if c_preprov%notfound then 
+                                    :P320_RESOURCES_FOUND := 'N';
+                                end if;
+                                close c_preprov;
+                            else
+                                -- no event code, so NoResource from find_available_tenancy is truly a No
+                                :P320_RESOURCES_FOUND := 'N';
+                            end if;
+                        else   
+                            :P320_RESOURCES_FOUND := 'Y';
+                        end if;
+                    exception when others then
+                        :P320_RESOURCES_FOUND := 'N';
+                    
+                    end;
+                    
+                    
+                    ```
+                itemsToSubmit: [
+                    P320_WORKSHOP_ID
+                    P320_VOUCHER_ID
+                ]
+                itemsToReturn: P320_RESOURCES_FOUND
+            }
+            execution {
+                sequence: 50
+                stopExecutionOnError: false
+            }
+        )
+
+        action native-hide (
+            action: hide
+            affectedElements {
+                selectionType: region
+                region: @no-resources-found
+            }
+            execution {
+                sequence: 30
+            }
+        )
+
+        action native-hide-2 (
+            action: hide
+            affectedElements {
+                selectionType: region
+                region: @checking-for-resources
+            }
+            execution {
+                sequence: 60
+            }
+        )
+
+        action native-hide-3 (
+            action: hide
+            affectedElements {
+                selectionType: region
+                region: @reserve-workshop
+            }
+            execution {
+                sequence: 20
+            }
+        )
+
+        action native-show (
+            action: show
+            affectedElements {
+                selectionType: region
+                region: @no-resources-found
+            }
+            execution {
+                sequence: 80
+            }
+            clientSideCondition {
+                type: item=value
+                item: P320_RESOURCES_FOUND
+                value: N
+            }
+        )
+
+        action native-show-2 (
+            action: show
+            affectedElements {
+                selectionType: region
+                region: @reserve-workshop
+            }
+            execution {
+                sequence: 70
+            }
+            clientSideCondition {
+                type: item=value
+                item: P320_RESOURCES_FOUND
+                value: Y
+            }
+        )
+
+        action native-show-3 (
+            action: show
+            affectedElements {
+                selectionType: region
+                region: @checking-for-resources
+            }
+            execution {
+                sequence: 40
+            }
+        )
+
+    )
+
+    validation future-res-date-and-time-selected (
+        name: Future Res - Date and Time Selected
+        execution {
+            sequence: 10
+        }
+        validation {
+            language: sql
+            sqlExpression: :P320_START_DATE is not null and :P320_START_TIME is not null
+        }
+        error {
+            errorMessage: "To schedule a reservation for the future, you must select a date and time. "
+        }
+        serverSideCondition {
+            type: item=value
+            item: P320_START_WORKSHOP_NOW
+            value: N
+        }
+    )
+
+    validation future-workshops (
+        name: Future_Workshops
+        execution {
+            sequence: 50
+        }
+        validation {
+            type: functionBodyReturningBoolean
+            plsqlFunctionBody:
+                ```plsql
+                declare
+                
+                  v_non_oracle_max    date  := add_months(sysdate,1);
+                  v_oracle_max        date  := add_months(sysdate,6);
+                  v_date              date;
+                  v_return_value      BOOLEAN;
+                  v_num_month         number;
+                  v_error             varchar2(4000);
+                  
+                begin
+                
+                  begin
+                    v_date := :P320_START_DATE;
+                  exception 
+                    when others then null;
+                  end;
+                  
+                  begin
+                    if v_date is null and :P320_START_DATE is not null then
+                      v_date := to_date(upper(:P320_START_DATE),'DD-MON-YYYY');
+                    end if;
+                  exception 
+                    when others then null;
+                  end;
+                
+                  if v_date is null then
+                    v_date := sysdate;
+                  end if;
+                  
+                  if v_date < v_non_oracle_max then
+                    v_return_value := TRUE;
+                  elsif v_date < v_oracle_max and 
+                        ll_pkg_security.am_i_allowed(p_apex_user => :P320_OWNER1, p_access_type => 'RES_WS_FUTURE', p_access_value => null) = 'Y' then
+                    v_return_value := TRUE;
+                  else
+                    v_return_value := FALSE;
+                  end if;
+                  
+                  return(v_return_value);
+                    
+                end;
+                ```
+        }
+        error {
+            errorMessage: You can only reserve workshops up to 1 month in the future. Please change the reservation date.
+        }
+    )
+
+    validation maximum-reservations (
+        name: Maximum_Reservations
+        execution {
+            sequence: 40
+        }
+        validation {
+            type: functionBodyReturningBoolean
+            plsqlFunctionBody:
+                ```plsql
+                declare
+                
+                  v_max_reservations  number;
+                  v_date              date;
+                  v_return_value      BOOLEAN;
+                  v_num_month         number;
+                  v_error             varchar2(4000);
+                
+                  v_userrole varchar2(4000);
+                
+                
+                  Cursor rolecursor Is
+                        select  lluser.email , llrole.name  from LL_USERS lluser, LL_USER_ROLES lluserrole , LL_ROLES llrole
+                        where upper(EMAIL) = upper(:APP_USER) AND lluser.id = lluserrole.USER_ID   AND llrole.id = lluserrole.ROLE_ID
+                        AND llrole.name = 'Multi Workshop Role';
+                  
+                begin
+                
+                  v_max_reservations := nvl(ll_pkg_admin.is_number(ll_pkg_admin.system_parameter('MAX_RES_PER_MONTH')),20);
+                
+                  begin
+                    v_date := :P320_START_DATE;
+                  exception 
+                    when others then null;
+                  end;
+                  
+                  begin
+                    if v_date is null and :P320_START_DATE is not null then
+                      v_date := to_date(upper(:P320_START_DATE),'DD-MON-YYYY');
+                    end if;
+                  exception 
+                    when others then null;
+                  end;
+                  
+                  v_num_month := ll_pkg_apex.reservations_per_month (
+                                                        p_res_id         => :P320_ID,
+                                                        p_owner          => :P320_OWNER1,
+                                                        p_start_date     => v_date,
+                                                        p_start_time     => :P320_START_TIME,
+                                                        p_start_timezone => :P320_START_TIMEZONE );
+                  begin                                                                             
+                  For row_1 In rolecursor Loop
+                        if row_1.name = 'Multi Workshop Role' then
+                             v_userrole := 'Multi Workshop Role';
+                       end if;
+                  End Loop;  
+                  exception when others then 
+                    v_userrole := null;
+                  end;
+                  
+                  if v_num_month < v_max_reservations then
+                    v_return_value := TRUE;
+                  elsif ll_pkg_security.am_i_allowed(p_apex_user => :P320_OWNER1, p_access_type => 'NUM_WS_MONTH', p_access_value => null) = 'Y' then
+                    v_return_value := TRUE;
+                  elsif v_userrole = 'Multi Workshop Role' then  
+                    v_return_value := TRUE;
+                  else
+                    v_return_value := FALSE;
+                  end if;
+                  
+                  return(v_return_value);
+                    
+                end;
+                ```
+        }
+        error {
+            errorMessage: You can only have up to 20 workshops running on the Oracle Livelabs environments per month. Try using the "Run on your Tenancy" option, if available, to run this workshop.
+        }
+    )
+
+    validation parallel-reservation (
+        name: Parallel_Reservation
+        execution {
+            sequence: 20
+        }
+        validation {
+            type: functionBodyReturningBoolean
+            plsqlFunctionBody:
+                ```plsql
+                declare
+                
+                  v_date                 date;
+                  v_return_value         BOOLEAN;
+                  v_parallel_reservation varchar2(1);
+                  v_error                varchar2(4000);
+                  v_userrole varchar2(30); 
+                
+                  Cursor rolecursor Is
+                        select  lluser.email , llrole.name  from LL_USERS lluser, LL_USER_ROLES lluserrole , LL_ROLES llrole
+                        where upper(EMAIL) = upper(:APP_USER) AND lluser.id = lluserrole.USER_ID   AND llrole.id = lluserrole.ROLE_ID
+                        AND llrole.name = 'Multi Workshop Role';
+                
+                begin
+                
+                  begin
+                    v_date := :P320_START_DATE;
+                  exception
+                    when others then null;
+                  end;
+                
+                  begin
+                    if v_date is null and :P320_START_DATE is not null then
+                      v_date := to_date(upper(:P320_START_DATE),'DD-MON-YYYY');
+                    end if;
+                  exception
+                    when others then null;
+                  end;
+                
+                  v_parallel_reservation := ll_pkg_apex.parallel_reservation (
+                                                           p_res_id         => :P320_ID,
+                                                           p_owner          => :P320_OWNER1,
+                                                           p_start_date     => v_date,
+                                                           p_start_time     => :P320_START_TIME,
+                                                           p_start_timezone => :P320_START_TIMEZONE,
+                                                           p_event_id       => :P320_VOUCHER_ID );
+                
+                
+                  -- Added by Madhu ---
+                   For row_1 In rolecursor Loop
+                        if row_1.name = 'Multi Workshop Role' then
+                             v_userrole := 'Multi Workshop Role';
+                       end if;
+                    End Loop;  
+                  -- Updated by Madhu --
+                  if v_parallel_reservation = 'N' then
+                    v_return_value := TRUE;
+                  elsif v_userrole = 'Multi Workshop Role' then
+                    v_return_value := TRUE;
+                  else
+                    v_return_value := FALSE;
+                  end if;
+                
+                
+                  return(v_return_value);
+                
+                exception
+                  when others then begin
+                    v_error := SQLERRM;
+                    ll_pkg_log.log(10,'Error in validation');
+                    ll_pkg_log.log(10,'P320_OWNER1: '||:P320_OWNER1);
+                    ll_pkg_log.log(10,'P320_START_DATE: '||:P320_START_DATE);
+                    ll_pkg_log.log(10,'P320_START_TIME: '||:P320_START_TIME);
+                    ll_pkg_log.log(10,'P320_START_TZ: '||:P320_START_TIMEZONE);
+                    return(FALSE);
+                    end;
+                
+                end;
+                ```
+        }
+        error {
+            errorMessage:
+                ```
+                Users may have up to 2 concurrent reservations if each reservation is from a different Event Code. Otherwise, users may only have 1 reservation active at a time. 
+                <br>
+                <strong>If you are seeing this error, too many reservations are active during your chosen date/time. </strong>
+                <br>
+                In order to create another reservation, please change your date/time or delete existing reservations by going to the <strong>My Reservations</strong> page.
+                ```
+        }
+    )
+
+    validation resources-found (
+        name: Resources Found
+        execution {
+            sequence: 80
+        }
+        validation {
+            type: item=Value
+            item: P320_RESOURCES_FOUND
+            value: Y
+        }
+        error {
+            errorMessage: Too many attendees are using the same resources as this workshop needs. Please try again in 30 minutes. (Ref: NoResources)
+            displayLocation: inlineInNotification
+        }
+    )
+
+    validation validate-domain (
+        name: Validate_Domain
+        execution {
+            sequence: 90
+        }
+        validation {
+            type: functionBodyReturningBoolean
+            plsqlFunctionBody:
+                ```plsql
+                DECLARE
+                    v_workshop     VARCHAR2(10);
+                    v_event        VARCHAR2(10);
+                    v_user_email   VARCHAR2(255) := :APP_USER;
+                    v_user_domain  VARCHAR2(255);
+                    v_disallowed   VARCHAR2(4000);
+                    v_return       BOOLEAN := TRUE;
+                BEGIN
+                    IF :P320_VOUCHER_ID IS NOT NULL THEN
+                        SELECT NVL(json_value(event_config_json,'$.LabConfigRestrictions'),NULL)   -- EVENT_CONFIG_JSON    SELECT NVL(json_value(event_json, '$.LiveLabsGreenEnabled'), NULL) -- 'N'
+                        -- SELECT NVL(json_value(event_config_json,'$.LabConfigRestrictions'),NULL)
+                        INTO v_event
+                        FROM ll_vouchers
+                        WHERE id = :P320_VOUCHER_ID;
+                
+                        IF v_event = 'Y' THEN
+                            -- Extract domain from email
+                            v_user_domain := LOWER(SUBSTR(v_user_email, INSTR(v_user_email, '@') + 1));
+                
+                            -- Get allowed domains from the system_parameters table
+                            SELECT COUNT(*)
+                            INTO v_disallowed
+                            FROM ll_system_parameters 
+                            WHERE name = 'EMAIL_DOMAIN_FILTER'
+                              AND INSTR(value, v_user_domain) > 0;
+                
+                            -- Check if the user's domain is in the allowed list
+                            IF v_disallowed > 0 THEN
+                                v_return := FALSE; 
+                            ELSE
+                                v_return := TRUE; 
+                            END IF;
+                        ELSE
+                
+                    -- Return the final value
+                     v_return := TRUE;
+                        END IF;
+                    END IF;
+                
+                    RETURN v_return;
+                
+                EXCEPTION
+                    WHEN OTHERS THEN
+                        RETURN FALSE;
+                END;
+                ```
+            alwaysExecute: true
+        }
+        error {
+            errorMessage: Sorry, you can’t join this event with that email. Please log in using your company’s email address.
+            displayLocation: inlineInNotification
+        }
+    )
+
+    validation validate-green-button (
+        name: Validate_green_button
+        execution {
+            sequence: 70
+        }
+        validation {
+            type: functionBodyReturningBoolean
+            plsqlFunctionBody:
+                ```plsql
+                declare
+                v_workshop varchar2(10);
+                v_event varchar2(10);
+                begin
+                if :P320_VOUCHER_ID is not null then
+                    select nvl(json_value(event_json, '$. LiveLabsGreenEnabled'), 'N')
+                        into v_event
+                        from ll_vouchers
+                        where id = :P320_VOUCHER_ID;
+                    if v_event = 'Y' then
+                        return true;
+                    else 
+                        return false;
+                    end if;
+                else
+                    select nvl(json_value(workshop_json, '$. LiveLabsGreenEnabled'), 'N')
+                        into v_workshop
+                        from ll_workshops
+                        where id = :P320_WORKSHOP_ID;
+                    if v_workshop = 'Y' then
+                        return true;
+                    else 
+                        return false;
+                    end if;
+                end if;
+                
+                exception when others then
+                    return false;
+                    
+                end;
+                ```
+            alwaysExecute: true
+        }
+        error {
+            errorMessage: This workshop's sandbox option has been disabled. Please try using another workshop.
+            displayLocation: inlineInNotification
+        }
+    )
+
+    validation validate-ssh-key (
+        name: Validate_SSH_Key
+        execution {
+            sequence: 60
+        }
+        validation {
+            plsqlExpression: ll_pkg_reservation.validate_public_key(:P320_PUBLIC_KEY) = 'Y'
+            alwaysExecute: true
+        }
+        error {
+            errorMessage:
+                ```
+                Invalid SSH public key. Please ensure you're using a valid RSA public key (minimum RSA-2048).
+                <br>
+                Need help? <a href="https://livelabs.oracle.com/cdn/common/labs/generate-ssh-key/index.html" target="_blank">Learn how to generate SSH keys</a>
+                ```
+            associatedItem: @P320_PUBLIC_KEY
+        }
+        serverSideCondition {
+            type: expression
+            plsqlExpression: ll_pkg_apex.requires_pub_key (p_workshop_id => :P320_WORKSHOP_ID, p_event_id => :P320_VOUCHER_ID) = 'Y' and :P320_PUBLIC_KEY is not null
+        }
+    )
+
+    process count-page-and-workshop (
+        name: Count page and workshop
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                begin
+                  insert into ll_page_visits (page_id, workshop_id, app_session) values (320,:P320_WORKSHOP_ID, :APP_SESSION);
+                exception
+                  when others then
+                    ll_pkg_log.log(1,'Error during insert on ll_page_visits for page_id 320, workshop_id '||V(:P320_WORKSHOP_ID)||', app_session '||:APP_SESSION);
+                end;
+                ```
+        }
+        execution {
+            sequence: 10
+            point: afterFooter
+        }
+        advanced {
+            executionMappingIdentifier: 197455197358651227
+        }
+    )
+
+    process initialize-form-reserve-a-workshop (
+        name: Initialize form Reserve a Workshop
+        type: formInitialization
+        formRegion: @reserve-workshop-form
+        execution {
+            sequence: 10
+            point: beforeHeader
+        }
+        advanced {
+            executionMappingIdentifier: 184298538332197319
+        }
+    )
+
+    process process-from-reserve-workshop-form (
+        name: Process from Reserve Workshop Form
+        type: formAutoRowProcessing
+        formRegion: @reserve-workshop-form
+        execution {
+            sequence: 10
+        }
+        successMessage {
+            successMessage: Reservation submitted
+        }
+        advanced {
+            executionMappingIdentifier: 184601377960273415
+        }
+    )
+
+    process retrieve-wec-if-applicable (
+        name: Retrieve WEC if applicable
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                declare 
+                
+                  cursor c_wec is select tenancy_id, region_id
+                                  from ll_vouchers
+                                  where voucher_code = :WEC
+                                  and workshop_id = :P320_WORKSHOP_ID;
+                
+                begin
+                
+                  if :WEC is not null then
+                    open c_wec;
+                    fetch c_wec into :P320_tenancy_id, :P320_REGION_ID;
+                    close c_wec;
+                  end if;
+                end;
+                
+                ```
+        }
+        execution {
+            sequence: 20
+            point: beforeHeader
+        }
+        advanced {
+            executionMappingIdentifier: 184300713620197341
+        }
+    )
+
+    branch (
+        name: Go to My Reservations
+        execution {
+            sequence: 10
+        }
+        behavior {
+            target: {
+                page: 300
+            }
+        }
+        serverSideCondition {
+            whenButtonPressed: @submit-reservation
+        }
+    )
+
+    branch (
+        name: Go to My Reservations
+        execution {
+            sequence: 20
+        }
+        behavior {
+            target: {
+                page: 300
+            }
+        }
+        serverSideCondition {
+            whenButtonPressed: @update-reservation
+        }
+    )
+
+)
+

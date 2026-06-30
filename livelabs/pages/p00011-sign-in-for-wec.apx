@@ -1,0 +1,78 @@
+page 11 (
+    name: Sign in for WEC
+    alias: SIGN-IN-FOR-WEC
+    title: Sign in for WEC
+    appearance {
+        pageTemplate: @standard-trustarc-redesign
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        authorizationScheme: mustNotBePublicUser
+        formAutoComplete: false
+    }
+
+    region new (
+        name: New
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: body
+        }
+        appearance {
+            template: @/standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader js-removeLandmark
+                t-Region--noUI
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    pageItem P11_WEC (
+        type: displayOnly
+        label {
+            label: New
+            alignment: left
+        }
+        layout {
+            sequence: 20
+            region: @new
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @/optional-floating
+            templateOptions: #DEFAULT#
+        }
+        security {
+            encryptSessionState: false
+            restrictedChars: webSafe
+        }
+    )
+
+    branch (
+        name: Branch To Page 180 with WEC
+        execution {
+            sequence: 20
+            point: beforeHeader
+        }
+        behavior {
+            target: {
+                page: 180
+                items: {
+                    WEC: &P11_WEC.
+                }
+                request: &SESSION.
+            }
+        }
+    )
+
+)
+

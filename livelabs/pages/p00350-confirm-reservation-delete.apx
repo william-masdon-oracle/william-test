@@ -1,0 +1,295 @@
+page 350 (
+    name: Confirm Reservation Delete
+    alias: CONFIRM-RESERVATION-DELETE
+    title: Confirm Reservation Delete
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @/modal-dialog
+        templateOptions: #DEFAULT#
+    }
+    dialog {
+        resizable: false
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    css {
+        inline:
+            ```css
+            .ui-dialog-content {
+                position: relative !important;
+            }
+            ```
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region delete-options (
+        name: Delete Options
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <div id="DELETE_RESERVATION" style="padding: 20px; max-width: 700px; margin: 0 auto;">
+                    
+                    <div style="display: flex; flex-direction: column; gap: 12px;">
+                        
+                        <!-- Terminate Option -->
+                        <div id="terminate-option" class="action-card" style="display: flex; align-items: center; gap: 20px; border: 2px solid #d0d0d0; border-radius: 4px; padding: 20px; background-color: #ffffff; cursor: pointer; transition: all 0.2s ease;"
+                             onmouseover="this.style.borderColor='#0572ce'; this.style.backgroundColor='#f0f7ff'; this.style.boxShadow='0 2px 8px rgba(5,114,206,0.15)';" 
+                             onmouseout="this.style.borderColor='#d0d0d0'; this.style.backgroundColor='#ffffff'; this.style.boxShadow='none';">
+                            <div style="flex-shrink: 0;">
+                                <span class="t-Icon fa fa-archive" style="font-size: 48px; color: #0572ce;"></span>
+                            </div>
+                            <div style="flex: 1;">
+                                <div style="font-weight: 600; font-size: 16px; color: #333; margin-bottom: 6px;">
+                                    Keep in History (Terminate)
+                                </div>
+                                <div style="color: #707070; font-size: 14px; line-height: 1.5;">
+                                    The workshop environment will be destroyed, but you can still view this reservation in your list for future reference.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Delete Option -->
+                        <div id="delete-option" class="action-card" style="display: flex; align-items: center; gap: 20px; border: 2px solid #d0d0d0; border-radius: 4px; padding: 20px; background-color: #ffffff; cursor: pointer; transition: all 0.2s ease;"
+                             onmouseover="this.style.borderColor='#d44848'; this.style.backgroundColor='#fff5f5'; this.style.boxShadow='0 2px 8px rgba(212,72,72,0.15)';" 
+                             onmouseout="this.style.borderColor='#d0d0d0'; this.style.backgroundColor='#ffffff'; this.style.boxShadow='none';">
+                            <div style="flex-shrink: 0;">
+                                <span class="t-Icon fa fa-trash-o" style="font-size: 48px; color: #d44848;"></span>
+                            </div>
+                            <div style="flex: 1;">
+                                <div style="font-weight: 600; font-size: 16px; color: #333; margin-bottom: 6px;">
+                                    Remove Completely (Delete)
+                                </div>
+                                <div style="color: #707070; font-size: 14px; line-height: 1.5;">
+                                    This reservation will be permanently removed from your list.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Cancel Option -->
+                        <div id="cancel-option" class="action-card" style="display: flex; align-items: center; gap: 20px; border: 2px solid #d0d0d0; border-radius: 4px; padding: 20px; background-color: #ffffff; cursor: pointer; transition: all 0.2s ease;"
+                             onmouseover="this.style.borderColor='#707070'; this.style.backgroundColor='#f9f9f9'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.1)';" 
+                             onmouseout="this.style.borderColor='#d0d0d0'; this.style.backgroundColor='#ffffff'; this.style.boxShadow='none';">
+                            <div style="flex-shrink: 0;">
+                                <span class="t-Icon fa fa-times-circle-o" style="font-size: 48px; color: #707070;"></span>
+                            </div>
+                            <div style="flex: 1;">
+                                <div style="font-weight: 600; font-size: 16px; color: #333; margin-bottom: 6px;">
+                                    Cancel
+                                </div>
+                                <div style="color: #707070; font-size: 14px; line-height: 1.5;">
+                                    Do not delete this reservation and return to My Reservations page.
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+                ```
+        }
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+    )
+
+    pageItem P350_ID (
+        type: hidden
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            sessionStateProtection: checksumRequiredSessionLevel
+            restrictedChars: alphanumWithSpace
+        }
+    )
+
+    dynamicAction cancel (
+        name: Cancel
+        execution {
+            sequence: 50
+        }
+        when {
+            event: click
+            selectionType: jQuerySelector
+            jquerySelector: #cancel-option
+        }
+
+        action native-dialog-cancel (
+            action: cancelDialog
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction delete (
+        name: Delete
+        execution {
+            sequence: 40
+        }
+        when {
+            event: click
+            selectionType: jQuerySelector
+            jquerySelector: #delete-option
+        }
+
+        action native-dialog-close (
+            action: closeDialog
+            execution {
+                sequence: 40
+                fireOnInit: false
+            }
+        )
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    UPDATE ll_reservations 
+                    SET ACTIVE_FLG = 'N', delete_flg = 'Y'
+                    WHERE ID = :P350_ID;
+                    ```
+                itemsToSubmit: P350_ID
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    var $region = $('#DELETE_RESERVATION');
+                    var overlay = $('<div class="spinner-overlay"></div>').css({
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        background: 'rgba(255, 255, 255, 0.8)',
+                        zIndex: 10000,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                    }).append('<span class="u-Processing-spinner"></span>');
+                    
+                    $region.css('position', 'relative').append(overlay);
+                    ```
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction diable-terminate-after-res-end (
+        name: Diable Terminate after Res End
+        execution {
+            sequence: 60
+        }
+        when {
+            event: ready
+        }
+        serverSideCondition {
+            type: expression
+            language: sql
+            sqlExpression: ll_pkg_apex.reservation_status(:P350_ID) != 'Available' or exists (select 'x' from ll_reservations where active_flg = 'N' and id = :P350_ID)
+        }
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode: $('#terminate-option').hide();
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    dynamicAction terminate (
+        name: Terminate
+        execution {
+            sequence: 30
+        }
+        when {
+            event: click
+            selectionType: jQuerySelector
+            jquerySelector: #terminate-option
+        }
+
+        action native-dialog-close (
+            action: closeDialog
+            execution {
+                sequence: 40
+                fireOnInit: false
+            }
+        )
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    UPDATE ll_reservations 
+                    SET ACTIVE_FLG = 'N'
+                    WHERE ID = :P350_ID;
+                    ```
+                itemsToSubmit: P350_ID
+            }
+            execution {
+                sequence: 30
+                fireOnInit: false
+            }
+        )
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    var $region = $('#DELETE_RESERVATION');
+                    var overlay = $('<div class="spinner-overlay"></div>').css({
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        background: 'rgba(255, 255, 255, 0.8)',
+                        zIndex: 10000,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                    }).append('<span class="u-Processing-spinner"></span>');
+                    
+                    $region.css('position', 'relative').append(overlay);
+                    ```
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+)
+

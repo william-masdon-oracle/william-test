@@ -1,0 +1,1693 @@
+page 100 (
+    name: Workshops & Sprints
+    alias: LIVELABS-WORKSHOP-CARDS
+    title: Workshops & Sprints
+    appearance {
+        pageTemplate: @standard-trustarc-redesign
+        templateOptions: [
+            #DEFAULT#
+            t-PageBody--noContentPadding
+        ]
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+        warnOnUnsavedChanges: false
+    }
+    javaScript {
+        functionAndGlobalVariableDeclaration:
+            ```javascript-browser
+            function toggleAiShell() {
+              const shell = document.getElementById("ai-shell");
+              const text = document.getElementById("ai-toggle-text");
+              const icon = document.getElementById("ai-toggle-icon");
+            
+              shell.classList.toggle("is-expanded");
+            
+              const expanded = shell.classList.contains("is-expanded");
+              text.textContent = expanded ? "Show less" : "Show more";
+              icon.className = expanded ? "fa fa-chevron-up" : "fa fa-chevron-down";
+            }
+            ```
+        executeWhenPageLoads:
+            ```javascript-browser
+            const input = document.querySelector('#P0_GLOBAL_SEARCH input.apex-item-text');
+            input.value = $v("SEARCH");
+            ```
+    }
+    css {
+        inline:
+            ```css
+            .ai-shell {
+              position: relative;
+              margin-bottom: 1rem;
+            }
+            
+            .ai-shell__body {
+              position: relative;
+              max-height: 260px;
+              min-height: 260px;
+              overflow: hidden;
+              transition: max-height 0.3s ease;
+              padding-bottom: 12px;
+            }
+            
+            .ai-shell__body::after {
+              content: "";
+              position: absolute;
+              left: 0;
+              right: 0;
+              bottom: 0;
+              height: 120px;
+              background: linear-gradient(
+                to bottom,
+                rgba(250, 249, 248, 0),
+                rgba(250, 249, 248, 0.65) 65%,
+                rgba(250, 249, 248, 1)
+              );
+              pointer-events: none;
+              transition: opacity 0.3s ease;
+            }
+            
+            .ai-shell.is-expanded .ai-shell__body {
+              max-height: 5000px;
+            }
+            
+            .ai-shell.is-expanded .ai-shell__body::after {
+              opacity: 0;
+            }
+            
+            .ai-answer {
+              opacity: 0;
+              transform: translateY(6px);
+              transition: opacity 0.5s ease, transform 0.5s ease;
+            }
+            
+            .ai-shell.is-loaded .ai-answer {
+              opacity: 1;
+              transform: translateY(0);
+            }
+            
+            .ai-shell.is-loaded .ai-skeleton {
+              display: none;
+            }
+            
+            .ai-skeleton {
+              padding: 6px 0 14px;
+            }
+            
+            .ai-skeleton__line {
+              height: 18px;
+              border-radius: 999px;
+              margin-bottom: 12px;
+              background: linear-gradient(90deg, #ece9e4 25%, #f4f1ec 50%, #ece9e4 75%);
+              background-size: 200% 100%;
+              animation: ai-skeleton-shimmer 1.6s ease-in-out infinite;
+            }
+            
+            .w-92 { width: 92%; }
+            .w-90 { width: 90%; }
+            .w-86 { width: 86%; }
+            .w-84 { width: 84%; }
+            .w-78 { width: 78%; }
+            .w-72 { width: 72%; }
+            
+            @keyframes ai-skeleton-shimmer {
+              0% { background-position: 200% 0; }
+              100% { background-position: -200% 0; }
+            }
+            
+            .ai-shell__footer {
+              padding-top: 8px;
+            }
+            
+            .ai-show-more {
+              width: 100%;
+              min-height: 48px;
+              border-radius: 999px;
+              border: 1px solid #d8d4ce;
+              background: transparent;
+              cursor: pointer;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              gap: 10px;
+              font-weight: 600;
+            }
+            
+            
+            
+            
+            :root { --a-cv-media-overlay-color: transparent; }
+            
+            .top-right {
+                position: float;
+                margin: 0px 0px 5px 5px;
+                float: right;
+            }
+            
+            .cards-class {
+                color: black;
+                background-color: white;
+            }
+            
+            
+            .a-CardView-header { align-items: start; }
+            
+            /* .a-CardView-media {
+                background-color: white;
+            } */
+            
+            .VERIFIED {
+                color:#F0CC71;
+                background-color: #312D2A;
+                background-image: url(#APP_FILES#abstracts-open-dark-4.webp);
+                /* --a-cv-media-overlay-color:  #312D2A; */
+            }
+            
+            .VERIFIED .a-CardView-media--cover {
+                background-image: url('#APP_IMAGES.abstracts-open-dark-4.webp'); /* Use #APP_IMAGES for local static files */
+                background-size: cover; /* Cover the entire area */
+                background-position: center; /* Center the image */
+                background-repeat: no-repeat; /* Prevent repeating */
+            }
+            
+            .apex-item-comboselect, .apex-item-comboselect input {
+                display: flex !important;
+            }
+            
+            
+            .featured-workshop-cards .a-CardView-mediaImg {
+                content: url('#APP_FILES#card-bg-brown.webp');
+            }
+            
+            .featured-workshop-cards * {
+                color: white !important;
+            }
+            
+            
+            .workshop-card-class .a-CardView-mediaImg {
+                content:  url('#APP_FILES#card-background-white.webp');
+            }
+            .livestack-card-class-tan .a-CardView-mediaImg {
+                content:  url('#APP_FILES#card-background-tan.webp');
+            }
+            
+            .livestack-card-class {
+                position: relative;
+                overflow: hidden;
+            }
+            
+            .livestack-card-class::before {
+                content: 'LiveStack';
+                position: absolute;
+                top: 10px;
+                right: -55px;
+                width: 160px;
+                transform: rotate(45deg);
+                background: #F1B13F;
+                color: #000;
+                font-size: 11px;
+                font-weight: bold;
+                text-align: center;
+                padding: 6px 0;
+                z-index: 10;
+                letter-spacing: 1px;
+            }
+            ```
+    }
+    security {
+        authentication: public
+        formAutoComplete: false
+    }
+
+    region ai-content-cards (
+        name: AI Content Cards
+        type: cards
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                WITH ai_results AS (
+                      SELECT
+                          a.ID,
+                          TO_CHAR(a.ID) AS result_key,
+                          a.NAME,
+                          ll_pkg_admin.cut_off_at_space(a.DESC_SHORT, 100) AS DESC_SHORT,
+                          ll_pkg_apex.getWorkshopCardIcon(a.ID) AS ICON_BLOB,
+                          ll_pkg_admin.hours_readable(a.TIME_IN_HOURS, 'SHORT', 'N') AS WORKSHOP_TIME,
+                          NVL2(a.TIME_IN_HOURS, 'fa fa-clock-o', NULL) AS TIME_ICON,
+                          CASE WHEN a.pg_views > 500 THEN a.pg_views || ' Views' ELSE '' END AS CARD_VIEWS,
+                          CASE
+                              WHEN REGEXP_LIKE(JSON_VALUE(workshop_json, '$.UpdatedOn'), '^\d{1,2}/\d{1,2}/\d{4}$')
+                                  THEN TO_DATE(JSON_VALUE(workshop_json, '$.UpdatedOn'), 'MM/DD/YYYY')
+                              ELSE created_date
+                          END AS updated_on,
+                          'WORKSHOP' AS source_type,
+                          '' AS source_type_class
+                      FROM ll_workshops a
+                      WHERE a.active_flg = 'Y'
+                          AND INSTR(',' || :P100_AI_WORKSHOPS || ',', ',' || TO_CHAR(a.id) || ',') > 0
+                
+                      UNION ALL
+                
+                      SELECT
+                          a.ID,
+                          '-' || TO_CHAR(a.ID) AS result_key,
+                          a.NAME,
+                          ll_pkg_admin.cut_off_at_space(a.DESC_SHORT, 100) AS DESC_SHORT,
+                          null AS ICON_BLOB,
+                          to_char((select count(*) from ll_livestack_entries where livestack_id = a.id)) || ' Steps' as WORKSHOP_TIME,
+                          'fa fa-list' as TIME_ICON,
+                          CASE WHEN a.pg_views > 500 THEN a.pg_views || ' Views' ELSE '' END AS CARD_VIEWS,
+                          a.created_date AS updated_on,
+                          'LIVESTACK' AS source_type,
+                          'livestack-card-class' AS source_type_class
+                      FROM ll_livestacks_vw a
+                      WHERE a.active_flg = 'Y'
+                          AND INSTR(',' || :P100_AI_WORKSHOPS || ',', ',-' || TO_CHAR(a.id) || ',') > 0
+                  )
+                  SELECT
+                      id,
+                      name,
+                      desc_short,
+                      icon_blob,
+                      workshop_time,
+                      time_icon,
+                      card_views,
+                      updated_on,
+                      result_key,
+                      source_type,
+                      source_type_class
+                  FROM ai_results
+                  ORDER BY INSTR(',' || :P100_AI_WORKSHOPS || ',', ',' || result_key || ',')
+                ```
+            pageItemsToSubmit: P100_AI_WORKSHOPS
+        }
+        layout {
+            sequence: 10
+            parentRegion: @livelabs-ai-companion
+            slot: subRegions
+        }
+        appearance {
+            template: @/cards-container
+            templateOptions: [
+                #DEFAULT#
+                t-CardsRegion--hideHeader js-addHiddenHeadingRoleDesc
+                margin-top-lg
+                margin-left-none
+                margin-right-md
+            ]
+        }
+        advanced {
+            htmlDomId: ai-cards-apex
+        }
+        componentAppearance {
+            gridColumns: 3
+            cssClasses: featured-workshop-cards
+        }
+        card {
+            cssClasses: [
+                cards-class
+                &SOURCE_TYPE_CLASS.
+            ]
+            primaryKeyColumn1: ID
+            primaryKeyColumn2: RESULT_KEY
+        }
+        title {
+            advancedFormatting: true
+            htmlExpression: <span style="font-weight:700;">&NAME.</span>
+        }
+        body {
+            column: DESC_SHORT
+        }
+        secondaryBody {
+            advancedFormatting: true
+            htmlExpression:
+                ```html
+                <span class="&TIME_ICON." style="font-size:1em;vertical-align:baseline;color:black;">&nbsp;&nbsp;&WORKSHOP_TIME.</span>
+                <span style="float:right;color:black;">&CARD_VIEWS.</span>
+                
+                ```
+        }
+        iconAndBadge {
+            iconSource: imageBlobColumn
+            imageColumn: ICON_BLOB
+            iconPosition: end
+            iconDescription: Workshop Icon
+        }
+        media {
+            source: imageUrl
+            url: #APP_FILES#test-background.webp
+            position: background
+            sizing: cover
+            imageDescription: Workshop Background
+        }
+        pagination {
+            type: page
+            cardsPerPage: 6
+        }
+        messages {
+            whenNoDataFound: No content was found matching your query
+        }
+
+        action action (
+            type: fullCard
+            layout {
+                sequence: 10
+            }
+            behavior {
+                target: {
+                    page: 180
+                    items: {
+                        WID: &ID.
+                    }
+                    clearCache: 180
+                    action: resetRegions
+                }
+            }
+            serverSideCondition {
+                type: item=value
+                item: SOURCE_TYPE
+                value: WORKSHOP
+            }
+        )
+
+        action action-2 (
+            type: fullCard
+            layout {
+                sequence: 20
+            }
+            behavior {
+                target: {
+                    page: 400
+                    items: {
+                        P400_ID: &ID.
+                    }
+                    clearCache: 400
+                    action: resetRegions
+                }
+            }
+            serverSideCondition {
+                type: item=value
+                item: SOURCE_TYPE
+                value: LIVESTACK
+            }
+        )
+
+    )
+
+    region facets (
+        name: Facets
+        type: facetedSearch
+        source {
+            filteredRegion: @workshops-sprints-and-livestacks-cards
+        }
+        layout {
+            sequence: 10
+            slot: body
+            columnSpan: 3
+        }
+        appearance {
+            template: @/blank-with-attributes
+            templateOptions: [
+                #DEFAULT#
+                margin-top-lg
+                margin-left-md
+                margin-right-sm
+            ]
+        }
+        settings {
+            compactNosThreshold: 10000
+            showCurrentFacets: true
+            showTotalRowCount: true
+            totalRowCountLabel: "Number of Workshops: "
+            displayChartForTopNValues: 10
+        }
+
+        facet P100_FOCUS_AREA (
+            type: checkboxGroup
+            label {
+                label: Focus Area
+            }
+            lov {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select level3, id from ll_tags where level1 = 'Focus' and active_flg = 'Y' and level3 is not null
+                    union
+                    select level2, id from ll_tags where level1 = 'Focus' and active_flg = 'Y' and level3 is null
+                    ```
+            }
+            layout {
+                sequence: 80
+            }
+            listEntries {
+                maxDisplayedEntries: 5
+                displayFilterInitially: true
+            }
+            actionsMenu {
+                chart: false
+            }
+            advanced {
+                collapsible: true
+            }
+            source {
+                databaseColumn: TAGS
+            }
+            multipleValues {
+                type: delimitedList
+            }
+        )
+
+        facet P100_LANGUAGE (
+            type: checkboxGroup
+            label {
+                label: Language
+            }
+            lov {
+                type: sqlQuery
+                sqlQuery: select level2, id from ll_tags where level1 = 'Language' and active_flg = 'Y'
+            }
+            layout {
+                sequence: 60
+            }
+            listEntries {
+                zeroCountEntries: disable
+                maxDisplayedEntries: 5
+            }
+            actionsMenu {
+                filter: false
+            }
+            advanced {
+                collapsible: true
+            }
+            source {
+                databaseColumn: LANGUAGE_TAG
+            }
+            multipleValues {
+                type: delimitedList
+            }
+            serverSideCondition {
+                type: never
+            }
+        )
+
+        facet P100_LEVEL (
+            type: checkboxGroup
+            label {
+                label: Level
+            }
+            lov {
+                type: sqlQuery
+                sqlQuery: select level2, id from ll_tags where level1 = 'Level' and active_flg = 'Y' order by id asc
+            }
+            layout {
+                sequence: 20
+            }
+            listEntries {
+                zeroCountEntries: disable
+                sortByTopCounts: false
+                maxDisplayedEntries: 5
+            }
+            actionsMenu {
+                filter: false
+                chart: false
+            }
+            advanced {
+                collapsible: true
+            }
+            source {
+                databaseColumn: TAGS
+            }
+            multipleValues {
+                type: delimitedList
+            }
+        )
+
+        facet P100_PRODUCT (
+            type: checkboxGroup
+            label {
+                label: Product
+            }
+            lov {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select level3, id from ll_tags where level1 = 'Product' and active_flg = 'Y' and level3 is not null
+                    union
+                    select level2, id from ll_tags where level1 = 'Product' and active_flg = 'Y' and level3 is null
+                    ```
+            }
+            layout {
+                sequence: 60
+            }
+            listEntries {
+                maxDisplayedEntries: 5
+                displayFilterInitially: true
+            }
+            actionsMenu {
+                chart: false
+            }
+            advanced {
+                collapsible: true
+            }
+            source {
+                databaseColumn: TAGS
+            }
+            multipleValues {
+                type: delimitedList
+            }
+        )
+
+        facet P100_ROLE (
+            type: checkboxGroup
+            label {
+                label: Role
+            }
+            lov {
+                type: sqlQuery
+                sqlQuery: select level2, id from ll_tags where level1 = 'Role' and active_flg = 'Y' order by level2 asc
+            }
+            layout {
+                sequence: 90
+            }
+            listEntries {
+                sortByTopCounts: false
+                maxDisplayedEntries: 5
+            }
+            actionsMenu {
+                filter: false
+                chart: false
+            }
+            advanced {
+                collapsible: true
+            }
+            source {
+                databaseColumn: TAGS
+            }
+            multipleValues {
+                type: delimitedList
+            }
+        )
+
+        facet P100_SALES_FOCUS (
+            type: checkboxGroup
+            label {
+                label: Sales Focus
+            }
+            lov {
+                type: sqlQuery
+                sqlQuery: select level2, id from ll_tags where level1 = 'Sales Focus' and active_flg = 'Y'
+            }
+            layout {
+                sequence: 100
+            }
+            listEntries {
+                zeroCountEntries: disable
+                maxDisplayedEntries: 5
+            }
+            actionsMenu {
+                filter: false
+                chart: false
+            }
+            advanced {
+                collapsible: true
+            }
+            source {
+                databaseColumn: TAGS
+            }
+            multipleValues {
+                type: delimitedList
+            }
+            serverSideCondition {
+                type: never
+            }
+        )
+
+        facet P100_SALES_PLAY (
+            type: checkboxGroup
+            label {
+                label: Sales Play
+            }
+            lov {
+                type: sqlQuery
+                sqlQuery: select level2, id from ll_tags where level1 = 'Sales Play' and active_flg = 'Y'
+            }
+            layout {
+                sequence: 110
+            }
+            listEntries {
+                zeroCountEntries: disable
+                maxDisplayedEntries: 5
+            }
+            actionsMenu {
+                filter: false
+                chart: false
+            }
+            advanced {
+                collapsible: true
+            }
+            source {
+                databaseColumn: TAGS
+            }
+            multipleValues {
+                type: delimitedList
+            }
+            serverSideCondition {
+                type: never
+            }
+        )
+
+        facet P100_WORKSHOP_SERIES (
+            type: checkboxGroup
+            label {
+                label: Workshop Series
+            }
+            lov {
+                type: sqlQuery
+                sqlQuery: select level2, id from ll_tags where level1 = 'Workshop Series' and active_flg = 'Y'
+            }
+            layout {
+                sequence: 70
+            }
+            listEntries {
+                maxDisplayedEntries: 5
+            }
+            actionsMenu {
+                filter: false
+                chart: false
+            }
+            advanced {
+                collapsible: true
+            }
+            source {
+                databaseColumn: TAGS
+            }
+            multipleValues {
+                type: delimitedList
+            }
+        )
+
+        facet P100_WORKSHOP_TYPE (
+            type: checkboxGroup
+            label {
+                label: Type
+            }
+            lov {
+                type: sqlQuery
+                sqlQuery: select level2, id from ll_tags where level1 = 'Workshop Type' and active_flg = 'Y'
+            }
+            layout {
+                sequence: 40
+            }
+            listEntries {
+                maxDisplayedEntries: 5
+            }
+            actionsMenu {
+                filter: false
+                chart: false
+            }
+            advanced {
+                collapsible: true
+            }
+            source {
+                databaseColumn: TAGS
+            }
+            multipleValues {
+                type: delimitedList
+            }
+        )
+
+    )
+
+    region livelabs-ai-companion (
+        name: LiveLabs AI Companion
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <!-- <div class="ai-shell" id="ai-shell">
+                
+                  <div class="ai-shell__body" id="ai-shell-body">
+                    <div style="background-color: #f0f2f4; border: 1px solid #b0b8c1; border-radius: 12px; padding: 12px 16px; margin-bottom: 16px;">
+                        <p style="margin: 0; color: #5a5a5a; font-size: 0.8rem; line-height: 1.6;">
+                            These are the top 6 workshops handpicked by AI based on the <strong>meaning</strong> of your search, not just the words.
+                            You may notice some of these workshops repeated in the keyword results below. That means they matched your query both semantically and by keyword.
+                        </p>
+                    </div>
+                    <div id="ai-search-loading" class="ai-loading" style="display:none;">
+                      <img src="#APP_FILES#ai-search-animation.gif" style="height: 175px;" alt="Loading">
+                    </div>
+                
+                    <div id="ai-search-answer" class="ai-answer"></div>
+                    <div id="ai-search-cards"></div>
+                  </div>
+                
+                  <div class="ai-shell__footer">
+                        <button class="ai-show-more" onclick="toggleAiShell()">
+                            Show more
+                        </button>
+                    </div>
+                </div> -->
+                
+                
+                
+                <div class="ai-shell" id="ai-shell">
+                  <div class="ai-shell__body">
+                    <div style="background-color: #f0f2f4; border: 1px solid #b0b8c1; border-radius: 12px; padding: 12px 16px; margin-bottom: 16px;">
+                        <p style="margin: 0; color: #5a5a5a; font-size: 0.8rem; line-height: 1.6;">
+                            These are the top 6 workshops handpicked by AI based on the <strong>meaning</strong> of your search, not just the words.
+                            You may notice some of these workshops repeated in the keyword results below. That means they matched your query both semantically and by keyword.
+                        </p>
+                    </div>
+                    <div class="ai-skeleton" id="ai-skeleton">
+                      <div class="ai-skeleton__line w-92"></div>
+                      <div class="ai-skeleton__line w-86"></div>
+                      <div class="ai-skeleton__line w-78"></div>
+                      <div class="ai-skeleton__line w-90"></div>
+                      <div class="ai-skeleton__line w-84"></div>
+                      <div class="ai-skeleton__line w-72"></div>
+                    </div>
+                
+                    <div id="ai-search-answer" class="ai-answer"></div>
+                    <div id="ai-search-cards"></div>
+                  </div>
+                
+                  <div class="ai-shell__footer">
+                    <button type="button" class="ai-show-more" id="ai-toggle-btn" onclick="toggleAiShell()">
+                      <span id="ai-toggle-text">Show more</span>
+                      <span id="ai-toggle-icon" class="fa fa-chevron-down"></span>
+                    </button>
+                  </div>
+                </div>
+                ```
+        }
+        layout {
+            sequence: 10
+            parentRegion: @search-results
+            slot: subRegions
+        }
+        appearance {
+            template: @/content-block
+            templateOptions: [
+                #DEFAULT#
+                t-ContentBlock--h2
+                t-ContentBlock--headingFontAlt
+                margin-top-lg
+                margin-left-md
+                margin-right-md
+            ]
+        }
+    )
+
+    region search-results (
+        name: Search Results
+        type: staticContent
+        layout {
+            sequence: 60
+            slot: body
+            startNewRow: false
+        }
+        appearance {
+            template: @/blank-with-attributes-no-grid
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    region workshops-sprints-and-livestacks (
+        name: Workshops, Sprints, and LiveStacks
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <div style="
+                    background-color: #f0f2f4;
+                    border: 1px solid #b0b8c1;
+                    border-radius: 12px;
+                    padding: 12px 16px;
+                    margin-bottom: 16px;
+                ">
+                  <p style="margin: 0; color: #5a5a5a; font-size: 0.8rem; line-height: 1.6;">
+                    Content matching your search keywords, powered by Oracle Text. Results are filtered by how closely they match your search terms.
+                
+                  </p>
+                </div>
+                ```
+        }
+        layout {
+            sequence: 20
+            parentRegion: @search-results
+            slot: subRegions
+        }
+        appearance {
+            template: @/content-block
+            templateOptions: [
+                #DEFAULT#
+                t-ContentBlock--h2
+                t-ContentBlock--headingFontAlt
+                margin-top-lg
+                margin-left-md
+                margin-right-md
+            ]
+        }
+    )
+
+    region workshops-sprints-and-livestacks-cards (
+        name: Workshops, Sprints, and LiveStacks Cards
+        type: cards
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                WITH search_ctx AS (
+                    SELECT NULLIF(TRIM(:SEARCH), '') AS search_term,
+                           ll_pkg_ai.format_ctx_query(NULLIF(TRIM(:SEARCH), '')) AS ctx_query
+                    FROM dual
+                ),
+                workshop_distances AS (
+                    SELECT
+                        a.ID,
+                        a.NAME,
+                        a.DESC_SHORT,
+                        ll_pkg_admin.hours_readable(a.TIME_IN_HOURS, 'SHORT', 'N')          AS WORKSHOP_TIME,
+                        NVL2(a.TIME_IN_HOURS, 'fa fa-clock-o', NULL)                        AS TIME_ICON,
+                        CASE WHEN a.pg_views > 500 THEN a.pg_views || ' Views' ELSE '' END  AS CARD_VIEWS,
+                        a.pg_views,
+                        CASE
+                            WHEN REGEXP_LIKE(JSON_VALUE(workshop_json, '$.UpdatedOn'), '^\d{1,2}/\d{1,2}/\d{4}$')
+                                THEN TO_DATE(JSON_VALUE(workshop_json, '$.UpdatedOn'), 'MM/DD/YYYY')
+                            ELSE created_date
+                        END                                                                  AS updated_on,
+                        NVL(mv.tags, '')                                                     AS tags,
+                        'WORKSHOP'                                                           AS source_type,
+                        CASE WHEN s.search_term IS NOT NULL THEN
+                            MIN(VECTOR_DISTANCE(v.embedding, ll_pkg_ai.get_search_embedding(s.search_term), COSINE))
+                        ELSE 0
+                        END                                                                  AS distance
+                    FROM ll_workshops a
+                        LEFT JOIN ll_workshop_tags_search_mv mv ON a.id = mv.workshop_id
+                        LEFT JOIN ll_workshop_vectors v         ON v.workshop_id = a.id
+                        CROSS JOIN search_ctx s
+                    WHERE a.active_flg = 'Y'
+                        AND CASE
+                            WHEN s.search_term IS NULL THEN 1
+                            WHEN s.ctx_query   IS NULL THEN 1
+                            WHEN CONTAINS(a.name, s.ctx_query, 1) > 0 THEN 1
+                            ELSE 0
+                        END = 1
+                    GROUP BY
+                        a.ID, a.NAME, a.DESC_SHORT,
+                        ll_pkg_admin.hours_readable(a.TIME_IN_HOURS, 'SHORT', 'N'),
+                        NVL2(a.TIME_IN_HOURS, 'fa fa-clock-o', NULL),
+                        CASE WHEN a.pg_views > 500 THEN a.pg_views || ' Views' ELSE '' END,
+                        a.pg_views,
+                        CASE
+                            WHEN REGEXP_LIKE(JSON_VALUE(workshop_json, '$.UpdatedOn'), '^\d{1,2}/\d{1,2}/\d{4}$')
+                                THEN TO_DATE(JSON_VALUE(workshop_json, '$.UpdatedOn'), 'MM/DD/YYYY')
+                            ELSE created_date
+                        END,
+                        NVL(mv.tags, ''),
+                        s.search_term
+                ),
+                livestack_distances AS (
+                    SELECT
+                        a.ID,
+                        a.NAME,
+                        a.DESC_SHORT,
+                        to_char((select count(*) from ll_livestack_entries where livestack_id = a.id)) || ' Steps' as WORKSHOP_TIME,
+                        'fa fa-list' as TIME_ICON,
+                        CASE WHEN a.pg_views > 500 THEN a.pg_views || ' Views' ELSE '' END  AS CARD_VIEWS,
+                        a.pg_views,
+                        a.created_date                                                       AS updated_on,
+                        NVL(mv.tags, '')                                                     AS tags,
+                        'LIVESTACK'                                                          AS source_type,
+                        CASE WHEN s.search_term IS NOT NULL THEN
+                            MIN(VECTOR_DISTANCE(v.embedding, ll_pkg_ai.get_search_embedding(s.search_term), COSINE))
+                        ELSE 0
+                        END                                                                  AS distance
+                    FROM ll_livestacks_vw a
+                        LEFT JOIN ll_livestack_tags_search_mv mv ON a.id = mv.livestack_id
+                        LEFT JOIN ll_livestack_vectors v ON v.livestack_id = a.id
+                        CROSS JOIN search_ctx s
+                    WHERE a.active_flg = 'Y'
+                        AND CASE
+                            WHEN s.search_term IS NULL THEN 1
+                            WHEN s.ctx_query   IS NULL THEN 1
+                            WHEN CONTAINS(a.name, s.ctx_query, 1) > 0 THEN 1
+                            ELSE 0
+                        END = 1
+                    GROUP BY
+                        a.ID, a.NAME, a.DESC_SHORT,
+                        CASE WHEN a.pg_views > 500 THEN a.pg_views || ' Views' ELSE '' END,
+                        a.pg_views,
+                        a.created_date,
+                        s.search_term,
+                        NVL(mv.tags, '')
+                ),
+                all_results AS (
+                    SELECT * FROM workshop_distances
+                    UNION ALL
+                    SELECT * FROM livestack_distances
+                )
+                SELECT
+                    r.*,
+                    CASE r.source_type
+                        WHEN 'WORKSHOP'  THEN ll_pkg_apex.getWorkshopCardIcon(r.ID)
+                        WHEN 'LIVESTACK' THEN null
+                    END AS ICON_BLOB,
+                    CASE r.source_type
+                        WHEN 'LIVESTACK' THEN 'livestack-card-class livestack-card-class-tan'
+                        ELSE 'workshop-card-class'
+                    END AS source_type_class
+                FROM all_results r
+                ORDER BY distance
+                ```
+            pageItemsToSubmit: SEARCH
+        }
+        orderBy {
+            type: item
+            item: {
+                itemName: P100_SORT_BY
+                orderBys: {
+                    DISTANCE: distance asc nulls last, pg_views desc nulls last
+                    POPULAR: pg_views desc nulls last
+                    NAME: name asc nulls last
+                    NAME1: name desc nulls last
+                    UPDATED_ON: updated_on desc nulls last
+                    UPDATED_ON1: updated_on asc nulls last
+                }
+            }
+        }
+        layout {
+            sequence: 10
+            parentRegion: @workshops-sprints-and-livestacks
+            slot: subRegions
+        }
+        appearance {
+            template: @/cards-container
+            templateOptions: [
+                #DEFAULT#
+                margin-left-none
+                margin-right-md
+            ]
+        }
+        componentAppearance {
+            gridColumns: 3
+        }
+        card {
+            cssClasses: [
+                cards-class
+                &SOURCE_TYPE_CLASS.
+            ]
+            primaryKeyColumn1: ID
+        }
+        title {
+            advancedFormatting: true
+            htmlExpression: <span style="font-weight:700;">&NAME.</span>
+        }
+        body {
+            column: DESC_SHORT
+            cssClasses: u-lineclamp-3
+        }
+        secondaryBody {
+            advancedFormatting: true
+            htmlExpression:
+                ```html
+                <span class="&TIME_ICON." style="font-size:1em;vertical-align:baseline;color:black;">&nbsp;&nbsp;&WORKSHOP_TIME.</span>
+                <span style="float:right;color:black;">&CARD_VIEWS.</span>
+                
+                ```
+        }
+        iconAndBadge {
+            iconSource: imageBlobColumn
+            imageColumn: ICON_BLOB
+            iconPosition: end
+            iconDescription: Workshop Icon
+        }
+        media {
+            source: imageUrl
+            url: #APP_FILES#test-background.webp
+            position: background
+            sizing: cover
+        }
+        pagination {
+            type: page
+            cardsPerPage: 30
+        }
+        messages {
+            whenNoDataFound: No content was found matching your criteria
+        }
+
+        action action (
+            type: fullCard
+            layout {
+                sequence: 20
+            }
+            behavior {
+                target: {
+                    page: 400
+                    items: {
+                        P400_ID: &ID.
+                    }
+                    action: resetRegions
+                }
+            }
+            serverSideCondition {
+                type: item=value
+                item: SOURCE_TYPE
+                value: LIVESTACK
+            }
+        )
+
+        action action-2 (
+            type: fullCard
+            layout {
+                sequence: 10
+            }
+            behavior {
+                target: {
+                    page: 180
+                    items: {
+                        WID: &ID.
+                    }
+                    clearCache: 180
+                    action: resetRegions
+                }
+            }
+            serverSideCondition {
+                type: item=value
+                item: SOURCE_TYPE
+                value: WORKSHOP
+            }
+        )
+
+    )
+
+    pageItem C (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 50
+            slot: body
+        }
+        security {
+            restrictedChars: alphanumWithSpace
+        }
+    )
+
+    pageItem ME (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 40
+            slot: body
+        }
+        security {
+            restrictedChars: alphanumWithSpace
+        }
+    )
+
+    pageItem P100_AI_ANSWER (
+        type: hidden
+        layout {
+            sequence: 20
+            region: @livelabs-ai-companion
+            slot: regionBody
+        }
+        sessionState {
+            storage: request
+        }
+    )
+
+    pageItem P100_AI_WORKSHOPS (
+        type: hidden
+        layout {
+            sequence: 40
+            region: @livelabs-ai-companion
+            slot: regionBody
+        }
+        sessionState {
+            storage: request
+        }
+    )
+
+    pageItem P100_SEARCH_BAR (
+        type: combobox
+        label {
+            alignment: left
+        }
+        settings {
+            infiniteScroll: false
+            manualEntriesItem: P1_MANUAL_ENTRIES
+            valueHtmlExpression:
+                ```html
+                <div class="search-result-container" style="display: flex; align-items: center;">
+                   <img class="a-CardView-iconImg" src="&PAR_LINK." loading="lazy" style="margin-right: 8px;">
+                   <span>&DISPLAY_VAL.</span>
+                </div>
+                ```
+        }
+        lov {
+            type: sharedComponent
+            lov: @copy-of-ll-workshops-active
+        }
+        layout {
+            sequence: 30
+            region: @/global-search
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @/hidden
+            templateOptions: #DEFAULT#
+            valuePlaceholder: Search for workshops and sprints...
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            used: always
+        }
+        serverSideCondition {
+            type: never
+        }
+        security {
+            restrictedChars: webSafe
+        }
+    )
+
+    pageItem P100_SORT_BY (
+        type: selectList
+        label {
+            label: Sort By
+            alignment: left
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC2:Most Relevant;DISTANCE,Most Popular;POPULAR,Title: A-Z;NAME,Title: Z-A;NAME1,Updated: Newest First;UPDATED_ON,Updated: Oldest First;UPDATED_ON1
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 40
+            region: @facets
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @/optional-floating
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        validation {
+            valueRequired: true
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        default {
+            type: static
+            staticValue: DISTANCE
+        }
+    )
+
+    pageItem SEARCH (
+        type: hidden
+        layout {
+            sequence: 30
+            slot: body
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            restrictedChars: webSafe
+        }
+    )
+
+    button clear-search-filters (
+        buttonName: Clear_Search_Filters
+        label: Clear Search
+        layout {
+            sequence: 10
+            region: @facets
+            slot: regionBody
+        }
+        appearance {
+            buttonTemplate: @/text
+            templateOptions: [
+                #DEFAULT#
+                t-Button--large
+                t-Button--stretch
+                t-Button--padLeft
+                t-Button--padRight
+                t-Button--padTop
+                t-Button--padBottom
+            ]
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button copy-search-filter (
+        buttonName: Copy_Search_Filter
+        label: Copy Search Link
+        layout {
+            sequence: 20
+            region: @facets
+            slot: regionBody
+        }
+        appearance {
+            buttonTemplate: @/text
+            templateOptions: [
+                #DEFAULT#
+                t-Button--large
+                t-Button--stretch
+                t-Button--padLeft
+                t-Button--padRight
+                t-Button--padTop
+                t-Button--padBottom
+            ]
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    dynamicAction ai-answer-update (
+        name: AI Answer Update
+        execution {
+            sequence: 60
+        }
+        when {
+            selectionType: items
+            items: P100_AI_ANSWER
+        }
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode: apex_util.pause(0.1);
+            }
+            execution {
+                sequence: 40
+                fireOnInit: false
+            }
+        )
+
+        action native-hide (
+            action: hide
+            affectedElements {
+                selectionType: jquerySelector
+                jquerySelector: #ai-search-loading
+            }
+            execution {
+                sequence: 30
+                fireOnInit: false
+            }
+        )
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    document.getElementById('ai-search-answer').innerHTML = $v('P100_AI_ANSWER');
+                    document.getElementById("ai-shell").classList.add("is-loaded");
+                    
+                    const cards = document.getElementById("ai-cards-apex");
+                    const host = document.getElementById("ai-search-cards");
+                    
+                    if (cards && host && cards.parentNode !== host) {
+                        host.appendChild(cards);
+                    }
+                    ```
+            }
+            execution {
+                sequence: 60
+                fireOnInit: false
+            }
+        )
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @ai-content-cards
+            }
+            execution {
+                sequence: 80
+                fireOnInit: false
+            }
+        )
+
+        action native-show (
+            action: show
+            affectedElements {
+                selectionType: region
+                region: @ai-content-cards
+            }
+            execution {
+                sequence: 90
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction clear-search-and-facets (
+        name: Clear Search and Facets
+        execution {
+            sequence: 20
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @clear-search-filters
+        }
+
+        action native-hide (
+            action: hide
+            affectedElements {
+                selectionType: region
+                region: @livelabs-ai-companion
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @workshops-sprints-and-livestacks-cards
+            }
+            execution {
+                sequence: 30
+                fireOnInit: false
+            }
+        )
+
+        action native-set-value (
+            action: setValue
+            settings {
+                type: plsqlExpression
+                plsqlExpression: null
+            }
+            affectedElements {
+                selectionType: items
+                items: [
+                    P100_LEVEL
+                    P100_WORKSHOP_TYPE
+                    P100_WORKSHOP_SERIES
+                    P100_ROLE
+                    P100_FOCUS_AREA
+                    P100_PRODUCT
+                    P100_SALES_FOCUS
+                    P100_SALES_PLAY
+                    SEARCH
+                    P0_GLOBAL_SEARCH
+                    P0_MOBILE_SEARCH
+                ]
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction copy-search-and-filters (
+        name: Copy Search and Filters
+        execution {
+            sequence: 30
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @copy-search-filter
+        }
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    // Build the pretty URL dynamically
+                    // Get the base URL up to /ords/ or /pls/apex/
+                    let pathname = window.location.pathname;
+                    let baseUrl = window.location.origin;
+                    
+                    if (pathname.includes('/ords/')) {
+                        baseUrl += pathname.substring(0, pathname.indexOf('/ords/') + 6);
+                    } else if (pathname.includes('/pls/apex/')) {
+                        baseUrl += pathname.substring(0, pathname.indexOf('/pls/apex/') + 10);
+                    } else {
+                        // Fallback - shouldn't happen but just in case
+                        baseUrl += '/ords/';
+                    }
+                    // recreate baseurl with pretty url
+                    baseUrl += 'r/dbpm/livelabs/livelabs-workshop-cards';
+                    
+                    // Build URL parameters from page items (only if they have values)
+                    let params = new URLSearchParams();
+                    
+                    // Helper function to add parameter if it has a value
+                    function addParam(itemName, paramName) {
+                    let value = apex.item(itemName).getValue();
+                    if (value && value !== '') {
+                        params.append(paramName, value);
+                    }
+                    }
+                    
+                    // Add all search parameters
+                    addParam('P100_LEVEL', 'p100_level');
+                    addParam('P100_WORKSHOP_TYPE', 'p100_workshop_type');
+                    addParam('P100_WORKSHOP_SERIES', 'p100_workshop_series');
+                    addParam('P100_PRODUCT', 'p100_product');
+                    addParam('P100_FOCUS_AREA', 'p100_focus_area');
+                    addParam('P100_ROLE', 'p100_role');
+                    addParam('P100_SORT_BY', 'p100_sort_by');
+                    addParam('SEARCH', 'search');
+                    
+                    // add clear parameter so session state doesn't mess up link
+                    params.append('clear', 100);
+                    
+                    // Build final URL
+                    let shareUrl = baseUrl + (params.toString() ? '?' + params.toString() : '');
+                    
+                    // Copy to clipboard
+                    navigator.clipboard.writeText(shareUrl).then(function() {
+                    // Show success message
+                    apex.message.showPageSuccess('Link copied to clipboard!');
+                    }).catch(function(err) {
+                    // Fallback for older browsers
+                    apex.message.showErrors('Failed to copy link');
+                    console.error('Copy failed:', err);
+                    });
+                    ```
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction get-ai-answer (
+        name: Get AI Answer
+        execution {
+            sequence: 50
+        }
+        when {
+            event: ready
+        }
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    DECLARE
+                        v_workshop_ids SYS.ODCINUMBERLIST;
+                        v_ids_csv VARCHAR2(4000) := '';
+                        v_answer CLOB;
+                    BEGIN
+                        -- Clear previous results first
+                        :P100_AI_WORKSHOPS := NULL;
+                        :P100_AI_ANSWER := NULL;
+                    
+                        ll_pkg_ai.search_workshops_ai(
+                            p_query        => :SEARCH,
+                            p_ai_answer    => v_answer,
+                            p_workshop_ids => v_workshop_ids
+                        );
+                    
+                        :P100_AI_ANSWER := v_answer;
+                    
+                        -- store search query 
+                        if nvl(ll_pkg_admin.system_parameter('STORE_SEARCH_HISTORY'), 'N') = 'Y' then 
+                            insert into ll_search_history (search_query, search_response, app_session, app_user)
+                            values (:SEARCH, v_answer, :APP_SESSION, :APP_USER);
+                        end if;
+                    
+                        -- Positive values are workshop IDs; negative values are LiveStack IDs. 
+                        IF v_workshop_ids IS NOT NULL AND v_workshop_ids.COUNT > 0 THEN
+                            FOR i IN 1..v_workshop_ids.COUNT LOOP
+                                v_ids_csv := v_ids_csv ||
+                                             CASE WHEN i > 1 THEN ',' END ||
+                                             v_workshop_ids(i);
+                            END LOOP;
+                        END IF;
+                    
+                        :P100_AI_WORKSHOPS := v_ids_csv;
+                    END;
+                    ```
+                itemsToSubmit: SEARCH
+                itemsToReturn: [
+                    P100_AI_ANSWER
+                    P100_AI_WORKSHOPS
+                ]
+            }
+            execution {
+                sequence: 30
+                waitForResult: false
+            }
+            serverSideCondition {
+                type: expression
+                plsqlExpression: trim(:SEARCH) is not null
+            }
+        )
+
+        action native-hide (
+            action: hide
+            affectedElements {
+                selectionType: region
+                region: @ai-content-cards
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    dynamicAction refresh-for-sort (
+        name: Refresh for Sort
+        execution {
+            sequence: 40
+        }
+        when {
+            selectionType: items
+            items: P100_SORT_BY
+        }
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @workshops-sprints-and-livestacks-cards
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction set-search (
+        name: Set Search
+        execution {
+            sequence: 10
+        }
+        when {
+            event: ready
+        }
+
+        action native-hide (
+            action: hide
+            affectedElements {
+                selectionType: region
+                region: @livelabs-ai-companion
+            }
+            execution {
+                sequence: 40
+            }
+            serverSideCondition {
+                type: expression
+                plsqlExpression: :SEARCH is null or trim(:SEARCH) = ''
+            }
+        )
+
+        action native-set-value (
+            action: setValue
+            settings {
+                value: &SEARCH.
+            }
+            affectedElements {
+                selectionType: items
+                items: [
+                    P1_SEARCH_BAR
+                    P1_MOBILE_SEARCH
+                ]
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    process count-page (
+        name: Count page
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                begin
+                  insert into ll_page_visits (page_id, app_session) values (100, :APP_SESSION);
+                  commit;
+                exception
+                  when others then
+                    ll_pkg_log.log(1,'Error during insert on ll_page_visits for page_id 100, app_session '||:APP_SESSION);
+                end;
+                ```
+        }
+        execution {
+            sequence: 10
+            point: afterFooter
+        }
+        advanced {
+            executionMappingIdentifier: 197455071961651226
+        }
+    )
+
+    process trim-search (
+        name: Trim Search
+        type: executeCode
+        source {
+            plsqlCode: :SEARCH := NULLIF(SUBSTR(TRIM(:SEARCH), 1, 200), '');
+        }
+        execution {
+            sequence: 10
+            point: beforeHeader
+        }
+        advanced {
+            executionMappingIdentifier: 4567917706499339
+        }
+    )
+
+)
+

@@ -1,0 +1,516 @@
+page 300 (
+    name: My Reservations
+    alias: MY-RESERVATIONS
+    title: My Reservations
+    appearance {
+        pageTemplate: @standard-trustarc-redesign
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    css {
+        inline:
+            ```css
+            @media (max-width: 1450px){
+                .a-CardView-actionsPrimary:has(.a-CardView-button) ~ .a-CardView-actionsSecondary .launch-label .a-CardView-buttonLabel {
+                    display: none;
+                }
+            
+                .a-CardView-actionsPrimary:has(.a-CardView-button) ~ .a-CardView-actionsSecondary .launch-label .a-CardView-buttonIcon {
+                    margin: 0px;
+                }
+            }
+            
+            @media (max-width: 1135px){
+                .a-CardView-actionsPrimary:has(.a-CardView-button) ~ .a-CardView-actionsSecondary .launch-label .a-CardView-buttonLabel {
+                    display: inline-block;
+                }
+                .a-CardView-actionsPrimary:has(.a-CardView-button) ~ .a-CardView-actionsSecondary .launch-label .a-CardView-buttonIcon {
+                    margin-right: 6px;
+                }
+            }
+            
+            @media (max-width: 1020px){
+                .a-CardView-actionsPrimary:has(.a-CardView-button) ~ .a-CardView-actionsSecondary .launch-label .a-CardView-buttonLabel {
+                    display: none;
+                }
+                .a-CardView-actionsPrimary:has(.a-CardView-button) ~ .a-CardView-actionsSecondary .launch-label .a-CardView-buttonIcon {
+                    margin: 0px;
+                }
+            }
+            
+            @media (max-width: 799px){
+                .a-CardView-actionsPrimary:has(.a-CardView-button) ~ .a-CardView-actionsSecondary .launch-label .a-CardView-buttonLabel {
+                    display: inline-block;
+                }
+                .a-CardView-actionsPrimary:has(.a-CardView-button) ~ .a-CardView-actionsSecondary .launch-label .a-CardView-buttonIcon {
+                    margin-right: 6px;
+                }
+            }
+            
+            @media (max-width: 768px){
+                .a-CardView-actionsPrimary:has(.a-CardView-button) ~ .a-CardView-actionsSecondary .launch-label .a-CardView-buttonLabel {
+                    display: none;
+                }
+                .a-CardView-actionsPrimary:has(.a-CardView-button) ~ .a-CardView-actionsSecondary .launch-label .a-CardView-buttonIcon {
+                    margin: 0px;
+                }
+            }
+            
+            @media (max-width: 751px){
+                .a-CardView-actionsPrimary:has(.a-CardView-button) ~ .a-CardView-actionsSecondary .launch-label .a-CardView-buttonLabel {
+                    display: inline-block;
+                }
+                .a-CardView-actionsPrimary:has(.a-CardView-button) ~ .a-CardView-actionsSecondary .launch-label .a-CardView-buttonIcon {
+                    margin-right: 6px;
+                }
+            }
+            
+            @media (max-width: 470px){
+                .a-CardView-actionsPrimary:has(.a-CardView-button) ~ .a-CardView-actionsSecondary .launch-label .a-CardView-buttonLabel {
+                    display: none;
+                }
+                .a-CardView-actionsPrimary:has(.a-CardView-button) ~ .a-CardView-actionsSecondary .launch-label .a-CardView-buttonIcon {
+                    margin: 0px;
+                }
+            }
+            ```
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region my-reservations (
+        name: My Reservations
+        type: cards
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                WITH user_reservations AS (
+                    -- Get base reservation data WITHOUT calling the view functions yet
+                    SELECT 
+                        r.ID,
+                        r.TITLE,
+                        r.WORKSHOP_ID,
+                        r.START_DATE,
+                        r.START_TIME,
+                        r.START_TIMEZONE,
+                        r.STOP_DATE,
+                        r.STOP_TIME,
+                        r.VOUCHER_ID,
+                        r.ACTIVE_FLG,
+                        r.livestack_id,
+                        r.livestack_entry_id,
+                        -- Calculate GMT times once here instead of in the view
+                        ll_pkg_reservation.date_gmt(r.START_DATE, r.START_TIME, r.START_TIMEZONE) as START_GMT,
+                        ll_pkg_reservation.stop_date_gmt(r.WORKSHOP_ID, r.START_DATE, r.START_TIME, r.START_TIMEZONE,
+                                                         r.STOP_DATE, r.STOP_TIME, r.VOUCHER_ID) as STOP_GMT
+                    FROM LL_RESERVATIONS r
+                    WHERE r.OWNER1 = :APP_USER
+                      AND NVL(r.DELETE_FLG, 'N') != 'Y'
+                ),
+                -- Calculate ALL reservation steps data in ONE query instead of per-reservation
+                reservation_steps_agg AS (
+                    SELECT 
+                        llrs.reservation_id,
+                        SUM(CASE llrs.create_success WHEN 'Y' THEN 1 ELSE 0 END) as create_success_count,
+                        SUM(CASE llrs.create_success WHEN 'N' THEN 1 ELSE 0 END) as create_error_count,
+                        SUM(CASE WHEN llrs.create_success IS NULL THEN llfs.create_seconds ELSE 0 END) as seconds_left,
+                        SUM(CASE WHEN llfs.step_code='CustomWaitSeconds' 
+                                 THEN TO_NUMBER(JSON_VALUE(llrs.flow_step_param,'$.param1')) 
+                                 ELSE 0 END) as custom_wait_seconds,
+                        MAX(CASE WHEN llrs.create_success IN ('Y','W') THEN llrs.create_date ELSE NULL END) as last_success_date
+                    FROM user_reservations ur
+                    INNER JOIN ll_reservation_steps llrs ON llrs.reservation_id = ur.ID
+                    INNER JOIN ll_flow_steps llfs ON llrs.flow_step_id = llfs.id
+                    GROUP BY llrs.reservation_id
+                ),
+                -- Calculate Terraform timing in ONE query
+                terraform_steps_agg AS (
+                    SELECT 
+                        llrs.reservation_id,
+                        SUM(NVL(llts.max_duration_minutes/60/24,0) - 
+                            (CASE WHEN llrs.create_date IS NOT NULL THEN SYSDATE - llrs.create_date ELSE 0 END)
+                           )*60*60*24 as tf_seconds_left
+                    FROM user_reservations ur
+                    INNER JOIN ll_reservation_steps llrs ON llrs.reservation_id = ur.ID
+                    INNER JOIN ll_tf_scripts llts ON JSON_VALUE(llrs.flow_step_param,'$.type') = 'ociTfCheckStatus'
+                                                  AND JSON_VALUE(llrs.flow_step_param,'$.param1') = llts.id
+                    WHERE NVL(llrs.create_success,'N') <> 'Y'
+                    GROUP BY llrs.reservation_id
+                ),
+                -- Calculate status in SQL instead of PL/SQL function
+                reservation_with_status AS (
+                    SELECT 
+                        ur.*,
+                        rsa.seconds_left,
+                        rsa.custom_wait_seconds,
+                        rsa.last_success_date,
+                        tsa.tf_seconds_left,
+                        -- Inline status calculation (replaces reservation_status function)
+                        CASE 
+                            WHEN ur.STOP_GMT < SYSDATE THEN 
+                                'Completed'
+                            WHEN SYSDATE BETWEEN ur.START_GMT AND ur.STOP_GMT AND rsa.seconds_left > 0 THEN
+                                'Estimated Time Remaining: ' || ll_pkg_admin.hours_readable(
+                                    NVL((rsa.last_success_date + 
+                                        (NVL(rsa.seconds_left + rsa.custom_wait_seconds + NVL(tsa.tf_seconds_left,0), 0)/60/60/24)
+                                        ) - SYSDATE, 5/60) * 24, 
+                                    'SHORT')
+                            WHEN SYSDATE BETWEEN ur.START_GMT AND ur.STOP_GMT AND rsa.seconds_left = 0 THEN
+                                'Available'
+                            WHEN SYSDATE BETWEEN ur.START_GMT AND ur.STOP_GMT THEN
+                                'Pending creation'
+                            WHEN ur.START_GMT > SYSDATE THEN
+                                'Scheduled'
+                            ELSE
+                                'Unknown status'
+                        END as res_status
+                    FROM user_reservations ur
+                    LEFT JOIN reservation_steps_agg rsa ON rsa.reservation_id = ur.ID
+                    LEFT JOIN terraform_steps_agg tsa ON tsa.reservation_id = ur.ID
+                ),
+                -- Get unique workshop IDs first, then get icons
+                unique_workshops AS (
+                    SELECT DISTINCT WORKSHOP_ID
+                    FROM reservation_with_status
+                ),
+                workshop_data AS (
+                    SELECT
+                        uw.WORKSHOP_ID,
+                        llw.name as workshop_name,
+                        llw.workshop_json,
+                        -- Get icon once per workshop, not per reservation
+                        NVL(
+                            (SELECT icon_blob 
+                             FROM ll_workshop_icons 
+                             WHERE title = JSON_VALUE(llw.workshop_json, '$.PrimaryProduct')),
+                            (SELECT icon_blob FROM ll_workshop_icons WHERE title = 'Other')
+                        ) as icon_blob
+                    FROM unique_workshops uw
+                    LEFT JOIN ll_workshops llw ON llw.id = uw.WORKSHOP_ID
+                )
+                SELECT 
+                    rws.ID,
+                    NVL(wd.workshop_name, rws.TITLE) as title,
+                    ll_pkg_reservation.date_full(rws.START_GMT, rws.START_TIMEZONE) as description,
+                    rws.res_status as status,
+                    CASE WHEN rws.res_status NOT IN ('Completed', 'Terminating', 'Available', 'Scheduled') 
+                         THEN rws.res_status 
+                         ELSE '' 
+                    END as countdown,
+                    rws.WORKSHOP_ID,
+                    llv.voucher_code,
+                    rws.active_flg as active_flg,
+                    wd.icon_blob as ICON_BLOB,
+                    rws.livestack_id,
+                    rws.livestack_entry_id
+                FROM reservation_with_status rws
+                LEFT JOIN LL_VOUCHERS llv ON rws.voucher_id = llv.id
+                LEFT JOIN workshop_data wd ON wd.WORKSHOP_ID = rws.WORKSHOP_ID
+                ORDER BY 
+                    CASE rws.res_status
+                        WHEN 'Scheduled' THEN 10
+                        WHEN 'Completed' THEN 99
+                        ELSE 1 
+                    END,
+                    CASE rws.res_status
+                        WHEN 'Scheduled' THEN (rws.START_GMT - SYSDATE)
+                        ELSE (SYSDATE - rws.START_GMT)
+                    END;
+                ```
+        }
+        layout {
+            sequence: 10
+            parentRegion: @my-reservations-2
+            slot: subRegions
+        }
+        appearance {
+            template: @/cards-container
+            templateOptions: [
+                #DEFAULT#
+                t-CardsRegion--styleA
+            ]
+        }
+        advanced {
+            htmlDomId: my-reservations-region
+        }
+        headerAndFooter {
+            headerText:
+                ```html
+                <table><tr><td><p style="margin-left: 20px; margin-right: 20px">All your current workshop reservations are shown below. You can edit active or pending reservations, view workshop details, attend an available workshop, or delete a reservation.</p>
+                </td><td><p style="margin-left: 20px; margin-right: 20px"><b>To access this page again</b> click the user dropdown in the top right corner and select <b>My Reservations</b></p>
+                </td></table><br><p style="margin-left: 20px; margin-right: 20px"><strong>Note:</strong> The status of your reservations will be emailed to you. Check your mail for any status updates.</p>
+                
+                ```
+        }
+        card {
+            primaryKeyColumn1: ID
+        }
+        title {
+            advancedFormatting: true
+            htmlExpression: <span style="font-weight:700;">&TITLE.</span>
+        }
+        subtitle {
+            column: DESCRIPTION
+        }
+        body {
+            advancedFormatting: true
+            htmlExpression: &COUNTDOWN.
+        }
+        iconAndBadge {
+            iconSource: imageBlobColumn
+            imageColumn: ICON_BLOB
+            iconPosition: end
+        }
+        performance {
+            lazyLoading: true
+        }
+        pagination {
+            type: page
+        }
+
+        action action (
+            label: Launch Workshop
+            layout {
+                sequence: 20
+            }
+            behavior {
+                target: {
+                    page: 410
+                    items: {
+                        P410_ID: &ID.
+                        P410_LIVESTACK_ID: &LIVESTACK_ID.
+                        P410_LIVESTACK_ENTRY_ID: &LIVESTACK_ENTRY_ID.
+                    }
+                    clearCache: 410
+                }
+            }
+            appearance {
+                displayType: textWithIcon
+                icon: fa-play-circle
+                hot: true
+            }
+            serverSideCondition {
+                type: expression
+                plsqlExpression: ((:STATUS in ('Available')) and (:ACTIVE_FLG = 'Y')) and :LIVESTACK_ID is not null
+            }
+        )
+
+        action action-2 (
+            label: Launch Workshop
+            layout {
+                sequence: 10
+            }
+            behavior {
+                target: {
+                    page: 200
+                    items: {
+                        P200_ID: &ID.
+                    }
+                    clearCache: 200
+                }
+            }
+            appearance {
+                displayType: textWithIcon
+                icon: fa-play-circle
+                hot: true
+            }
+            serverSideCondition {
+                type: expression
+                plsqlExpression: ((:STATUS in ('Available')) and (:ACTIVE_FLG = 'Y')) and :LIVESTACK_ID is null
+            }
+        )
+
+        action action-3 (
+            label: Edit Reservation
+            layout {
+                sequence: 30
+            }
+            behavior {
+                target: {
+                    page: 320
+                    items: {
+                        P320_ID: &ID.
+                    }
+                    clearCache: 320
+                }
+            }
+            appearance {
+                displayType: textWithIcon
+                icon: fa-calendar-edit
+            }
+            serverSideCondition {
+                type: itemIsInColonDelimitedList
+                item: STATUS
+                list: Scheduled
+            }
+        )
+
+        action action-4 (
+            label: Details
+            layout {
+                position: secondary
+                sequence: 40
+            }
+            behavior {
+                target: {
+                    page: 180
+                    items: {
+                        WID: &WORKSHOP_ID.
+                    }
+                    clearCache: 180
+                }
+            }
+            appearance {
+                displayType: textWithIcon
+                icon: fa-info-circle-o
+                cssClasses: launch-label
+            }
+            serverSideCondition {
+                type: expression
+                plsqlExpression: ((:STATUS in ('Completed', 'Terminating', 'Available', 'Scheduled')) and (:VOUCHER_CODE is null))
+            }
+        )
+
+        action action-5 (
+            label: Details
+            layout {
+                position: secondary
+                sequence: 50
+            }
+            behavior {
+                target: {
+                    page: 180
+                    items: {
+                        WEC: &VOUCHER_CODE.
+                    }
+                    clearCache: 180
+                }
+            }
+            appearance {
+                displayType: textWithIcon
+                icon: fa-info-circle-o
+                cssClasses: launch-label
+            }
+            serverSideCondition {
+                type: expression
+                plsqlExpression: ((:STATUS in ('Completed', 'Terminating', 'Available', 'Scheduled')) and (:VOUCHER_CODE is not null))
+            }
+        )
+
+        action action-6 (
+            label: Delete
+            layout {
+                position: secondary
+                sequence: 60
+            }
+            behavior {
+                target: {
+                    page: 350
+                    items: {
+                        P350_ID: &ID.
+                    }
+                    clearCache: 350
+                }
+            }
+            appearance {
+                displayType: textWithIcon
+                icon: fa-trash-o
+                cssClasses: launch-label
+            }
+            serverSideCondition {
+                type: itemIsInColonDelimitedList
+                item: STATUS
+                list: [
+                    Available
+                    Scheduled
+                    Completed
+                ]
+            }
+        )
+
+    )
+
+    region my-reservations-2 (
+        name: My Reservations
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: body
+        }
+        appearance {
+            template: @/content-block
+            templateOptions: [
+                #DEFAULT#
+                t-ContentBlock--h2
+                t-ContentBlock--headingFontAlt
+            ]
+        }
+    )
+
+    dynamicAction refresh-page-after-dialog-close-da (
+        name: refresh page after dialog close DA
+        execution {
+            sequence: 20
+        }
+        when {
+            event: apexafterclosedialog
+            selectionType: region
+            region: @my-reservations-2
+        }
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @my-reservations
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction refresh-page-every-minute-da (
+        name: refresh page every minute DA
+        execution {
+            sequence: 10
+        }
+        when {
+            event: ready
+        }
+
+        action refresh-page-every-minute (
+            name: refresh page every minute
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    // Refresh the region every 60 seconds continuously
+                    function refreshMyReservations() {
+                        apex.region('my-reservations-region').refresh();
+                        // Schedule the next refresh
+                        window.setTimeout(refreshMyReservations, 60000);
+                    }
+                    
+                    // Start the first refresh after 30 seconds
+                    window.setTimeout(refreshMyReservations, 60000);
+                    
+                    
+                    ```
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+)
+

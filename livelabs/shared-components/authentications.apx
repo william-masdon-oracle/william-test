@@ -1,0 +1,19 @@
+authentication apex-express (
+    name: Apex Express
+    type: oracleApexAccounts
+    loginProcessing {
+        switchInSession: true
+    }
+)
+
+authentication oracle-sso (
+    name: Oracle SSO
+    type: samlSignIn
+    loginProcessing {
+        switchInSession: true
+    }
+    sessionSharing {
+        type: workspaceSharing
+    }
+)
+

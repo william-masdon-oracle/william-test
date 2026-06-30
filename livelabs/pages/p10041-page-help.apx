@@ -1,0 +1,100 @@
+page 10041 (
+    name: Help
+    alias: PAGE_HELP
+    title: Help
+    appearance {
+        pageTemplate: @standard-trustarc-redesign
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+        warnOnUnsavedChanges: false
+    }
+    security {
+        authentication: public
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+    config {
+        buildOption: @feature-about-page
+    }
+
+    region oracle-livelabs-faq (
+        name: Oracle LiveLabs FAQ
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <h1>Oracle LiveLabs - Frequently Asked Questions</h1>
+                ​
+                <div style="width:800px">
+                <p>These are the most frequently asked questions about LiveLabs. If you'd like to suggest another question to be answered, use the <strong>Submit Feedback</strong> link in the menu bar.</p>
+                ​
+                <h4>Is LiveLabs free?</h4>
+                <p style="padding-left:20px">Yes, LiveLabs is completely free. To reserve a workshop, simply log in with your Oracle (oracle.com) account! The only other detail we need is the day and time you want to run the workshop.</p>
+                ​
+                <h4>How does LiveLabs work?</h4>
+                <p style="padding-left:20px">LiveLabs allows you to try Oracle Cloud free of charge and learn a technical skill without creating an account or Oracle Cloud tenancy. Each LiveLabs reservation provides a self-contained environment to run the workshop. The environment is removed once the reservation time expires.</p>
+                ​
+                <h4>Can I run these workshops on my own Oracle Cloud account?</h4>
+                <p style="padding-left:20px">Absolutely! Many of the workshops provided through LiveLabs can also be run on other Oracle Cloud accounts, including <a href="https://www.oracle.com/cloud/free/#always-free"  target="_blank">Always Free</a>, <a href="https://www.oracle.com/cloud/free/#free-cloud-trial" target="_blank">Free Trial accounts</a>, and <a href="https://www.oracle.com/cloud/bring-your-own-license/faq/universal-credit-pricing.html" target="_blank">your own Oracle Cloud tenancy</a>.</p>
+                ​
+                <h4>Can I try out other things on my workshop reservation?</h4>
+                <p style="padding-left:20px">All LiveLabs reservations are provided free of charge but are subject to <a href="https://www.oracle.com/legal/terms.html" target="_blank">Oracle's Terms of Use</a> and are provided solely for the purpose of running the workshop specified for any given reservation. Any breach of these terms will result in the immediate cancelation of the reservation and the deletion of all objects created as part of the reservation.</p>
+                ​
+                <h4>Can I download my objects from my workshop reservation?</h4>
+                <p style="padding-left:20px">No, objects created in LiveLabs reservations cannot be downloaded. If you need to download the objects you create, we recommend you run the workshop in your own tenancy, e.g. Always Free, or Free Trials.</p>
+                ​
+                <h4>What happens to my objects when my reservation expires?</h4>
+                <p style="padding-left:20px">At the end of your LiveLabs reservation, the environment created for the workshop and all the objects created in the workshop are deleted from the tenancy. If you need to preserve objects you create, we recommend you run the workshop in another tenancy, e.g. Always Free. Your objects will persist according to the rules and policies of that tenancy.</p>
+                ​
+                <h4>Why do workshops have a Workshop Duration and a Lease Time?</h4>
+                <p style="padding-left:20px">The Workshop Duration is an estimate of the time required to complete the workshop. The Lease Time, which is generally twice the duration time, is the amount of time we give you to complete the workshop on your reservation. </p>
+                ​
+                <h4>How do I reset my password?</h4>
+                <p style="padding-left:20px">You can reset the password for a LiveLabs reservation on the Attend Workshop page for that reservation. Click <strong>My Reservations</strong> in the menu bar, then click <strong>Attend Workshop</strong> for the reservation. On the <strong>Attend Workshop</strong> page, click the <strong>Reset Workshop Password</strong> button. You can then view the new password in the <strong>Workshop Details</strong> section of the <strong>Attend Workshop</strong> page.</p>
+                ​
+                <h4>Can I get more time to finish the workshop?</h4>
+                <p style="padding-left:20px">You can extend the lease time for a LiveLabs reservation on the Attend Workshop page for that reservation. Click <strong>My Reservations</strong> in the menu bar, then click <strong>Attend Workshop</strong> for the reservation. On the <strong>Attend Workshop</strong> page, click the <strong>Extend Workshop Reservation</strong> button. Extra time will be added to your reservation's lease time. The time remaining for your reservation is shown in the <strong>Workshop Details</strong> section of the <strong>Attend Workshop</strong> page.</p>
+                ​
+                <h4>Which web browser should I use for LiveLabs?</h4>
+                <p style="padding-left:20px">Currently, you'll get the best experience using LiveLabs on Chrome, Firefox and Safari browsers.</p>
+                ​
+                <h4>How can I have workshop content and the Oracle Cloud console side-by-side on the screen?</h4>
+                <p style="padding-left:20px">If you'd like to split your screen so you can view Oracle Cloud in one window and the LiveLabs workshop in the other, follow these instructions:</p>
+                <p style="padding-left:20px"><b>For Windows:</b></p>
+                <ul style="padding-left:20px">
+                <li>Open Oracle Cloud in one browser window and the Oracle LiveLabs Workshop content in another.</li>
+                <li>Click your cursor in the Oracle Cloud window, the press the Windows key and the left arrow key.</li>
+                <li>Repeat the process for the Oracle LiveLabs workshop window, but press the right arrow key instead.</li>
+                </ul>
+                <p style="padding-left:20px"><b>For Mac</b> - Note: Split view requires OS X El Capitan or later (10.11.6):</p>
+                <ul style="padding-left:20px">
+                <li>Hover your pointer over the full-screen button <img src="#APP_IMAGES#full-screen-mac.webp" alt="Full Screen Button"> in the upper-left corner of your Oracle Cloud window. Or click and hold the button.</li>
+                <li>Choose ”Tile Window to Left of Screen”. The window then fills the left side of the screen.</li>
+                <li>Repeat step 1 for the Oracle LiveLabs workshop window, but this time choose ”Tile Window to Right of Screen” from the menu.</li>
+                </ul>
+                </div>
+                ```
+        }
+        layout {
+            sequence: 10
+            slot: body
+        }
+        appearance {
+            template: @/standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader js-removeLandmark
+                t-Region--noUI
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+)
+

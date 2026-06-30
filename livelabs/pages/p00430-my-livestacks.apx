@@ -1,0 +1,660 @@
+page 430 (
+    name: My LiveStacks
+    alias: MY-LIVESTACKS
+    title: My LiveStacks
+    appearance {
+        pageTemplate: @standard-trustarc-redesign
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    css {
+        inline:
+            ```css
+            .a-GV-altMessage-icon .a-Icon.fa.fa-search {
+                color: var(--a-gv-nodata-message-text-color);
+            }
+            ```
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region completed (
+        name: Completed
+        type: staticContent
+        layout {
+            sequence: 40
+            parentRegion: @my-livestacks
+            slot: subRegions
+        }
+        appearance {
+            template: @/standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader js-removeLandmark
+                t-Region--noBorder
+                t-Region--scrollBody
+            ]
+            cssClasses: u-color-20-bg
+        }
+    )
+
+    region completed-cards (
+        name: Completed Cards
+        type: cards
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select
+                      c.id,
+                      c.name,
+                      c.desc_short,
+                      s.id as ls_user_id
+                  from ll_livestacks c
+                  join ll_livestack_users s
+                    on s.livestack_id = c.id
+                   and s.user_email    = :APP_USER
+                   and s.status = 'Completed'
+                  where nvl(c.active_flg, 'N') <> 'N'
+                  order by s.completed_date desc;
+                ```
+        }
+        layout {
+            sequence: 20
+            parentRegion: @completed
+            slot: regionBody
+        }
+        appearance {
+            template: @/cards-container
+            templateOptions: [
+                #DEFAULT#
+                t-CardsRegion--hideHeader js-addHiddenHeadingRoleDesc
+            ]
+        }
+        card {
+            primaryKeyColumn1: ID
+        }
+        title {
+            column: NAME
+        }
+        body {
+            column: DESC_SHORT
+            cssClasses: u-lineclamp-5
+        }
+        pagination {
+            type: page
+            cardsPerPage: 6
+        }
+        messages {
+            whenNoDataFound: <span class="u-text-body-2">No Completed LiveStacks found</span>
+            noDataFoundIcon: fa-search
+        }
+
+        action action (
+            label: View
+            layout {
+                sequence: 20
+            }
+            behavior {
+                target: {
+                    page: 400
+                    items: {
+                        P400_ID: &ID.
+                    }
+                }
+            }
+            appearance {
+                displayType: textWithIcon
+                icon: fa-eye
+                hot: true
+            }
+        )
+
+        action action-2 (
+            label: Edit
+            layout {
+                position: secondary
+                sequence: 40
+            }
+            behavior {
+                target: {
+                    page: 435
+                    items: {
+                        P435_LIVESTACK_ID: &ID.
+                        P435_LIVESTACK_USER_ID: &LS_USER_ID.
+                        P435_LIVESTACK_REGION: COMPLETED
+                    }
+                }
+            }
+            appearance {
+                displayType: textWithIcon
+                icon: fa-pencil-square-o
+            }
+        )
+
+        action action-3 (
+            type: fullCard
+            layout {
+                sequence: 10
+            }
+            behavior {
+                target: {
+                    page: 400
+                    items: {
+                        P400_ID: &ID.
+                    }
+                }
+            }
+        )
+
+    )
+
+    region in-progress (
+        name: In Progress
+        type: staticContent
+        layout {
+            sequence: 20
+            parentRegion: @my-livestacks
+            slot: subRegions
+        }
+        appearance {
+            template: @/standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader js-removeLandmark
+                t-Region--noBorder
+                t-Region--scrollBody
+            ]
+            cssClasses: u-color-16-bg
+        }
+    )
+
+    region in-progress-cards (
+        name: In Progress Cards
+        type: cards
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select
+                    c.id,
+                    c.name,
+                    c.desc_short,
+                    sum(case when p.completed_flg = 'Y' then 1 else 0 end) as completed_steps,
+                    count(ci.id) as total_steps,
+                    case
+                        when count(ci.id) = 0 then 0
+                        else round(
+                          sum(case when p.completed_flg = 'Y' then 1 else 0 end)
+                          / count(ci.id) * 100
+                        )
+                    end as pct_complete,
+                    s.id as ls_user_id
+                from ll_livestacks c
+                join ll_livestack_users s
+                    on s.livestack_id = c.id
+                    and s.user_email    = :APP_USER
+                    and nvl(s.status, 'N')   = 'In Progress'
+                join ll_livestack_entries ci
+                    on ci.livestack_id = c.id
+                left join ll_livestack_user_progress p
+                    on p.entry_id       = ci.id
+                    and p.user_email    = s.user_email
+                where nvl(c.active_flg, 'N') <> 'N'
+                group by c.id, c.name, c.desc_short, ls_user_id
+                -- having sum(case when p.completed_flg = 'Y' then 1 else 0 end) >= 1
+                --     and sum(case when p.completed_flg = 'Y' then 1 else 0 end) < count(ci.id)
+                order by max(p.completed_date) desc, c.name;
+                ```
+        }
+        layout {
+            sequence: 30
+            parentRegion: @in-progress
+            slot: regionBody
+        }
+        appearance {
+            template: @/cards-container
+            templateOptions: [
+                #DEFAULT#
+                t-CardsRegion--hideHeader js-addHiddenHeadingRoleDesc
+            ]
+        }
+        card {
+            primaryKeyColumn1: ID
+        }
+        title {
+            column: NAME
+        }
+        body {
+            column: DESC_SHORT
+            cssClasses: u-lineclamp-3
+        }
+        secondaryBody {
+            advancedFormatting: true
+            htmlExpression:
+                ```html
+                <style>
+                    .ll-progress {
+                    height: 8px;
+                    background: #e6e6e6;
+                    border-radius: 999px;
+                    overflow: hidden;
+                    margin-top: 10px;
+                  }
+                  .ll-progress__bar {
+                    height: 100%;
+                    background: #2db24a; /* green */
+                    width: 0;
+                  }
+                  .ll-progress__text {
+                    margin-top: 6px;
+                    font-size: 12px;
+                    color: #666;
+                  }
+                </style>
+                
+                <div class="ll-progress" role="progressbar"
+                    aria-valuenow="&PCT_COMPLETE."
+                    aria-valuemin="0" aria-valuemax="100">
+                <div class="ll-progress__bar" style="width:&PCT_COMPLETE.%"></div>
+                </div>
+                <div class="ll-progress__text">
+                &COMPLETED_STEPS. / &TOTAL_STEPS. completed
+                </div>
+                ```
+        }
+        pagination {
+            type: page
+            cardsPerPage: 6
+        }
+        messages {
+            whenNoDataFound: <span class="u-text-body-2">No LiveStacks are In Progress</span>
+            noDataFoundIcon: fa-search
+        }
+
+        action action (
+            label: Resume
+            layout {
+                sequence: 20
+            }
+            behavior {
+                target: {
+                    page: 400
+                    items: {
+                        P400_ID: &ID.
+                    }
+                }
+            }
+            appearance {
+                displayType: textWithIcon
+                icon: fa-play
+                hot: true
+            }
+        )
+
+        action action-2 (
+            label: Edit
+            layout {
+                position: secondary
+                sequence: 40
+            }
+            behavior {
+                target: {
+                    page: 435
+                    items: {
+                        P435_LIVESTACK_ID: &ID.
+                        P435_LIVESTACK_USER_ID: &LS_USER_ID.
+                        P435_LIVESTACK_REGION: IN PROGRESS
+                    }
+                }
+            }
+            appearance {
+                displayType: textWithIcon
+                icon: fa-pencil-square-o
+            }
+        )
+
+        action action-3 (
+            type: fullCard
+            layout {
+                sequence: 10
+            }
+            behavior {
+                target: {
+                    page: 400
+                    items: {
+                        P400_ID: &ID.
+                    }
+                }
+            }
+        )
+
+    )
+
+    region my-livestacks (
+        name: My LiveStacks
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <table><tr><td><p style="margin-left: 0px; margin-right: 20px">LiveStacks are curated, business-focused solution experiences that combine demos, LiveLabs workshops, and deployable environments into a guided end-to-end journey. </p>
+                </td><td><p style="margin-left: 20px; margin-right: 0px"><b>To access this page again</b> click the user dropdown in the top right corner and select <b>My LiveStacks</b></p>
+                </td></table><br>
+                ```
+        }
+        layout {
+            sequence: 10
+            slot: body
+        }
+        appearance {
+            template: @/content-block
+            templateOptions: [
+                #DEFAULT#
+                t-ContentBlock--h2
+                t-ContentBlock--headingFontAlt
+            ]
+        }
+    )
+
+    region subscribed (
+        name: Subscribed
+        type: staticContent
+        layout {
+            sequence: 30
+            parentRegion: @my-livestacks
+            slot: subRegions
+        }
+        appearance {
+            template: @/standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader js-removeLandmark
+                t-Region--noBorder
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    region subscribed-cards (
+        name: Subscribed Cards
+        type: cards
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select
+                      c.id,
+                      c.name,
+                      c.desc_short,
+                      s.status,
+                      s.id as ls_user_id
+                  from ll_livestacks c
+                  join ll_livestack_users s
+                    on s.livestack_id = c.id
+                   and s.user_email    = :APP_USER
+                   and nvl(s.subscribed_flg, 'N') = 'Y'
+                  order by s.subscribed_date desc;
+                
+                ```
+        }
+        layout {
+            sequence: 30
+            parentRegion: @subscribed
+            slot: regionBody
+        }
+        appearance {
+            template: @/cards-container
+            templateOptions: [
+                #DEFAULT#
+                t-CardsRegion--hideHeader js-addHiddenHeadingRoleDesc
+            ]
+        }
+        card {
+            primaryKeyColumn1: ID
+        }
+        title {
+            column: NAME
+        }
+        body {
+            column: DESC_SHORT
+            cssClasses: u-lineclamp-5
+        }
+        iconAndBadge {
+            badgeColumn: STATUS
+        }
+        pagination {
+            type: page
+            cardsPerPage: 6
+        }
+        messages {
+            whenNoDataFound: <span class="u-text-body-2">No LiveStack Subscriptions found</span>
+            noDataFoundIcon: fa-search
+        }
+
+        action action (
+            label: View
+            layout {
+                sequence: 20
+            }
+            behavior {
+                target: {
+                    page: 400
+                    items: {
+                        P400_ID: &ID.
+                    }
+                }
+            }
+            appearance {
+                displayType: textWithIcon
+                icon: fa-eye
+                hot: true
+            }
+        )
+
+        action action-2 (
+            label: Unsubscribe
+            layout {
+                position: secondary
+                sequence: 40
+            }
+            behavior {
+                target: {
+                    page: 435
+                    items: {
+                        P435_LIVESTACK_ID: &ID.
+                        P435_LIVESTACK_USER_ID: &LS_USER_ID.
+                        P435_LIVESTACK_REGION: SUBSCRIBED
+                    }
+                }
+            }
+            appearance {
+                displayType: textWithIcon
+                icon: fa-minus-circle-o
+            }
+        )
+
+        action action-3 (
+            type: fullCard
+            layout {
+                sequence: 10
+            }
+            behavior {
+                target: {
+                    page: 400
+                    items: {
+                        P400_ID: &ID.
+                    }
+                }
+            }
+        )
+
+    )
+
+    pageItem P430_COMPLETED (
+        type: displayOnly
+        label {
+            label: Subscribed
+            alignment: left
+        }
+        settings {
+            format: html
+            sendOnPageSubmit: false
+        }
+        layout {
+            sequence: 10
+            region: @completed
+            slot: regionBody
+            alignment: left
+            labelColumnSpan: 0
+        }
+        appearance {
+            template: @/hidden
+            templateOptions: #DEFAULT#
+        }
+        source {
+            used: always
+        }
+        default {
+            type: static
+            staticValue: <div style="font-size:25px"><b>Completed</b></div>
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            sessionStateProtection: restricted
+        }
+    )
+
+    pageItem P430_IN_PROGRESS (
+        type: displayOnly
+        label {
+            alignment: left
+        }
+        settings {
+            format: html
+            sendOnPageSubmit: false
+        }
+        layout {
+            sequence: 10
+            region: @in-progress
+            slot: regionBody
+            alignment: left
+            labelColumnSpan: 0
+        }
+        appearance {
+            template: @/hidden
+            templateOptions: [
+                #DEFAULT#
+                margin-bottom-sm
+            ]
+        }
+        source {
+            used: always
+        }
+        default {
+            type: static
+            staticValue: <div style="font-size:25px"><b>In Progress</b></div>
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            sessionStateProtection: restricted
+        }
+    )
+
+    pageItem P430_SUBSCRIBED (
+        type: displayOnly
+        label {
+            label: Subscribed
+            alignment: left
+        }
+        settings {
+            format: html
+            sendOnPageSubmit: false
+        }
+        layout {
+            sequence: 10
+            region: @subscribed
+            slot: regionBody
+            alignment: left
+            labelColumnSpan: 0
+        }
+        appearance {
+            template: @/hidden
+            templateOptions: #DEFAULT#
+        }
+        source {
+            used: always
+        }
+        default {
+            type: static
+            staticValue: <div style="font-size:25px"><b>Subscribed</b></div>
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            sessionStateProtection: restricted
+        }
+    )
+
+    dynamicAction refresh-after-dialog-close (
+        name: refresh after dialog close
+        execution {
+            sequence: 10
+        }
+        when {
+            event: apexafterclosecanceldialog
+            selectionType: region
+            region: @my-livestacks
+        }
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @completed-cards
+            }
+            execution {
+                sequence: 30
+                fireOnInit: false
+            }
+        )
+
+        action native-refresh-2 (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @in-progress-cards
+            }
+            execution {
+                sequence: 40
+                fireOnInit: false
+            }
+        )
+
+        action native-refresh-3 (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @subscribed-cards
+            }
+            execution {
+                sequence: 50
+                fireOnInit: false
+            }
+        )
+
+    )
+
+)
+

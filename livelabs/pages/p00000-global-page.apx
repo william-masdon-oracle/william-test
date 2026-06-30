@@ -1,0 +1,1084 @@
+page 0 (
+    name: Global Page - Desktop
+    appearance {
+        templateOptions: #DEFAULT#
+    }
+
+    region banner (
+        name: Banner
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <div id="scrolling-banner">
+                    <span id="banner-text">&P0_BANNER_TEXT.</span>
+                </div>
+                
+                <button id="close-banner" type="button" aria-label="Close banner">
+                    &times;
+                </button>
+                
+                <style>
+                @keyframes scrollBanner {
+                  from { transform: translateX(0); }
+                  to { transform: translateX(-100%); }
+                }
+                
+                #site-banner {
+                    background-color: #ffcc00;
+                    color: #000;
+                    font-size: 14px;
+                    line-height: 20px;
+                    font-weight: 600;
+                    text-align: center;
+                    display: none;
+                    align-items: center;
+                    justify-content: space-between;
+                    gap: 0;
+                    height: 26px; 
+                    overflow: hidden; 
+                    position: relative;
+                }
+                
+                #scrolling-banner {
+                    flex: 1;
+                    overflow: hidden;
+                    white-space: nowrap; 
+                    height: 100%;
+                    display: flex;
+                    align-items: center;
+                    position: relative;
+                }
+                
+                #banner-text {
+                    display: inline-block;
+                    white-space: nowrap;
+                    padding-left: 100%; 
+                    padding-right: 25px; 
+                }
+                
+                #close-banner {
+                    align-self: stretch;
+                    background-color: #f5f5f5;
+                    color: #000;
+                    border: none;
+                    font-size: 16px;
+                    cursor: pointer;
+                    padding: 0 12px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    flex-shrink: 0;
+                    transition: background-color 0.2s ease;
+                }
+                
+                #close-banner:hover {
+                    background-color: #e0e0e0;
+                }
+                
+                #close-banner:active {
+                    background-color: #d0d0d0;
+                }
+                </style>
+                
+                <script>
+                (function() {
+                    const bannerText = document.getElementById('banner-text');
+                    const scrollingBanner = document.getElementById('scrolling-banner');
+                    const siteBanner = document.getElementById('site-banner');
+                
+                    if (sessionStorage.getItem('hideLiveLabsBanner') != 'Y') {
+                        siteBanner.style.display = 'flex';
+                    }
+                    
+                    // Calculate animation duration based on text width
+                    function setScrollSpeed() {
+                        const textWidth = bannerText.scrollWidth;
+                        const containerWidth = scrollingBanner.offsetWidth;
+                        
+                        // Base speed: pixels per second
+                        const pixelsPerSecond = 50;
+                        
+                        // Total distance is just the text width (already includes padding-left via scrollWidth)
+                        const duration = textWidth / pixelsPerSecond;
+                        
+                        // Apply animation
+                        bannerText.style.animation = `scrollBanner ${duration}s linear infinite`;
+                    }
+                    
+                    // Set speed on load
+                    setScrollSpeed();
+                    
+                    // Recalculate on window resize
+                    window.addEventListener('resize', setScrollSpeed);
+                
+                    // Pause on hover
+                    bannerText.addEventListener('mouseenter', function() {
+                        this.style.animationPlayState = 'paused';
+                    });
+                    
+                    bannerText.addEventListener('mouseleave', function() {
+                        this.style.animationPlayState = 'running';
+                    });
+                    
+                    // Close button functionality
+                    document.getElementById('close-banner').addEventListener('click', function() {
+                        siteBanner.style.display = 'none';
+                        sessionStorage.setItem('hideLiveLabsBanner', 'Y');
+                    });
+                })();
+                </script>
+                ```
+        }
+        layout {
+            sequence: 0
+            slot: banner
+        }
+        appearance {
+            template: @/blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            htmlDomId: site-banner
+        }
+        serverSideCondition {
+            type: expression
+            language: sql
+            sqlExpression: exists (select 'x' from ll_system_parameters where name = 'BANNER_DISPLAY' and value = 'Y') and exists (select 'x' from ll_system_parameters where name = 'BANNER_TEXT' and value is not null)
+        }
+    )
+
+    region footer (
+        name: footer
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <div align="center"><span style="color:white">© 2020 Oracle  |  Privacy/Do Not Sell My Info. | Cookie Preferences | Ad Choices</span></div>
+                
+                ```
+        }
+        layout {
+            sequence: 60
+            parentRegion: @footer-with-links
+            slot: subRegions
+        }
+        appearance {
+            template: @/standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader js-removeLandmark
+                t-Region--noUI
+                t-Region--scrollBody
+            ]
+            renderComponents: belowContent
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    region footer-with-links (
+        name: Footer with links
+        type: staticContent
+        layout {
+            sequence: 40
+            slot: footer
+        }
+        appearance {
+            template: @/standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader js-removeLandmark
+                t-Region--accent14
+                t-Region--noUI
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            htmlDomId: footer_links
+        }
+    )
+
+    region global-search (
+        name: Global Search
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: beforeNavigationBar
+        }
+        appearance {
+            template: @/blank-with-attributes
+            templateOptions: [
+                #DEFAULT#
+                t-Form--stretchInputs
+            ]
+            cssClasses: [
+                u-flex-grow-1
+                ll-Header-search
+            ]
+        }
+        advanced {
+            htmlDomId: global-search-div
+            regionDisplaySelector: true
+        }
+    )
+
+    region infinity-code-dev (
+        name: Infinity Code - Dev
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <!-- Infinity Code - Dev -->
+                
+                <script type="text/javascript">
+                    if ( (oracle.truste.api.getGdprConsentDecision().consentDecision) &&
+                     (oracle.truste.api.getGdprConsentDecision().consentDecision.indexOf(0) != -1 ||
+                      oracle.truste.api.getGdprConsentDecision().consentDecision.indexOf(2) != -1) ) {
+                    document.write('<script src="//c.oracleinfinity.io/acs/account/wh3g12c3gg/js/oraclelabs/odc.js?_ora.config=analytics:development"><\/script>');
+                    document.write('<script src="//www.oracle.com/us/assets/metrics/ora_apex.js"><\/script>');
+                }
+                </script>
+                ```
+        }
+        layout {
+            sequence: 20
+            slot: footer
+        }
+        appearance {
+            template: @/blank-with-attributes-no-grid
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        config {
+            buildOption: @infinity-code-dev
+        }
+    )
+
+    region infinity-code-prod (
+        name: Infinity Code - Prod
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <!-- Infinity Code - Prod -->
+                
+                <script type="text/javascript">
+                    if ( (oracle.truste.api.getGdprConsentDecision().consentDecision) &&
+                     (oracle.truste.api.getGdprConsentDecision().consentDecision.indexOf(0) != -1 ||
+                      oracle.truste.api.getGdprConsentDecision().consentDecision.indexOf(2) != -1) ) {
+                    document.write('<script src="//c.oracleinfinity.io/acs/account/wh3g12c3gg/js/oraclelabs/odc.js"><\/script>');
+                    document.write('<script src="//www.oracle.com/us/assets/metrics/ora_apex.js"><\/script>');
+                }
+                </script>
+                ```
+        }
+        layout {
+            sequence: 30
+            slot: footer
+        }
+        appearance {
+            template: @/blank-with-attributes-no-grid
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        config {
+            buildOption: @infinity-code-prod
+        }
+    )
+
+    region links-col (
+        name: Links_col_3
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <span style="color:black">
+                <h3>Solutions</h3>
+                <a href="https://www.oracle.com/artificial-intelligence/">Artificial Intelligence</a>
+                <br>
+                <a href="https://www.oracle.com/internet-of-things/">Internet of Things</a>
+                <br>
+                <a href="https://www.oracle.com/blockchain/">Blockchain</a>
+                </span>
+                ```
+        }
+        layout {
+            sequence: 30
+            parentRegion: @footer-with-links
+            slot: subRegions
+            startNewRow: false
+        }
+        appearance {
+            template: @/standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader js-removeLandmark
+                t-Region--noUI
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    region links-col-2 (
+        name: Links_col_2
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <span style="color:black">
+                <h3>Partners</h3>
+                <a href="https://www.oracle.com/partnernetwork/">Oracle PartnerNetwork</a>
+                <br>
+                <a href="https://partner-finder.oracle.com/">Find a Partner</a>
+                <br>
+                <a href="https://www.oracle.com/opn/index.html">Log in to OPN</a>
+                </span>
+                ```
+        }
+        layout {
+            sequence: 20
+            parentRegion: @footer-with-links
+            slot: subRegions
+            startNewRow: false
+        }
+        appearance {
+            template: @/standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader js-removeLandmark
+                t-Region--noUI
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    region links-col-3 (
+        name: Links_col_1
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <span style="color:black">
+                <h3>Resources</h3>
+                <div>
+                    <a style="min-width:24px; min-height:24px;" href="https://developer.oracle.com">Developers</a><br>
+                    <a style="min-width:24px; min-height:24px;" href="https://www.oracle.com/startup/">Startups</a><br>
+                    <a style="min-width:24px; min-height:24px;" href="https://academy.oracle.com/en/oa-web-overview.html">Students &amp; Educators</a>
+                    </span>
+                </div>
+                ```
+        }
+        layout {
+            sequence: 10
+            parentRegion: @footer-with-links
+            slot: subRegions
+            column: 2
+        }
+        appearance {
+            template: @/standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader js-removeLandmark
+                t-Region--noUI
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    region links-col-4 (
+        name: Links_col_4
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <span style="color:black">
+                <h3>What's New</h3>
+                <a href="https://www.oracle.com/corporate/covid-19.html">Oracle’s response to COVID-19</a>
+                <br>
+                <a href="https://www.oracle.com/java/technologies/javase-downloads.html">Java SE download</a>
+                <br>
+                <a href="https://www.oracle.com/cloud/free/">Try Oracle Cloud Free Tier</a>
+                </span>
+                ```
+        }
+        layout {
+            sequence: 40
+            parentRegion: @footer-with-links
+            slot: subRegions
+            startNewRow: false
+        }
+        appearance {
+            template: @/standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader js-removeLandmark
+                t-Region--noUI
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    region links-col-5 (
+        name: Links_col_5
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <span style="color:black">
+                <h3>Contact Us</h3>
+                <a href="tel:18006330738">US Sales: +1.800.633.0738</a>
+                <br>
+                <a href="https://www.oracle.com/corporate/contact/">How can we help?</a>
+                <br>
+                <a href="https://go.oracle.com/subscriptions">Subscribe to emails</a>
+                </span>
+                ```
+        }
+        layout {
+            sequence: 50
+            parentRegion: @footer-with-links
+            slot: subRegions
+            startNewRow: false
+        }
+        appearance {
+            template: @/standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader js-removeLandmark
+                t-Region--noUI
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    region mobile-search (
+        name: Mobile Search
+        type: staticContent
+        layout {
+            sequence: 1
+            slot: body
+        }
+        appearance {
+            template: @/inline-popup
+            templateOptions: [
+                #DEFAULT#
+                js-dialog-autoheight
+                js-dialog-size720x480
+                js-popup-pos-after
+                t-Form--noPadding
+                t-Form--stretchInputs
+            ]
+            cssClasses: u-flex-grow-1
+        }
+        advanced {
+            htmlDomId: mobile-search-div
+            customAttributes: data-parent-element=#global-search-div
+            regionDisplaySelector: true
+        }
+    )
+
+    region oda (
+        name: ODA
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <html lang="en-US" class="no-js">
+                <head>   
+                <script src="#APP_FILES#artie/web-sdk.js"></script>
+                <script src="#APP_FILES#artie/artieLocal#MIN#.js" onload="initSdk()"></script>
+                <link rel="stylesheet" href="#APP_FILES#artie/artie.css">
+                </head>
+                </html>
+                ```
+        }
+        layout {
+            sequence: 10
+            slot: footer
+        }
+        appearance {
+            template: @/blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region redirect-popup (
+        name: Redirect Popup
+        title: LiveLabs has Moved!
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <div style="padding: 15px; max-width: 550px; width: calc(100vw - 60px); margin: 0 auto; box-sizing: border-box;">
+                    <h2 style="margin-top: 0; margin-bottom: 15px; color: #2196F3; font-size: 20px;">Welcome to the New LiveLabs!</h2>
+                    <p style="font-size: 14px; line-height: 1.6; margin-bottom: 20px;">
+                        LiveLabs has moved to a new location. We've automatically redirected you to the correct page with all your parameters intact.
+                    </p>
+                    <div style="background-color: #e8f5e9; border-left: 4px solid #4CAF50; padding: 15px; margin: 20px 0; border-radius: 4px; box-sizing: border-box;">
+                        <strong style="color: #2e7d32;">✓ You're now at the new URL:</strong>
+                        <div style="position: relative; margin-top: 10px;">
+                            <code id="currentUrl" style="font-size: 12px; word-break: break-all; color: #333; display: block; background: white; padding: 10px; border-radius: 4px; padding-right: 75px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; box-sizing: border-box;"></code>
+                            <button id="copyBtn" type="button" onclick="copyUrl(); return false;" style="position: absolute; top: 5px; right: 5px; padding: 5px 12px; background: #2196F3; color: white; border: none; border-radius: 3px; cursor: pointer; font-size: 12px;">Copy</button>
+                        </div>
+                    </div>
+                    <p style="font-size: 14px; color: #333; margin-bottom: 10px;">
+                        <strong>Please bookmark this new URL</strong> to avoid seeing this message in the future.
+                    </p>
+                    <p style="font-size: 13px; color: #666; margin-bottom: 0;">
+                        Update any saved links or shortcuts to point to <strong>livelabs.oracle.com/ords/...</strong> instead of <strong>apexapps.oracle.com/pls/apex/...</strong>
+                    </p>
+                </div>
+                
+                <script>
+                    // Display the current URL
+                    document.getElementById('currentUrl').textContent = window.location.href;
+                    
+                    // Copy URL to clipboard (without P0_REDIRECT parameter)
+                    function copyUrl() {
+                        let url = new URL(window.location.href);
+                        
+                        // Remove P0_REDIRECT parameter from the URL
+                        url.searchParams.delete('P0_REDIRECT');
+                        url.searchParams.delete('p0_redirect');
+                        url.searchParams.delete('P0_redirect');
+                        
+                        const cleanUrl = url.toString();
+                        
+                        navigator.clipboard.writeText(cleanUrl).then(function() {
+                            const btn = document.getElementById('copyBtn');
+                            btn.textContent = 'Copied!';
+                            btn.style.background = '#4CAF50';
+                            setTimeout(function() {
+                                btn.textContent = 'Copy';
+                                btn.style.background = '#2196F3';
+                            }, 2000);
+                        }).catch(function(err) {
+                            alert('Failed to copy URL');
+                        });
+                        
+                        return false;
+                    }
+                </script>
+                ```
+        }
+        layout {
+            sequence: 11
+            slot: dialogsDrawersAndPopups
+        }
+        appearance {
+            template: @/inline-popup
+            templateOptions: [
+                #DEFAULT#
+                js-dialog-autoheight
+                t-DialogRegion--noPadding
+                js-dialog-size600x400
+            ]
+        }
+    )
+
+    pageItem GLOBAL_WID (
+        type: hidden
+        layout {
+            sequence: 0
+            slot: body
+        }
+        security {
+            restrictedChars: alphanumWithSpace
+        }
+    )
+
+    pageItem P0_BANNER_TEXT (
+        type: hidden
+        layout {
+            sequence: 40
+            region: @banner
+            slot: regionBody
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery: select value from ll_system_parameters where name = 'BANNER_TEXT'
+            used: always
+        }
+    )
+
+    pageItem P0_GLOBAL_SEARCH (
+        type: combobox
+        label {
+            alignment: left
+        }
+        settings {
+            infiniteScroll: false
+            manualEntriesItem: P1_MANUAL_ENTRIES
+            valueHtmlExpression:
+                ```html
+                <div class="search-result-container" style="display: flex; align-items: center;">
+                   <img class="a-CardView-iconImg" src="&PAR_LINK." loading="lazy" style="margin-right: 8px;">
+                   <span>&DISPLAY_VAL.</span>
+                </div>
+                ```
+        }
+        lov {
+            type: sharedComponent
+            lov: @copy-of-ll-workshops-active
+        }
+        layout {
+            sequence: 40
+            region: @global-search
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @global-search-bar
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+            width: 1000
+            valuePlaceholder: Ask a question or search for a workshop with natural language...
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            used: always
+        }
+        security {
+            restrictedChars: webSafe
+        }
+    )
+
+    pageItem P0_MANUAL_ENTRIES (
+        type: hidden
+        layout {
+            sequence: 60
+            region: @global-search
+            slot: regionBody
+        }
+    )
+
+    pageItem P0_MOBILE_SEARCH (
+        type: combobox
+        label {
+            alignment: left
+        }
+        settings {
+            infiniteScroll: false
+            manualEntriesItem: P1_MANUAL_ENTRIES
+            valueHtmlExpression:
+                ```html
+                <div class="search-result-container" style="display: flex; align-items: center;">
+                   <img class="a-CardView-iconImg" src="&PAR_LINK." loading="lazy" style="margin-right: 8px;">
+                   <span>&DISPLAY_VAL.</span>
+                </div>
+                ```
+        }
+        lov {
+            type: sharedComponent
+            lov: @copy-of-ll-workshops-active
+        }
+        layout {
+            sequence: 10
+            region: @mobile-search
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @global-search-bar
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+            width: 1000
+            valuePlaceholder: Ask a question or search for a workshop with natural language...
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            used: always
+        }
+        security {
+            restrictedChars: webSafe
+        }
+    )
+
+    pageItem P0_REDIRECT (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 10
+            region: @redirect-popup
+            slot: regionBody
+        }
+        default {
+            type: static
+            staticValue: N
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+            restrictedChars: alphanumWithSpace
+        }
+    )
+
+    dynamicAction apexapps-logging (
+        name: Apexapps Logging
+        execution {
+            sequence: 90
+        }
+        when {
+            event: ready
+        }
+        clientSideCondition {
+            type: jsExpression
+            javaScriptExpression:
+                ```javascript-browser
+                window.location.hostname.toLowerCase().includes('apexapps')
+                
+                ```
+        }
+        serverSideCondition {
+            type: currentPageNotInList
+            pages: [
+                320
+                201
+                350
+            ]
+        }
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    apex.server.process(
+                      "LOG_PAGE_VISIT",
+                      {
+                        x01: JSON.stringify({
+                          url: window.location.href,
+                          referrer: document.referrer
+                        })
+                      },
+                      {
+                        dataType: "json",
+                        // success: function(pData) {
+                        //   console.log("Logged!", pData);
+                        // }
+                      }
+                    );
+                    
+                    ```
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    dynamicAction open-mobile-search (
+        name: Open Mobile Search
+        execution {
+            sequence: 80
+        }
+        when {
+            event: click
+            selectionType: jQuerySelector
+            jquerySelector: .header-search-item a
+        }
+
+        action native-open-region (
+            action: openRegion
+            affectedElements {
+                selectionType: region
+                region: @mobile-search
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction open-redirect-popup (
+        name: Open Redirect Popup
+        execution {
+            sequence: 110
+        }
+        when {
+            event: ready
+        }
+        clientSideCondition {
+            type: item=value
+            item: P0_REDIRECT
+            value: Y
+        }
+
+        action open-livelabs-redirect-dialog (
+            name: Open LiveLabs Redirect Dialog
+            action: openRegion
+            affectedElements {
+                selectionType: region
+                region: @redirect-popup
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    dynamicAction send-search-to-page-desktop-click (
+        name: Send search to page - desktop - click
+        execution {
+            sequence: 40
+        }
+        when {
+            event: custom
+            customEvent: input
+            selectionType: items
+            items: P0_GLOBAL_SEARCH
+        }
+        clientSideCondition {
+            type: jsExpression
+            javaScriptExpression: this.data && this.data.action === 'ITEM_SELECTED'
+        }
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    // Get the LL ID.
+                    var wsid = apex.item( "P0_GLOBAL_SEARCH" ).getValue(); 
+                        
+                    // Build the pretty URL dynamically
+                    // Get the base URL up to /ords/ or /pls/apex/
+                    let pathname = window.location.pathname;
+                    let baseUrl = window.location.origin;
+                    
+                    if (pathname.includes('/ords/')) {
+                        baseUrl += pathname.substring(0, pathname.indexOf('/ords/') + 6);
+                    } else if (pathname.includes('/pls/apex/')) {
+                        baseUrl += pathname.substring(0, pathname.indexOf('/pls/apex/') + 10);
+                    } else {
+                        // Fallback - shouldn't happen but just in case
+                        baseUrl += '/ords/';
+                    }
+                    // Get current session ID
+                    let sessionId = apex.env.APP_SESSION;
+                    // add value to search
+                    if (wsid != '') {
+                        if (wsid > 0) {
+                            // Redirect to the pretty URL - workshop
+                            apex.navigation.redirect(baseUrl + 'r/dbpm/livelabs/view-workshop?clear=RR,180&wid=' + wsid + '&session=' + sessionId);
+                        } else { 
+                            // Redirect to the pretty URL - livestack
+                            apex.navigation.redirect(baseUrl + 'r/dbpm/livelabs/livestack-landing-page?clear=RR,400&p400_id=' + (wsid*-1) + '&session=' + sessionId);
+                        }
+                    }
+                    ```
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction send-search-to-page-desktop-enter (
+        name: Send search to page - desktop - enter
+        execution {
+            sequence: 20
+        }
+        when {
+            event: keydown
+            selectionType: items
+            items: P0_GLOBAL_SEARCH
+        }
+        clientSideCondition {
+            type: jsExpression
+            javaScriptExpression: event.which == 13
+        }
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    var kw = document.querySelector('#P0_GLOBAL_SEARCH input.apex-item-text')?.value;
+                        
+                    // Build the pretty URL dynamically
+                    // Get the base URL up to /ords/ or /pls/apex/
+                    let pathname = window.location.pathname;
+                    let baseUrl = window.location.origin;
+                    let prettyUrl;
+                    
+                    if (pathname.includes('/ords/')) {
+                        baseUrl += pathname.substring(0, pathname.indexOf('/ords/') + 6);
+                    } else if (pathname.includes('/pls/apex/')) {
+                        baseUrl += pathname.substring(0, pathname.indexOf('/pls/apex/') + 10);
+                    } else {
+                        // Fallback - shouldn't happen but just in case
+                        baseUrl += '/ords/';
+                    }
+                    // Get current session ID
+                    let sessionId = apex.env.APP_SESSION;
+                    // add value to search
+                    if (kw != '') {
+                        var encodedKw = encodeURIComponent(kw);
+                        // Construct the pretty URL path
+                        prettyUrl = baseUrl + 'r/dbpm/livelabs/livelabs-workshop-cards?clear=100&search=' + encodedKw + '&session=' + sessionId;
+                    }
+                    // just go to search page 
+                    else {
+                        prettyUrl = baseUrl + 'r/dbpm/livelabs/livelabs-workshop-cards?session=' + sessionId;
+                    }
+                    // Redirect to the pretty URL
+                    apex.navigation.redirect(prettyUrl);
+                    ```
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction send-search-to-page-mobile-click (
+        name: Send search to page - mobile - click
+        execution {
+            sequence: 50
+        }
+        when {
+            event: custom
+            customEvent: input
+            selectionType: items
+            items: P0_MOBILE_SEARCH
+        }
+        clientSideCondition {
+            type: jsExpression
+            javaScriptExpression: this.data && this.data.action === 'ITEM_SELECTED'
+        }
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    // Get the LL ID.
+                    var wsid = apex.item( "P0_MOBILE_SEARCH" ).getValue(); 
+                        
+                    // Build the pretty URL dynamically
+                    // Get the base URL up to /ords/ or /pls/apex/
+                    let pathname = window.location.pathname;
+                    let baseUrl = window.location.origin;
+                    
+                    if (pathname.includes('/ords/')) {
+                        baseUrl += pathname.substring(0, pathname.indexOf('/ords/') + 6);
+                    } else if (pathname.includes('/pls/apex/')) {
+                        baseUrl += pathname.substring(0, pathname.indexOf('/pls/apex/') + 10);
+                    } else {
+                        // Fallback - shouldn't happen but just in case
+                        baseUrl += '/ords/';
+                    }
+                    // Get current session ID
+                    let sessionId = apex.env.APP_SESSION;
+                    // add value to search
+                    if (wsid != '') {
+                        if (wsid > 0) {
+                            // Redirect to the pretty URL - workshop
+                            apex.navigation.redirect(baseUrl + 'r/dbpm/livelabs/view-workshop?clear=RR,180&wid=' + wsid + '&session=' + sessionId);
+                        } else { 
+                            // Redirect to the pretty URL - livestack
+                            apex.navigation.redirect(baseUrl + 'r/dbpm/livelabs/livestack-landing-page?clear=RR,400&p400_id=' + (wsid*-1) + '&session=' + sessionId);
+                        }
+                    }
+                    ```
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction send-search-to-page-mobile-enter (
+        name: Send search to page - mobile - enter
+        execution {
+            sequence: 30
+        }
+        when {
+            event: keydown
+            selectionType: items
+            items: P0_MOBILE_SEARCH
+        }
+        clientSideCondition {
+            type: jsExpression
+            javaScriptExpression: event.which == 13
+        }
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    var kw = document.querySelector('#P0_MOBILE_SEARCH input.apex-item-text')?.value;
+                        
+                    // Build the pretty URL dynamically
+                    // Get the base URL up to /ords/ or /pls/apex/
+                    let pathname = window.location.pathname;
+                    let baseUrl = window.location.origin;
+                    let prettyUrl;
+                    
+                    if (pathname.includes('/ords/')) {
+                        baseUrl += pathname.substring(0, pathname.indexOf('/ords/') + 6);
+                    } else if (pathname.includes('/pls/apex/')) {
+                        baseUrl += pathname.substring(0, pathname.indexOf('/pls/apex/') + 10);
+                    } else {
+                        // Fallback - shouldn't happen but just in case
+                        baseUrl += '/ords/';
+                    }
+                    // Get current session ID
+                    let sessionId = apex.env.APP_SESSION;
+                    // add value to search
+                    if (kw != '') {
+                        var encodedKw = encodeURIComponent(kw);
+                        // Construct the pretty URL path
+                        prettyUrl = baseUrl + 'r/dbpm/livelabs/livelabs-workshop-cards?clear=100&search=' + encodedKw + '&session=' + sessionId;
+                    }
+                    // just go to search page 
+                    else {
+                        prettyUrl = baseUrl + 'r/dbpm/livelabs/livelabs-workshop-cards?session=' + sessionId;
+                    }
+                    // Redirect to the pretty URL
+                    apex.navigation.redirect(prettyUrl);
+                    ```
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+)
+

@@ -1,0 +1,158 @@
+page 12 (
+    name: ApexApps Redirect
+    alias: APEXAPPS-REDIRECT
+    title: ApexApps Redirect
+    appearance {
+        pageTemplate: @standard-trustarc-redesign
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        authentication: public
+        formAutoComplete: false
+    }
+
+    region redirect-alert (
+        name: Redirect alert
+        title: We've moved domains!
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                
+                
+                ```
+        }
+        layout {
+            sequence: 10
+            slot: body
+            column: 4
+            columnSpan: 6
+        }
+        appearance {
+            template: @/hero
+            templateOptions: [
+                #DEFAULT#
+                t-HeroRegion--featured t-HeroRegion--centered
+                t-HeroRegion--hideIcon
+                js-headingLevel-1
+                t-Form--xlarge
+            ]
+        }
+    )
+
+    pageItem P12_REDIRECT_IMAGE (
+        type: displayImage
+        label {
+            alignment: left
+        }
+        settings {
+            basedOn: url
+        }
+        layout {
+            sequence: 10
+            region: @redirect-alert
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @/optional-floating
+            templateOptions: #DEFAULT#
+        }
+        source {
+            type: staticValue
+            staticValue: #APP_FILES#redirect.webp
+        }
+    )
+
+    pageItem P12_WEC (
+        type: hidden
+        layout {
+            sequence: 40
+            slot: body
+        }
+        security {
+            encryptSessionState: false
+            restrictedChars: webSafe
+        }
+    )
+
+    button redirect (
+        buttonName: Redirect
+        label: Redirect Me to the New Site
+        layout {
+            sequence: 20
+            region: @redirect-alert
+            slot: regionBody
+            columnSpan: 12
+        }
+        appearance {
+            buttonTemplate: @/text
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--large
+                t-Button--primary
+            ]
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 11
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    branch (
+        name: Redirect apexapps.com to livelabs.com
+        execution {
+            sequence: 20
+            point: beforeHeader
+        }
+        behavior {
+            target: {
+                type: url
+                url: https://livelabs.oracle.com/apex/r/dbpm/livelabs/apexapps-redirect?P12_WEC=&P12_WEC.
+            }
+        }
+        serverSideCondition {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                begin
+                    return instr(owa_util.get_cgi_env('HTTP_HOST'),'apexapps.oracle.com') > 0;
+                end;
+                ```
+        }
+    )
+
+    branch (
+        name: Skip this page if on livelabs.oracle.com already
+        execution {
+            sequence: 30
+            point: beforeHeader
+        }
+        behavior {
+            target: {
+                page: 11
+                items: {
+                    P11_WEC: &P12_WEC.
+                }
+            }
+        }
+        serverSideCondition {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                begin
+                    return instr(owa_util.get_cgi_env('HTTP_HOST'),'livelabs.oracle.com') > 0;
+                end;
+                ```
+        }
+    )
+
+)
+

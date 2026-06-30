@@ -1,0 +1,861 @@
+page 101 (
+    name: Workshops & Sprints Backup - 20251029
+    alias: WORKSHOPS-SPRINTS-BACKUP-20251029
+    title: Workshops & Sprints Backup - 20251029
+    appearance {
+        pageTemplate: @standard-trustarc-redesign
+        templateOptions: [
+            #DEFAULT#
+            t-PageBody--noContentPadding
+        ]
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+        warnOnUnsavedChanges: false
+    }
+    javaScript {
+        executeWhenPageLoads:
+            ```javascript-browser
+            const input = document.querySelector('#P0_GLOBAL_SEARCH input.apex-item-text');
+            input.value = $v("SEARCH");
+            ```
+    }
+    css {
+        inline:
+            ```css
+            :root { --a-cv-media-overlay-color: transparent; }
+            
+            .top-right {
+                position: float;
+                margin: 0px 0px 5px 5px;
+                float: right;
+            }
+            
+            .cards-class {
+                color: black;
+                background-color: white;
+            }
+            
+            
+            .a-CardView-header { align-items: start; }
+            
+            /* .a-CardView-media {
+                background-color: white;
+            } */
+            
+            .VERIFIED {
+                color:#F0CC71;
+                background-color: #312D2A;
+                background-image: url(#APP_FILES#abstracts-open-dark-4.webp);
+                /* --a-cv-media-overlay-color:  #312D2A; */
+            }
+            
+            .VERIFIED .a-CardView-media--cover {
+                background-image: url('#APP_IMAGES.abstracts-open-dark-4.webp'); /* Use #APP_IMAGES for local static files */
+                background-size: cover; /* Cover the entire area */
+                background-position: center; /* Center the image */
+                background-repeat: no-repeat; /* Prevent repeating */
+            }
+            
+            .apex-item-comboselect, .apex-item-comboselect input {
+                display: flex !important;
+            }
+            
+            ```
+    }
+    security {
+        authentication: public
+        formAutoComplete: false
+    }
+
+    region facets (
+        name: Facets
+        type: facetedSearch
+        source {
+            filteredRegion: @workshops-sprints-cards
+        }
+        layout {
+            sequence: 1
+            slot: body
+            columnSpan: 3
+        }
+        appearance {
+            template: @/blank-with-attributes
+            templateOptions: [
+                #DEFAULT#
+                margin-top-lg
+                margin-left-md
+                margin-right-sm
+            ]
+        }
+        settings {
+            compactNosThreshold: 10000
+            showCurrentFacets: true
+            showTotalRowCount: true
+            totalRowCountLabel: "Number of Workshops: "
+            showCharts: false
+        }
+
+        facet P101_FOCUS_AREA (
+            type: checkboxGroup
+            label {
+                label: Focus Area
+            }
+            lov {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select level3, id from ll_tags where level1 = 'Focus' and active_flg = 'Y' and level3 is not null
+                    union
+                    select level2, id from ll_tags where level1 = 'Focus' and active_flg = 'Y' and level3 is null
+                    ```
+            }
+            layout {
+                sequence: 80
+            }
+            listEntries {
+                zeroCountEntries: disable
+                maxDisplayedEntries: 5
+                displayFilterInitially: true
+            }
+            actionsMenu {
+                chart: false
+            }
+            advanced {
+                collapsible: true
+            }
+            source {
+                databaseColumn: FOCUS_TAG
+            }
+            multipleValues {
+                type: delimitedList
+            }
+        )
+
+        facet P101_LANGUAGE (
+            type: checkboxGroup
+            label {
+                label: Language
+            }
+            lov {
+                type: sqlQuery
+                sqlQuery: select level2, id from ll_tags where level1 = 'Language' and active_flg = 'Y'
+            }
+            layout {
+                sequence: 60
+            }
+            listEntries {
+                zeroCountEntries: disable
+                maxDisplayedEntries: 5
+            }
+            actionsMenu {
+                filter: false
+            }
+            advanced {
+                collapsible: true
+            }
+            source {
+                databaseColumn: LANGUAGE_TAG
+            }
+            multipleValues {
+                type: delimitedList
+            }
+            serverSideCondition {
+                type: never
+            }
+        )
+
+        facet P101_LEVEL (
+            type: checkboxGroup
+            label {
+                label: Level
+            }
+            lov {
+                type: sqlQuery
+                sqlQuery: select level2, id from ll_tags where level1 = 'Level' and active_flg = 'Y'
+            }
+            layout {
+                sequence: 20
+            }
+            listEntries {
+                zeroCountEntries: disable
+                maxDisplayedEntries: 5
+            }
+            actionsMenu {
+                filter: false
+            }
+            advanced {
+                collapsible: true
+            }
+            source {
+                databaseColumn: LEVEL_TAG
+            }
+            multipleValues {
+                type: delimitedList
+            }
+        )
+
+        facet P101_PRODUCT (
+            type: checkboxGroup
+            label {
+                label: Product
+            }
+            lov {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select level3, id from ll_tags where level1 = 'Product' and active_flg = 'Y' and level3 is not null
+                    union
+                    select level2, id from ll_tags where level1 = 'Product' and active_flg = 'Y' and level3 is null
+                    ```
+            }
+            layout {
+                sequence: 90
+            }
+            listEntries {
+                zeroCountEntries: disable
+                maxDisplayedEntries: 5
+                displayFilterInitially: true
+            }
+            actionsMenu {
+                chart: false
+            }
+            advanced {
+                collapsible: true
+            }
+            source {
+                databaseColumn: PRODUCT_TAG
+            }
+            multipleValues {
+                type: delimitedList
+            }
+        )
+
+        facet P101_ROLE (
+            type: checkboxGroup
+            label {
+                label: Role
+            }
+            lov {
+                type: sqlQuery
+                sqlQuery: select level2, id from ll_tags where level1 = 'Role' and active_flg = 'Y'
+            }
+            layout {
+                sequence: 70
+            }
+            listEntries {
+                zeroCountEntries: disable
+                maxDisplayedEntries: 5
+            }
+            actionsMenu {
+                filter: false
+                chart: false
+            }
+            advanced {
+                collapsible: true
+            }
+            source {
+                databaseColumn: ROLE_TAG
+            }
+            multipleValues {
+                type: delimitedList
+            }
+        )
+
+        facet P101_SALES_FOCUS (
+            type: checkboxGroup
+            label {
+                label: Sales Focus
+            }
+            lov {
+                type: sqlQuery
+                sqlQuery: select level2, id from ll_tags where level1 = 'Sales Focus' and active_flg = 'Y'
+            }
+            layout {
+                sequence: 100
+            }
+            listEntries {
+                zeroCountEntries: disable
+                maxDisplayedEntries: 5
+            }
+            actionsMenu {
+                filter: false
+                chart: false
+            }
+            advanced {
+                collapsible: true
+            }
+            source {
+                databaseColumn: SALES_FOCUS_TAG
+            }
+            multipleValues {
+                type: delimitedList
+            }
+            serverSideCondition {
+                type: expression
+                plsqlExpression: instr(upper(:app_user),'@ORACLE.COM')>0
+            }
+        )
+
+        facet P101_SALES_PLAY (
+            type: checkboxGroup
+            label {
+                label: Sales Play
+            }
+            lov {
+                type: sqlQuery
+                sqlQuery: select level2, id from ll_tags where level1 = 'Sales Play' and active_flg = 'Y'
+            }
+            layout {
+                sequence: 110
+            }
+            listEntries {
+                zeroCountEntries: disable
+                maxDisplayedEntries: 5
+            }
+            actionsMenu {
+                filter: false
+                chart: false
+            }
+            advanced {
+                collapsible: true
+            }
+            source {
+                databaseColumn: SALES_PLAY_TAG
+            }
+            multipleValues {
+                type: delimitedList
+            }
+            serverSideCondition {
+                type: expression
+                plsqlExpression: instr(upper(:app_user),'@ORACLE.COM')>0
+            }
+        )
+
+        facet P101_WORKSHOP_SERIES (
+            type: checkboxGroup
+            label {
+                label: Workshop Series
+            }
+            lov {
+                type: sqlQuery
+                sqlQuery: select level2, id from ll_tags where level1 = 'Workshop Series' and active_flg = 'Y'
+            }
+            layout {
+                sequence: 50
+            }
+            listEntries {
+                zeroCountEntries: disable
+                maxDisplayedEntries: 5
+            }
+            actionsMenu {
+                filter: false
+            }
+            advanced {
+                collapsible: true
+            }
+            source {
+                databaseColumn: WORKSHOP_SERIES_TAG
+            }
+            multipleValues {
+                type: delimitedList
+            }
+        )
+
+        facet P101_WORKSHOP_TYPE (
+            type: checkboxGroup
+            label {
+                label: Workshop Type
+            }
+            lov {
+                type: sqlQuery
+                sqlQuery: select level2, id from ll_tags where level1 = 'Workshop Type' and active_flg = 'Y'
+            }
+            layout {
+                sequence: 40
+            }
+            listEntries {
+                zeroCountEntries: disable
+                maxDisplayedEntries: 5
+            }
+            actionsMenu {
+                filter: false
+            }
+            advanced {
+                collapsible: true
+            }
+            source {
+                databaseColumn: WORKSHOP_TYPE_TAG
+            }
+            multipleValues {
+                type: delimitedList
+            }
+        )
+
+    )
+
+    region workshops-and-sprints (
+        name: Workshops and Sprints
+        type: staticContent
+        layout {
+            sequence: 70
+            slot: body
+            startNewRow: false
+        }
+        appearance {
+            template: @/content-block
+            templateOptions: [
+                #DEFAULT#
+                t-ContentBlock--h2
+                t-ContentBlock--headingFontAlt
+                margin-top-lg
+                margin-left-md
+                margin-right-md
+            ]
+        }
+    )
+
+    region workshops-sprints-cards (
+        name: Workshops & Sprints Cards
+        type: cards
+        source {
+            location: localDatabase
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                declare
+                v_sql clob := q'~
+                select a.ID,
+                       a.NAME,
+                       ll_pkg_admin.cut_off_at_space (A.DESC_SHORT, 100) as DESC_SHORT,
+                       ll_pkg_apex.getWorkshopCardIcon(a.ID) as ICON_BLOB,
+                       ll_pkg_admin.hours_readable (a.TIME_IN_HOURS, 'SHORT', 'N') AS WORKSHOP_TIME,
+                       Nvl2(a.TIME_IN_HOURS, 'fa fa-clock-o', null) as TIME_ICON,
+                       case when a.pg_views > 500 then a.pg_views || ' Views' else '' end CARD_VIEWS,
+                       (select listagg(c.tag_id,':') within group (order by c.tag_id) "tags"
+                        from ll_workshop_tags c
+                        where c.workshop_id = a.id
+                        and c.tag_id in (select id from ll_tags where level1 = 'Level')
+                        group by c.workshop_id) as LEVEL_TAG,
+                        (select listagg(c.tag_id,':') within group (order by c.tag_id) "tags"
+                        from ll_workshop_tags c
+                        where c.workshop_id = a.id
+                        and c.tag_id in (select id from ll_tags where level1 = 'Workshop Type')
+                        group by c.workshop_id) as WORKSHOP_TYPE_TAG,
+                        (select listagg(c.tag_id,':') within group (order by c.tag_id) "tags"
+                        from ll_workshop_tags c
+                        where c.workshop_id = a.id
+                        and c.tag_id in (select id from ll_tags where level1 = 'Workshop Series')
+                        group by c.workshop_id) as WORKSHOP_SERIES_TAG,
+                        (select listagg(c.tag_id,':') within group (order by c.tag_id) "tags"
+                        from ll_workshop_tags c
+                        where c.workshop_id = a.id
+                        and c.tag_id in (select id from ll_tags where level1 = 'Role')
+                        group by c.workshop_id) as ROLE_TAG,
+                        (select listagg(c.tag_id,':') within group (order by c.tag_id) "tags"
+                        from ll_workshop_tags c
+                        where c.workshop_id = a.id
+                        and c.tag_id in (select id from ll_tags where level1 = 'Focus')
+                        group by c.workshop_id) as FOCUS_TAG,
+                        (select listagg(c.tag_id,':') within group (order by c.tag_id) "tags"
+                        from ll_workshop_tags c
+                        where c.workshop_id = a.id
+                        and c.tag_id in (select id from ll_tags where level1 = 'Product')
+                        group by c.workshop_id) as PRODUCT_TAG,
+                        (select listagg(c.tag_id,':') within group (order by c.tag_id) "tags"
+                        from ll_workshop_tags c
+                        where c.workshop_id = a.id
+                        and c.tag_id in (select id from ll_tags where level1 = 'Sales Focus')
+                        group by c.workshop_id) as SALES_FOCUS_TAG,
+                        (select listagg(c.tag_id,':') within group (order by c.tag_id) "tags"
+                        from ll_workshop_tags c
+                        where c.workshop_id = a.id
+                        and c.tag_id in (select id from ll_tags where level1 = 'Sales Play')
+                        group by c.workshop_id) as SALES_PLAY_TAG,
+                        (select listagg(c.tag_id,':') within group (order by c.tag_id) "tags"
+                        from ll_workshop_tags c
+                        where c.workshop_id = a.id
+                        and c.tag_id in (select id from ll_tags where level1 = 'Language')
+                        group by c.workshop_id) as LANGUAGE_TAG,
+                              CASE WHEN REGEXP_LIKE(JSON_VALUE(workshop_json, '$.UpdatedOn'), '^\d{1,2}/\d{1,2}/\d{4}$') 
+                              THEN TO_DATE(JSON_VALUE(workshop_json, '$.UpdatedOn'), 'MM/DD/YYYY')
+                              ELSE created_date
+                              END AS updated_on 
+                
+                  from LL_WORKSHOPS a
+                  where a.active_flg = 'Y'
+                ~';
+                v_search varchar2(4000);
+                v_s_intr varchar2(2); 
+                first_loop number;
+                begin
+                
+                    -- Limit input length
+                    v_search := substr(nvl(:SEARCH,' '), 1, 200);
+                
+                    -- Remove anything that's not A-Z, a-z, 0-9, space, or dash  
+                    v_search := REGEXP_REPLACE(v_search, '[^A-Za-z0-9 -]', ' ');
+                
+                    -- Change consecutive dashes of any length to a single dash
+                    v_search := REGEXP_REPLACE(v_search, '-{2,}', '-');
+                
+                    -- Trim and collapse multiple spaces into one
+                    v_search := trim(REGEXP_REPLACE(v_search, '\s+', ' '));
+                  
+                    --This takes out all of the stop words
+                    v_search := regexp_replace(v_search,'ID[^ID]*$','');
+                    v_search := REGEXP_REPLACE(v_search,0,REGEXP_instr(v_search,'ID',1)-1);
+                    v_search := ll_pkg_apex.clean_searchstr(v_search);
+                  
+                    
+                    if(v_search is not null) then
+                        v_search := ltrim(rtrim(v_search));
+                        --Convert to a comma separated list
+                        v_search := REGEXP_REPLACE(v_search,' ',',');
+                        --For each search word add a where clause
+                        first_loop := 0;
+                        v_sql := ''||v_sql||' and ';
+                        for x in (select column_value from table(apex_string.split(v_search, ','))) loop
+                            if(first_loop != 0) then
+                                v_sql := v_sql || ' and ';
+                            end if;
+                            v_sql :=  v_sql || '((upper('' '' || regexp_replace(a.name, ''[^A-Za-z0-9-]'', '' '') || '' '') like  upper(''% '||x.column_value||' %'')   ) or ';
+                            v_sql :=  v_sql || '(upper('' '' || regexp_replace(a.desc_short, ''[^A-Za-z0-9-]'', '' '') || '' '') like  upper(''% '||x.column_value||' %'')   ))';
+                       
+                            first_loop := 1;
+                        end loop;
+                   end if;
+                
+                    if(:P101_SORT_BY = 'pg_views desc' or :P101_SORT_BY = 'name' or :P101_SORT_BY = 'updated_on desc') then
+                        v_sql := v_sql || ' order by ' || :P101_SORT_BY;
+                    else
+                        :P101_SORT_BY := 'pg_views desc';
+                    end if;
+                
+                    return v_sql;
+                end;
+                
+                ```
+            pageItemsToSubmit: [
+                P101_SORT_BY
+                SEARCH
+            ]
+        }
+        layout {
+            sequence: 10
+            slot: body
+        }
+        appearance {
+            template: @/cards-container
+            templateOptions: [
+                #DEFAULT#
+                margin-left-none
+                margin-right-md
+            ]
+        }
+        componentAppearance {
+            gridColumns: 3
+        }
+        card {
+            cssClasses: cards-class
+            primaryKeyColumn1: ID
+        }
+        title {
+            advancedFormatting: true
+            htmlExpression: <span style="font-weight:700;">&NAME.</span>
+        }
+        body {
+            column: DESC_SHORT
+        }
+        secondaryBody {
+            advancedFormatting: true
+            htmlExpression:
+                ```html
+                <span class="&TIME_ICON." style="font-size:1em;vertical-align:baseline;color:black;">&nbsp;&nbsp;&WORKSHOP_TIME.</span>
+                <span style="float:right;color:black;">&CARD_VIEWS.</span>
+                
+                ```
+        }
+        iconAndBadge {
+            iconSource: imageBlobColumn
+            imageColumn: ICON_BLOB
+            iconPosition: end
+            iconDescription: Workshop Icon
+        }
+        media {
+            source: imageUrl
+            url: #APP_FILES#test-background.webp
+            position: background
+            sizing: cover
+            imageDescription: Workshop Background
+        }
+        pagination {
+            type: page
+            cardsPerPage: 30
+        }
+        messages {
+            whenNoDataFound: No Workshops or Sprints were found matching your criteria
+        }
+
+        action action (
+            type: fullCard
+            layout {
+                sequence: 10
+            }
+            behavior {
+                target: {
+                    page: 180
+                    items: {
+                        WID: &ID.
+                    }
+                    clearCache: 180
+                    action: resetRegions
+                }
+            }
+        )
+
+    )
+
+    pageItem 101_C (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 60
+            slot: body
+        }
+        security {
+            restrictedChars: alphanumWithSpace
+        }
+    )
+
+    pageItem 101_ME (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 50
+            slot: body
+        }
+        security {
+            restrictedChars: alphanumWithSpace
+        }
+    )
+
+    pageItem 101_SEARCH (
+        type: hidden
+        layout {
+            sequence: 40
+            slot: body
+        }
+        security {
+            restrictedChars: webSafe
+        }
+    )
+
+    pageItem P101_SEARCH_BAR (
+        type: combobox
+        label {
+            alignment: left
+        }
+        settings {
+            infiniteScroll: false
+            manualEntriesItem: P1_MANUAL_ENTRIES
+            valueHtmlExpression:
+                ```html
+                <div class="search-result-container" style="display: flex; align-items: center;">
+                   <img class="a-CardView-iconImg" src="&PAR_LINK." loading="lazy" style="margin-right: 8px;">
+                   <span>&DISPLAY_VAL.</span>
+                </div>
+                ```
+        }
+        lov {
+            type: sharedComponent
+            lov: @copy-of-ll-workshops-active
+        }
+        layout {
+            sequence: 30
+            slot: body
+            alignment: left
+        }
+        appearance {
+            template: @/hidden
+            templateOptions: #DEFAULT#
+            valuePlaceholder: Search for workshops and sprints...
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            used: always
+        }
+        serverSideCondition {
+            type: never
+        }
+        security {
+            restrictedChars: webSafe
+        }
+    )
+
+    pageItem P101_SORT_BY (
+        type: selectList
+        label {
+            label: Sort By
+            alignment: left
+        }
+        settings {
+            pageActionOnSelection: submitPage
+            executeValidations: false
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC2:Most Popular;pg_views desc,Alphabetical;name,Newest;updated_on desc
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 20
+            region: @facets
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @/optional-floating
+            templateOptions: [
+                #DEFAULT#
+                margin-top-sm
+                margin-left-sm
+                margin-right-sm
+            ]
+            height: 1
+        }
+        default {
+            type: static
+            staticValue: pg_views desc
+        }
+        security {
+            restrictedChars: webSafe
+        }
+    )
+
+    button clear-search-filters (
+        buttonName: Clear_Search_Filters
+        label: Clear Search & Filters
+        layout {
+            sequence: 10
+            region: @facets
+            slot: regionBody
+        }
+        appearance {
+            buttonTemplate: @/text
+            templateOptions: [
+                #DEFAULT#
+                t-Button--stretch
+                t-Button--gapLeft
+                t-Button--gapRight
+                t-Button--padTop
+                t-Button--gapBottom
+            ]
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    dynamicAction clear-search-and-facets (
+        name: Clear Search and Facets
+        execution {
+            sequence: 20
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @clear-search-filters
+        }
+
+        action native-set-value (
+            action: setValue
+            settings {
+                type: plsqlExpression
+                plsqlExpression: null
+            }
+            affectedElements {
+                selectionType: items
+                items: [
+                    P101_LEVEL
+                    P101_WORKSHOP_TYPE
+                    P101_WORKSHOP_SERIES
+                    P101_ROLE
+                    P101_FOCUS_AREA
+                    P101_PRODUCT
+                    P101_SALES_FOCUS
+                    P101_SALES_PLAY
+                    SEARCH
+                    P0_GLOBAL_SEARCH
+                    P0_MOBILE_SEARCH
+                ]
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction set-search (
+        name: Set Search
+        execution {
+            sequence: 10
+        }
+        when {
+            event: ready
+        }
+
+        action native-set-value (
+            action: setValue
+            settings {
+                value: &SEARCH.
+            }
+            affectedElements {
+                selectionType: items
+                items: [
+                    P1_SEARCH_BAR
+                    P1_MOBILE_SEARCH
+                ]
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    process count-page (
+        name: Count page
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                begin
+                  insert into ll_page_visits (page_id, app_session) values (100, :APP_SESSION);
+                  commit;
+                exception
+                  when others then
+                    ll_pkg_log.log(1,'Error during insert on ll_page_visits for page_id 100, app_session '||:APP_SESSION);
+                end;
+                ```
+        }
+        execution {
+            sequence: 10
+            point: afterFooter
+        }
+        advanced {
+            executionMappingIdentifier: 3181048939135980
+        }
+    )
+
+)
+

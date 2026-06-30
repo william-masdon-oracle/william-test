@@ -1,0 +1,43 @@
+appItem AVAILABLE_WORKSHOP_SUBTITLE (
+    scope: global
+)
+
+appItem EC_GLOBAL (
+    security {
+        escapeSpecialChars: false
+    }
+)
+
+appItem F9906_REFRESH (
+    security {
+        escapeSpecialChars: false
+    }
+)
+
+appItem META_WSID (
+)
+
+appItem SOURCE (
+    security {
+        sessionStateProtection: unrestricted
+        escapeSpecialChars: false
+    }
+)
+
+appItem SOURCETYPE (
+    security {
+        sessionStateProtection: unrestricted
+        escapeSpecialChars: false
+    }
+)
+
+appItem SRC1 (
+    security {
+        sessionStateProtection: unrestricted
+        escapeSpecialChars: false
+    }
+)
+
+appItem WS_APP_FILES (
+)
+

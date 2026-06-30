@@ -1,0 +1,315 @@
+page 202 (
+    name: Preview Sandbox Instructions
+    alias: PREVIEW-SANDBOX-INSTRUCTIONS
+    title: Preview Sandbox Instructions
+    appearance {
+        pageTemplate: @standard-trustarc-redesign
+        templateOptions: [
+            #DEFAULT#
+            t-PageBody--noContentPadding
+        ]
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+        warnOnUnsavedChanges: false
+    }
+    css {
+        inline:
+            ```css
+            body {
+              overflow: hidden;
+            } 
+            
+            .rw-layout--contained:not(.rw-layout--edge-to-edge):not(.rw-layout--fixed):not(.rw-layout--foldout) .t-Body-main {
+              width: 100%;
+            }
+            
+            .rw-layout--contained:not(.rw-layout--edge-to-edge):not(.rw-layout--fixed):not(.rw-layout--foldout) {
+                --ut-body-content-max-width: 100%;
+            }
+            
+            .t-Body-fullContent {
+                height: 100%;
+            }
+            .t-Body-fullContent .container {
+                display: flex;
+                flex-direction: column;
+                height: 100%;
+            }
+            .height100 {
+                height: 100%;
+            }
+            .workshop-iframe {
+                width: 100%;
+                height: 100%;
+                display: block;
+                margin: 0;
+            }
+            
+            .t-Footer {
+                display: none;
+            }
+            
+            
+            
+            .workshop-details {
+                background-color: #fceddc;
+                color: #161513;
+                padding: 10px 16px 8px 16px;
+                font-size: 14px;
+                line-height: 20px;
+                font-weight: 600;
+                text-align: center;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 1rem;
+                flex-wrap: wrap;
+            }
+            
+            .apex-item-comboselect, .apex-item-comboselect input {
+                display: flex !important;
+            }
+            
+            ```
+    }
+    security {
+        authentication: public
+        deepLinking: false
+        formAutoComplete: false
+    }
+
+    region workshop-details (
+        name: Workshop Details
+        type: staticContent
+        source {
+            htmlCode: "This page is a preview only. Return to the workshop landing page to create a Sandbox environment to run this workshop. "
+        }
+        layout {
+            sequence: 20
+            slot: fullWidthContent
+        }
+        appearance {
+            template: @/blank-with-attributes
+            templateOptions: #DEFAULT#
+            cssClasses: workshop-details
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region workshop-instructions (
+        name: Workshop Instructions
+        type: url
+        layout {
+            sequence: 110
+            slot: fullWidthContent
+            rowCssClasses: height100
+        }
+        settings {
+            url: &P202_WORKSHOP_LOCATION.
+            iframeAttrs: " allowfullscreen=\"true\" class=\"workshop-iframe\""
+        }
+    )
+
+    pageItem P202_ID (
+        type: hidden
+        layout {
+            sequence: 20
+            slot: body
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            restrictedChars: alphanumWithSpace
+        }
+    )
+
+    pageItem P202_VOUCHER_ID (
+        type: hidden
+        layout {
+            sequence: 40
+            slot: body
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            restrictedChars: alphanumWithSpace
+        }
+    )
+
+    pageItem P202_WORKSHOP_ID (
+        type: hidden
+        layout {
+            sequence: 30
+            slot: body
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            restrictedChars: alphanumWithSpace
+        }
+    )
+
+    pageItem P202_WORKSHOP_LOCATION (
+        type: hidden
+        layout {
+            sequence: 50
+            slot: body
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            sessionStateProtection: restricted
+        }
+    )
+
+    dynamicAction extend-reservation (
+        name: Extend Reservation
+        execution {
+            sequence: 20
+        }
+        when {
+            event: click
+            selectionType: jQuerySelector
+            jquerySelector: #extend-res
+        }
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    begin
+                      ll_pkg_reservation.extend_reservation (p_reservation_id => :P202_ID);
+                    end;
+                    ```
+                itemsToSubmit: P202_ID
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode: location.reload();
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction hide-extend-reservation (
+        name: Hide Extend Reservation
+        execution {
+            sequence: 30
+        }
+        when {
+            event: ready
+        }
+        serverSideCondition {
+            type: expression
+            plsqlExpression: ll_pkg_reservation.extend_allowed (p_reservation_id => :P202_ID) != 'Y'
+        }
+
+        action native-hide (
+            action: hide
+            affectedElements {
+                selectionType: jquerySelector
+                jquerySelector: #extend-res
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    dynamicAction hide-footer-links (
+        name: Hide Footer Links
+        execution {
+            sequence: 10
+        }
+        when {
+            event: ready
+        }
+
+        action native-hide (
+            action: hide
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    process count-page-and-workshop (
+        name: Count page and workshop
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                begin
+                  insert into ll_page_visits (page_id, workshop_id, app_session) values (200,:P202_WORKSHOP_ID, :APP_SESSION);
+                  commit;
+                exception
+                  when others then
+                    ll_pkg_log.log(1,'Error during insert on ll_page_visits for page_id 200, workshop_id '||V(:P202_WORKSHOP_ID)||', app_session '||:APP_SESSION);
+                end;
+                ```
+        }
+        execution {
+            sequence: 10
+            point: afterFooter
+        }
+        advanced {
+            executionMappingIdentifier: 71557041080021157
+        }
+    )
+
+    process retrieve-information (
+        name: RETRIEVE_INFORMATION
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                declare
+                  v_lab_url       varchar2(4000);
+                  
+                begin
+                
+                if :P202_VOUCHER_ID is not null then
+                    select json_value(alt_url, '$.LIVELABS_URL') into v_lab_url from ll_vouchers where id = :P202_VOUCHER_ID;
+                end if;
+                
+                if v_lab_url is null or length(trim(v_lab_url)) = 0 then
+                    select json_value(lab_url, '$.LIVELABS_URL') into v_lab_url from ll_workshops where id = :P202_WORKSHOP_ID;
+                end if;
+                
+                :P202_WORKSHOP_LOCATION := v_lab_url;
+                
+                end;
+                ```
+        }
+        execution {
+            sequence: 10
+            point: beforeHeader
+        }
+        advanced {
+            executionMappingIdentifier: 71556653980021155
+        }
+    )
+
+)
+

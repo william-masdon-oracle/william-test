@@ -1,0 +1,55 @@
+buildOption feature-about-page (
+    name: Feature: About Page
+    status {
+        status: include
+    }
+    advanced {
+        featureIdentifier: APPLICATION_ABOUT_PAGE
+    }
+)
+
+buildOption feature-activity-reporting (
+    name: Feature: Activity Reporting
+    status {
+        status: include
+    }
+    advanced {
+        featureIdentifier: APPLICATION_ACTIVITY_REPORTING
+    }
+)
+
+buildOption feature-configuration-options (
+    name: Feature: Configuration Options
+    status {
+        status: include
+    }
+    advanced {
+        featureIdentifier: APPLICATION_CONFIGURATION
+    }
+)
+
+buildOption feature-feedback (
+    name: Feature: Feedback
+    status {
+        status: include
+    }
+    advanced {
+        featureIdentifier: APPLICATION_FEEDBACK
+    }
+)
+
+buildOption infinity-code-dev (
+    name: Infinity Code - Dev
+    status {
+        defaultOnExport: exclude
+    }
+)
+
+buildOption infinity-code-prod (
+    name: Infinity Code - Prod
+    status {
+        status: include
+        defaultOnExport: include
+    }
+)
+

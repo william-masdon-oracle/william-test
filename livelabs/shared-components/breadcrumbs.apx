@@ -1,0 +1,18 @@
+breadcrumb breadcrumb (
+    name: Breadcrumb
+
+    entry download-workshop-icon (
+        name: Download Workshop Icon
+        pageNumber: 2
+        execution {
+            sequence: 10
+        }
+        link {
+            target: {
+                page: 2
+            }
+        }
+    )
+
+)
+

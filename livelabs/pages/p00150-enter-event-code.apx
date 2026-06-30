@@ -1,0 +1,204 @@
+page 150 (
+    name: Enter Event Code
+    alias: ENTER-EVENT-CODE
+    title: Enter Event Code
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @/modal-dialog
+        templateOptions: #DEFAULT#
+    }
+    dialog {
+        resizable: false
+    }
+    security {
+        authentication: public
+        formAutoComplete: false
+    }
+
+    region buttons-container (
+        name: Buttons Container
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: dialogFooter
+        }
+        appearance {
+            template: @/buttons-container
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region enter-event-code (
+        name: Enter Event Code
+        type: staticContent
+        source {
+            htmlCode: <p>If you've been provided with an event code by Oracle, enter it below</p>
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @/blank-with-attributes
+            templateOptions: #DEFAULT#
+            renderComponents: belowContent
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    pageItem P150_EVENT_CODE (
+        type: textField
+        label {
+            label: Event Code
+            alignment: left
+        }
+        settings {
+            textCase: upper
+            submitWhenEnterPressed: true
+        }
+        layout {
+            sequence: 10
+            region: @enter-event-code
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @/required-floating
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--xlarge
+            ]
+            width: 19
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            used: always
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+            restrictedChars: noSpecialCharNoNewline
+        }
+    )
+
+    button cancel (
+        buttonName: Cancel
+        label: Cancel
+        layout {
+            sequence: 20
+            region: @buttons-container
+            slot: close
+        }
+        appearance {
+            buttonTemplate: @/text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button submit (
+        buttonName: Submit
+        label: Submit Event Code
+        layout {
+            sequence: 10
+            region: @buttons-container
+            slot: create
+        }
+        appearance {
+            buttonTemplate: @/text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            showProcessing: true
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    dynamicAction close-event-code-dialog (
+        name: Close Event Code Dialog
+        execution {
+            sequence: 20
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @cancel
+        }
+
+        action native-dialog-cancel (
+            action: cancelDialog
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction set-focus-on-event-code-input (
+        name: Set Focus on Event Code Input
+        execution {
+            sequence: 10
+        }
+        when {
+            event: ready
+        }
+
+        action native-set-focus (
+            action: setFocus
+            affectedElements {
+                selectionType: items
+                items: P150_EVENT_CODE
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    validation event-code-exists-validation (
+        name: "Event Code Exists Validation "
+        execution {
+            sequence: 20
+        }
+        validation {
+            type: rowsReturned
+            sqlQuery: select 1 from ll_vouchers where voucher_code = :P150_EVENT_CODE
+        }
+        error {
+            errorMessage: "This Event Code does not exist. "
+            displayLocation: inlineWithField
+            associatedItem: @P150_EVENT_CODE
+        }
+    )
+
+    branch (
+        name: Go to P180 via P11
+        execution {
+            sequence: 10
+        }
+        behavior {
+            target: {
+                page: 11
+                items: {
+                    P11_WEC: &P150_EVENT_CODE.
+                }
+            }
+        }
+    )
+
+)
+
