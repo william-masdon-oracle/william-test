@@ -30,8 +30,7 @@ create table ll_livestack_event_vouchers (
         references ll_livestack_entries (id) on delete cascade,
     constraint ll_lse_vouchers_voucher_fk foreign key (voucher_id)
         references ll_vouchers (id),
-    constraint ll_lse_vouchers_entry_uk unique (livestack_event_id, livestack_entry_id),
-    constraint ll_lse_vouchers_voucher_uk unique (livestack_event_id, voucher_id)
+    constraint ll_lse_vouchers_entry_uk unique (livestack_event_id, livestack_entry_id)
 );
 
 create or replace editionable trigger ll_livestack_events_trg
