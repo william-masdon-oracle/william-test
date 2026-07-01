@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "db": {
+      "source": "oracle/skills",
+      "sourceType": "github",
+      "skillPath": "db/SKILL.md",
+      "computedHash": "fe7aba12adee4f3abf45a376af7d9fb7203a9d9c6ffc7cfe6ecde7408888e6d6"
+    }
+  }
+}
