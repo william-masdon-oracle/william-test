@@ -568,7 +568,10 @@ page 400 (
                     end as badge_class
                 from col_data cd
                 ```
-            pageItemsToSubmit: P400_ID,P400_EVENT_ID
+            pageItemsToSubmit: [
+                P400_ID
+                P400_EVENT_ID
+            ]
         }
         orderBy {
             type: staticValue
@@ -612,6 +615,9 @@ page 400 (
         body {
             column: ENTRY_DESC
             cssClasses: u-lineclamp-3
+        }
+        secondaryBody {
+            column: ENTRY_EVENT_CODE
         }
         iconAndBadge {
             iconSource: initials
@@ -1000,6 +1006,9 @@ page 400 (
             template: @/hidden
             templateOptions: #DEFAULT#
         }
+        advanced {
+            customAttributes: style="word-break: auto-phrase;"
+        }
         default {
             type: static
             staticValue: <div style="font-size:25px"><b>About This LiveStack</b></div>
@@ -1040,7 +1049,7 @@ page 400 (
         }
         default {
             type: static
-            staticValue: <div style="font-size:25px"><b>Content in this LiveStack</b></div>
+            staticValue: <div style="font-size:25px; word-break: auto-phrase;"><b>Content in this LiveStack</b></div>
         }
         sessionState {
             storage: request
@@ -1071,11 +1080,28 @@ page 400 (
             template: @/hidden
             templateOptions: #DEFAULT#
         }
+        advanced {
+            customAttributes: style="word-break: auto-phrase;"
+        }
         sessionState {
             storage: request
         }
         security {
             sessionStateProtection: restricted
+        }
+    )
+
+    pageItem P400_EVENT_ID (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 35
+            slot: body
+        }
+        sessionState {
+            storage: request
         }
     )
 
@@ -1093,23 +1119,6 @@ page 400 (
         }
         security {
             restrictedChars: alphanumWithSpace
-        }
-    )
-
-    pageItem P400_EVENT_ID (
-        type: hidden
-        settings {
-            valueProtected: false
-        }
-        layout {
-            sequence: 35
-            slot: body
-        }
-        sessionState {
-            storage: request
-        }
-        security {
-            sessionStateProtection: restricted
         }
     )
 
@@ -1197,7 +1206,7 @@ page 400 (
         }
         source {
             type: staticValue
-            staticValue: N
+            staticValue: Y
         }
         sessionState {
             storage: request
@@ -1397,7 +1406,7 @@ page 400 (
             icon: fa-clock-o
         }
         advanced {
-            customAttributes: style="color:black;font-weight:550;"
+            customAttributes: style="color:black;font-weight:550; word-break: auto-phrase;"
         }
         source {
             type: sqlQuerySingleValue
@@ -1845,6 +1854,7 @@ page 400 (
                   e_apex_engine_stop   exception;
                   pragma exception_init(e_apex_engine_stop, -20876);
                 begin
+                    
                   if :P400_ID is not null and :P400_ID <> regexp_replace(:P400_ID, '[^0-9]', '') then
                     :P400_ID := regexp_replace(:P400_ID, '[^0-9]', '');
                   end if;
@@ -1958,3 +1968,4 @@ page 400 (
     )
 
 )
+

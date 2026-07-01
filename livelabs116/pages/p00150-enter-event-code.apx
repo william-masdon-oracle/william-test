@@ -176,7 +176,12 @@ page 150 (
         }
         validation {
             type: rowsReturned
-            sqlQuery: select 1 from ll_vouchers where voucher_code = :P150_EVENT_CODE
+            sqlQuery:
+                ```sql
+                select 1 from ll_vouchers where voucher_code = :P150_EVENT_CODE
+                union all 
+                select 1 from ll_livestack_events where event_code = :P150_EVENT_CODE
+                ```
         }
         error {
             errorMessage: "This Event Code does not exist. "

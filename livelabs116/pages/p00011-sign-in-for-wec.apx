@@ -72,6 +72,60 @@ page 11 (
                 request: &SESSION.
             }
         }
+        serverSideCondition {
+            type: rowsReturned
+            sqlQuery: select 'x' from ll_vouchers where voucher_code = :P11_WEC
+        }
+    )
+
+    branch (
+        name: Branch To Page 400 with WEC
+        execution {
+            sequence: 30
+            point: beforeHeader
+        }
+        behavior {
+            target: {
+                page: 400
+                items: {
+                    WEC: &P11_WEC.
+                }
+                request: &SESSION.
+            }
+        }
+        serverSideCondition {
+            type: rowsReturned
+            sqlQuery: select 'x' from ll_livestack_events where event_code = :P11_WEC
+        }
+    )
+
+    branch (
+        name: Bad Event Code
+        execution {
+            sequence: 40
+            point: beforeHeader
+        }
+        behavior {
+            target: {
+                page: 1
+                items: {
+                    P1_INVALID_EVENT_CODE: &P11_WEC.
+                }
+                request: &SESSION.
+                successMessage: false
+            }
+        }
+        serverSideCondition {
+            type: never
+        }
+        comments {
+            comments:
+                ```
+                select 'x' from ll_vouchers where voucher_code = :P11_WEC
+                union all 
+                select 'x' from ll_livestack_events where event_code = :P11_WEC
+                ```
+        }
     )
 
 )

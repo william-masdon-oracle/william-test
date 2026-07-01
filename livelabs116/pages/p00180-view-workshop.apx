@@ -425,6 +425,9 @@ page 180 (
             template: @/hidden
             templateOptions: #DEFAULT#
         }
+        advanced {
+            customAttributes: style="word-break: auto-phrase;"
+        }
         default {
             type: static
             staticValue: <div style="font-size:25px"><b>About This Workshop</b></div>
@@ -455,6 +458,9 @@ page 180 (
         appearance {
             template: @/optional-above
             templateOptions: #DEFAULT#
+        }
+        advanced {
+            customAttributes: style="word-break: auto-phrase;"
         }
         default {
             type: static
@@ -489,6 +495,9 @@ page 180 (
         appearance {
             template: @/hidden
             templateOptions: #DEFAULT#
+        }
+        advanced {
+            customAttributes: style="word-break: auto-phrase;"
         }
         sessionState {
             storage: request
@@ -686,6 +695,9 @@ page 180 (
             template: @/optional-above
             templateOptions: #DEFAULT#
         }
+        advanced {
+            customAttributes: style="word-break: auto-phrase;"
+        }
         default {
             type: static
             staticValue:
@@ -727,6 +739,9 @@ page 180 (
         appearance {
             template: @/optional-above
             templateOptions: #DEFAULT#
+        }
+        advanced {
+            customAttributes: style="word-break: auto-phrase;"
         }
         default {
             type: static
@@ -778,6 +793,9 @@ page 180 (
         appearance {
             template: @/optional-above
             templateOptions: #DEFAULT#
+        }
+        advanced {
+            customAttributes: style="word-break: auto-phrase;"
         }
         default {
             type: static
@@ -865,6 +883,7 @@ page 180 (
         }
         advanced {
             cssClasses: greenbutton-error
+            customAttributes: style="word-break: auto-phrase;"
         }
         default {
             type: static
@@ -902,6 +921,7 @@ page 180 (
         }
         advanced {
             cssClasses: greenbutton-error
+            customAttributes: style="word-break: auto-phrase;"
         }
         default {
             type: static
@@ -970,6 +990,7 @@ page 180 (
         }
         advanced {
             cssClasses: greenbutton-error
+            customAttributes: style="word-break: auto-phrase;"
         }
         default {
             type: static
@@ -1113,6 +1134,7 @@ page 180 (
         }
         advanced {
             cssClasses: greenbutton-error
+            customAttributes: style="word-break: auto-phrase;"
         }
         default {
             type: static
@@ -1205,6 +1227,7 @@ page 180 (
         }
         advanced {
             cssClasses: greenbutton-error
+            customAttributes: style="word-break: auto-phrase;"
         }
         default {
             type: static
@@ -1242,6 +1265,7 @@ page 180 (
         }
         advanced {
             cssClasses: greenbutton-error
+            customAttributes: style="word-break: auto-phrase;"
         }
         default {
             type: static
@@ -1297,7 +1321,7 @@ page 180 (
             icon: fa-clock-o
         }
         advanced {
-            customAttributes: style="color:black;font-weight:550;"
+            customAttributes: style="color:black;font-weight:550; word-break: auto-phrase;"
         }
         sessionState {
             storage: request

@@ -1,64 +1,14 @@
-page 410 (
-    name: Run LiveStack Sandbox
-    alias: RUN-LIVESTACK-SANDBOX
-    title: Run LiveStack
+page 420 (
+    name: Run LiveStack Tenancy
+    alias: RUN-LIVESTACK-TENANCY
+    title: Run LiveStack Tenancy
     appearance {
         pageTemplate: @standard-trustarc-redesign
-        templateOptions: [
-            #DEFAULT#
-            t-PageBody--noContentPadding
-        ]
+        templateOptions: #DEFAULT#
     }
     navigation {
         cursorFocus: doNotFocusCursor
         warnOnUnsavedChanges: false
-    }
-    javaScript {
-        functionAndGlobalVariableDeclaration:
-            ```javascript-browser
-            var countDownDate;
-            var countDownInterval;
-            
-            function startCountdown(hoursRemaining) {
-              if (countDownInterval) {
-                clearInterval(countDownInterval);
-              }
-            
-              var totalHours = Math.floor(hoursRemaining);
-              var days = Math.floor(totalHours / 24);
-              var h = totalHours % 24;
-              var m = Math.floor((hoursRemaining - totalHours) * 60);
-              var s = Math.floor(((hoursRemaining - totalHours) * 60 - m) * 60);
-            
-              countDownDate = new Date();
-              countDownDate.setDate(countDownDate.getDate() + days);
-              countDownDate.setHours(countDownDate.getHours() + h);
-              countDownDate.setMinutes(countDownDate.getMinutes() + m);
-              countDownDate.setSeconds(countDownDate.getSeconds() + s);
-            
-              countDownInterval = setInterval(function () {
-                var now = new Date().getTime();
-                var distance = countDownDate - now;
-            
-                var days    = Math.floor(distance / (1000 * 60 * 60 * 24));
-                var hours   = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-                var seconds = Math.floor((distance % (1000 * 60)) / 1000);
-            
-                var display = "<b>Time Remaining:</b> ";
-                if (days > 0)  display += days + "d ";
-                if (days > 0 || hours > 0) display += hours + "h ";
-                display += minutes + "m " + seconds + "s";
-            
-                document.getElementById("demo").innerHTML = display;
-            
-                if (distance < 0) {
-                  clearInterval(countDownInterval);
-                  document.getElementById("demo").innerHTML = "EXPIRED";
-                }
-              }, 1000);
-            }
-            ```
     }
     css {
         inline:
@@ -66,6 +16,9 @@ page 410 (
             body {
               overflow: hidden;
             } 
+            #P0_GLOBAL_SEARCH .apex-item-comboselect {
+                display: flex !important;
+            }
             
             .rw-layout--contained:not(.rw-layout--edge-to-edge):not(.rw-layout--fixed):not(.rw-layout--foldout) .t-Body-main {
               width: 100%;
@@ -97,8 +50,6 @@ page 410 (
                 display: none;
             }
             
-            
-            
             .workshop-details {
                 background-color: #fceddc;
                 color: #161513;
@@ -117,8 +68,7 @@ page 410 (
             
             #completed-button-id {
                 display: none;
-            }
-            
+            } 
             
             .t-Body-contentInner {
                 padding: 0;
@@ -126,7 +76,6 @@ page 410 (
             ```
     }
     security {
-        pageAccessProtection: argumentsMustHaveChecksum
         formAutoComplete: false
     }
 
@@ -134,7 +83,7 @@ page 410 (
         name: Buttons
         type: staticContent
         layout {
-            sequence: 60
+            sequence: 40
             parentRegion: @journey-info
             slot: regionBody
             startNewRow: false
@@ -142,9 +91,7 @@ page 410 (
                 style="flex-basis:
                 min-content;
                 flex-grow:
-                0;
-                padding:
-                0px;"
+                0;"
             ]
         }
         appearance {
@@ -163,7 +110,7 @@ page 410 (
         name: Completed Popup
         type: staticContent
         layout {
-            sequence: 40
+            sequence: 120
             slot: dialogsDrawersAndPopups
         }
         appearance {
@@ -180,56 +127,11 @@ page 410 (
         }
     )
 
-    region javascript-counter (
-        name: javascript counter
-        type: dynamicContent
-        source {
-            plsqlFunctionBody:
-                ```plsql
-                declare
-                  v_time number;
-                begin
-                  v_time := ll_pkg_reservation.time_remaining(p_reservation_id => :P410_ID);
-                  return '<span id="demo" data-hours="' || v_time || '"></span>';
-                end;
-                ```
-            pageItemsToSubmit: P410_RES_ID
-        }
-        layout {
-            sequence: 40
-            parentRegion: @journey-info
-            slot: regionBody
-            startNewRow: false
-            columnCssClasses: u-pullRight
-            columnAttributes: [
-                style="min-width:
-                fit-content;
-                flex-grow:
-                0;
-                flex-basis:
-                fit-content;"
-            ]
-        }
-        appearance {
-            template: @/standard
-            templateOptions: [
-                #DEFAULT#
-                t-Region--noPadding
-                t-Region--removeHeader js-removeLandmark
-                t-Region--textContent
-                t-Region--scrollBody
-            ]
-        }
-        advanced {
-            customAttributes: style="padding: 5px 10px 0px 0px;"
-        }
-    )
-
     region journey-bar (
         name: Journey Bar
         type: staticContent
         layout {
-            sequence: 10
+            sequence: 70
             slot: fullWidthContent
             rowCssClasses: u-flex
         }
@@ -261,7 +163,7 @@ page 410 (
         name: Journey Title
         type: staticContent
         source {
-            htmlCode: &P410_LIVESTACK_NAME.
+            htmlCode: &P420_LIVESTACK_NAME.
         }
         layout {
             sequence: 30
@@ -269,14 +171,12 @@ page 410 (
             slot: regionBody
             startNewRow: false
             columnCssClasses: [
-                hidden-sm-down
+                hidden-xs-down
                 u-flex-grow-1
             ]
             columnAttributes: [
                 style="max-width:
-                unset;
-                padding-left:
-                0px;"
+                unset;"
             ]
         }
         appearance {
@@ -301,7 +201,7 @@ page 410 (
                 <div style="font-size:3rem;margin-bottom:.5rem;">&#127942;</div><br>
                   <h2 style="color:#fff;margin:0 0 .5rem;font-size:1.25rem;font-weight:700;">LiveStack Complete!</h2>
                   <p style="color:rgba(255,255,255,.85);margin:0;font-size:.9rem;">
-                    You've finished the <strong>&P410_LIVESTACK_NAME.</strong> LiveStack. Outstanding!
+                    You've finished the <strong>&P420_LIVESTACK_NAME.</strong> LiveStack. Outstanding!
                   </p><br>
                   <p style="color:rgba(255,255,255,.85);margin:0;font-size:.9rem;">
                     Share your accomplishment, or return to the LiveStack homepage with the buttons below.
@@ -337,7 +237,7 @@ page 410 (
                 <div style="font-size:3rem;margin-bottom:.5rem;">&#11088;</div><br>
                   <h2 style="color:#fff;margin:0 0 .5rem;font-size:1.25rem;font-weight:700;">Workshop Complete!</h2>
                   <p style="color:rgba(255,255,255,.85);margin:0;font-size:.9rem;">
-                    You've finished the <strong>&P410_LIVESTACK_ENTRY_NAME.</strong> workshop. Excellent work!
+                    You've finished the <strong>&P420_LIVESTACK_ENTRY_NAME.</strong> workshop. Excellent work!
                   </p><br>
                   <p style="color:rgba(255,255,255,.85);margin:0;font-size:.9rem;">
                     You can now move to the next step in the LiveStack, or return to another page with the buttons below.
@@ -362,76 +262,115 @@ page 410 (
         }
     )
 
-    region workshop-details (
-        name: Workshop Details
-        type: plSqlDynamicContent
-        source {
-            plsqlCode:
-                ```plsql
-                declare
-                v_hold varchar2(4000);
-                v_time number;
-                v_live_sql varchar2(500);
-                begin
-                v_time := ll_pkg_reservation.time_remaining(p_reservation_id => :P410_ID);
-                v_hold := ll_pkg_apex.javascript_countdown(p_hours_remaining => v_time, p_id => 'demo');
-                
-                htp.script(v_hold, 'Javascript');
-                htp.p('<div class="workshop-details-actions"><a href="'|| :P410_RES_INFO_URL || '">View Login Info</a></div><div class="workshop-details-timer"><span id="demo"></span><br><a id="extend-res" href="#">Extend Workshop Reservation</a></div>');
-                end;
-                ```
-        }
-        layout {
-            sequence: 20
-            slot: fullWidthContent
-        }
-        appearance {
-            template: @/blank-with-attributes
-            templateOptions: #DEFAULT#
-            cssClasses: workshop-details
-        }
-        advanced {
-            regionDisplaySelector: true
-        }
-        serverSideCondition {
-            type: never
-        }
-    )
-
     region workshop-instructions (
-        name: Workshop Instructions
+        name: workshop instructions
         type: url
         layout {
-            sequence: 30
+            sequence: 80
             slot: fullWidthContent
             rowCssClasses: height100
         }
-        serverSideCondition {
-            type: item=value
-            item: P410_VALID_REQUEST
-            value: Y
+        comments {
+            comments:
+                ```
+                was a server side condition for function body: 
+                declare
+                
+                  cursor c_workshop is select active_flg from ll_workshops where ID = :P420_WID;
+                
+                  v_status        varchar2(1);
+                  v_return_value  BOOLEAN;
+                  v_is_public_ws  varchar2(1);
+                
+                begin
+                
+                  ll_pkg_log.log(40,'P420 - Begin Serverside Enablement of regions');
+                
+                  open c_workshop;
+                  fetch c_workshop into v_is_public_ws;
+                  close c_workshop;
+                
+                  ll_pkg_log.log(40,'P420 - Status of workshop is: '||v_is_public_ws);
+                
+                  if v_is_public_ws = 'Y' then
+                    v_status:='Y';
+                  else 
+                    ll_pkg_log.log(40,'P420 - Status <> Y, Workshop ID is '||:P420_WID);
+                    if :P420_WID is not null then
+                      v_status := ll_pkg_security.am_i_allowed(p_apex_user => :APP_USER, 
+                                                               p_access_type  => 'WORKSHOP_VIEW',
+                                                               p_access_value => :P420_WID );
+                      ll_pkg_log.log(40,'P420 - Status of am_i_allowed is '||v_status||' for P420_WS_ID '||:P420_WID||' and user '||:APP_USER);                                               
+                    else
+                      v_status:='N';
+                    end if;
+                  end if;
+                
+                  v_status := nvl(v_status,'N');
+                
+                  ll_pkg_log.log(40,'P420 - End of check, current status is '||v_status);                                               
+                
+                
+                  if v_status = 'Y' then
+                    ll_pkg_log.log(40,'P420 - Sending status TRUE');
+                    return (TRUE);
+                  else
+                    ll_pkg_log.log(40,'P420 - Sending status FALSE');
+                    return (FALSE);
+                  end if;
+                end;
+                ```
         }
         settings {
-            url: &P410_WORKSHOP_LOCATION.
+            url: &P420_WORKSHOP_LOCATION.
             iframeAttrs: " allowfullscreen=\"true\" class=\"workshop-iframe\""
         }
     )
 
-    pageItem P410_DESC_SHORT (
+    pageItem P420_LIVESTACK_COMPLETION_STATUS (
         type: hidden
         layout {
-            sequence: 60
+            sequence: 140
             slot: body
-        }
-        sessionState {
-            storage: request
-        }
-        security {
-            sessionStateProtection: restricted
         }
     )
 
-    pageItem P410_DISPLAY_OCI_INSTRUCTIONS (
+    pageItem P420_LIVESTACK_EC (
+        type: hidden
+        layout {
+            sequence: 30
+            slot: body
+        }
+        security {
+            restrictedChars: webSafe
+        }
+    )
+
+    pageItem P420_LIVESTACK_ENTRY_COMPLETION_STATUS (
+        type: hidden
+        layout {
+            sequence: 130
+            slot: body
+        }
+    )
+
+    pageItem P420_LIVESTACK_ENTRY_ID (
+        type: hidden
+        layout {
+            sequence: 110
+            slot: body
+        }
+    )
+
+    pageItem P420_LIVESTACK_ENTRY_NAME (
+        type: hidden
+        layout {
+            sequence: 120
+            slot: body
+        }
+    )
+
+    pageItem P420_LIVESTACK_ID (
         type: hidden
         layout {
             sequence: 90
@@ -440,131 +379,28 @@ page 410 (
         sessionState {
             storage: request
         }
-        security {
-            sessionStateProtection: restricted
-        }
     )
 
-    pageItem P410_ID (
-        type: hidden
-        layout {
-            sequence: 20
-            slot: body
-        }
-        sessionState {
-            storage: request
-        }
-        security {
-            restrictedChars: alphanumWithSpace
-        }
-    )
-
-    pageItem P410_LIVESTACK_COMPLETION_STATUS (
-        type: hidden
-        layout {
-            sequence: 120
-            slot: body
-        }
-        sessionState {
-            storage: request
-        }
-    )
-
-    pageItem P410_LIVESTACK_ENTRY_COMPLETION_STATUS (
-        type: hidden
-        layout {
-            sequence: 150
-            slot: body
-        }
-        sessionState {
-            storage: request
-        }
-    )
-
-    pageItem P410_LIVESTACK_ENTRY_ID (
-        type: hidden
-        layout {
-            sequence: 130
-            slot: body
-        }
-        sessionState {
-            storage: request
-        }
-    )
-
-    pageItem P410_LIVESTACK_ENTRY_NAME (
-        type: hidden
-        layout {
-            sequence: 140
-            slot: body
-        }
-        sessionState {
-            storage: request
-        }
-    )
-
-    pageItem P410_LIVESTACK_ID (
+    pageItem P420_LIVESTACK_NAME (
         type: hidden
         layout {
             sequence: 100
             slot: body
         }
-        sessionState {
-            storage: request
-        }
     )
 
-    pageItem P410_LIVESTACK_NAME (
+    pageItem P420_SPRINT_ENABLED (
         type: hidden
-        layout {
-            sequence: 110
-            slot: body
+        settings {
+            valueProtected: false
         }
-        sessionState {
-            storage: request
-        }
-    )
-
-    pageItem P410_RES_INFO_URL (
-        type: hidden
         layout {
             sequence: 70
             slot: body
         }
-        security {
-            sessionStateProtection: restricted
-        }
     )
 
-    pageItem P410_VALID_REQUEST (
-        type: hidden
-        layout {
-            sequence: 80
-            slot: body
-        }
-        sessionState {
-            storage: request
-        }
-        security {
-            sessionStateProtection: restricted
-        }
-    )
-
-    pageItem P410_WORKSHOP_ID (
-        type: hidden
-        layout {
-            sequence: 30
-            slot: body
-        }
-        sessionState {
-            storage: request
-        }
-        security {
-            restrictedChars: alphanumWithSpace
-        }
-    )
-
-    pageItem P410_WORKSHOP_LOCATION (
+    pageItem P420_SPRINT_EVENT_CODE (
         type: hidden
         layout {
             sequence: 40
@@ -574,14 +410,61 @@ page 410 (
             storage: request
         }
         security {
+            restrictedChars: webSafe
+        }
+    )
+
+    pageItem P420_TYPE (
+        type: hidden
+        layout {
+            sequence: 50
+            slot: body
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            restrictedChars: webSafe
+        }
+    )
+
+    pageItem P420_WEC (
+        type: hidden
+        layout {
+            sequence: 20
+            slot: body
+        }
+        security {
+            restrictedChars: webSafe
+        }
+    )
+
+    pageItem P420_WID (
+        type: hidden
+        layout {
+            sequence: 10
+            slot: body
+        }
+        security {
+            restrictedChars: alphanumWithSpace
+        }
+    )
+
+    pageItem P420_WORKSHOP_LOCATION (
+        type: hidden
+        layout {
+            sequence: 60
+            slot: body
+        }
+        security {
             sessionStateProtection: restricted
         }
     )
 
-    pageItem P410_WORKSHOP_NAME (
+    pageItem P420_WORKSHOP_NAME (
         type: hidden
         layout {
-            sequence: 50
+            sequence: 80
             slot: body
         }
         sessionState {
@@ -619,7 +502,7 @@ page 410 (
             target: {
                 page: 400
                 items: {
-                    P400_ID: &P410_LIVESTACK_ID.
+                    P400_ID: &P420_LIVESTACK_ID.
                 }
             }
             warnOnUnsavedChanges: doNotCheck
@@ -630,20 +513,11 @@ page 410 (
         buttonName: completed
         label: Completed
         layout {
-            sequence: 50
+            sequence: 20
             region: @buttons
             slot: regionBody
             startNewRow: false
             columnCssClasses: u-pullRight
-            columnAttributes: [
-                style="max-width:
-                100%;
-                padding:
-                0px
-                0px
-                0px
-                8px;"
-            ]
         }
         appearance {
             buttonTemplate: @/text-with-icon
@@ -653,7 +527,6 @@ page 410 (
                 t-Button--tiny
                 t-Button--success
                 t-Button--iconLeft
-                t-Button--padLeft
             ]
             cssClasses: u-pullRight
             icon: fa-check
@@ -694,7 +567,8 @@ page 410 (
             target: {
                 page: 400
                 items: {
-                    P400_ID: &P410_LIVESTACK_ID.
+                    P400_ID: &P420_LIVESTACK_ID.
+                    WEC: &P420_LIVESTACK_EC.
                 }
             }
             warnOnUnsavedChanges: doNotCheck
@@ -705,19 +579,14 @@ page 410 (
         buttonName: Mark-complete
         label: Mark Complete
         layout {
-            sequence: 40
+            sequence: 10
             region: @buttons
             slot: regionBody
             startNewRow: false
             columnCssClasses: u-pullRight
             columnAttributes: [
                 style="max-width:
-                100%;
-                padding:
-                0px
-                0px
-                0px
-                8px;"
+                100%;"
             ]
         }
         appearance {
@@ -766,7 +635,8 @@ page 410 (
             target: {
                 page: 400
                 items: {
-                    P400_ID: &P410_LIVESTACK_ID.
+                    P400_ID: &P420_LIVESTACK_ID.
+                    WEC: &P420_LIVESTACK_EC.
                 }
             }
             warnOnUnsavedChanges: doNotCheck
@@ -831,49 +701,7 @@ page 410 (
             target: {
                 page: 400
                 items: {
-                    P400_ID: &P410_LIVESTACK_ID.
-                }
-            }
-            warnOnUnsavedChanges: doNotCheck
-        }
-    )
-
-    button view-login-info (
-        buttonName: view-login-info
-        label: View Login Info
-        layout {
-            sequence: 50
-            region: @journey-info
-            slot: regionBody
-            startNewRow: false
-            columnCssClasses: u-pullRight
-            columnAttributes: [
-                style="flex-basis:
-                min-content;
-                flex-grow:
-                0;
-                padding:
-                0px;"
-            ]
-        }
-        appearance {
-            buttonTemplate: @/text-with-icon
-            templateOptions: [
-                #DEFAULT#
-                t-Button--mobileHideLabel
-                t-Button--tiny
-                t-Button--warning
-                t-Button--iconLeft
-            ]
-            cssClasses: u-pullRight
-            icon: fa-info-circle
-        }
-        behavior {
-            action: redirectThisApp
-            target: {
-                page: 201
-                items: {
-                    P201_RES_ID: &P410_ID.
+                    P400_ID: &P420_LIVESTACK_ID.
                 }
             }
             warnOnUnsavedChanges: doNotCheck
@@ -883,7 +711,7 @@ page 410 (
     dynamicAction close-dialog (
         name: Close Dialog
         execution {
-            sequence: 80
+            sequence: 50
         }
         when {
             event: click
@@ -905,51 +733,10 @@ page 410 (
 
     )
 
-    dynamicAction extend-reservation (
-        name: Extend Reservation
-        execution {
-            sequence: 20
-        }
-        when {
-            event: click
-            selectionType: jQuerySelector
-            jquerySelector: #extend-res
-        }
-
-        action native-execute-plsql-code (
-            action: executeServerSideCode
-            settings {
-                plsqlCode:
-                    ```plsql
-                    begin
-                      ll_pkg_reservation.extend_reservation (p_reservation_id => :P410_ID);
-                    end;
-                    ```
-                itemsToSubmit: P410_ID
-            }
-            execution {
-                sequence: 10
-                fireOnInit: false
-            }
-        )
-
-        action native-javascript-code (
-            action: executeJsCode
-            settings {
-                jsCode: location.reload();
-            }
-            execution {
-                sequence: 20
-                fireOnInit: false
-            }
-        )
-
-    )
-
     dynamicAction hide-completed-regions (
         name: hide completed regions
         execution {
-            sequence: 50
+            sequence: 60
         }
         when {
             event: ready
@@ -979,36 +766,10 @@ page 410 (
 
     )
 
-    dynamicAction hide-extend-reservation (
-        name: Hide Extend Reservation
-        execution {
-            sequence: 30
-        }
-        when {
-            event: ready
-        }
-        serverSideCondition {
-            type: expression
-            plsqlExpression: ll_pkg_reservation.extend_allowed (p_reservation_id => :P410_ID) != 'Y'
-        }
-
-        action native-hide (
-            action: hide
-            affectedElements {
-                selectionType: jquerySelector
-                jquerySelector: #extend-res
-            }
-            execution {
-                sequence: 10
-            }
-        )
-
-    )
-
     dynamicAction mark-complete (
         name: Mark Complete
         execution {
-            sequence: 60
+            sequence: 20
         }
         when {
             event: click
@@ -1026,11 +787,11 @@ page 410 (
                       v_completed number;
                       v_total number;
                     begin
-                      -- update old entry
+                      -- re-enable old entry
                       begin
                         select id into v_exists 
                         from ll_livestack_users 
-                        where livestack_id = :P410_LIVESTACK_ID 
+                        where livestack_id = :P420_LIVESTACK_ID 
                         and user_email = :APP_USER;
                         
                         update ll_livestack_users 
@@ -1044,13 +805,13 @@ page 410 (
                       -- create new entry
                       if v_exists = -1 then
                         insert into ll_livestack_users (livestack_id, user_email, status)
-                        values (:P410_LIVESTACK_ID, :APP_USER, 'In Progress')
+                        values (:P420_LIVESTACK_ID, :APP_USER, 'In Progress')
                         returning id into v_exists;
                       end if;
                     
                       -- upsert progress row
                       merge into ll_livestack_user_progress p
-                      using (select :P410_LIVESTACK_ENTRY_ID as entry_id, :APP_USER as user_email from dual) src
+                      using (select :P420_LIVESTACK_ENTRY_ID as entry_id, :APP_USER as user_email from dual) src
                       on (p.entry_id = src.entry_id and p.user_email = src.user_email)
                       when matched then
                         update set p.completed_flg  = 'Y',
@@ -1061,7 +822,7 @@ page 410 (
                     
                       commit;
                     
-                      -- if all items are completed, update status
+                      -- if all items are completed, update subscription status
                       select
                         count(case when nvl(p.completed_flg, 'N') = 'Y' then 1 else null end) as completed_count,
                         count(*) as total_count
@@ -1072,23 +833,23 @@ page 410 (
                       left join ll_livestack_user_progress p
                         on i.id = p.entry_id
                         and p.user_email = :APP_USER
-                      where i.livestack_id = :P410_LIVESTACK_ID;
+                      where i.livestack_id = :P420_LIVESTACK_ID;
                     
                       if v_completed = v_total then
                         update ll_livestack_users 
                         set status         = 'Completed', 
                             completed_date = sysdate 
                         where id = v_exists;
-                        :P410_LIVESTACK_COMPLETION_STATUS := 'Completed';
+                        :P420_LIVESTACK_COMPLETION_STATUS := 'Completed';
                       end if;
                     
                     end;
                     ```
                 itemsToSubmit: [
-                    P410_LIVESTACK_ID
-                    P410_LIVESTACK_ENTRY_ID
+                    P420_LIVESTACK_ID
+                    P420_LIVESTACK_ENTRY_ID
                 ]
-                itemsToReturn: P410_LIVESTACK_COMPLETION_STATUS
+                itemsToReturn: P420_LIVESTACK_COMPLETION_STATUS
                 showProcessing: true
             }
             execution {
@@ -1144,7 +905,7 @@ page 410 (
             }
             clientSideCondition {
                 type: item=value
-                item: P410_LIVESTACK_COMPLETION_STATUS
+                item: P420_LIVESTACK_COMPLETION_STATUS
                 value: Completed
             }
         )
@@ -1161,7 +922,7 @@ page 410 (
             }
             clientSideCondition {
                 type: item!=value
-                item: P410_LIVESTACK_COMPLETION_STATUS
+                item: P420_LIVESTACK_COMPLETION_STATUS
                 value: Completed
             }
         )
@@ -1171,7 +932,7 @@ page 410 (
     dynamicAction open-completed-popup (
         name: open completed popup
         execution {
-            sequence: 70
+            sequence: 40
         }
         when {
             event: click
@@ -1203,7 +964,7 @@ page 410 (
             }
             clientSideCondition {
                 type: item=value
-                item: P410_LIVESTACK_COMPLETION_STATUS
+                item: P420_LIVESTACK_COMPLETION_STATUS
                 value: Completed
             }
         )
@@ -1220,43 +981,8 @@ page 410 (
             }
             clientSideCondition {
                 type: item!=value
-                item: P410_LIVESTACK_COMPLETION_STATUS
+                item: P420_LIVESTACK_COMPLETION_STATUS
                 value: Completed
-            }
-        )
-
-    )
-
-    dynamicAction refresh-page-for-time (
-        name: "refresh page for time "
-        execution {
-            sequence: 90
-        }
-        when {
-            event: apexafterclosecanceldialog
-            selectionType: button
-            button: @view-login-info
-        }
-
-        action native-javascript-code (
-            action: executeJsCode
-            settings {
-                jsCode:
-                    ```javascript-browser
-                    apex.server.process("GET_TIME_REMAINING", {
-                      pageItems: "#P410_ID"
-                    }, {
-                      dataType: "text",  // <-- this is the key fix
-                      success: function(data) {
-                        startCountdown(parseFloat(data));
-                      }
-                    });
-                    
-                    ```
-            }
-            execution {
-                sequence: 10
-                fireOnInit: false
             }
         )
 
@@ -1265,7 +991,7 @@ page 410 (
     dynamicAction set-button-status (
         name: set button status
         execution {
-            sequence: 40
+            sequence: 30
         }
         when {
             event: ready
@@ -1277,27 +1003,27 @@ page 410 (
                 plsqlCode:
                     ```plsql
                     begin
-                    select count(*) into :P410_LIVESTACK_ENTRY_COMPLETION_STATUS from ll_livestack_user_progress
-                    where entry_id = :P410_LIVESTACK_ENTRY_ID
+                    select count(*) into :P420_LIVESTACK_ENTRY_COMPLETION_STATUS from ll_livestack_user_progress
+                    where entry_id = :P420_LIVESTACK_ENTRY_ID
                         and user_email = :APP_USER
                         and completed_flg = 'Y';
                     
                     begin
-                        select status into :P410_LIVESTACK_COMPLETION_STATUS from ll_livestack_users
-                        where livestack_id = :P410_LIVESTACK_ID
+                        select status into :P420_LIVESTACK_COMPLETION_STATUS from ll_livestack_users
+                        where livestack_id = :P420_LIVESTACK_ID
                             and user_email = :APP_USER;
                     exception when others then 
-                        :P410_LIVESTACK_COMPLETION_STATUS := 'Not Completed';
+                        :P420_LIVESTACK_COMPLETION_STATUS := 'Not Completed';
                     end;
                     end;
                     ```
                 itemsToSubmit: [
-                    P410_LIVESTACK_ENTRY_ID
-                    P410_LIVESTACK_ID
+                    P420_LIVESTACK_ENTRY_ID
+                    P420_LIVESTACK_ID
                 ]
                 itemsToReturn: [
-                    P410_LIVESTACK_ENTRY_COMPLETION_STATUS
-                    P410_LIVESTACK_COMPLETION_STATUS
+                    P420_LIVESTACK_ENTRY_COMPLETION_STATUS
+                    P420_LIVESTACK_COMPLETION_STATUS
                 ]
                 showProcessing: true
             }
@@ -1317,7 +1043,7 @@ page 410 (
             }
             clientSideCondition {
                 type: item!=value
-                item: P410_LIVESTACK_ENTRY_COMPLETION_STATUS
+                item: P420_LIVESTACK_ENTRY_COMPLETION_STATUS
                 value: 0
             }
         )
@@ -1325,44 +1051,15 @@ page 410 (
         action native-javascript-code (
             action: executeJsCode
             settings {
-                jsCode:
-                    ```javascript-browser
-                    document.getElementById("completed-button-id").style.display = "block";
-                    
-                    ```
+                jsCode: document.getElementById("completed-button-id").style.display = "block";
             }
             execution {
                 sequence: 50
             }
             clientSideCondition {
                 type: item!=value
-                item: P410_LIVESTACK_ENTRY_COMPLETION_STATUS
+                item: P420_LIVESTACK_ENTRY_COMPLETION_STATUS
                 value: 0
-            }
-        )
-
-    )
-
-    dynamicAction update-countdown-timer (
-        name: update countdown timer
-        execution {
-            sequence: 100
-        }
-        when {
-            event: ready
-        }
-
-        action native-javascript-code (
-            action: executeJsCode
-            settings {
-                jsCode:
-                    ```javascript-browser
-                    var hoursRemaining = parseFloat(document.getElementById("demo").getAttribute("data-hours"));
-                    startCountdown(hoursRemaining);
-                    ```
-            }
-            execution {
-                sequence: 10
             }
         )
 
@@ -1375,111 +1072,96 @@ page 410 (
             plsqlCode:
                 ```plsql
                 begin
-                  insert into ll_page_visits (page_id, workshop_id, app_session) values (410,:P410_LIVESTACK_ID, :APP_SESSION);
+                  insert into ll_page_visits (page_id, workshop_id, app_session) values (420,:P420_LIVESTACK_ID, :APP_SESSION);
                 exception
                   when others then
-                    ll_pkg_log.log(1,'Error during insert on ll_page_visits for page_id 410, livestack_id '||V(:P410_LIVESTACK_ID)||', app_session '||:APP_SESSION);
+                    ll_pkg_log.log(1,'Error during insert on ll_page_visits for page_id 420, livestack_id '||V(:P420_LIVESTACK_ID)||', app_session '||:APP_SESSION);
                 end;
                 ```
         }
         execution {
-            sequence: 10
+            sequence: 20
             point: afterFooter
         }
         advanced {
-            executionMappingIdentifier: 6788463888330144
+            executionMappingIdentifier: 7828301386772855
         }
     )
 
-    process get-time-remaining (
-        name: GET_TIME_REMAINING
+    process retrieve-info (
+        name: RETRIEVE_INFO
         type: executeCode
         source {
             plsqlCode:
                 ```plsql
                 declare
-                  v_time number;
-                begin
-                  v_time := ll_pkg_reservation.time_remaining(p_reservation_id => to_number(:P410_ID));
-                  htp.p(v_time);
-                end;
-                ```
-        }
-        execution {
-            sequence: 10
-            point: ajaxCallback
-        }
-        advanced {
-            executionMappingIdentifier: 7225181092454938
-        }
-    )
-
-    process retrieve-information (
-        name: RETRIEVE_INFORMATION
-        type: executeCode
-        source {
-            plsqlCode:
-                ```plsql
-                declare
-                  cursor c_reservation is select llr.workshop_id, llr.voucher_id, llw.name, llw.lab_url, desc_short, llw.workshop_json
-                                          from ll_reservations llr, ll_workshops llw
-                                          where llr.workshop_id = llw.id
-                                          and llr.id = :P410_ID;
-                
-                  cursor c_event (p_event_id number) is 
-                                    select alt_url, alt_desc_short
-                                    from ll_vouchers
-                                    where id = p_event_id;
-                
-                  v_lab_url       varchar2(4000);
-                  v_desc_short    varchar2(4000);
-                  v_voucher_id    number;
-                  v_time number;
-                  v_hold varchar2(4000);
+                  cursor c_workshop is select lab_url, name
+                                       from ll_workshops
+                                       where id = :P420_WID
+                                       and ( ll_pkg_security.am_i_allowed ( p_apex_user => :APP_USER,
+                                                                            p_access_type => 'WORKSHOP_VIEW',
+                                                                            p_access_value => :P420_WID ) = 'Y'
+                                             or
+                                             active_flg = 'Y' );
+                  cursor c_event_code is select alt_url, id
+                                         from ll_vouchers
+                                         where voucher_code = :P420_WEC
+                                         and workshop_id = :P420_WID
+                                         and ll_pkg_security.am_i_allowed ( p_apex_user => :APP_USER,
+                                                                            p_access_type => 'WORKSHOP_VIEW',
+                                                                            p_access_value => :P420_WID ) = 'Y';
+                   cursor c_livestack_event (p_voucher_id number) is 
+                                select lse.event_code 
+                                from ll_livestack_event_vouchers lsev
+                                    join ll_livestack_events lse 
+                                        on lse.id = lsev.livestack_event_id 
+                                        and lsev.voucher_id = p_voucher_id 
+                                        and lsev.livestack_entry_id = :P420_LIVESTACK_ENTRY_ID;
                 
                 
+                  v_ws_lab_url     varchar2(4000);              
+                  v_ec_lab_url     varchar2(4000);
+                  v_ws_name         varchar2(4000);
+                  v_voucher_id number;
                 begin
                 
-                  if :P410_ID is not null then
+                  if :P420_WEC is not null then 
+                    open c_event_code;
+                    fetch c_event_code into v_ec_lab_url, v_voucher_id;
+                    close c_event_code;
                 
-                    for x in c_reservation loop
-                
-                      if x.voucher_id is not null then
-                        open c_event(x.voucher_id);
-                        fetch c_event into v_lab_url, v_desc_short;
-                        close c_event;
-                
-                        v_voucher_id := x.voucher_id;
-                      end if;
-                
-                      v_lab_url := nvl(v_lab_url, x.lab_url);
-                 
-                      :P410_WORKSHOP_LOCATION := nvl(json_value(v_lab_url,'$.GITHUB_URL'),  json_value(v_lab_url,'$.LIVELABS_URL'));
-                      :P410_DISPLAY_OCI_INSTRUCTIONS := nvl(json_value(x.workshop_json,'$.DisplayOciInstructions'), 'Y');
-                      :P410_WORKSHOP_ID := x.workshop_id;
-                      :P410_WORKSHOP_NAME := x.name;
-                      :P410_DESC_SHORT := nvl(v_desc_short, x.desc_short);
-                      :P410_VALID_REQUEST :=  ll_pkg_security.am_i_allowed(p_apex_user => :APP_USER, 
-                                                                           p_access_type  => 'RESERVATION_VIEW',
-                                                                           p_access_value => :P410_ID );
-                      :P410_RES_INFO_URL := APEX_PAGE.GET_URL (
-                            p_page   => 201,
-                            p_items  => 'P201_RES_ID',
-                            p_values => :P410_ID );
-                
-                
-                    end loop;
-                  else
-                    :P410_VALID_REQUEST := 'N';
+                        ll_pkg_log.log(1, 'before EC');
+                        open c_livestack_event(v_voucher_id);
+                        fetch c_livestack_event into :P420_LIVESTACK_EC;
+                        close c_livestack_event;
+                        ll_pkg_log.log(1, 'after EC' || :P420_LIVESTACK_EC);
                   end if;
                 
+                  open c_workshop;
+                  fetch c_workshop into v_ws_lab_url, v_ws_name;
+                  close c_workshop;
+                  
+                --   begin
+                --       select ll.workshop_id into :P420_SPRINT_ENABLED from ll_workshop_tags ll, ll_tags t where t.level2 = 'Sprints' and ll.tag_id = t.id and ll.workshop_id = :P420_WID;
+                --       if :P420_SPRINT_ENABLED is not null then 
+                --         :P420_SPRINT_ENABLED := 'Y';
+                --       else 
+                --         :P420_SPRINT_ENABLED := 'N';
+                --       end if;
+                --   exception when others then 
+                --     :P420_SPRINT_ENABLED := 'N';
+                --   end;
                 
+                  :P420_WORKSHOP_NAME := v_ws_name;
                 
-                  select name into :P410_LIVESTACK_NAME from ll_livestacks where id = :P410_LIVESTACK_ID;
+                  :P420_WORKSHOP_LOCATION := nvl(JSON_VALUE(v_ec_lab_url, '$.PAID_URL'), JSON_VALUE(v_ws_lab_url, '$.PAID_URL'));
                 
-                  select nvl(title_override, :P410_WORKSHOP_NAME) into :P410_LIVESTACK_ENTRY_NAME from ll_livestack_entries where id = :P410_LIVESTACK_ENTRY_ID;
+                  select name into :P420_LIVESTACK_NAME from ll_livestacks where id = :P420_LIVESTACK_ID;
+                
+                  select nvl(title_override, :P420_WORKSHOP_NAME) into :P420_LIVESTACK_ENTRY_NAME from ll_livestack_entries where id = :P420_LIVESTACK_ENTRY_ID;
                 
                 end;
+                
                 ```
         }
         execution {
@@ -1487,7 +1169,7 @@ page 410 (
             point: beforeHeader
         }
         advanced {
-            executionMappingIdentifier: 6788041450330143
+            executionMappingIdentifier: 6796054818362788
         }
     )
 
