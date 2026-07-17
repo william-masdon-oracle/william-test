@@ -1,0 +1,632 @@
+page 21 (
+    name: Home Page Banners
+    alias: HOME-PAGE-BANNERS
+    title: Home Page Banners
+    appearance {
+        pageTemplate: @standard-trustarc
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    css {
+        inline:
+            ```css
+            .t-Region-header {
+                background-color: #9cb88c;
+            }
+            ```
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region banner-management (
+        name: Banner Management
+        title: LiveLabs Home Page Banners
+        type: staticContent
+        source {
+            htmlCode: <b>You can activate, modify, or deactivate existing carousel slots of the <a href="livelabs.oracle.com">LiveLabs</a> home page carousel using the report below.</b> <i><u>NOTE:</u></i> There are currently &P21_CAROUSEL_SLOT_COUNT. carousel slots <i>(&P21_CAROUSEL_SLOT_WIDTH. x &P21_CAROUSEL_SLOT_HEIGHT.)</i>. The creation of additional slots would require a push to production, so please reach out to the LiveLabs Dev team for that.
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    region home-page-banners (
+        name: Home Page Banners
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery: select "ID","POSITION","ACCESSIBILITY_TEXT", "URL",sys.dbms_lob.getlength("IMAGE")"IMAGE","ACTIVE"from "LL_HOME_PAGE_BANNERS"
+        }
+        layout {
+            sequence: 10
+            parentRegion: @banner-management
+            slot: subRegions
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: [
+                #DEFAULT#
+                margin-top-md
+            ]
+        }
+        link {
+            linkColumn: customTarget
+            target: {
+                page: 22
+                items: {
+                    P22_ID: \#ID#\
+                }
+                action: resetPagination
+            }
+            linkIcon: <span role="img" aria-label="Edit" class="fa fa-edit" title="Edit"></span>
+        }
+        pagination {
+            type: rowRangesXToY
+        }
+        messages {
+            whenNoDataFound: No data found.
+            whenMoreDataFound: The maximum row count for this report is #MAX_ROW_COUNT# rows.  Please apply a filter to reduce the number of records in your query.
+        }
+        advanced {
+            savedReportMappingIdentifier: 678421010733640461
+        }
+
+        column ACCESSIBILITY_TEXT (
+            type: plainText
+            heading {
+                heading: Accessibility Text
+                alignment: center
+            }
+            layout {
+                sequence: 15
+                columnAlignment: center
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: F
+            }
+        )
+
+        column ACTIVE (
+            type: plainText
+            heading {
+                heading: Active
+                alignment: center
+            }
+            layout {
+                sequence: 5
+                columnAlignment: center
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: E
+            }
+        )
+
+        column ID (
+            type: hidden
+            heading {
+                heading: ID
+            }
+            layout {
+                sequence: 0
+            }
+            source {
+                primaryKey: true
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: A
+            }
+        )
+
+        column IMAGE (
+            type: downloadBlob
+            heading {
+                heading: Image
+                alignment: center
+            }
+            layout {
+                sequence: 4
+                columnAlignment: center
+            }
+            appearance {
+                viewFileAs: inline
+            }
+            blobAttributes {
+                tableName: LL_HOME_PAGE_BANNERS
+                blobColumn: IMAGE
+                primaryKeyColumn1: ID
+            }
+            source {
+                primaryKey: true
+                dataType: NUMBER
+            }
+            columnFilter {
+                type: none
+            }
+            advanced {
+                endUserAlias: D
+            }
+            enableUsersTo {
+                sort: false
+                filter: false
+                highlight: false
+                controlBreak: false
+                aggregate: false
+                compute: false
+                chart: false
+                groupBy: false
+                pivot: false
+            }
+        )
+
+        column POSITION (
+            type: plainText
+            heading {
+                heading: Banner Slot
+                alignment: center
+            }
+            layout {
+                sequence: 2
+                columnAlignment: center
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: B
+            }
+        )
+
+        column URL (
+            type: plainText
+            heading {
+                heading: URL
+                alignment: center
+            }
+            layout {
+                sequence: 25
+                columnAlignment: center
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: G
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: Home Page Banners
+        }
+
+        savedReport 6784333 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn ACCESSIBILITY_TEXT (
+                sequence: 5
+            )
+
+            displayColumn ACTIVE (
+                sequence: 2
+            )
+
+            displayColumn IMAGE (
+                sequence: 3
+            )
+
+            displayColumn POSITION (
+                sequence: 1
+            )
+
+            displayColumn URL (
+                sequence: 4
+            )
+
+            sort (
+                column: POSITION
+                sort {
+                    sequence: 1
+                }
+            )
+
+        )
+
+    )
+
+    region new-banners (
+        name: New Banners
+        type: interactiveGrid
+        source {
+            location: localDatabase
+            tableName: LL_BANNERS
+        }
+        layout {
+            sequence: 30
+            slot: contentBody
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        edit {
+            enabled: true
+            allowedOperations: [
+                add
+                update
+                delete
+            ]
+        }
+        toolbar {
+            controls: [
+                searchCol
+                searchField
+                actionsMenu
+                resetButton
+                saveButton
+            ]
+        }
+        download {
+            formats: [
+                csv
+                html
+                excel
+                pdf
+            ]
+        }
+        advanced {
+            savedReportMappingIdentifier: 6209647650409519
+        }
+
+        savedReport 62677 (
+            visibility: primary
+            view {
+                default: grid
+            }
+            singleRowView {
+                displayedColumns: true
+            }
+
+            displayColumn (
+                column: @ID
+                layout {
+                    sequence: 1
+                }
+            )
+
+            displayColumn (
+                column: @BANNER_TEXT
+                layout {
+                    sequence: 2
+                }
+            )
+
+            displayColumn (
+                column: @BUTTON_LABEL
+                layout {
+                    sequence: 3
+                }
+            )
+
+            displayColumn (
+                column: @BUTTON_LINK
+                layout {
+                    sequence: 4
+                }
+            )
+
+            displayColumn (
+                column: @ACTIVE_FLG
+                layout {
+                    sequence: 5
+                }
+            )
+
+            displayColumn (
+                column: @BANNER_ORDER
+                layout {
+                    sequence: 6
+                }
+            )
+
+            displayColumn (
+                column: @APEX$ROW_ACTION
+                layout {
+                    sequence: 0
+                }
+            )
+
+        )
+
+        column ACTIVE_FLG (
+            type: textField
+            heading {
+                heading: Active Flg
+            }
+            layout {
+                sequence: 70
+            }
+            validation {
+                maxLength: 1
+            }
+            source {
+                databaseColumn: ACTIVE_FLG
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column APEX$ROW_ACTION (
+            type: actionsMenu
+            layout {
+                sequence: 20
+            }
+        )
+
+        column APEX$ROW_SELECTOR (
+            type: rowSelector
+            layout {
+                sequence: 10
+            }
+        )
+
+        column BANNER_ORDER (
+            type: numberField
+            heading {
+                heading: Banner Order
+                alignment: end
+            }
+            layout {
+                sequence: 80
+                columnAlignment: end
+            }
+            source {
+                databaseColumn: BANNER_ORDER
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column BANNER_TEXT (
+            type: textarea
+            heading {
+                heading: Banner Text
+            }
+            layout {
+                sequence: 40
+            }
+            validation {
+                maxLength: 4000
+            }
+            source {
+                databaseColumn: BANNER_TEXT
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column BUTTON_LABEL (
+            type: textField
+            heading {
+                heading: Button Label
+            }
+            layout {
+                sequence: 50
+            }
+            validation {
+                maxLength: 100
+            }
+            source {
+                databaseColumn: BUTTON_LABEL
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column BUTTON_LINK (
+            type: textarea
+            heading {
+                heading: Button Link
+            }
+            layout {
+                sequence: 60
+            }
+            validation {
+                maxLength: 4000
+            }
+            source {
+                databaseColumn: BUTTON_LINK
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column ID (
+            type: hidden
+            layout {
+                sequence: 30
+            }
+            source {
+                databaseColumn: ID
+                dataType: number
+                queryOnly: true
+                primaryKey: true
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+    )
+
+    pageItem P21_CAROUSEL_SLOT_COUNT (
+        type: hidden
+        layout {
+            sequence: 10
+            region: @banner-management
+            slot: regionBody
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery: select value from ll_system_parameters where name = 'HOME_PAGE_BANNER_COUNT';
+        }
+    )
+
+    pageItem P21_CAROUSEL_SLOT_HEIGHT (
+        type: hidden
+        layout {
+            sequence: 30
+            region: @banner-management
+            slot: regionBody
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery: select value from ll_system_parameters where name = 'HOME_PG_BANNER_HEIGHT';
+        }
+    )
+
+    pageItem P21_CAROUSEL_SLOT_WIDTH (
+        type: hidden
+        layout {
+            sequence: 20
+            region: @banner-management
+            slot: regionBody
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery: select value from ll_system_parameters where name = 'HOME_PG_BANNER_WIDTH';
+        }
+    )
+
+    button create (
+        buttonName: CREATE
+        label: Create
+        layout {
+            sequence: 10
+            region: @home-page-banners
+            slot: rightOfInteractiveReportSearchBar
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 22
+                clearCache: 22
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    dynamicAction edit-report-dialog-closed (
+        name: Edit Report - Dialog Closed
+        execution {
+            sequence: 10
+        }
+        when {
+            event: apexafterclosedialog
+            selectionType: region
+            region: @home-page-banners
+        }
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @home-page-banners
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    process new-banner-save-interactive-grid-data (
+        name: New Banner - Save Interactive Grid Data
+        type: interactiveGridAutoRowProcessing
+        editableRegion: @new-banners
+        execution {
+            sequence: 10
+        }
+        advanced {
+            executionMappingIdentifier: 6210538279409528
+        }
+    )
+
+)
+

@@ -1,0 +1,792 @@
+page 9651 (
+    name: Reservation Details
+    alias: RESERVATION-DETAILS
+    title: Reservation Details
+    appearance {
+        pageTemplate: @standard-trustarc
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    javaScript {
+        functionAndGlobalVariableDeclaration: var htmldb_delete_message='"DELETE_CONFIRM_MSG"';
+    }
+    security {
+        authorizationScheme: @superrrrr-user
+        formAutoComplete: false
+    }
+
+    region reservation-details (
+        name: Reservation Details
+        type: form
+        source {
+            location: localDatabase
+            tableName: LL_RESERVATIONS_VW
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        edit {
+            enabled: true
+            allowedOperations: [
+                add
+                update
+                delete
+            ]
+        }
+    )
+
+    pageItem P9651_ACTIVE_FLG (
+        type: selectList
+        label {
+            label: Active Flg
+            alignment: left
+        }
+        lov {
+            type: sharedComponent
+            lov: @active-flg
+        }
+        layout {
+            sequence: 20
+            region: @reservation-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 1
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            formRegion: @reservation-details
+            column: ACTIVE_FLG
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9651_ENVIRONMENTS (
+        type: numberField
+        label {
+            label: Environments
+            alignment: left
+        }
+        settings {
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 110
+            region: @reservation-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 1
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 255
+        }
+        source {
+            formRegion: @reservation-details
+            column: ENVIRONMENTS
+            dataType: number
+        }
+        default {
+            type: static
+            staticValue: 1
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9651_FOCUS_AREA (
+        type: textField
+        label {
+            label: Focus Area
+            alignment: left
+        }
+        settings {
+            trimSpaces: none
+        }
+        layout {
+            sequence: 50
+            region: @reservation-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 50
+        }
+        source {
+            formRegion: @reservation-details
+            column: FOCUS_AREA
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9651_ID (
+        type: displayOnly
+        label {
+            label: ID
+            alignment: left
+        }
+        layout {
+            sequence: 10
+            region: @reservation-details
+            slot: regionBody
+            alignment: left
+            columnSpan: 1
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @reservation-details
+            column: ID
+            dataType: number
+            primaryKey: true
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9651_OWNER1 (
+        type: textField
+        label {
+            label: Primary owner
+            alignment: left
+        }
+        settings {
+            trimSpaces: none
+        }
+        layout {
+            sequence: 60
+            region: @reservation-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 50
+        }
+        source {
+            formRegion: @reservation-details
+            column: OWNER1
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9651_PUBLIC_KEY (
+        type: textarea
+        label {
+            label: Public Key
+            alignment: left
+        }
+        layout {
+            sequence: 220
+            region: @reservation-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+            height: 10
+        }
+        validation {
+            maxLength: 4000
+        }
+        source {
+            formRegion: @reservation-details
+            column: PUBLIC_KEY
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9651_REASON (
+        type: textField
+        label {
+            label: Reason
+            alignment: left
+        }
+        settings {
+            trimSpaces: none
+        }
+        layout {
+            sequence: 40
+            region: @reservation-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 50
+        }
+        source {
+            formRegion: @reservation-details
+            column: REASON
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9651_REGION_ID (
+        type: selectList
+        label {
+            label: Region Id
+            alignment: left
+        }
+        lov {
+            type: sharedComponent
+            lov: @ll-regions-3
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 80
+            region: @reservation-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @required-floating
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            formRegion: @reservation-details
+            column: REGION_ID
+            dataType: number
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9651_REMARKS (
+        type: textarea
+        label {
+            label: Remarks
+            alignment: left
+        }
+        layout {
+            sequence: 210
+            region: @reservation-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 60
+            height: 10
+        }
+        validation {
+            maxLength: 4000
+        }
+        source {
+            formRegion: @reservation-details
+            column: REMARKS
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9651_START_DATE (
+        type: datePickerJquery
+        label {
+            label: Start Date
+            alignment: left
+        }
+        layout {
+            sequence: 140
+            region: @reservation-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 255
+        }
+        source {
+            formRegion: @reservation-details
+            column: START_DATE
+            dataType: date
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9651_START_GMT (
+        type: displayOnly
+        label {
+            label: Start Gmt
+            alignment: left
+        }
+        layout {
+            sequence: 190
+            region: @reservation-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 2
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            formatMask: DD-MON-YYYY HH24:MI
+        }
+        source {
+            formRegion: @reservation-details
+            column: START_GMT
+            dataType: date
+            queryOnly: true
+        }
+    )
+
+    pageItem P9651_START_TIME (
+        type: selectList
+        label {
+            label: Start Time
+            alignment: left
+        }
+        lov {
+            type: sharedComponent
+            lov: @starttime
+            displayNullValue: false
+        }
+        layout {
+            sequence: 150
+            region: @reservation-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            formRegion: @reservation-details
+            column: START_TIME
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9651_START_TIMEZONE (
+        type: selectList
+        label {
+            label: Start Timezone
+            alignment: left
+        }
+        lov {
+            type: sharedComponent
+            lov: @timezones
+            displayNullValue: false
+        }
+        layout {
+            sequence: 160
+            region: @reservation-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 3
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            formRegion: @reservation-details
+            column: START_TIMEZONE
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9651_STOP_DATE (
+        type: datePickerJquery
+        label {
+            label: Stop Date
+            alignment: left
+        }
+        layout {
+            sequence: 170
+            region: @reservation-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 255
+        }
+        source {
+            formRegion: @reservation-details
+            column: STOP_DATE
+            dataType: date
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9651_STOP_GMT (
+        type: displayOnly
+        label {
+            label: Stop Gmt
+            alignment: left
+        }
+        layout {
+            sequence: 200
+            region: @reservation-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 2
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            formatMask: DD-MON-YYYY HH24:MI
+        }
+        source {
+            formRegion: @reservation-details
+            column: STOP_GMT
+            dataType: date
+            queryOnly: true
+        }
+    )
+
+    pageItem P9651_STOP_TIME (
+        type: selectList
+        label {
+            label: Stop Time
+            alignment: left
+        }
+        lov {
+            type: sharedComponent
+            lov: @starttime
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 180
+            region: @reservation-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            formRegion: @reservation-details
+            column: STOP_TIME
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9651_TENANCY_ID (
+        type: selectList
+        label {
+            label: Tenancy Id
+            alignment: left
+        }
+        lov {
+            type: sharedComponent
+            lov: @ll-tenancies-2
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 120
+            region: @reservation-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @required-floating
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            formRegion: @reservation-details
+            column: TENANCY_ID
+            dataType: number
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9651_TITLE (
+        type: textField
+        label {
+            label: Title
+            alignment: left
+        }
+        settings {
+            trimSpaces: none
+        }
+        layout {
+            sequence: 30
+            region: @reservation-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 50
+        }
+        source {
+            formRegion: @reservation-details
+            column: TITLE
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9651_WORKSHOP_ID (
+        type: selectList
+        label {
+            label: Workshop Id
+            alignment: left
+        }
+        lov {
+            type: sharedComponent
+            lov: @ll-workshops
+        }
+        layout {
+            sequence: 100
+            region: @reservation-details
+            slot: regionBody
+            alignment: left
+            columnSpan: 4
+        }
+        appearance {
+            template: @required-floating
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            formRegion: @reservation-details
+            column: WORKSHOP_ID
+            dataType: number
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button cancel (
+        buttonName: CANCEL
+        label: Cancel
+        layout {
+            sequence: 10
+            region: @reservation-details
+            slot: close
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 9650
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button create (
+        buttonName: CREATE
+        label: Create
+        layout {
+            sequence: 40
+            region: @reservation-details
+            slot: create
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: insert
+        }
+        serverSideCondition {
+            type: itemIsNull
+            item: P9651_ID
+        }
+    )
+
+    button delete (
+        buttonName: DELETE
+        label: Delete
+        layout {
+            sequence: 20
+            region: @reservation-details
+            slot: delete
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectUrl
+            targetUrl: javascript:apex.confirm(htmldb_delete_message,'DELETE');
+            executeValidations: false
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: delete
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P9651_ID
+        }
+    )
+
+    button save (
+        buttonName: SAVE
+        label: Apply Changes
+        layout {
+            sequence: 30
+            region: @reservation-details
+            slot: change
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: update
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P9651_ID
+        }
+    )
+
+    process initialize-form-reservation-details (
+        name: Initialize form Reservation Details
+        type: formInitialization
+        formRegion: @reservation-details
+        execution {
+            sequence: 10
+            point: beforeHeader
+        }
+        advanced {
+            executionMappingIdentifier: 11184503043952091667
+        }
+    )
+
+    process process-form-reservation-details (
+        name: Process form Reservation Details
+        type: formAutoRowProcessing
+        formRegion: @reservation-details
+        execution {
+            sequence: 10
+        }
+        advanced {
+            executionMappingIdentifier: 11184503495140091667
+        }
+    )
+
+    branch (
+        name: Go To Page 9650
+        execution {
+            sequence: 1
+        }
+        behavior {
+            target: {
+                page: 9650
+            }
+        }
+    )
+
+)
+

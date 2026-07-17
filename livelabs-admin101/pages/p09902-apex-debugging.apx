@@ -1,0 +1,686 @@
+page 9902 (
+    name: APEX Debugging
+    alias: APEX-DEBUGGING
+    title: APEX Debugging
+    appearance {
+        pageTemplate: @standard-trustarc
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region apex-debugging (
+        name: APEX Debugging
+        type: interactiveGrid
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select a.APEX_USER, a.application_id, a.application_name, a.page_id, a.page_name, a.view_date, a.log_context, a.ip_address, a.apex_session_id, a.error_message, a.error_on_component_type, a.error_on_component_name, a.application_info, a.regions_from_cache, a.request_value,
+                       b.message, b.message_level, b.call_stack
+                from apex_workspace_activity_log a,
+                     apex_debug_messages b
+                where a.DEBUG_PAGE_VIEW_ID = b.PAGE_VIEW_ID
+                
+                ```
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        performance {
+            lazyLoading: true
+        }
+        toolbar {
+            controls: [
+                searchCol
+                searchField
+                actionsMenu
+                resetButton
+                saveButton
+            ]
+        }
+        enableUsersTo {
+            savePublicReport: true
+            savePublicReportAuthorization: @superrrrr-user
+        }
+        download {
+            formats: [
+                csv
+                html
+                pdf
+            ]
+        }
+        advanced {
+            savedReportMappingIdentifier: 45053534333002420
+        }
+
+        savedReport 931084 (
+            visibility: primary
+            view {
+                default: grid
+            }
+            singleRowView {
+                displayedColumns: true
+            }
+
+            displayColumn (
+                column: @APEX_USER
+                layout {
+                    sequence: 1
+                }
+            )
+
+            displayColumn (
+                column: @APPLICATION_ID
+                layout {
+                    sequence: 2
+                }
+            )
+
+            displayColumn (
+                column: @APPLICATION_NAME
+                layout {
+                    sequence: 3
+                }
+            )
+
+            displayColumn (
+                column: @PAGE_ID
+                layout {
+                    sequence: 4
+                }
+            )
+
+            displayColumn (
+                column: @PAGE_NAME
+                layout {
+                    sequence: 5
+                }
+            )
+
+            displayColumn (
+                column: @VIEW_DATE
+                layout {
+                    sequence: 6
+                }
+            )
+
+            displayColumn (
+                column: @LOG_CONTEXT
+                layout {
+                    sequence: 7
+                }
+            )
+
+            displayColumn (
+                column: @IP_ADDRESS
+                layout {
+                    sequence: 8
+                }
+            )
+
+            displayColumn (
+                column: @APEX_SESSION_ID
+                layout {
+                    sequence: 9
+                }
+            )
+
+            displayColumn (
+                column: @ERROR_MESSAGE
+                layout {
+                    sequence: 10
+                }
+            )
+
+            displayColumn (
+                column: @ERROR_ON_COMPONENT_TYPE
+                layout {
+                    sequence: 11
+                }
+            )
+
+            displayColumn (
+                column: @ERROR_ON_COMPONENT_NAME
+                layout {
+                    sequence: 12
+                }
+            )
+
+            displayColumn (
+                column: @APPLICATION_INFO
+                layout {
+                    sequence: 13
+                }
+            )
+
+            displayColumn (
+                column: @REGIONS_FROM_CACHE
+                layout {
+                    sequence: 14
+                }
+            )
+
+            displayColumn (
+                column: @REQUEST_VALUE
+                layout {
+                    sequence: 15
+                }
+            )
+
+            displayColumn (
+                column: @MESSAGE
+                layout {
+                    sequence: 16
+                }
+            )
+
+            displayColumn (
+                column: @MESSAGE_LEVEL
+                layout {
+                    sequence: 17
+                }
+            )
+
+            displayColumn (
+                column: @CALL_STACK
+                layout {
+                    sequence: 18
+                }
+            )
+
+        )
+
+        column APEX_SESSION_ID (
+            type: numberField
+            heading {
+                heading: Apex Session Id
+                alignment: end
+            }
+            settings {
+                numberAlignment: end
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 90
+                columnAlignment: end
+            }
+            source {
+                databaseColumn: APEX_SESSION_ID
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column APEX_USER (
+            type: textarea
+            heading {
+                heading: Apex User
+            }
+            layout {
+                sequence: 10
+            }
+            validation {
+                maxLength: 255
+            }
+            source {
+                databaseColumn: APEX_USER
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column APPLICATION_ID (
+            type: numberField
+            heading {
+                heading: Application Id
+                alignment: end
+            }
+            settings {
+                numberAlignment: end
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 20
+                columnAlignment: end
+            }
+            source {
+                databaseColumn: APPLICATION_ID
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column APPLICATION_INFO (
+            type: textField
+            heading {
+                heading: Application Info
+            }
+            layout {
+                sequence: 130
+            }
+            source {
+                databaseColumn: APPLICATION_INFO
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column APPLICATION_NAME (
+            type: textarea
+            heading {
+                heading: Application Name
+            }
+            layout {
+                sequence: 30
+            }
+            validation {
+                maxLength: 255
+            }
+            source {
+                databaseColumn: APPLICATION_NAME
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column CALL_STACK (
+            type: textarea
+            heading {
+                heading: Call Stack
+            }
+            layout {
+                sequence: 180
+            }
+            validation {
+                maxLength: 4000
+            }
+            source {
+                databaseColumn: CALL_STACK
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column ERROR_MESSAGE (
+            type: textarea
+            heading {
+                heading: Error Message
+            }
+            layout {
+                sequence: 100
+            }
+            validation {
+                maxLength: 4000
+            }
+            source {
+                databaseColumn: ERROR_MESSAGE
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column ERROR_ON_COMPONENT_NAME (
+            type: textarea
+            heading {
+                heading: Error On Component Name
+            }
+            layout {
+                sequence: 120
+            }
+            validation {
+                maxLength: 255
+            }
+            source {
+                databaseColumn: ERROR_ON_COMPONENT_NAME
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column ERROR_ON_COMPONENT_TYPE (
+            type: textarea
+            heading {
+                heading: Error On Component Type
+            }
+            layout {
+                sequence: 110
+            }
+            validation {
+                maxLength: 255
+            }
+            source {
+                databaseColumn: ERROR_ON_COMPONENT_TYPE
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column IP_ADDRESS (
+            type: textarea
+            heading {
+                heading: Ip Address
+            }
+            layout {
+                sequence: 80
+            }
+            validation {
+                maxLength: 4000
+            }
+            source {
+                databaseColumn: IP_ADDRESS
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column LOG_CONTEXT (
+            type: textarea
+            heading {
+                heading: Log Context
+            }
+            layout {
+                sequence: 70
+            }
+            validation {
+                maxLength: 255
+            }
+            source {
+                databaseColumn: LOG_CONTEXT
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column MESSAGE (
+            type: textarea
+            heading {
+                heading: Message
+            }
+            layout {
+                sequence: 160
+            }
+            validation {
+                maxLength: 4000
+            }
+            source {
+                databaseColumn: MESSAGE
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column MESSAGE_LEVEL (
+            type: numberField
+            heading {
+                heading: Message Level
+                alignment: end
+            }
+            settings {
+                numberAlignment: end
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 170
+                columnAlignment: end
+            }
+            source {
+                databaseColumn: MESSAGE_LEVEL
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column PAGE_ID (
+            type: numberField
+            heading {
+                heading: Page Id
+                alignment: end
+            }
+            settings {
+                numberAlignment: end
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 40
+                columnAlignment: end
+            }
+            source {
+                databaseColumn: PAGE_ID
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column PAGE_NAME (
+            type: textarea
+            heading {
+                heading: Page Name
+            }
+            layout {
+                sequence: 50
+            }
+            validation {
+                maxLength: 255
+            }
+            source {
+                databaseColumn: PAGE_NAME
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column REGIONS_FROM_CACHE (
+            type: numberField
+            heading {
+                heading: Regions From Cache
+                alignment: end
+            }
+            settings {
+                numberAlignment: end
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 140
+                columnAlignment: end
+            }
+            source {
+                databaseColumn: REGIONS_FROM_CACHE
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column REQUEST_VALUE (
+            type: textarea
+            heading {
+                heading: Request Value
+            }
+            layout {
+                sequence: 150
+            }
+            validation {
+                maxLength: 4000
+            }
+            source {
+                databaseColumn: REQUEST_VALUE
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column VIEW_DATE (
+            type: datePickerJquery
+            heading {
+                heading: View Date
+                alignment: center
+            }
+            layout {
+                sequence: 60
+                columnAlignment: center
+            }
+            source {
+                databaseColumn: VIEW_DATE
+                dataType: date
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: APEX Debugging
+        }
+    )
+
+)
+

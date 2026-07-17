@@ -1,0 +1,275 @@
+page 13 (
+    name: Ignore CIDRs
+    alias: IGNORE-CIDRS
+    title: Ignore CIDRs
+    appearance {
+        pageTemplate: @standard-trustarc
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region ignore-cidrs (
+        name: Ignore CIDRs
+        type: interactiveGrid
+        source {
+            location: localDatabase
+            tableName: LL_CIDRS_IGNORE
+        }
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        edit {
+            enabled: true
+            allowedOperations: [
+                add
+                update
+                delete
+            ]
+        }
+        toolbar {
+            controls: [
+                searchCol
+                searchField
+                actionsMenu
+                resetButton
+                saveButton
+            ]
+        }
+        download {
+            formats: [
+                csv
+                html
+                pdf
+                excel
+            ]
+        }
+        advanced {
+            savedReportMappingIdentifier: 276503782120867025
+        }
+
+        savedReport 2064089 (
+            visibility: primary
+            view {
+                default: grid
+            }
+            singleRowView {
+                displayedColumns: true
+            }
+
+            displayColumn (
+                column: @REGION
+                layout {
+                    sequence: 13
+                }
+            )
+
+            displayColumn (
+                column: @TAG
+                layout {
+                    sequence: 14
+                }
+            )
+
+            displayColumn (
+                column: @ID
+                layout {
+                    sequence: 15
+                }
+            )
+
+            displayColumn (
+                column: @APEX$ROW_ACTION
+                layout {
+                    sequence: 0
+                }
+            )
+
+            displayColumn (
+                column: @PROTOCOL
+                layout {
+                    sequence: 3
+                }
+            )
+
+            displayColumn (
+                column: @CIDR
+                layout {
+                    sequence: 5
+                }
+            )
+
+        )
+
+        column APEX$ROW_ACTION (
+            type: actionsMenu
+            layout {
+                sequence: 20
+            }
+        )
+
+        column APEX$ROW_SELECTOR (
+            type: rowSelector
+            layout {
+                sequence: 10
+            }
+        )
+
+        column CIDR (
+            type: textarea
+            heading {
+                heading: Cidr
+            }
+            layout {
+                sequence: 70
+            }
+            validation {
+                maxLength: 100
+            }
+            source {
+                databaseColumn: CIDR
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column ID (
+            type: hidden
+            layout {
+                sequence: 100
+            }
+            source {
+                databaseColumn: ID
+                dataType: number
+                queryOnly: true
+                primaryKey: true
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column PROTOCOL (
+            type: selectList
+            heading {
+                heading: Protocol
+            }
+            lov {
+                type: staticValues
+                staticValues: STATIC:TCP;TCP,ICMP;ICMP,UDP;UDP
+            }
+            layout {
+                sequence: 50
+            }
+            source {
+                databaseColumn: PROTOCOL
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: useLov
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column REGION (
+            type: textField
+            heading {
+                heading: Region
+            }
+            layout {
+                sequence: 80
+            }
+            validation {
+                maxLength: 100
+            }
+            source {
+                databaseColumn: REGION
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column TAG (
+            type: textField
+            heading {
+                heading: Tag
+            }
+            layout {
+                sequence: 90
+            }
+            validation {
+                maxLength: 100
+            }
+            source {
+                databaseColumn: TAG
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: Ignore CIDRs
+        }
+    )
+
+    process custom-cidrs-save-interactive-grid-data (
+        name: Custom CIDRs - Save Interactive Grid Data
+        type: interactiveGridAutoRowProcessing
+        editableRegion: @ignore-cidrs
+        execution {
+            sequence: 10
+        }
+        advanced {
+            executionMappingIdentifier: 70100543191973419
+        }
+    )
+
+)
+

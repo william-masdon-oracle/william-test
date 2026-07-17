@@ -1,0 +1,397 @@
+page 9170 (
+    name: Object Delete Methods
+    alias: OBJECT-DELETE-METHODS
+    title: Object Delete Methods
+    appearance {
+        pageTemplate: @standard-trustarc
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region object-delete-methods (
+        name: Object Delete Methods
+        type: interactiveGrid
+        source {
+            location: localDatabase
+            tableName: LL_DELETE_OBJECTS
+            includeRowidColumn: true
+        }
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        edit {
+            enabled: true
+            allowedOperations: [
+                add
+                update
+                delete
+            ]
+        }
+        toolbar {
+            controls: [
+                searchCol
+                searchField
+                actionsMenu
+                resetButton
+                saveButton
+            ]
+        }
+        download {
+            formats: [
+                csv
+                html
+                pdf
+            ]
+        }
+        advanced {
+            savedReportMappingIdentifier: 209500401353453478
+        }
+
+        savedReport 491118 (
+            visibility: primary
+            view {
+                default: grid
+            }
+            singleRowView {
+                displayedColumns: true
+            }
+
+            displayColumn (
+                column: @HOME_REGION_REQ
+                layout {
+                    sequence: 9
+                }
+            )
+
+            displayColumn (
+                column: @APEX$ROW_ACTION
+                layout {
+                    sequence: 0
+                }
+            )
+
+            displayColumn (
+                column: @ROWID
+                layout {
+                    sequence: 1
+                }
+            )
+
+            displayColumn (
+                column: @ID
+                layout {
+                    sequence: 2
+                }
+            )
+
+            displayColumn (
+                column: @SOURCE_TYPE
+                layout {
+                    sequence: 3
+                }
+            )
+
+            displayColumn (
+                column: @SEARCH_NAME
+                layout {
+                    sequence: 4
+                }
+            )
+
+            displayColumn (
+                column: @STEP_NAME
+                layout {
+                    sequence: 5
+                }
+            )
+
+            displayColumn (
+                column: @DELETE_METHOD
+                layout {
+                    sequence: 6
+                }
+            )
+
+            displayColumn (
+                column: @ENDPOINT_TYPE
+                layout {
+                    sequence: 7
+                }
+            )
+
+            displayColumn (
+                column: @DELETE_ORDER
+                layout {
+                    sequence: 8
+                }
+            )
+
+        )
+
+        column APEX$ROW_ACTION (
+            type: actionsMenu
+            layout {
+                sequence: 20
+            }
+        )
+
+        column APEX$ROW_SELECTOR (
+            type: rowSelector
+            layout {
+                sequence: 10
+            }
+        )
+
+        column DELETE_METHOD (
+            type: textarea
+            heading {
+                heading: Delete Method
+            }
+            layout {
+                sequence: 80
+            }
+            validation {
+                maxLength: 200
+            }
+            source {
+                databaseColumn: DELETE_METHOD
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+        )
+
+        column DELETE_ORDER (
+            type: numberField
+            heading {
+                heading: Delete Order
+                alignment: end
+            }
+            settings {
+                numberAlignment: end
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 100
+                columnAlignment: end
+            }
+            source {
+                databaseColumn: DELETE_ORDER
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column ENDPOINT_TYPE (
+            type: selectList
+            heading {
+                heading: Endpoint Type
+            }
+            lov {
+                type: sharedComponent
+                lov: @ll-oci-region-endpoints
+                displayExtraValues: false
+            }
+            layout {
+                sequence: 90
+            }
+            source {
+                databaseColumn: ENDPOINT_TYPE
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: useLov
+            }
+        )
+
+        column HOME_REGION_REQ (
+            type: selectList
+            heading {
+                heading: Home Region Req
+            }
+            lov {
+                type: sharedComponent
+                lov: @active-flg
+                displayExtraValues: false
+                displayNullValue: false
+            }
+            layout {
+                sequence: 110
+            }
+            source {
+                databaseColumn: HOME_REGION_REQ
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: useLov
+            }
+        )
+
+        column ID (
+            type: numberField
+            heading {
+                heading: Id
+                alignment: end
+            }
+            settings {
+                numberAlignment: end
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 40
+                columnAlignment: end
+            }
+            source {
+                databaseColumn: ID
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column ROWID (
+            type: hidden
+            layout {
+                sequence: 30
+            }
+            source {
+                databaseColumn: ROWID
+                dataType: rowid
+                primaryKey: true
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column SEARCH_NAME (
+            type: textField
+            heading {
+                heading: Search Name
+            }
+            layout {
+                sequence: 60
+            }
+            validation {
+                maxLength: 50
+            }
+            source {
+                databaseColumn: SEARCH_NAME
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column SOURCE_TYPE (
+            type: textField
+            heading {
+                heading: Source Type
+            }
+            layout {
+                sequence: 50
+            }
+            validation {
+                maxLength: 50
+            }
+            source {
+                databaseColumn: SOURCE_TYPE
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column STEP_NAME (
+            type: textField
+            heading {
+                heading: Step Name
+            }
+            layout {
+                sequence: 70
+            }
+            validation {
+                maxLength: 50
+            }
+            source {
+                databaseColumn: STEP_NAME
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: useLov
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: Object Delete Methods
+        }
+    )
+
+    process object-delete-methods-save-interactive-grid-data (
+        name: Object Delete Methods - Save Interactive Grid Data
+        type: interactiveGridAutoRowProcessing
+        editableRegion: @object-delete-methods
+        execution {
+            sequence: 10
+        }
+        advanced {
+            executionMappingIdentifier: 388440827027906599
+        }
+    )
+
+)
+

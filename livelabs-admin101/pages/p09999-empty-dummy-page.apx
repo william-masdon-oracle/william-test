@@ -1,0 +1,40 @@
+page 9999 (
+    name: Empty Dummy Page
+    alias: EMPTY-DUMMY-PAGE
+    title: Empty Dummy Page
+    appearance {
+        pageTemplate: @standard-trustarc
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        authorizationScheme: @superrrrr-user
+        formAutoComplete: false
+    }
+
+    region dummy (
+        name: Dummy
+        type: staticContent
+        source {
+            htmlCode: This is an empty page to solve a bug in 20.2 dynamic menu setup. Please discard this page !
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+)
+

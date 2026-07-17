@@ -1,0 +1,450 @@
+page 9201 (
+    name: VCN value Helper
+    alias: VCN-VALUE-HELPER
+    title: VCN value Helper
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @modal-dialog
+        templateOptions: #DEFAULT#
+    }
+    dialog {
+        width: 1000
+        height: 1000
+        resizable: false
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region vcn-helper (
+        name: VCN Helper
+        type: interactiveGrid
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery: "select rownum, description, direction, protocol, port, cidr from JSON_TABLE ( :P9201_JSON, '$[*]' COLUMNS (description, direction, protocol, port, cidr))"
+        }
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+            renderComponents: belowContent
+        }
+        advanced {
+            htmlDomId: 9201VCN
+        }
+        edit {
+            enabled: true
+            allowedOperations: [
+                add
+                update
+                delete
+            ]
+            addRowIfEmpty: false
+        }
+        componentAppearance {
+            selectFirstRow: false
+        }
+        pagination {
+            showTotalCount: false
+        }
+        toolbar {
+            controls: [
+                searchCol
+                searchField
+                actionsMenu
+                resetButton
+                saveButton
+            ]
+        }
+        download {
+            formats: [
+                csv
+                html
+                pdf
+                excel
+            ]
+        }
+        heading {
+            fixedTo: region
+            fixedReportHeight: 300
+        }
+        advanced {
+            savedReportMappingIdentifier: 103010371506549522
+        }
+
+        savedReport 1030108 (
+            visibility: primary
+            view {
+                default: grid
+            }
+            singleRowView {
+                displayedColumns: true
+            }
+
+            displayColumn (
+                column: @APEX$ROW_ACTION
+                layout {
+                    sequence: 0
+                }
+            )
+
+            displayColumn (
+                column: @DESCRIPTION
+                layout {
+                    sequence: 2
+                }
+            )
+
+            displayColumn (
+                column: @PROTOCOL
+                layout {
+                    sequence: 4
+                }
+            )
+
+            displayColumn (
+                column: @PORT
+                layout {
+                    sequence: 5
+                }
+            )
+
+            displayColumn (
+                column: @CIDR
+                layout {
+                    sequence: 6
+                }
+            )
+
+            displayColumn (
+                column: @ROWNUM
+                layout {
+                    sequence: 7
+                }
+            )
+
+            displayColumn (
+                column: @DIRECTION
+                layout {
+                    sequence: 8
+                }
+            )
+
+        )
+
+        column APEX$ROW_ACTION (
+            type: actionsMenu
+            layout {
+                sequence: 20
+            }
+        )
+
+        column APEX$ROW_SELECTOR (
+            type: rowSelector
+            layout {
+                sequence: 10
+            }
+        )
+
+        column CIDR (
+            type: textField
+            heading {
+                heading: Cidr
+            }
+            layout {
+                sequence: 80
+            }
+            validation {
+                maxLength: 4000
+            }
+            source {
+                databaseColumn: CIDR
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+            advanced {
+                htmlDomId: CIDR
+            }
+        )
+
+        column DESCRIPTION (
+            type: textField
+            heading {
+                heading: Description
+            }
+            layout {
+                sequence: 40
+            }
+            validation {
+                maxLength: 4000
+            }
+            source {
+                databaseColumn: DESCRIPTION
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+            advanced {
+                htmlDomId: DESCRIPTION
+            }
+        )
+
+        column DIRECTION (
+            type: selectList
+            heading {
+                heading: Direction
+            }
+            lov {
+                type: staticValues
+                staticValues: STATIC:Ingress;I,Egress;E
+                displayExtraValues: false
+                displayNullValue: false
+            }
+            layout {
+                sequence: 100
+            }
+            source {
+                databaseColumn: DIRECTION
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: useLov
+            }
+            advanced {
+                htmlDomId: DIRECTION
+            }
+        )
+
+        column PORT (
+            type: textField
+            heading {
+                heading: Port
+            }
+            layout {
+                sequence: 70
+            }
+            validation {
+                maxLength: 4000
+            }
+            source {
+                databaseColumn: PORT
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+            advanced {
+                htmlDomId: PORT
+            }
+        )
+
+        column PROTOCOL (
+            type: selectList
+            heading {
+                heading: Protocol
+            }
+            lov {
+                type: staticValues
+                staticValues: STATIC:TCP;TCP,UDP;UDP,ALL;ALL
+                displayExtraValues: false
+                displayNullValue: false
+            }
+            layout {
+                sequence: 60
+            }
+            source {
+                databaseColumn: PROTOCOL
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: useLov
+            }
+            advanced {
+                htmlDomId: PROTOCOL
+            }
+        )
+
+        column ROWNUM (
+            type: numberField
+            heading {
+                heading: Rownum
+                alignment: end
+            }
+            settings {
+                numberAlignment: end
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 90
+                columnAlignment: end
+            }
+            source {
+                databaseColumn: ROWNUM
+                dataType: number
+                primaryKey: true
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: VCN Helper
+        }
+    )
+
+    pageItem P9201_JSON (
+        type: textarea
+        label {
+            label: Json
+            alignment: left
+        }
+        layout {
+            sequence: 30
+            region: @vcn-helper
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+            height: 5
+        }
+        default {
+            type: static
+            staticValue: "[{\"description\":\"Test\", \"direction\":\"E\", \"protocol\":\"TCP\", \"port\": \"3389\", \"cidr\": \"0.0.0.0/0\"}]"
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button java (
+        buttonName: Java
+        label: Refesh below JSON box after altering the table
+        layout {
+            sequence: 20
+            region: @vcn-helper
+            slot: regionBody
+            startNewRow: false
+            newColumn: false
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button refesh-report (
+        buttonName: Refesh-Report
+        label: Refresh above report after altering the text box below
+        layout {
+            sequence: 10
+            region: @vcn-helper
+            slot: regionBody
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    dynamicAction javapressed (
+        name: JavaPressed
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @java
+        }
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    var model = apex.region('9201VCN').widget().interactiveGrid("getViews","grid").model;
+                    
+                    $s("P9201_JSON","[");
+                    
+                    model.forEach ( function(vcn) {
+                    
+                    
+                      if ( apex.item( "P9201_JSON" ).getValue() != "[" ) {
+                        $s( "P9201_JSON", $v( "P9201_JSON" ) + ", \r\n");
+                      }
+                    
+                            $s( "P9201_JSON", $v( "P9201_JSON" ) + "{ \"description\" : \"" + model.getValue(vcn, "DESCRIPTION") + "\", " + 
+                                                                     "\"protocol\" : \""    + model.getValue(vcn, "PROTOCOL").v + "\", " + 
+                                                                     "\"cidr\" : \""        + model.getValue(vcn, "CIDR") + "\", " + 
+                                                                     "\"direction\" : \""   + model.getValue(vcn, "DIRECTION").v + "\", " + 
+                                                                     "\"port\" : \""        + model.getValue(vcn, "PORT") + "\" } " );
+                    
+                    });
+                    
+                    $s( "P9201_JSON", $v( "P9201_JSON") + "]" );
+                    
+                    ```
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+)
+

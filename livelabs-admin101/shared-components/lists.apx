@@ -1,0 +1,1297 @@
+list activity-reports (
+    name: Activity Reports
+    config {
+        buildOption: @feature-activity-reporting
+    }
+
+    entry application-error-log (
+        label: Application Error Log
+        icon {
+            imageIconCssClasses: fa-exclamation
+        }
+        layout {
+            sequence: 30
+        }
+        link {
+            target: {
+                page: 10022
+                clearCache: 10022
+            }
+        }
+        userDefinedAttributes {
+            1: Report of errors logged by this application
+        }
+    )
+
+    entry dashboard (
+        label: Dashboard
+        icon {
+            imageIconCssClasses: fa-area-chart
+        }
+        layout {
+            sequence: 10
+        }
+        link {
+            target: {
+                page: 10020
+                clearCache: 10020
+            }
+        }
+        userDefinedAttributes {
+            1: View application activity metrics
+        }
+    )
+
+    entry page-performance (
+        label: Page Performance
+        icon {
+            imageIconCssClasses: fa-file-chart
+        }
+        layout {
+            sequence: 40
+        }
+        link {
+            target: {
+                page: 10023
+                clearCache: 10023
+            }
+        }
+        userDefinedAttributes {
+            1: Report of activity and performance by application page
+        }
+    )
+
+    entry page-views (
+        label: Page Views
+        icon {
+            imageIconCssClasses: fa-file-search
+        }
+        layout {
+            sequence: 50
+        }
+        link {
+            target: {
+                page: 10024
+                clearCache: 10024
+                action: resetRegions
+            }
+        }
+        userDefinedAttributes {
+            1: Report of each page view by user including date of access and elapsed time
+        }
+    )
+
+    entry top-users (
+        label: Top Users
+        icon {
+            imageIconCssClasses: fa-user-chart
+        }
+        layout {
+            sequence: 20
+        }
+        link {
+            target: {
+                page: 10021
+                clearCache: 10021
+            }
+        }
+        userDefinedAttributes {
+            1: Report of page views aggregated by user
+        }
+    )
+
+)
+
+list application-configuration (
+    name: Application Configuration
+    config {
+        buildOption: @feature-configuration-options
+    }
+
+    entry configuration-options (
+        label: Configuration Options
+        icon {
+            imageIconCssClasses: fa-sliders
+        }
+        layout {
+            sequence: 10
+        }
+        link {
+            target: {
+                page: 10010
+                clearCache: 10010
+            }
+        }
+        userDefinedAttributes {
+            1: Enable or disable application features
+        }
+        config {
+            buildOption: @feature-configuration-options
+        }
+    )
+
+)
+
+list batch-provision (
+    name: Batch Provision
+
+    entry provide-event-details (
+        label: Provide Event Details
+        layout {
+            sequence: 10
+        }
+        link {
+            target: {
+                page: 19
+            }
+        }
+    )
+
+    entry review-submit (
+        label: Review & Submit
+        layout {
+            sequence: 30
+        }
+        link {
+            target: {
+                page: 23
+            }
+        }
+    )
+
+    entry select-a-provision-plan (
+        label: Select a Provision Plan
+        layout {
+            sequence: 20
+        }
+        link {
+            target: {
+                page: 20
+            }
+        }
+    )
+
+)
+
+list desktop-nav-menu-available-workshops (
+    name: Desktop Nav Menu - Available Workshops
+    source {
+        type: sqlQuery
+        sqlQuery:
+            ```sql
+            SELECT null, 
+                   ITEM_NAME label, 
+                   apex_util.host_url('NULL') || ITEM_FILTER target, 
+                   'YES' is_current 
+            FROM  LL_DYNAMIC_MENU 
+            ORDER BY ITEM_PARENT
+            ```
+    }
+)
+
+list desktop-navigation-bar (
+    name: Desktop Navigation Bar
+
+    entry about (
+        label: About
+        icon {
+            imageIconCssClasses: fa-question-circle-o
+        }
+        layout {
+            sequence: 20
+        }
+        userDefinedAttributes {
+            2: icon-only
+        }
+        config {
+            buildOption: @feature-about-page
+        }
+    )
+
+    entry about-livelabs (
+        label: About LiveLabs
+        layout {
+            sequence: 50
+            parentEntry: @about
+        }
+        link {
+            target: {
+                page: 10040
+                clearCache: 10040
+            }
+        }
+        config {
+            buildOption: @feature-about-page
+        }
+    )
+
+    entry app-user (
+        label: &APP_USER.
+        icon {
+            imageIconCssClasses: fa-user
+        }
+        layout {
+            sequence: 60
+        }
+        link {
+            target: {
+                type: url
+                url: #
+            }
+        }
+        userDefinedAttributes {
+            2: has-username
+        }
+        serverSideCondition {
+            type: userIsAuthenticated
+        }
+    )
+
+    entry dashboard (
+        label: Dashboard
+        layout {
+            sequence: 37
+            parentEntry: @about
+        }
+        link {
+            target: {
+                page: 9500
+            }
+        }
+        serverSideCondition {
+            type: expression
+            plsqlExpression: instr(upper(:app_user),'@ORACLE.COM')>0
+        }
+        security {
+            authorizationScheme: mustNotBePublicUser
+        }
+    )
+
+    entry faq (
+        label: FAQ
+        layout {
+            sequence: 30
+            parentEntry: @about
+        }
+        link {
+            target: {
+                page: 10041
+                items: {
+                    P10041_PAGE_ID: &APP_PAGE_ID.
+                }
+            }
+        }
+        userDefinedAttributes {
+            2: icon-only
+        }
+        config {
+            buildOption: @feature-about-page
+        }
+    )
+
+    entry feedback (
+        label: Feedback
+        icon {
+            imageIconCssClasses: fa-comments-o
+        }
+        layout {
+            sequence: 10
+        }
+        link {
+            target: {
+                page: 110
+                action: resetPagination
+            }
+        }
+        userDefinedAttributes {
+            2: hidden-xs hidden-xss hidden-xxs
+        }
+        config {
+            buildOption: @feature-feedback
+        }
+    )
+
+    entry list_item (
+        label: ---
+        layout {
+            sequence: 35
+            parentEntry: @about
+        }
+        link {
+            target: {
+                type: url
+                url: separator
+            }
+        }
+        serverSideCondition {
+            type: expression
+            plsqlExpression: instr(upper(:app_user),'@ORACLE.COM')>0
+        }
+        security {
+            authorizationScheme: mustNotBePublicUser
+        }
+    )
+
+    entry list_item-2 (
+        label: ---
+        layout {
+            sequence: 40
+            parentEntry: @about
+        }
+        link {
+            target: {
+                type: url
+                url: separator
+            }
+        }
+    )
+
+    entry list_item-3 (
+        label: ---
+        layout {
+            sequence: 70
+            parentEntry: @app-user
+        }
+        link {
+            target: {
+                type: url
+                url: separator
+            }
+        }
+    )
+
+    entry search (
+        label: Search
+        icon {
+            imageIconCssClasses: fa-search
+        }
+        layout {
+            sequence: 5
+        }
+        link {
+            target: {
+                type: url
+                url: #
+            }
+        }
+        userDefinedAttributes {
+            2: icon-only header-search-item
+        }
+    )
+
+    entry sign-in (
+        label: Sign In
+        icon {
+            imageIconCssClasses: fa-sign-in
+        }
+        layout {
+            sequence: 90
+        }
+        link {
+            target: {
+                page: 10
+                items: {
+                    P10_PAGE_ID: &APP_PAGE_ID.
+                }
+            }
+        }
+        serverSideCondition {
+            type: userIsPublicUser
+        }
+    )
+
+    entry sign-out (
+        label: Sign Out
+        icon {
+            imageIconCssClasses: fa-sign-out
+        }
+        layout {
+            sequence: 80
+            parentEntry: @app-user
+        }
+        link {
+            target: {
+                type: url
+                url: &LOGOUT_URL.
+            }
+        }
+        serverSideCondition {
+            type: userIsAuthenticated
+        }
+    )
+
+)
+
+list desktop-navigation-menu (
+    name: Desktop Navigation Menu
+
+    entry administration (
+        label: Administration
+        icon {
+            imageIconCssClasses: fa-registered
+        }
+        layout {
+            sequence: 9000
+        }
+        serverSideCondition {
+            type: expression
+            language: sql
+            sqlExpression:
+                ```sql
+                ll_pkg_security.am_i_allowed(p_apex_user => :APP_USER, p_access_type => 'MENU', p_access_value => 'Roberts Menu') = 'Y'
+                
+                ```
+        }
+    )
+
+    entry apex-administration (
+        label: APEX Administration
+        layout {
+            sequence: 10000
+            parentEntry: @administration
+        }
+        link {
+            target: {
+                page: 10000
+            }
+        }
+        serverSideCondition {
+            type: expression
+            language: sql
+            sqlExpression: ll_pkg_security.am_i_allowed(p_apex_user => :APP_USER, p_access_type => 'MENU', p_access_value => 'Administration') = 'Y'
+        }
+        security {
+            authorizationScheme: @superrrrr-user
+        }
+    )
+
+    entry apex-debugging (
+        label: APEX Debugging
+        layout {
+            sequence: 9420
+            parentEntry: @debugging
+        }
+        isCurrent {
+            type: pages
+            pages: 9902
+        }
+        link {
+            target: {
+                page: 9902
+            }
+        }
+    )
+
+    entry assets (
+        label: Assets
+        layout {
+            sequence: 9275
+            parentEntry: @configuration
+        }
+        isCurrent {
+            type: pages
+            pages: [
+                9176
+                9177
+            ]
+        }
+        link {
+            target: {
+                page: 9176
+            }
+        }
+    )
+
+    entry autonomous-database (
+        label: Autonomous Database
+        layout {
+            sequence: 105
+            parentEntry: @popular-workshops
+        }
+        link {
+            target: {
+                page: 100
+                items: {
+                    P100_PRODUCT: 81
+                }
+            }
+        }
+    )
+
+    entry available-workshops (
+        label: Available Workshops
+        layout {
+            sequence: 100
+        }
+        link {
+            target: {
+                page: 100
+                clearCache: 100
+            }
+        }
+    )
+
+    entry cidrs (
+        label: CIDRs
+        layout {
+            sequence: 9450
+            parentEntry: @configuration
+        }
+        isCurrent {
+            type: pages
+            pages: 9145
+        }
+        link {
+            target: {
+                page: 9145
+            }
+        }
+    )
+
+    entry configuration (
+        label: Configuration
+        layout {
+            sequence: 9200
+            parentEntry: @administration
+        }
+    )
+
+    entry current-status (
+        label: Current Status
+        layout {
+            sequence: 9050
+            parentEntry: @administration
+        }
+        isCurrent {
+            type: pages
+            pages: 9906
+        }
+        link {
+            target: {
+                page: 9906
+            }
+        }
+    )
+
+    entry debugging (
+        label: Debugging
+        layout {
+            sequence: 9400
+            parentEntry: @administration
+        }
+    )
+
+    entry dynamic-menus (
+        label: Dynamic Menus
+        layout {
+            sequence: 9460
+            parentEntry: @configuration
+        }
+        isCurrent {
+            type: pages
+            pages: 9190
+        }
+        link {
+            target: {
+                page: 9190
+            }
+        }
+    )
+
+    entry email-status (
+        label: Email status
+        layout {
+            sequence: 9110
+            parentEntry: @support
+        }
+        isCurrent {
+            type: pages
+            pages: 9605
+        }
+        link {
+            target: {
+                page: 9605
+            }
+        }
+    )
+
+    entry email-templates (
+        label: Email Templates
+        layout {
+            sequence: 9225
+            parentEntry: @configuration
+        }
+        isCurrent {
+            type: pages
+            pages: [
+                9140
+                9141
+            ]
+        }
+        link {
+            target: {
+                page: 9140
+            }
+        }
+    )
+
+    entry faq (
+        label: FAQ
+        layout {
+            sequence: 300
+        }
+        link {
+            target: {
+                page: 10041
+            }
+        }
+    )
+
+    entry feedback-management (
+        label: Feedback Management
+        layout {
+            sequence: 8000
+        }
+        link {
+            target: {
+                page: 9951
+                action: resetPagination
+            }
+        }
+        serverSideCondition {
+            type: expression
+            plsqlExpression:
+                ```plsql
+                ll_pkg_security.am_i_allowed(p_apex_user => :app_user, p_access_type => 'PAGE', p_access_value => '9951') = 'Y'
+                  
+                ```
+        }
+    )
+
+    entry home (
+        label: Home
+        icon {
+            imageIconCssClasses: fa-home
+        }
+        layout {
+            sequence: 10
+        }
+        link {
+            target: {
+                page: 1
+            }
+        }
+    )
+
+    entry jobs-status (
+        label: Jobs status
+        layout {
+            sequence: 9105
+            parentEntry: @support
+        }
+        isCurrent {
+            type: pages
+            pages: 9606
+        }
+        link {
+            target: {
+                page: 9606
+            }
+        }
+    )
+
+    entry keys (
+        label: Keys
+        layout {
+            sequence: 9240
+            parentEntry: @configuration
+        }
+        isCurrent {
+            type: pages
+            pages: 9701
+        }
+        link {
+            target: {
+                page: 9701
+            }
+        }
+    )
+
+    entry livelabs-feedback (
+        label: LiveLabs Feedback
+        layout {
+            sequence: 9060
+            parentEntry: @administration
+        }
+        isCurrent {
+            type: pages
+            pages: [
+                9951
+                9952
+            ]
+        }
+        link {
+            target: {
+                page: 9951
+            }
+        }
+    )
+
+    entry livestacks (
+        label: LiveStacks
+        layout {
+            sequence: 9270
+            parentEntry: @configuration
+        }
+        isCurrent {
+            type: pages
+            pages: [
+                9810
+                9800
+            ]
+        }
+        link {
+            target: {
+                page: 9810
+            }
+        }
+    )
+
+    entry logging (
+        label: Logging
+        layout {
+            sequence: 9410
+            parentEntry: @debugging
+        }
+        isCurrent {
+            type: pages
+            pages: 9601
+        }
+        link {
+            target: {
+                page: 9601
+            }
+        }
+    )
+
+    entry my-reservations (
+        label: My Reservations
+        layout {
+            sequence: 200
+        }
+        link {
+            target: {
+                page: 300
+                items: {
+                    P300_PAGE_ID: 300
+                }
+            }
+        }
+    )
+
+    entry oci-certifications (
+        label: OCI Certifications
+        layout {
+            sequence: 120
+            parentEntry: @popular-workshops
+        }
+        link {
+            target: {
+                page: 100
+                items: {
+                    P100_CERTIFICATION: 121
+                }
+            }
+        }
+    )
+
+    entry oci-tenancies-and-endpoints (
+        label: OCI Tenancies and endpoints
+        layout {
+            sequence: 9230
+            parentEntry: @configuration
+        }
+        isCurrent {
+            type: pages
+            pages: 9130
+        }
+        link {
+            target: {
+                page: 9130
+            }
+        }
+    )
+
+    entry page-views (
+        label: Page views
+        layout {
+            sequence: 9150
+            parentEntry: @support
+        }
+        isCurrent {
+            type: pages
+            pages: 9910
+        }
+        link {
+            target: {
+                page: 9910
+            }
+        }
+    )
+
+    entry policies (
+        label: Policies
+        layout {
+            sequence: 9245
+            parentEntry: @configuration
+        }
+        isCurrent {
+            type: pages
+            pages: 9171
+        }
+        link {
+            target: {
+                page: 9171
+            }
+        }
+    )
+
+    entry popular-workshops (
+        label: Popular Workshops
+        layout {
+            sequence: 101
+            parentEntry: @available-workshops
+        }
+    )
+
+    entry reservation-steps (
+        label: Reservation Steps
+        layout {
+            sequence: 9102
+            parentEntry: @support
+        }
+        isCurrent {
+            type: pages
+            pages: 9653
+        }
+        link {
+            target: {
+                page: 9653
+            }
+        }
+    )
+
+    entry reservations (
+        label: Reservations
+        layout {
+            sequence: 9101
+            parentEntry: @support
+        }
+        isCurrent {
+            type: pages
+            pages: 9650
+        }
+        link {
+            target: {
+                page: 9650
+            }
+        }
+    )
+
+    entry resource-groups (
+        label: Resource Groups
+        layout {
+            sequence: 9220
+            parentEntry: @configuration
+        }
+        link {
+            target: {
+                page: 9181
+                action: resetPagination
+            }
+        }
+    )
+
+    entry resources (
+        label: Resources
+        layout {
+            sequence: 9215
+            parentEntry: @configuration
+        }
+        isCurrent {
+            type: pages
+            pages: 9180
+        }
+        link {
+            target: {
+                page: 9180
+            }
+        }
+    )
+
+    entry roberts-shortcuts (
+        label: Roberts shortcuts
+        layout {
+            sequence: 9430
+            parentEntry: @debugging
+        }
+        isCurrent {
+            type: pages
+            pages: 9900
+        }
+        link {
+            target: {
+                page: 9900
+            }
+        }
+    )
+
+    entry role-grants (
+        label: Role Grants
+        layout {
+            sequence: 9340
+            parentEntry: @user-management
+        }
+        isCurrent {
+            type: pages
+            pages: 9188
+        }
+        link {
+            target: {
+                page: 9188
+            }
+        }
+    )
+
+    entry role-permissions (
+        label: Role Permissions
+        layout {
+            sequence: 9330
+            parentEntry: @user-management
+        }
+        isCurrent {
+            type: pages
+            pages: 9187
+        }
+        link {
+            target: {
+                page: 9187
+            }
+        }
+    )
+
+    entry roles (
+        label: Roles
+        layout {
+            sequence: 9320
+            parentEntry: @user-management
+        }
+        isCurrent {
+            type: pages
+            pages: 9186
+        }
+        link {
+            target: {
+                page: 9186
+            }
+        }
+    )
+
+    entry source-flow-steps (
+        label: Source Flow Steps
+        layout {
+            sequence: 9235
+            parentEntry: @configuration
+        }
+        isCurrent {
+            type: pages
+            pages: 9154
+        }
+        link {
+            target: {
+                page: 9154
+            }
+        }
+    )
+
+    entry support (
+        label: Support
+        layout {
+            sequence: 9100
+            parentEntry: @administration
+        }
+    )
+
+    entry system-parameters (
+        label: System Parameters
+        layout {
+            sequence: 9260
+            parentEntry: @configuration
+        }
+        isCurrent {
+            type: pages
+            pages: 9702
+        }
+        link {
+            target: {
+                page: 9702
+            }
+        }
+    )
+
+    entry tags (
+        label: Tags
+        layout {
+            sequence: 9255
+            parentEntry: @configuration
+        }
+        isCurrent {
+            type: pages
+            pages: 9135
+        }
+        link {
+            target: {
+                page: 9135
+            }
+        }
+    )
+
+    entry tenancies (
+        label: Tenancies
+        layout {
+            sequence: 9206
+            parentEntry: @configuration
+        }
+        isCurrent {
+            type: pages
+            pages: 9120
+        }
+        link {
+            target: {
+                page: 9120
+            }
+        }
+    )
+
+    entry user-management (
+        label: User Management
+        layout {
+            sequence: 9300
+            parentEntry: @administration
+        }
+    )
+
+    entry user-roles (
+        label: User Roles
+        layout {
+            sequence: 9310
+            parentEntry: @user-management
+        }
+        isCurrent {
+            type: pages
+            pages: 9189
+        }
+        link {
+            target: {
+                page: 9189
+            }
+        }
+    )
+
+    entry users (
+        label: Users
+        layout {
+            sequence: 9305
+            parentEntry: @user-management
+        }
+        isCurrent {
+            type: pages
+            pages: 9185
+        }
+        link {
+            target: {
+                page: 9185
+            }
+        }
+    )
+
+    entry vouchers (
+        label: Vouchers
+        layout {
+            sequence: 9440
+            parentEntry: @support
+        }
+        isCurrent {
+            type: pages
+            pages: [
+                9160
+                9161
+            ]
+        }
+        link {
+            target: {
+                page: 9160
+            }
+        }
+    )
+
+    entry workshops (
+        label: Workshops
+        layout {
+            sequence: 9205
+            parentEntry: @configuration
+        }
+        isCurrent {
+            type: pages
+            pages: 9151
+        }
+        link {
+            target: {
+                page: 9151
+            }
+        }
+    )
+
+)
+
+list feedback (
+    name: Feedback
+    config {
+        buildOption: @feature-feedback
+    }
+
+    entry user-feedback (
+        label: User Feedback
+        icon {
+            imageIconCssClasses: fa-comment-o
+        }
+        layout {
+            sequence: 10
+        }
+        link {
+            target: {
+                page: 10033
+                clearCache: 10033
+            }
+        }
+        userDefinedAttributes {
+            1: Report of all feedback submitted by application users
+        }
+    )
+
+)
+
+list livelabs-dynamic-menu (
+    name: LiveLabs Dynamic Menu
+    source {
+        type: sqlQuery
+        sqlQuery:
+            ```sql
+            SELECT LEVEL as menu_level, ITEM_NAME as label, target_url as target, null as is_current, null as image
+            from ( select distinct id, item_name, target_url, item_parent, item_order
+                   from ll_dynamic_menu_vw b
+                   start with id in ( select id 
+                                      from ll_dynamic_menu c
+                                      where is_public='Y'
+                                         or ll_pkg_security.am_i_allowed(:APP_USER, 'PAGE', page_id) = 'Y')
+                   connect by id = prior item_parent )
+            START WITH ITEM_PARENT IS NULL
+            CONNECT BY PRIOR ID = ITEM_PARENT
+            ORDER SIBLINGS BY ITEM_ORDER
+            
+            ```
+    }
+)
+
+list wizard-progress-list (
+    name: Wizard Progress List
+
+    entry finish (
+        label: Finish
+        layout {
+            sequence: 70
+        }
+        link {
+            target: {
+                page: 9217
+            }
+        }
+    )
+
+    entry workshop-br-emails (
+        label: Workshop<br>Emails
+        layout {
+            sequence: 60
+        }
+        link {
+            target: {
+                page: 9216
+            }
+        }
+    )
+
+    entry workshop-br-images (
+        label: Workshop<br>Images
+        layout {
+            sequence: 20
+        }
+        link {
+            target: {
+                page: 9212
+            }
+        }
+    )
+
+    entry workshop-br-policies (
+        label: Workshop<br>Policies
+        layout {
+            sequence: 30
+        }
+        link {
+            target: {
+                page: 9213
+            }
+        }
+    )
+
+    entry workshop-br-requirements (
+        label: Workshop<br>Requirements
+        layout {
+            sequence: 40
+        }
+        link {
+            target: {
+                page: 9214
+            }
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    entry workshop-br-steps (
+        label: Workshop<br>Steps
+        layout {
+            sequence: 10
+        }
+        link {
+            target: {
+                page: 9211
+            }
+        }
+    )
+
+    entry workshop-br-tags (
+        label: Workshop<br>Tags
+        layout {
+            sequence: 50
+        }
+        link {
+            target: {
+                page: 9215
+            }
+        }
+    )
+
+)
+

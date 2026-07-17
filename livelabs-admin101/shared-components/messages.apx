@@ -1,0 +1,16 @@
+textMessage FOOTER_LINK (
+    message {
+        text:
+            ```
+            <span class="copyright-Span">
+            <a href="https://www.oracle.com/legal/copyright.html">© 2022 Oracle</a>  |  
+            <a href="https://www.oracle.com/legal/privacy/">Terms of Use &amp; Privacy</a> | 
+            <div id="teconsent" style="display:inline"></div> | 
+            <a href="https://www.oracle.com/legal/privacy/marketing-cloud-data-cloud-privacy-policy.html#12">Ad Choices</a>
+            </span>
+            ```
+        language: en
+        usedInJavaScript: true
+    }
+)
+

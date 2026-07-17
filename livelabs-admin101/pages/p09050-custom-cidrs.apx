@@ -1,0 +1,424 @@
+page 9050 (
+    name: Custom CIDRs
+    alias: CUSTOM-CIDRS
+    title: Custom CIDRs
+    appearance {
+        pageTemplate: @standard-trustarc
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region cidr-instructions (
+        name: CIDR Instructions
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                Instructions for adding a Custom CIDR rules: 
+                <ol>
+                <li>Choose a Protocol: ICMP, TCP, or UDP</li>
+                <li>Specify the rule's direction: Ingress or Egress</li>
+                <li>Specify the CIDR for the rule</li>
+                <li>Provide the Type (for ICMP protocols) or the Minimum Port (for TCP and UDP protocols)</li>
+                <li>Provide the Code (for ICMP protocols) or the Maximum Port (for TCP and UDP protocols). <b>Note:</b> You must specify both the min and max port numbers. If you only require one port, use the same number in both fields</li>
+                <li>Detail an optional description</li>
+                </ol>
+                <br>
+                To add a Custom CIDR rule to a workshop, visit the workshop's admin page and add the relevant CIDR rules there. 
+                ```
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region custom-cidrs (
+        name: Custom CIDRs
+        type: interactiveGrid
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select 
+                       c.ID,
+                       c.PROTOCOL,
+                       c.DIRECTION,
+                       c.CIDR,
+                       c.PORT_MIN_OR_TYPE,
+                       c.PORT_MAX_OR_CODE,
+                        (select listagg(r.workshop_id, ',') from ll_workshop_cidrs_ref r where r.cidr_id = c.id) as workshops_using,
+                       c.DESCRIPTION
+                  from LL_WORKSHOP_CIDRS c
+                ```
+        }
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        edit {
+            enabled: true
+            allowedOperations: [
+                add
+                update
+                delete
+            ]
+        }
+        toolbar {
+            controls: [
+                searchCol
+                searchField
+                actionsMenu
+                resetButton
+                saveButton
+            ]
+        }
+        download {
+            formats: [
+                csv
+                html
+                pdf
+                excel
+            ]
+        }
+        advanced {
+            savedReportMappingIdentifier: 206408496356893664
+        }
+
+        savedReport 2064089 (
+            visibility: primary
+            view {
+                default: grid
+            }
+            singleRowView {
+                displayedColumns: true
+            }
+
+            displayColumn (
+                column: @DESCRIPTION
+                layout {
+                    sequence: 10
+                }
+            )
+
+            displayColumn (
+                column: @APEX$ROW_ACTION
+                layout {
+                    sequence: 0
+                }
+            )
+
+            displayColumn (
+                column: @ID
+                layout {
+                    sequence: 2
+                }
+            )
+
+            displayColumn (
+                column: @PROTOCOL
+                layout {
+                    sequence: 3
+                }
+            )
+
+            displayColumn (
+                column: @DIRECTION
+                layout {
+                    sequence: 4
+                }
+            )
+
+            displayColumn (
+                column: @CIDR
+                layout {
+                    sequence: 5
+                }
+            )
+
+            displayColumn (
+                column: @PORT_MIN_OR_TYPE
+                layout {
+                    sequence: 8
+                }
+            )
+
+            displayColumn (
+                column: @PORT_MAX_OR_CODE
+                layout {
+                    sequence: 9
+                }
+            )
+
+            displayColumn (
+                column: @WORKSHOPS_USING
+                layout {
+                    sequence: 12
+                }
+            )
+
+        )
+
+        column APEX$ROW_ACTION (
+            type: actionsMenu
+            layout {
+                sequence: 20
+            }
+        )
+
+        column APEX$ROW_SELECTOR (
+            type: rowSelector
+            layout {
+                sequence: 10
+            }
+        )
+
+        column CIDR (
+            type: textarea
+            heading {
+                heading: Cidr
+            }
+            layout {
+                sequence: 70
+            }
+            validation {
+                maxLength: 100
+            }
+            source {
+                databaseColumn: CIDR
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column DESCRIPTION (
+            type: textarea
+            heading {
+                heading: Description
+            }
+            layout {
+                sequence: 100
+            }
+            validation {
+                maxLength: 4000
+            }
+            source {
+                databaseColumn: DESCRIPTION
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column DIRECTION (
+            type: selectList
+            heading {
+                heading: Direction
+            }
+            lov {
+                type: staticValues
+                staticValues: STATIC:Ingress;I,Egress;E
+                displayExtraValues: false
+                displayNullValue: false
+            }
+            layout {
+                sequence: 60
+            }
+            source {
+                databaseColumn: DIRECTION
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: useLov
+            }
+        )
+
+        column ID (
+            type: hidden
+            layout {
+                sequence: 40
+            }
+            source {
+                databaseColumn: ID
+                dataType: number
+                primaryKey: true
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column PORT_MAX_OR_CODE (
+            type: numberField
+            heading {
+                heading: Port Max Or Code
+                alignment: end
+            }
+            settings {
+                numberAlignment: end
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 90
+                columnAlignment: end
+            }
+            source {
+                databaseColumn: PORT_MAX_OR_CODE
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column PORT_MIN_OR_TYPE (
+            type: numberField
+            heading {
+                heading: Port Min Or Type
+                alignment: end
+            }
+            settings {
+                numberAlignment: end
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 80
+                columnAlignment: end
+            }
+            source {
+                databaseColumn: PORT_MIN_OR_TYPE
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column PROTOCOL (
+            type: selectList
+            heading {
+                heading: Protocol
+            }
+            lov {
+                type: staticValues
+                staticValues: STATIC:TCP;6,ICMP;1,UDP;17
+                displayExtraValues: false
+                displayNullValue: false
+            }
+            layout {
+                sequence: 50
+            }
+            source {
+                databaseColumn: PROTOCOL
+                dataType: number
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: useLov
+            }
+        )
+
+        column WORKSHOPS_USING (
+            type: displayOnly
+            heading {
+                heading: Workshops Using
+            }
+            layout {
+                sequence: 120
+            }
+            source {
+                databaseColumn: WORKSHOPS_USING
+                dataType: varchar2
+                queryOnly: true
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: Custom CIDRs
+        }
+    )
+
+    process custom-cidrs-save-interactive-grid-data (
+        name: Custom CIDRs - Save Interactive Grid Data
+        type: interactiveGridAutoRowProcessing
+        editableRegion: @custom-cidrs
+        execution {
+            sequence: 10
+        }
+        advanced {
+            executionMappingIdentifier: 206417662647893812
+        }
+    )
+
+)
+

@@ -1,0 +1,191 @@
+page 25 (
+    name: Go to Event
+    alias: GO-TO-EVENT
+    title: Go to Event
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @modal-dialog
+        templateOptions: #DEFAULT#
+    }
+    dialog {
+        resizable: false
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+        warnOnUnsavedChanges: false
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    pageItem P25_EVENT_ID (
+        type: textField
+        label {
+            label: Event ID or Event Code
+            alignment: left
+        }
+        settings {
+            submitWhenEnterPressed: true
+        }
+        layout {
+            sequence: 30
+            slot: contentBody
+            alignment: left
+            columnSpan: 8
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            valueRequired: true
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        sessionState {
+            storage: request
+        }
+    )
+
+    button go-to-event (
+        buttonName: Go_To_Event
+        label: Go to Event
+        layout {
+            sequence: 40
+            slot: contentBody
+            startNewRow: false
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--large
+                t-Button--stretch
+                t-Button--gapTop
+            ]
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    dynamicAction set-focus (
+        name: Set Focus
+        execution {
+            sequence: 10
+        }
+        when {
+            event: ready
+        }
+
+        action native-set-focus (
+            action: setFocus
+            affectedElements {
+                selectionType: items
+                items: P25_EVENT_ID
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    validation validate-event (
+        name: Validate Event
+        execution {
+            sequence: 10
+        }
+        validation {
+            type: functionBodyReturningBoolean
+            plsqlFunctionBody:
+                ```plsql
+                declare
+                cursor c_id (v_id number) is select 'x' from ll_vouchers where id = v_id;
+                cursor c_ec (v_ec varchar2) is select 'x' from ll_vouchers where VOUCHER_CODE = v_ec;
+                v_hold varchar2(1);
+                begin
+                -- trim whitespace
+                :P25_EVENT_ID := trim(:P25_EVENT_ID);
+                if :P25_EVENT_ID is not null then 
+                    IF REGEXP_LIKE(:P25_EVENT_ID, '^[0-9]+$') THEN
+                        open c_id (:P25_EVENT_ID);
+                        fetch c_id into v_hold;
+                        if c_id%notfound then
+                            close c_id;
+                            return false;
+                        else 
+                            close c_id;
+                            return true;
+                        end if;
+                    else
+                        open c_ec (:P25_EVENT_ID);
+                        fetch c_ec into v_hold;
+                        if c_ec%notfound then 
+                            close c_ec;
+                            return false;
+                        else
+                            close c_ec;
+                            return true;
+                        end if;
+                    end if;
+                
+                else
+                    return false;
+                end if;
+                exception when others then 
+                    return false;
+                end;
+                ```
+        }
+        error {
+            errorMessage: "This Event does not exist. "
+            displayLocation: inlineWithField
+            associatedItem: @P25_EVENT_ID
+        }
+    )
+
+    process translate-event-code (
+        name: translate event code
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                begin
+                select id into :P25_EVENT_ID from ll_vouchers where voucher_code = :P25_EVENT_ID;
+                end;
+                ```
+        }
+        execution {
+            sequence: 10
+        }
+        advanced {
+            executionMappingIdentifier: 2595382543202804
+        }
+        serverSideCondition {
+            type: itemIsNotNumeric
+            item: P25_EVENT_ID
+        }
+    )
+
+    branch (
+        name: go to event
+        execution {
+            sequence: 10
+        }
+        behavior {
+            target: {
+                page: 9161
+                items: {
+                    P9161_ID: &P25_EVENT_ID.
+                }
+            }
+        }
+    )
+
+)
+

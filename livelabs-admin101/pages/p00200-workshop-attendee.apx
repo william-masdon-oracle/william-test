@@ -1,0 +1,1319 @@
+page 200 (
+    name: Workshop Attendee
+    alias: WORKSHOP-ATTENDEE
+    title: Attend the &P200_WORKSHOP. Workshop
+    appearance {
+        pageTemplate: @standard-trustarc
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    javaScript {
+        functionAndGlobalVariableDeclaration:
+            ```javascript-browser
+            //Get the button:
+            mybutton = document.getElementById("myBtn");
+            //timebub = document.getElementById("time_bubble");
+            
+            // When the user scrolls down 20px from the top of the document, show the button
+            window.onscroll = function() {scrollFunction()};
+            
+            function scrollFunction() {
+              if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
+                mybutton.style.display = "block";
+            //    timebub.style.display = "block";
+              } else {
+                mybutton.style.display = "none";
+            //    timebub.style.display = "none";
+              }
+            }
+            
+            // When the user clicks on the button, scroll to the top of the document
+            function topFunction() {
+                $('html, body').animate({scrollTop:0}, 'slow');
+                document.body.scrollTop = 0; // For Safari
+                document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+            }
+            ```
+    }
+    css {
+        inline:
+            ```css
+            body  {
+                margin: 0 auto;
+                background-image: url(#APP_IMAGES#ll_bg_tile.png);
+                background-repeat: repeat;
+            }
+            
+            .t-Body-mainContent  {
+                width: 100%;
+                max-width: 1920px !important;
+                /* min-width: 1200px; 
+                margin: 0 auto;
+                background-image: url(#APP_IMAGES#ll_bg_tile.png);
+                background-repeat: repeat;*/
+                padding:0px 50px 0px 50px;
+            }
+            
+            #TITLEBAR{
+                color: white;
+                background: url(#APP_IMAGES#ll_region_bg_green.png);
+                min-height: 100%;
+                padding: 20px 40px 20px 45px;
+                border-radius: 0;
+            }
+            
+                
+            #myBtn {
+              display: none; /* Hidden by default */
+              position: fixed; /* Fixed/sticky position */
+              bottom: 20px; /* Place the button at the bottom of the page */
+            //  right: 30px; /* Place the button 30px from the right */
+              right: 50%;
+              z-index: 9999; /* Make sure it does not overlap */
+              border: none; /* Remove borders */
+              outline: none; /* Remove outline */
+              background-color: #46423f; /* Set a background color */
+              color: white; /* Text color */
+              cursor: pointer; /* Add a mouse pointer on hover */
+              padding: 5px 15px 5px 15px; /* Some padding */
+              border-radius: 5px; /* Rounded corners */
+              font-size: 14px; /* Increase font size */
+            }
+            
+            #myBtn:hover {
+              background-color: #719668; /* Add a dark-grey background on hover */
+            }
+            
+            #time_bubble {
+              display: none; /* Hidden by default */
+              position: fixed; /* Fixed/sticky position */
+              bottom: 20px; /* Place the button at the bottom of the page */
+              left: 20px;
+              z-index: 99; /* Make sure it does not overlap */
+              border: none; /* Remove borders */
+              outline: none; /* Remove outline */
+              background-color: #46423f; /* Set a background color */
+              color: white; /* Text color */
+              padding: 5px 15px 5px 15px; /* Some padding */
+              border-radius: 5px; /* Rounded corners */
+              font-size: 14px; /* Increase font size */
+            }
+            ```
+    }
+    security {
+        authorizationScheme: @superrrrr-user
+        formAutoComplete: false
+        browserCache: false
+    }
+    errorHandling {
+        inLineErrorNotificationText: There has been an unexpected error. Please revisit the My Reservations page or Available Workshops page to continue.
+    }
+
+    region button-switch-to-content (
+        name: button switch to content
+        type: staticContent
+        layout {
+            sequence: 60
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--scrollBody
+                t-Form--noPadding
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        serverSideCondition {
+            type: item=value
+            item: P200_VALID_REQUEST
+            value: Y
+        }
+    )
+
+    region button-switch-to-intro (
+        name: button - switch to intro
+        type: staticContent
+        layout {
+            sequence: 70
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--scrollBody
+                t-Form--noPadding
+            ]
+        }
+        serverSideCondition {
+            type: item=value
+            item: P200_VALID_REQUEST
+            value: Y
+        }
+    )
+
+    region buttons (
+        name: Buttons
+        type: staticContent
+        layout {
+            sequence: 30
+            parentRegion: @workshop-details-span-style-font-size-9em-font-weight-300-click-to-view-login-details-for-the-workshop
+            slot: subRegions
+            startNewRow: false
+            newColumn: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--hiddenOverflow
+                margin-top-none
+                margin-bottom-none
+                margin-left-md
+                margin-right-none
+            ]
+        }
+    )
+
+    region generate-ssh-key-link (
+        name: Generate SSH key - link
+        type: staticContent
+        source {
+            htmlCode: &nbsp;To find out more about generating SSH keys, see <a href="https://oracle.github.io/learning-library/common/labs/generate-ssh-key/" target="_blank">Create SSH Keys</a>
+        }
+        layout {
+            sequence: 20
+            parentRegion: @workshop-details-span-style-font-size-9em-font-weight-300-click-to-view-login-details-for-the-workshop
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--scrollBody
+                t-Form--noPadding
+                margin-left-md
+            ]
+        }
+        serverSideCondition {
+            type: never
+        }
+        comments {
+            comments:
+                ```
+                Server-side condition was:
+                ll_pkg_admin.requires_pub_key (p_workshop_id => :P200_WORKSHOP_ID) = 'Y'
+                ```
+        }
+    )
+
+    region intr-button-region (
+        name: intr button region
+        type: staticContent
+        layout {
+            sequence: 10
+            parentRegion: @button-switch-to-intro
+            slot: subRegions
+            columnSpan: 3
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--scrollBody
+                t-Form--noPadding
+                margin-top-none
+                margin-bottom-none
+                margin-left-md
+                margin-right-none
+            ]
+        }
+    )
+
+    region let-s-get-started-log-in-to-oracle-cloud (
+        name: Let's Get Started - Log in to Oracle Cloud
+        type: plSqlDynamicContent
+        source {
+            plsqlCode: ll_pkg_reservation.display_attendee_login_help(p_reservation_id => :P200_ID);
+        }
+        layout {
+            sequence: 40
+            slot: contentBody
+        }
+        appearance {
+            template: @collapsible
+            templateOptions: [
+                #DEFAULT#
+                js-useLocalStorage
+                t-Region--hideShowIconsMath
+                is-expanded
+                t-Region--noUI
+                t-Region--scrollBody
+                t-Form--noPadding
+                margin-left-md
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        serverSideCondition {
+            type: expression
+            plsqlExpression: :P200_VALID_REQUEST ='Y' and :P200_DISPLAY_OCI_INSTRUCTIONS = 'Y'
+        }
+    )
+
+    region link (
+        name: link
+        type: staticContent
+        source {
+            htmlCode: &nbsp;&nbsp;&nbsp;<span style="font-size:1.2em; font-weight:400"><a href="&P200_WORKSHOP_LOCATION." target="_blank"><span class="fa fa-external-link" style="vertical-align:middle"></span>&nbsp;Open the workshop instructions in a new tab</a></span>
+        }
+        layout {
+            sequence: 30
+            parentRegion: @button-switch-to-content
+            slot: subRegions
+            startNewRow: false
+            columnSpan: 5
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--scrollBody
+                t-Form--noPadding
+                margin-top-sm
+                margin-bottom-none
+                margin-left-none
+            ]
+        }
+    )
+
+    region link-2 (
+        name: link
+        type: staticContent
+        source {
+            htmlCode: &nbsp;&nbsp;&nbsp;<span style="font-size:1.2em; font-weight:400;"><a href="&P200_WORKSHOP_LOCATION." target="_blank"><span class="fa fa-external-link" style="vertical-align:middle"></span>&nbsp;Open the workshop instructions in a new tab</a></span>
+        }
+        layout {
+            sequence: 20
+            parentRegion: @button-switch-to-intro
+            slot: subRegions
+            startNewRow: false
+            columnSpan: 4
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--scrollBody
+                t-Form--noPadding
+                margin-top-sm
+                margin-bottom-none
+                margin-left-none
+            ]
+        }
+    )
+
+    region small-p200-id-p200-workshop-id-small (
+        name: <small>&P200_ID.:&P200_WORKSHOP_ID.</small>
+        type: staticContent
+        layout {
+            sequence: 80
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                t-Region--noPadding
+                t-Region--noUI
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region span-style-font-weight-200-launch-span-span-style-font-weight-400-p200-workshop-name-span-span-style-font-weight-200-workshop-span (
+        name: <span style="font-weight: 200">Launch </span><span style="font-weight: 400">&P200_WORKSHOP_NAME.</span><span style="font-weight: 200"> Workshop</span>
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <p style="font-weight: 200;color:white;font-size:2.3em;line-height:1em">Launch 
+                <span style="font-weight:400">&P200_WORKSHOP_NAME.</span>
+                <span style="font-weight: 200;"> Workshop</span>
+                </p>
+                
+                <p style="color:white;font-size:1.0em;margin-top:-5px;">
+                    &P200_DESC_SHORT.
+                <p>
+                    <span id="demo" style="color:white;font-size:1.0em;font-weight:600;margin-top:-5px">
+                    </span> 
+                    <!--span style="float:right;color:white;font-weight:800;vertical-align:middle">
+                        <a href="javascript:openModal('RATE_WK_200');" style="color:white"><span class="fa fa-star-o" style="vertical-align:baseline;color:white;">
+                        </span>          
+                         Rate this workshop?</a>
+                    </span-->
+                </p>
+                
+                <button onclick="topFunction()" id="myBtn" title="Go to top">Return to top of page</button>
+                
+                
+                <div id="time_bubble">
+                    <span id="demo" style="color:white;font-size:1.0em;font-weight:600;margin-top:-5px">
+                    </span>
+                </div>
+                ```
+        }
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--textContent
+                t-Region--hiddenOverflow
+                t-Form--noPadding
+                margin-bottom-sm
+                margin-left-md
+                margin-right-md
+            ]
+        }
+        advanced {
+            htmlDomId: TITLEBAR
+            regionDisplaySelector: true
+        }
+        serverSideCondition {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                declare
+                  v_status        varchar2(1);
+                  v_return_value  BOOLEAN;
+                begin
+                
+                  if :P200_ID is not null then
+                    v_status := ll_pkg_security.am_i_allowed(p_apex_user => :APP_USER, 
+                                                             p_access_type  => 'RESERVATION_VIEW',
+                                                             p_access_value => :P200_ID );
+                  end if;
+                
+                  v_status := nvl(v_status,'N');
+                  
+                  if v_status = 'Y' then
+                    return (TRUE);
+                  else
+                    return (FALSE);
+                  end if;
+                end;
+                ```
+        }
+    )
+
+    region wk-content-button-region (
+        name: wk content button region
+        type: staticContent
+        layout {
+            sequence: 10
+            parentRegion: @button-switch-to-content
+            slot: subRegions
+            columnSpan: 4
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--scrollBody
+                t-Form--noPadding
+                margin-top-none
+                margin-bottom-none
+                margin-left-md
+                margin-right-none
+            ]
+        }
+    )
+
+    region workshop-details (
+        name: Workshop Details
+        type: plSqlDynamicContent
+        source {
+            plsqlCode:
+                ```plsql
+                ll_pkg_apex.display_attendee_details (p_reservation_id => :P200_ID);
+                
+                ```
+        }
+        layout {
+            sequence: 10
+            parentRegion: @workshop-details-span-style-font-size-9em-font-weight-300-click-to-view-login-details-for-the-workshop
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--scrollBody
+                margin-left-md
+            ]
+        }
+    )
+
+    region workshop-details-span-style-font-size-9em-font-weight-300-click-to-view-login-details-for-the-workshop (
+        name: Workshop Details <span style="font-size:.9em; font-weight:300">(click + to view login details for the workshop)
+        type: staticContent
+        layout {
+            sequence: 30
+            slot: contentBody
+        }
+        appearance {
+            template: @collapsible
+            templateOptions: [
+                #DEFAULT#
+                js-useLocalStorage
+                t-Region--hideShowIconsMath
+                is-expanded
+                t-Region--noBorder
+                t-Region--scrollBody
+                t-Form--noPadding
+                margin-left-md
+                margin-right-md
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        serverSideCondition {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                declare
+                  v_status        varchar2(1);
+                  v_return_value  BOOLEAN;
+                begin
+                
+                  if :P200_ID is not null then
+                    v_status := ll_pkg_security.am_i_allowed(p_apex_user => :APP_USER, 
+                                                             p_access_type  => 'RESERVATION_VIEW',
+                                                             p_access_value => :P200_ID );
+                  end if;
+                
+                  v_status := nvl(v_status,'N');
+                  
+                  if v_status = 'Y' then
+                    return (TRUE);
+                  else
+                    return (FALSE);
+                  end if;
+                end;
+                ```
+        }
+    )
+
+    region workshop-instructions-nbsp-nbsp-nbsp-span-style-font-size-0-9em-a-href-p200-workshop-location-target-blank-span-class-fa-fa-external-link-style-vertical-align-middle-span-nbsp-open-these-instructions-in-a-new-tab-a-span (
+        name: Workshop Instructions&nbsp;&nbsp;&nbsp;<span style="font-size:0.9em; "><a href="&P200_WORKSHOP_LOCATION." target="_blank"><span class="fa fa-external-link" style="vertical-align:middle"></span>&nbsp;Open these instructions in a new tab</a></span>
+        type: url
+        layout {
+            sequence: 50
+            slot: contentBody
+        }
+        appearance {
+            template: @collapsible
+            templateOptions: [
+                #DEFAULT#
+                js-useLocalStorage
+                t-Region--hideShowIconsMath
+                is-expanded
+                t-Region--noUI
+                t-Region--scrollBody
+                margin-left-md
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        serverSideCondition {
+            type: item=value
+            item: P200_VALID_REQUEST
+            value: Y
+        }
+        settings {
+            url: &P200_WORKSHOP_LOCATION.
+            iframeAttrs: width="100%" height="1500px" allowfullscreen="true"
+        }
+    )
+
+    pageItem P200_DESC_SHORT (
+        type: hidden
+        layout {
+            sequence: 60
+            region: @workshop-details
+            slot: regionBody
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P200_DISPLAY_OCI_INSTRUCTIONS (
+        type: hidden
+        layout {
+            sequence: 70
+            region: @workshop-details
+            slot: regionBody
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P200_ID (
+        type: hidden
+        layout {
+            sequence: 10
+            region: @workshop-details
+            slot: regionBody
+        }
+        security {
+            sessionStateProtection: checksumRequiredSessionLevel
+        }
+    )
+
+    pageItem P200_VALID_REQUEST (
+        type: hidden
+        layout {
+            sequence: 40
+            region: @workshop-details
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P200_WORKSHOP_ID (
+        type: hidden
+        layout {
+            sequence: 20
+            region: @workshop-details
+            slot: regionBody
+        }
+    )
+
+    pageItem P200_WORKSHOP_LOCATION (
+        type: hidden
+        layout {
+            sequence: 50
+            region: @workshop-details
+            slot: regionBody
+        }
+        sessionState {
+            storage: request
+        }
+    )
+
+    pageItem P200_WORKSHOP_NAME (
+        type: hidden
+        layout {
+            sequence: 30
+            region: @workshop-details
+            slot: regionBody
+        }
+    )
+
+    button display-workshop-content (
+        buttonName: display-workshop-content
+        label: Click here to open the next part of the workshop
+        layout {
+            sequence: 10
+            region: @wk-content-button-region
+            slot: belowBox
+            horizontalAlignment: left
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--large
+            ]
+            icon: fa-list-alt
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button dummy (
+        buttonName: Dummy
+        label: Dummy
+        layout {
+            sequence: 70
+            region: @buttons
+            slot: regionBody
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    button extend-reservation (
+        buttonName: extend-reservation
+        label: Extend Workshop Reservation
+        layout {
+            sequence: 60
+            region: @buttons
+            slot: regionBody
+            startNewRow: false
+            newColumn: false
+        }
+        appearance {
+            buttonTemplate: @text-with-icon
+            templateOptions: [
+                #DEFAULT#
+                t-Button--iconRight
+                t-Button--hoverIconSpin
+            ]
+            icon: fa-clock-o
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+        serverSideCondition {
+            type: expression
+            plsqlExpression: ll_pkg_reservation.extend_allowed (p_reservation_id => :P200_ID) = 'Y'
+        }
+    )
+
+    button resetpassword (
+        buttonName: ResetPassword
+        label: Reset Workshop Password
+        layout {
+            sequence: 50
+            region: @buttons
+            slot: regionBody
+            startNewRow: false
+            newColumn: false
+        }
+        appearance {
+            buttonTemplate: @text-with-icon
+            templateOptions: [
+                #DEFAULT#
+                t-Button--iconRight
+                t-Button--hoverIconPush
+            ]
+            icon: fa-lock-password
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+        serverSideCondition {
+            type: item=value
+            item: P200_DISPLAY_OCI_INSTRUCTIONS
+            value: Y
+        }
+    )
+
+    button show-login-instructions (
+        buttonName: show-login-instructions
+        label: Show login instructions
+        layout {
+            sequence: 20
+            region: @intr-button-region
+            slot: belowBox
+            horizontalAlignment: left
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--large
+            ]
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    dynamicAction changepassword (
+        name: ChangePassword
+        execution {
+            sequence: 40
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @resetpassword
+        }
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    ll_pkg_reservation.reset_password (p_reservation_id => :P200_ID);
+                    
+                    ```
+                itemsToSubmit: P200_ID
+                itemsToReturn: P200_ID
+                suppressChangeEvent: true
+                showProcessing: true
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+        action native-submit-page (
+            action: submitPage
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction click-show-instructions (
+        name: click show instructions
+        execution {
+            sequence: 60
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @display-workshop-content
+        }
+
+        action native-hide (
+            action: hide
+            affectedElements {
+                selectionType: region
+                region: @let-s-get-started-log-in-to-oracle-cloud
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+        action native-hide-2 (
+            action: hide
+            affectedElements {
+                selectionType: region
+                region: @button-switch-to-content
+            }
+            execution {
+                sequence: 20
+            }
+        )
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode: window.scrollTo(0,0);
+            }
+            execution {
+                sequence: 60
+                fireOnInit: false
+            }
+        )
+
+        action native-open-region (
+            action: openRegion
+            affectedElements {
+                selectionType: region
+                region: @workshop-instructions-nbsp-nbsp-nbsp-span-style-font-size-0-9em-a-href-p200-workshop-location-target-blank-span-class-fa-fa-external-link-style-vertical-align-middle-span-nbsp-open-these-instructions-in-a-new-tab-a-span
+            }
+            execution {
+                sequence: 50
+                fireOnInit: false
+            }
+        )
+
+        action native-set-focus (
+            action: setFocus
+            affectedElements {
+                selectionType: items
+                items: P200_ANCHOR
+            }
+            execution {
+                sequence: 50
+            }
+        )
+
+        action native-show (
+            action: show
+            affectedElements {
+                selectionType: region
+                region: @workshop-instructions-nbsp-nbsp-nbsp-span-style-font-size-0-9em-a-href-p200-workshop-location-target-blank-span-class-fa-fa-external-link-style-vertical-align-middle-span-nbsp-open-these-instructions-in-a-new-tab-a-span
+            }
+            execution {
+                sequence: 30
+            }
+        )
+
+        action native-show-2 (
+            action: show
+            affectedElements {
+                selectionType: region
+                region: @button-switch-to-intro
+            }
+            execution {
+                sequence: 40
+            }
+        )
+
+    )
+
+    dynamicAction click-show-login-info (
+        name: click show login info
+        execution {
+            sequence: 80
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @show-login-instructions
+        }
+
+        action native-hide (
+            action: hide
+            affectedElements {
+                selectionType: region
+                region: @workshop-instructions-nbsp-nbsp-nbsp-span-style-font-size-0-9em-a-href-p200-workshop-location-target-blank-span-class-fa-fa-external-link-style-vertical-align-middle-span-nbsp-open-these-instructions-in-a-new-tab-a-span
+            }
+            execution {
+                sequence: 20
+            }
+        )
+
+        action native-hide-2 (
+            action: hide
+            affectedElements {
+                selectionType: region
+                region: @button-switch-to-intro
+            }
+            execution {
+                sequence: 40
+            }
+        )
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode: window.scrollTo(0,0);
+            }
+            execution {
+                sequence: 60
+                fireOnInit: false
+            }
+        )
+
+        action native-open-region (
+            action: openRegion
+            affectedElements {
+                selectionType: region
+                region: @let-s-get-started-log-in-to-oracle-cloud
+            }
+            execution {
+                sequence: 50
+                fireOnInit: false
+            }
+        )
+
+        action native-set-focus (
+            action: setFocus
+            affectedElements {
+                selectionType: items
+                items: P200_ANCHOR
+            }
+            execution {
+                sequence: 60
+            }
+        )
+
+        action native-show (
+            action: show
+            affectedElements {
+                selectionType: region
+                region: @let-s-get-started-log-in-to-oracle-cloud
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+        action native-show-2 (
+            action: show
+            affectedElements {
+                selectionType: region
+                region: @button-switch-to-content
+            }
+            execution {
+                sequence: 30
+            }
+        )
+
+    )
+
+    dynamicAction clickuser (
+        name: ClickUser
+        execution {
+            sequence: 20
+        }
+        when {
+            event: click
+            selectionType: items
+            items: P200_USERNAME
+        }
+
+        action native-alert (
+            action: alert
+            settings {
+                message: Username copied
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    /* Select the text field */
+                    $('#P200_USERNAME').select();
+                    
+                    /* Copy the text inside the text field */
+                    document.execCommand("copy");
+                    ```
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction extendrequest (
+        name: ExtendRequest
+        execution {
+            sequence: 50
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @extend-reservation
+        }
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    begin
+                      ll_pkg_reservation.extend_reservation (p_reservation_id => :P200_ID);
+                    end;
+                    ```
+                itemsToSubmit: P200_ID
+            }
+            execution {
+                sequence: 30
+                fireOnInit: false
+            }
+        )
+
+        action native-submit-page (
+            action: submitPage
+            settings {
+                requestButtonName: extend-reservation
+            }
+            execution {
+                sequence: 40
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction initial-page-layout (
+        name: Initial page layout
+        execution {
+            sequence: 70
+        }
+        when {
+            event: ready
+        }
+
+        action native-hide (
+            action: hide
+            affectedElements {
+                selectionType: region
+                region: @workshop-instructions-nbsp-nbsp-nbsp-span-style-font-size-0-9em-a-href-p200-workshop-location-target-blank-span-class-fa-fa-external-link-style-vertical-align-middle-span-nbsp-open-these-instructions-in-a-new-tab-a-span
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+        action native-hide-2 (
+            action: hide
+            affectedElements {
+                selectionType: region
+                region: @button-switch-to-intro
+            }
+            execution {
+                sequence: 50
+            }
+        )
+
+        action native-show (
+            action: show
+            affectedElements {
+                selectionType: region
+                region: @let-s-get-started-log-in-to-oracle-cloud
+            }
+            execution {
+                sequence: 20
+            }
+        )
+
+        action native-show-2 (
+            action: show
+            affectedElements {
+                selectionType: region
+                region: @button-switch-to-content
+            }
+            execution {
+                sequence: 40
+            }
+        )
+
+    )
+
+    dynamicAction layout-when-not-showing-oci-login-info (
+        name: Layout when not showing OCI Login info
+        execution {
+            sequence: 90
+        }
+        when {
+            event: ready
+        }
+        serverSideCondition {
+            type: expression
+            plsqlExpression: nvl(:P200_DISPLAY_OCI_INSTRUCTIONS,'Y') = 'N'
+        }
+
+        action native-hide (
+            action: hide
+            affectedElements {
+                selectionType: region
+                region: @let-s-get-started-log-in-to-oracle-cloud
+            }
+            execution {
+                sequence: 20
+            }
+        )
+
+        action native-hide-2 (
+            action: hide
+            affectedElements {
+                selectionType: region
+                region: @button-switch-to-content
+            }
+            execution {
+                sequence: 30
+            }
+        )
+
+        action native-show (
+            action: show
+            affectedElements {
+                selectionType: region
+                region: @workshop-instructions-nbsp-nbsp-nbsp-span-style-font-size-0-9em-a-href-p200-workshop-location-target-blank-span-class-fa-fa-external-link-style-vertical-align-middle-span-nbsp-open-these-instructions-in-a-new-tab-a-span
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    dynamicAction new (
+        name: New
+        execution {
+            sequence: 110
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @dummy
+        }
+
+        action native-submit-page (
+            action: submitPage
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    process count-page-and-workshop (
+        name: Count page and workshop
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                begin
+                  insert into ll_page_visits (page_id, workshop_id, app_session) values (200,:P200_WORKSHOP_ID, :APP_SESSION);
+                  commit;
+                exception
+                  when others then
+                    ll_pkg_log.log(1,'Error during insert on ll_page_visits for page_id 200, workshop_id '||:P200_WORKSHOP_ID||', app_session '||:APP_SESSION);
+                end;
+                ```
+        }
+        execution {
+            sequence: 10
+            point: afterFooter
+        }
+        advanced {
+            executionMappingIdentifier: 11226870027622804780
+        }
+    )
+
+    process retrieve-information (
+        name: RETRIEVE_INFORMATION
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                declare
+                  cursor c_reservation is select llr.workshop_id, llr.voucher_id, llw.name, llw.lab_url, desc_short, llw.workshop_json
+                                          from ll_reservations llr, ll_workshops llw
+                                          where llr.workshop_id = llw.id
+                                          and llr.id = :P200_ID;
+                
+                  cursor c_event (p_event_id number) is 
+                                    select alt_url, alt_desc_short
+                                    from ll_vouchers
+                                    where id = p_event_id;
+                /*
+                  cursor c_rating (p_workshop_id number, p_voucher_id number) is 
+                                     select rating 
+                                     from ll_workshop_rating
+                                     where id = ll_pkg_apex.get_star_rating (p_app_user       => :app_user,
+                                                                             p_workshop_id    => p_workshop_id,
+                                                                             p_session_id     => to_number(SYS_CONTEXT ('USERENV', 'SESSIONID')),
+                                                                             p_event_code_id  => p_voucher_id);
+                */
+                  v_lab_url       varchar2(4000);
+                  v_desc_short    varchar2(4000);
+                  v_voucher_id    number;
+                
+                
+                begin
+                
+                  if :P200_ID is not null then
+                
+                    for x in c_reservation loop
+                
+                      if x.voucher_id is not null then
+                        open c_event(x.voucher_id);
+                        fetch c_event into v_lab_url, v_desc_short;
+                        close c_event;
+                
+                        v_voucher_id := x.voucher_id;
+                      end if;
+                
+                      v_lab_url := nvl(v_lab_url, x.lab_url);
+                 
+                      :P200_WORKSHOP_LOCATION := nvl(json_value(v_lab_url,'$.GITHUB_URL'),  json_value(v_lab_url,'$.LIVELABS_URL'));
+                      :P200_DISPLAY_OCI_INSTRUCTIONS := nvl(json_value(x.workshop_json,'$.DisplayOciInstructions'), 'Y');
+                      :P200_WORKSHOP_ID := x.workshop_id;
+                      :P200_WORKSHOP_NAME := x.name;
+                      :P200_DESC_SHORT := nvl(v_desc_short, x.desc_short);
+                      :P200_VALID_REQUEST :=  ll_pkg_security.am_i_allowed(p_apex_user => :APP_USER, 
+                                                                           p_access_type  => 'RESERVATION_VIEW',
+                                                                           p_access_value => :P200_ID );
+                /*
+                      open c_rating (:P200_ID, v_voucher_id);                                                           
+                      fetch c_rating into :P200_STAR_RATING;
+                      close c_rating;
+                */
+                    end loop;
+                  else
+                    :P200_VALID_REQUEST := 'N';
+                  end if;
+                
+                end;
+                ```
+        }
+        execution {
+            sequence: 20
+            point: beforeHeader
+        }
+        advanced {
+            executionMappingIdentifier: 222969716196239741
+        }
+    )
+
+)
+

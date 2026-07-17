@@ -1,0 +1,238 @@
+page 250 (
+    name: Workshop Attendee Split
+    alias: WORKSHOP-ATTENDEE-SPLIT
+    title: Workshop Attendee Split
+    appearance {
+        pageTemplate: @standard-trustarc
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    css {
+        fileUrls: https://objectstorage.us-phoenix-1.oraclecloud.com/n/c4u03/b/ll_md/o/style-apex.css
+    }
+    security {
+        authorizationScheme: @superrrrr-user
+        formAutoComplete: false
+    }
+
+    region desktop (
+        name: Desktop
+        type: url
+        layout {
+            sequence: 20
+            slot: contentBody
+            startNewRow: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        headerAndFooter {
+            headerText: <div style="overflow: auto; min-height: 400px; max-height: 1440px;">
+        }
+        settings {
+            url: http://158.101.212.111:6080/vnc.html?password=Test123&resize=remote&autoconnect=true
+            iframeAttrs: width="100%" height="1024px" frameborder="0"
+        }
+    )
+
+    region details (
+        name: Details
+        type: plSqlDynamicContent
+        source {
+            plsqlCode:
+                ```plsql
+                declare
+                
+                  cursor c_md is select md from ll_labs where id = :P250_LAB_ID;
+                  
+                  v_html varchar2(4000);
+                  
+                begin
+                  htp.p('<div class="winmd">');
+                  
+                  for x in c_md loop
+                    v_html := x.md;
+                    v_html := replace (v_html, '<!--- USERNAME --->','ll-364');
+                    v_html := replace (v_html, '<!--- PASSWORD --->','NHSBDSUGSKBRB344');
+                    v_html := replace (v_html, '<!--- REGION --->','us-ashburn-1');
+                    v_html := replace (v_html, '<!--- COMPARTMENT --->','LL346-COMPARTMENT');
+                    
+                    
+                    htp.p(v_html);
+                  end loop;
+                  
+                  htp.p('</div>');
+                end;
+                ```
+        }
+        layout {
+            sequence: 20
+            parentRegion: @workshop
+            slot: subRegions
+            columnCssClasses: #APP_IMAGES#style-apex.css
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--noBorder
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    region labs (
+        name: Labs
+        type: staticContent
+        layout {
+            sequence: 10
+            parentRegion: @workshop
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    region workshop (
+        name: Workshop
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: contentBody
+            columnSpan: 4
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    pageItem P250_LAB_ID (
+        type: selectList
+        label {
+            label: Lab
+            alignment: left
+        }
+        settings {
+            pageActionOnSelection: submitPage
+            executeValidations: false
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select 'Lab '|| rownum || ' - '||title, id
+                from ll_labs
+                where id in (select lab_id
+                             from ll_workshop_labs 
+                             where workshop_id = 647)
+                ```
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 20
+            region: @labs
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        default {
+            type: sqlQuerySingleValue
+            sqlQuerySingleValue:
+                ```sql
+                select min(id)
+                from ll_labs
+                where id in (select lab_id
+                             from ll_workshop_labs 
+                             where workshop_id = 647)
+                ```
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    dynamicAction winmd (
+        name: WinMD
+        execution {
+            sequence: 10
+        }
+        when {
+            event: ready
+        }
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    /*
+                    Author: Ashwin Agarwal
+                    Last updated: 29-Sep-20
+                    */
+                    
+                    $('.winmd').hide();
+                    
+                    $.getScript('https://objectstorage.us-phoenix-1.oraclecloud.com/n/c4u03/b/ll_md/o/main-apex.js', function() {
+                        winify($('.winmd').text(), function(html, toc) {
+                            $('.winmd').html(html).show();
+                            $('.toc').html(toc);  
+                        });
+                    });
+                    ```
+            }
+            execution {
+                sequence: 20
+            }
+        )
+
+        action native-javascript-code-2 (
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    /* Scroll to Top */
+                    $("html, body").animate({ scrollTop: 0 }, 0);
+                    
+                    ```
+            }
+            execution {
+                sequence: 30
+            }
+        )
+
+    )
+
+)
+

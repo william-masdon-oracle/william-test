@@ -1,0 +1,16 @@
+page 573 (
+    name: Adv Search
+    alias: ADV-SEARCH
+    title: Adv Search
+    appearance {
+        pageTemplate: @standard-trustarc
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+)
+

@@ -1,0 +1,476 @@
+page 9301 (
+    name: Tags per Workshop
+    alias: TAGS-PER-WORKSHOP
+    title: Tags per Workshop
+    appearance {
+        pageTemplate: @standard-trustarc
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        authorizationScheme: @superrrrr-user
+        formAutoComplete: false
+    }
+
+    region button-bar (
+        name: Button Bar
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @buttons-container
+            templateOptions: [
+                #DEFAULT#
+                t-ButtonRegion--noPadding
+                t-ButtonRegion--noUI
+            ]
+        }
+    )
+
+    region tags (
+        name: Tags
+        type: interactiveGrid
+        source {
+            location: localDatabase
+            tableName: LL_WORKSHOP_TAGS
+        }
+        layout {
+            sequence: 30
+            slot: contentBody
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        masterDetail {
+            masterRegion: @workshops
+        }
+        edit {
+            enabled: true
+            allowedOperations: [
+                add
+                update
+                delete
+            ]
+        }
+        toolbar {
+            controls: [
+                searchCol
+                searchField
+                actionsMenu
+                resetButton
+            ]
+        }
+        download {
+            formats: [
+                csv
+                html
+                pdf
+            ]
+        }
+        advanced {
+            savedReportMappingIdentifier: 161891197628407565
+        }
+
+        savedReport 931034 (
+            visibility: primary
+            view {
+                default: grid
+            }
+            singleRowView {
+                displayedColumns: true
+            }
+
+            displayColumn (
+                column: @APEX$ROW_ACTION
+                layout {
+                    sequence: 0
+                }
+            )
+
+            displayColumn (
+                column: @ID
+                layout {
+                    sequence: 1
+                }
+            )
+
+            displayColumn (
+                column: @WORKSHOP_ID
+                layout {
+                    sequence: 2
+                }
+            )
+
+            displayColumn (
+                column: @TAG_ID
+                layout {
+                    sequence: 3
+                }
+            )
+
+        )
+
+        column APEX$ROW_ACTION (
+            type: actionsMenu
+            layout {
+                sequence: 20
+            }
+        )
+
+        column APEX$ROW_SELECTOR (
+            type: rowSelector
+            layout {
+                sequence: 10
+            }
+        )
+
+        column ID (
+            type: hidden
+            layout {
+                sequence: 30
+            }
+            source {
+                databaseColumn: ID
+                dataType: number
+                primaryKey: true
+            }
+            default {
+                duplicateCopiesExistingValue: false
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column TAG_ID (
+            type: selectList
+            heading {
+                heading: Tag
+            }
+            lov {
+                type: sharedComponent
+                lov: @ll-tags
+                displayExtraValues: false
+                displayNullValue: false
+            }
+            layout {
+                sequence: 50
+            }
+            validation {
+                valueRequired: true
+            }
+            source {
+                databaseColumn: TAG_ID
+                dataType: number
+            }
+            default {
+                duplicateCopiesExistingValue: false
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: useLov
+            }
+        )
+
+        column WORKSHOP_ID (
+            type: hidden
+            layout {
+                sequence: 40
+            }
+            source {
+                databaseColumn: WORKSHOP_ID
+                dataType: number
+            }
+            masterDetail {
+                masterColumn: @ID
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: Tags
+        }
+    )
+
+    region workshops (
+        name: Workshops
+        type: interactiveGrid
+        source {
+            location: localDatabase
+            tableName: LL_WORKSHOPS
+        }
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        performance {
+            lazyLoading: true
+        }
+        pagination {
+            type: page
+        }
+        toolbar {
+            controls: [
+                searchCol
+                searchField
+                actionsMenu
+                resetButton
+            ]
+        }
+        enableUsersTo {
+            defineChartView: false
+        }
+        download {
+            formats: [
+                csv
+                html
+                pdf
+            ]
+        }
+        advanced {
+            savedReportMappingIdentifier: 161886225653407307
+        }
+
+        savedReport 931033 (
+            visibility: primary
+            view {
+                default: grid
+                rowsPerPage: 5
+            }
+            singleRowView {
+                displayedColumns: true
+            }
+
+            displayColumn (
+                column: @ID
+                layout {
+                    width: 63
+                    sequence: 1
+                }
+            )
+
+            displayColumn (
+                column: @NAME
+                layout {
+                    width: 626
+                    sequence: 2
+                }
+            )
+
+            displayColumn (
+                column: @ACTIVE_FLG
+                layout {
+                    width: 97.77800000000002
+                    sequence: 3
+                }
+            )
+
+            displayColumn (
+                column: @DEVELOPMENT_STATUS
+                layout {
+                    sequence: 4
+                }
+            )
+
+        )
+
+        column ACTIVE_FLG (
+            type: textField
+            heading {
+                heading: Active Flag
+                alignment: center
+            }
+            layout {
+                sequence: 50
+                columnAlignment: center
+            }
+            validation {
+                maxLength: 1
+            }
+            source {
+                databaseColumn: ACTIVE_FLG
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column DEVELOPMENT_STATUS (
+            type: textField
+            heading {
+                heading: Development Status
+            }
+            layout {
+                sequence: 60
+            }
+            validation {
+                maxLength: 50
+            }
+            source {
+                databaseColumn: DEVELOPMENT_STATUS
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column ID (
+            type: displayOnly
+            heading {
+                heading: ID
+            }
+            layout {
+                sequence: 30
+            }
+            source {
+                databaseColumn: ID
+                dataType: number
+                primaryKey: true
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column NAME (
+            type: displayOnly
+            heading {
+                heading: Name
+            }
+            layout {
+                sequence: 40
+            }
+            source {
+                databaseColumn: NAME
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: Workshops
+        }
+    )
+
+    button save (
+        buttonName: SAVE
+        label: Save
+        layout {
+            sequence: 10
+            region: @button-bar
+            slot: edit
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    dynamicAction boxchanged (
+        name: BoxChanged
+        execution {
+            sequence: 10
+        }
+        when {
+            selectionType: items
+            items: P9301_INCLUDE
+        }
+
+        action native-submit-page (
+            action: submitPage
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction boxchanged-2 (
+        name: BoxChanged2
+        execution {
+            sequence: 20
+        }
+        when {
+            selectionType: items
+            items: P9301_INCLUDE2
+        }
+
+        action native-submit-page (
+            action: submitPage
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    process tags-save-interactive-grid-data (
+        name: Tags - Save Interactive Grid Data
+        type: interactiveGridAutoRowProcessing
+        editableRegion: @tags
+        execution {
+            sequence: 20
+        }
+        advanced {
+            executionMappingIdentifier: 340828648644860634
+        }
+        serverSideCondition {
+            whenButtonPressed: @save
+        }
+    )
+
+)
+

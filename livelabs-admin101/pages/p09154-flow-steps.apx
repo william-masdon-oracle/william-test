@@ -1,0 +1,979 @@
+page 9154 (
+    name: Flow steps
+    alias: FLOW-STEPS
+    title: Flow steps
+    appearance {
+        pageTemplate: @standard-trustarc
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        authorizationScheme: @superrrrr-user
+        formAutoComplete: false
+    }
+
+    region flow-group-steps (
+        name: Flow Group Steps
+        type: interactiveGrid
+        source {
+            location: localDatabase
+            tableName: LL_FLOW_GROUP_STEPS
+            includeRowidColumn: true
+        }
+        layout {
+            sequence: 30
+            slot: contentBody
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        edit {
+            enabled: true
+            allowedOperations: [
+                add
+                update
+                delete
+            ]
+        }
+        toolbar {
+            controls: [
+                searchCol
+                searchField
+                actionsMenu
+                resetButton
+                saveButton
+            ]
+        }
+        download {
+            formats: [
+                csv
+                html
+                pdf
+                excel
+            ]
+        }
+        advanced {
+            savedReportMappingIdentifier: 122518313814602264
+        }
+
+        savedReport 1225188 (
+            visibility: primary
+            view {
+                default: grid
+            }
+            singleRowView {
+                displayedColumns: true
+            }
+
+            displayColumn (
+                column: @APEX$ROW_ACTION
+                layout {
+                    sequence: 0
+                }
+            )
+
+            displayColumn (
+                column: @ROWID
+                layout {
+                    sequence: 1
+                }
+            )
+
+            displayColumn (
+                column: @ID
+                layout {
+                    width: 40
+                    sequence: 3
+                }
+            )
+
+            displayColumn (
+                column: @GROUP_STEP_ID
+                layout {
+                    sequence: 4
+                }
+            )
+
+            displayColumn (
+                column: @STEP_CODE
+                layout {
+                    sequence: 5
+                }
+            )
+
+            displayColumn (
+                column: @ACTIVE_FLG
+                layout {
+                    sequence: 5
+                }
+            )
+
+            sort (
+                column: @GROUP_STEP_ID
+                sort {
+                    nulls: last
+                    sequence: 1
+                }
+            )
+
+            sort (
+                column: @STEP_CODE
+                sort {
+                    nulls: last
+                    sequence: 2
+                }
+            )
+
+        )
+
+        column ACTIVE_FLG (
+            type: selectList
+            heading {
+                heading: Active Flg
+            }
+            lov {
+                type: sharedComponent
+                lov: @active-flg
+                displayExtraValues: false
+                displayNullValue: false
+            }
+            layout {
+                sequence: 70
+            }
+            source {
+                databaseColumn: ACTIVE_FLG
+                dataType: varchar2
+            }
+            default {
+                type: static
+                staticValue: Y
+                duplicateCopiesExistingValue: false
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: useLov
+            }
+        )
+
+        column APEX$ROW_ACTION (
+            type: actionsMenu
+            layout {
+                sequence: 20
+            }
+        )
+
+        column APEX$ROW_SELECTOR (
+            type: rowSelector
+            layout {
+                sequence: 10
+            }
+        )
+
+        column GROUP_STEP_ID (
+            type: popupLov
+            heading {
+                heading: Group Step Id
+            }
+            settings {
+                fetchOnSearch: true
+            }
+            lov {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select name || ' ('||id||'-'||step_code||')', id
+                    from ll_flow_steps
+                    where is_group='Y'
+                    
+                    ```
+                displayExtraValues: false
+                displayNullValue: false
+            }
+            layout {
+                sequence: 50
+            }
+            validation {
+                valueRequired: true
+            }
+            source {
+                databaseColumn: GROUP_STEP_ID
+                dataType: number
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: useLov
+            }
+        )
+
+        column ID (
+            type: displayOnly
+            heading {
+                heading: ID
+            }
+            layout {
+                sequence: 40
+            }
+            source {
+                databaseColumn: ID
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column ROWID (
+            type: hidden
+            layout {
+                sequence: 30
+            }
+            source {
+                databaseColumn: ROWID
+                dataType: rowid
+                primaryKey: true
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column STEP_CODE (
+            type: popupLov
+            heading {
+                heading: Step Code
+            }
+            settings {
+                fetchOnSearch: true
+            }
+            lov {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select step_code||' - '||name||' ('||id||')', step_code
+                    from ll_flow_steps
+                    where nvl(is_group,'N') = 'N'
+                    ```
+                displayExtraValues: false
+            }
+            layout {
+                sequence: 60
+            }
+            validation {
+                valueRequired: true
+                maxLength: 50
+            }
+            source {
+                databaseColumn: STEP_CODE
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: useLov
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: Flow Group Steps
+        }
+    )
+
+    region flow-step-type-selection (
+        name: Flow step type selection
+        type: regionDisplaySelector
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        settings {
+            rememberSelection: bySession
+        }
+    )
+
+    region flow-steps (
+        name: Flow steps
+        type: interactiveGrid
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select ID,
+                       NAME,
+                       DESCRIPTION,
+                       CREATE_ORDER,
+                       DELETE_ORDER,
+                       STEP_CODE, 
+                       VISIBLE,
+                       CREATE_SECONDS,
+                       OBJECT_NAME,
+                       SOURCE_CODE,
+                       RESOURCE_ID,
+                       IS_GROUP,
+                       ACTIVE_FLG,
+                       (select listagg(workshop_id, ',') within group (order by workshop_id) from ll_workshop_flow b where b.step_id = a.id) as workshops_using
+                  from LL_FLOW_STEPS A
+                ```
+        }
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        edit {
+            enabled: true
+            allowedOperations: [
+                add
+                update
+                delete
+            ]
+        }
+        componentAppearance {
+            showNullValuesAs: -
+        }
+        toolbar {
+            controls: [
+                searchCol
+                searchField
+                actionsMenu
+                resetButton
+                saveButton
+            ]
+        }
+        download {
+            formats: [
+                csv
+                html
+                pdf
+            ]
+        }
+        advanced {
+            savedReportMappingIdentifier: 105816516549005222
+        }
+
+        savedReport 491083 (
+            visibility: primary
+            view {
+                default: grid
+            }
+            singleRowView {
+                displayedColumns: true
+            }
+
+            displayColumn (
+                column: @CREATE_SECONDS
+                layout {
+                    width: 110.75
+                    sequence: 8
+                }
+            )
+
+            displayColumn (
+                column: @OBJECT_NAME
+                layout {
+                    width: 211
+                    sequence: 9
+                }
+            )
+
+            displayColumn (
+                column: @SOURCE_CODE
+                layout {
+                    sequence: 9
+                }
+            )
+
+            displayColumn (
+                column: @WORKSHOPS_USING
+                layout {
+                    sequence: 14
+                }
+            )
+
+            displayColumn (
+                column: @RESOURCE_ID
+                layout {
+                    sequence: 10
+                }
+            )
+
+            displayColumn (
+                column: @IS_GROUP
+                layout {
+                    width: 75
+                    sequence: 11
+                }
+            )
+
+            displayColumn (
+                column: @ACTIVE_FLG
+                layout {
+                    width: 75
+                    sequence: 13
+                }
+            )
+
+            displayColumn (
+                column: @VISIBLE
+                layout {
+                    width: 75
+                    sequence: 12
+                }
+            )
+
+            displayColumn (
+                column: @ID
+                layout {
+                    sequence: 2
+                }
+            )
+
+            displayColumn (
+                column: @NAME
+                layout {
+                    width: 325
+                    sequence: 3
+                }
+            )
+
+            displayColumn (
+                column: @DESCRIPTION
+                layout {
+                    show: false
+                    sequence: 6
+                }
+            )
+
+            displayColumn (
+                column: @DELETE_ORDER
+                layout {
+                    width: 75
+                    sequence: 5
+                }
+            )
+
+            displayColumn (
+                column: @STEP_CODE
+                layout {
+                    width: 176
+                    sequence: 2
+                }
+            )
+
+            displayColumn (
+                column: @CREATE_ORDER
+                layout {
+                    width: 75
+                    sequence: 4
+                }
+            )
+
+            displayColumn (
+                column: @APEX$ROW_ACTION
+                layout {
+                    width: 20
+                    sequence: 0
+                }
+            )
+
+            sort (
+                column: @CREATE_ORDER
+                sort {
+                    nulls: last
+                    sequence: 1
+                }
+            )
+
+        )
+
+        column ACTIVE_FLG (
+            type: selectList
+            heading {
+                heading: Active
+                alignment: center
+            }
+            lov {
+                type: sharedComponent
+                lov: @active-flg
+                displayExtraValues: false
+                displayNullValue: false
+            }
+            layout {
+                sequence: 170
+                columnAlignment: center
+            }
+            source {
+                databaseColumn: ACTIVE_FLG
+                dataType: varchar2
+            }
+            default {
+                type: static
+                staticValue: Y
+                duplicateCopiesExistingValue: false
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: useLov
+            }
+        )
+
+        column APEX$ROW_ACTION (
+            type: actionsMenu
+            layout {
+                sequence: 20
+            }
+        )
+
+        column APEX$ROW_SELECTOR (
+            type: rowSelector
+            layout {
+                sequence: 10
+            }
+        )
+
+        column CREATE_ORDER (
+            type: numberField
+            heading {
+                heading: Create
+                alignment: center
+            }
+            settings {
+                numberAlignment: end
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 80
+                columnAlignment: center
+            }
+            source {
+                databaseColumn: CREATE_ORDER
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column CREATE_SECONDS (
+            type: numberField
+            heading {
+                heading: Create Seconds
+                alignment: center
+            }
+            settings {
+                numberAlignment: end
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 110
+                columnAlignment: center
+            }
+            source {
+                databaseColumn: CREATE_SECONDS
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column DELETE_ORDER (
+            type: numberField
+            heading {
+                heading: Delete
+                alignment: center
+            }
+            settings {
+                numberAlignment: end
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 90
+                columnAlignment: center
+            }
+            source {
+                databaseColumn: DELETE_ORDER
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column DESCRIPTION (
+            type: textarea
+            heading {
+                heading: Description
+            }
+            layout {
+                sequence: 70
+            }
+            validation {
+                maxLength: 4000
+            }
+            source {
+                databaseColumn: DESCRIPTION
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column ID (
+            type: hidden
+            layout {
+                sequence: 40
+            }
+            source {
+                databaseColumn: ID
+                dataType: number
+                primaryKey: true
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column IS_GROUP (
+            type: selectList
+            heading {
+                heading: Is Group
+                alignment: center
+            }
+            lov {
+                type: sharedComponent
+                lov: @active-flg
+                displayExtraValues: false
+                displayNullValue: false
+            }
+            layout {
+                sequence: 150
+                columnAlignment: center
+            }
+            source {
+                databaseColumn: IS_GROUP
+                dataType: varchar2
+            }
+            default {
+                type: static
+                staticValue: N
+                duplicateCopiesExistingValue: false
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: useLov
+            }
+        )
+
+        column NAME (
+            type: textField
+            heading {
+                heading: Name
+            }
+            layout {
+                sequence: 60
+            }
+            validation {
+                maxLength: 50
+            }
+            source {
+                databaseColumn: NAME
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column OBJECT_NAME (
+            type: textField
+            heading {
+                heading: Object Name
+            }
+            layout {
+                sequence: 120
+            }
+            validation {
+                maxLength: 50
+            }
+            source {
+                databaseColumn: OBJECT_NAME
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column RESOURCE_ID (
+            type: popupLov
+            heading {
+                heading: Resource Required
+            }
+            settings {
+                fetchOnSearch: true
+            }
+            lov {
+                type: sharedComponent
+                lov: @ll-resources-5
+                displayExtraValues: false
+            }
+            layout {
+                sequence: 140
+            }
+            source {
+                databaseColumn: RESOURCE_ID
+                dataType: number
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: useLov
+            }
+        )
+
+        column SOURCE_CODE (
+            type: textField
+            heading {
+                heading: Source Code
+            }
+            layout {
+                sequence: 130
+            }
+            validation {
+                maxLength: 100
+            }
+            source {
+                databaseColumn: SOURCE_CODE
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column STEP_CODE (
+            type: textField
+            heading {
+                heading: Step Code
+            }
+            layout {
+                sequence: 50
+            }
+            validation {
+                maxLength: 50
+            }
+            source {
+                databaseColumn: STEP_CODE
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column VISIBLE (
+            type: selectList
+            heading {
+                heading: Visible
+                alignment: center
+            }
+            lov {
+                type: sharedComponent
+                lov: @active-flg
+                displayExtraValues: false
+                displayNullValue: false
+            }
+            layout {
+                sequence: 160
+                columnAlignment: center
+            }
+            source {
+                databaseColumn: VISIBLE
+                dataType: varchar2
+            }
+            default {
+                type: static
+                staticValue: Y
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: useLov
+            }
+        )
+
+        column WORKSHOPS_USING (
+            type: textarea
+            heading {
+                heading: Workshops Using
+            }
+            layout {
+                sequence: 180
+            }
+            validation {
+                maxLength: 4000
+            }
+            source {
+                databaseColumn: WORKSHOPS_USING
+                dataType: varchar2
+                queryOnly: true
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+    )
+
+    button create (
+        buttonName: CREATE
+        label: Create
+        layout {
+            sequence: 10
+            region: @flow-steps
+            slot: edit
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 9155
+                clearCache: 155
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    process flow-group-steps-save-interactive-grid-data (
+        name: Flow Group Steps - Save Interactive Grid Data
+        type: interactiveGridAutoRowProcessing
+        editableRegion: @flow-group-steps
+        execution {
+            sequence: 10
+        }
+        advanced {
+            executionMappingIdentifier: 301459576481055343
+        }
+    )
+
+    process flow-steps-save-interactive-grid-data (
+        name: Flow steps - Save Interactive Grid Data
+        type: interactiveGridAutoRowProcessing
+        editableRegion: @flow-steps
+        execution {
+            sequence: 10
+        }
+        advanced {
+            executionMappingIdentifier: 11184442034677021080
+        }
+    )
+
+)
+

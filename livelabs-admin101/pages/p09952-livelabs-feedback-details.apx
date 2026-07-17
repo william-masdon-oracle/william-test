@@ -1,0 +1,500 @@
+page 9952 (
+    name: Livelabs Feedback Details
+    alias: LIVELABS-FEEDBACK-DETAILS
+    title: Livelabs Feedback Details
+    appearance {
+        pageTemplate: @standard-trustarc
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    javaScript {
+        functionAndGlobalVariableDeclaration: var htmldb_delete_message='"DELETE_CONFIRM_MSG"';
+    }
+    security {
+        authorizationScheme: @superrrrr-user
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region livelabs-feedback (
+        name: Livelabs Feedback
+        type: form
+        source {
+            location: localDatabase
+            tableName: LL_FEEDBACK
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        edit {
+            enabled: true
+            allowedOperations: [
+                add
+                update
+                delete
+            ]
+        }
+    )
+
+    pageItem P9952_EMAIL_SUBMITTER (
+        type: textField
+        label {
+            label: Email Submitter
+            alignment: left
+        }
+        layout {
+            sequence: 90
+            region: @livelabs-feedback
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 4
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            maxLength: 50
+        }
+        source {
+            formRegion: @livelabs-feedback
+            column: EMAIL_SUBMITTER
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9952_FEEDBACK_COMMENTS (
+        type: markdownEditor
+        label {
+            label: Feedback Comments
+            alignment: left
+        }
+        layout {
+            sequence: 60
+            region: @livelabs-feedback
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @livelabs-feedback
+            column: FEEDBACK_COMMENTS
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9952_FEEDBACK_DATE (
+        type: displayOnly
+        label {
+            label: Feedback Date
+            alignment: left
+        }
+        layout {
+            sequence: 80
+            region: @livelabs-feedback
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            formatMask: DD Mon YYYY HH24:MI
+        }
+        source {
+            formRegion: @livelabs-feedback
+            column: FEEDBACK_DATE
+            dataType: date
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9952_FEEDBACK_TYPE (
+        type: selectList
+        label {
+            label: Feedback Type
+            alignment: left
+        }
+        lov {
+            type: sharedComponent
+            lov: @feedback-type
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 70
+            region: @livelabs-feedback
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            formRegion: @livelabs-feedback
+            column: FEEDBACK_TYPE
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9952_ID (
+        type: hidden
+        layout {
+            sequence: 20
+            region: @livelabs-feedback
+            slot: regionBody
+        }
+        source {
+            formRegion: @livelabs-feedback
+            column: ID
+            dataType: number
+            primaryKey: true
+        }
+        security {
+            sessionStateProtection: checksumRequiredSessionLevel
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9952_INTERNAL_COMMENTS (
+        type: markdownEditor
+        label {
+            label: Internal Comments
+            alignment: left
+        }
+        layout {
+            sequence: 120
+            region: @livelabs-feedback
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @livelabs-feedback
+            column: INTERNAL_COMMENTS
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9952_INTERNAL_OWNER (
+        type: textField
+        label {
+            label: Internal Owner
+            alignment: left
+        }
+        settings {
+            trimSpaces: none
+        }
+        layout {
+            sequence: 100
+            region: @livelabs-feedback
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 50
+        }
+        source {
+            formRegion: @livelabs-feedback
+            column: INTERNAL_OWNER
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9952_INTERNAL_STATUS (
+        type: selectList
+        label {
+            label: Internal Status
+            alignment: left
+        }
+        lov {
+            type: sharedComponent
+            lov: @feedback-status
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 110
+            region: @livelabs-feedback
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            formRegion: @livelabs-feedback
+            column: INTERNAL_STATUS
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9952_LAB_NAME (
+        type: textField
+        label {
+            label: Lab Name
+            alignment: left
+        }
+        layout {
+            sequence: 40
+            region: @livelabs-feedback
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 5
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 60
+        }
+        validation {
+            maxLength: 200
+        }
+        source {
+            formRegion: @livelabs-feedback
+            column: LAB_NAME
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9952_WORKSHOP_ID (
+        type: selectList
+        label {
+            label: Workshop
+            alignment: left
+        }
+        lov {
+            type: sharedComponent
+            lov: @ll-workshops
+        }
+        layout {
+            sequence: 30
+            region: @livelabs-feedback
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            formRegion: @livelabs-feedback
+            column: WORKSHOP_ID
+            dataType: number
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9952_WORKSHOP_ID_DISPLAY (
+        type: displayOnly
+        label {
+            label: Workshop ID
+            alignment: left
+        }
+        layout {
+            sequence: 10
+            region: @livelabs-feedback
+            slot: regionBody
+            alignment: left
+            columnSpan: 1
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @livelabs-feedback
+            column: WORKSHOP_ID
+            dataType: number
+            queryOnly: true
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button cancel (
+        buttonName: CANCEL
+        label: Cancel
+        layout {
+            sequence: 10
+            region: @livelabs-feedback
+            slot: close
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 9951
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button create (
+        buttonName: CREATE
+        label: Create
+        layout {
+            sequence: 40
+            region: @livelabs-feedback
+            slot: create
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: insert
+        }
+        serverSideCondition {
+            type: itemIsNull
+            item: P9952_ID
+        }
+    )
+
+    button delete (
+        buttonName: DELETE
+        label: Delete
+        layout {
+            sequence: 20
+            region: @livelabs-feedback
+            slot: delete
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectUrl
+            targetUrl: javascript:apex.confirm(htmldb_delete_message,'DELETE');
+            executeValidations: false
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: delete
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P9952_ID
+        }
+    )
+
+    button save (
+        buttonName: SAVE
+        label: Apply Changes
+        layout {
+            sequence: 30
+            region: @livelabs-feedback
+            slot: change
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: update
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P9952_ID
+        }
+    )
+
+    process initialize-form-livelabs-stage-feedback (
+        name: Initialize form Livelabs Stage Feedback
+        type: formInitialization
+        formRegion: @livelabs-feedback
+        execution {
+            sequence: 10
+            point: beforeHeader
+        }
+        advanced {
+            executionMappingIdentifier: 11223245209218524286
+        }
+    )
+
+    process process-form-livelabs-stage-feedback (
+        name: Process form Livelabs Stage Feedback
+        type: formAutoRowProcessing
+        formRegion: @livelabs-feedback
+        execution {
+            sequence: 10
+        }
+        advanced {
+            executionMappingIdentifier: 11223245556777524286
+        }
+    )
+
+    branch (
+        execution {
+            sequence: 1
+        }
+        behavior {
+            target: {
+                page: 9951
+            }
+        }
+    )
+
+)
+

@@ -1,0 +1,725 @@
+page 9601 (
+    name: Logging
+    alias: LOGGING
+    title: Logging
+    appearance {
+        pageTemplate: @standard-trustarc
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        authorizationScheme: @superrrrr-user
+        formAutoComplete: false
+    }
+
+    region logging (
+        name: Logging
+        type: interactiveGrid
+        source {
+            location: localDatabase
+            tableName: LL_LOGGING
+        }
+        layout {
+            sequence: 40
+            slot: contentBody
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        customization {
+            customizable: shownByDefault
+            name: Test
+        }
+        edit {
+            enabled: true
+            allowedOperations: [
+                add
+                update
+                delete
+            ]
+        }
+        toolbar {
+            controls: [
+                searchCol
+                searchField
+                actionsMenu
+                resetButton
+                saveButton
+            ]
+        }
+        download {
+            formats: [
+                csv
+                html
+                pdf
+            ]
+        }
+        advanced {
+            savedReportMappingIdentifier: 11905698218227340825
+        }
+
+        savedReport 931071 (
+            visibility: primary
+            view {
+                default: grid
+            }
+            singleRowView {
+                displayedColumns: true
+            }
+
+            displayColumn (
+                column: @APEX$ROW_ACTION
+                layout {
+                    sequence: 0
+                }
+            )
+
+            displayColumn (
+                column: @ID
+                layout {
+                    width: 65
+                    sequence: 1
+                }
+            )
+
+            displayColumn (
+                column: @LOG_DATE
+                layout {
+                    width: 133
+                    sequence: 2
+                }
+            )
+
+            displayColumn (
+                column: @LOG_LEVEL
+                layout {
+                    width: 73
+                    sequence: 3
+                }
+            )
+
+            displayColumn (
+                column: @MODULE
+                layout {
+                    sequence: 4
+                }
+            )
+
+            displayColumn (
+                column: @LOG_VALUE
+                layout {
+                    width: 686
+                    sequence: 5
+                }
+            )
+
+            displayColumn (
+                column: @SESSION_ID
+                layout {
+                    width: 84
+                    sequence: 6
+                }
+            )
+
+            displayColumn (
+                column: @RESERVATION_ID
+                layout {
+                    width: 106
+                    sequence: 7
+                }
+            )
+
+            displayColumn (
+                column: @APEX_USER
+                layout {
+                    width: 207
+                    sequence: 8
+                }
+            )
+
+            sort (
+                column: @ID
+                sort {
+                    direction: desc
+                    nulls: first
+                    sequence: 1
+                }
+            )
+
+        )
+
+        column APEX$ROW_ACTION (
+            type: actionsMenu
+            layout {
+                sequence: 20
+            }
+        )
+
+        column APEX$ROW_SELECTOR (
+            type: rowSelector
+            layout {
+                sequence: 10
+            }
+        )
+
+        column APEX_USER (
+            type: textField
+            heading {
+                heading: Apex User
+            }
+            layout {
+                sequence: 100
+            }
+            validation {
+                maxLength: 50
+            }
+            source {
+                databaseColumn: APEX_USER
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column ID (
+            type: numberField
+            heading {
+                heading: Id
+            }
+            settings {
+                numberAlignment: end
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 30
+            }
+            validation {
+                valueRequired: true
+            }
+            source {
+                databaseColumn: ID
+                dataType: number
+                primaryKey: true
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column LOG_DATE (
+            type: datePickerJquery
+            heading {
+                heading: Log Date
+            }
+            layout {
+                sequence: 40
+            }
+            appearance {
+                formatMask: DD Mon YY HH24:MI:SS
+            }
+            source {
+                databaseColumn: LOG_DATE
+                dataType: date
+            }
+        )
+
+        column LOG_LEVEL (
+            type: numberField
+            heading {
+                heading: Log Level
+            }
+            settings {
+                numberAlignment: end
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 50
+            }
+            source {
+                databaseColumn: LOG_LEVEL
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column LOG_VALUE (
+            type: textarea
+            heading {
+                heading: Log Value
+            }
+            settings {
+                autoHeight: true
+            }
+            layout {
+                sequence: 70
+                stretch: never
+            }
+            validation {
+                maxLength: 32676
+            }
+            source {
+                databaseColumn: LOG_VALUE
+                dataType: clob
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+        )
+
+        column MODULE (
+            type: textarea
+            heading {
+                heading: Module
+            }
+            layout {
+                sequence: 60
+            }
+            validation {
+                maxLength: 200
+            }
+            source {
+                databaseColumn: MODULE
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column RESERVATION_ID (
+            type: numberField
+            heading {
+                heading: Reservation Id
+            }
+            settings {
+                numberAlignment: end
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 90
+            }
+            source {
+                databaseColumn: RESERVATION_ID
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column SESSION_ID (
+            type: numberField
+            heading {
+                heading: Session Id
+            }
+            settings {
+                numberAlignment: end
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 80
+            }
+            source {
+                databaseColumn: SESSION_ID
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: Logging
+        }
+    )
+
+    region loglevel (
+        name: Loglevel
+        type: staticContent
+        layout {
+            sequence: 20
+            parentRegion: @settings
+            slot: subRegions
+            startNewRow: false
+            columnSpan: 8
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    region searchfield (
+        name: Searchfield
+        type: staticContent
+        layout {
+            sequence: 30
+            parentRegion: @settings
+            slot: subRegions
+            startNewRow: false
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    region settings (
+        name: Settings
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @collapsible
+            templateOptions: [
+                #DEFAULT#
+                js-useLocalStorage
+                t-Region--hideShowIconsMath
+                is-expanded
+                t-Region--scrollBody
+            ]
+            renderComponents: belowContent
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    pageItem P9601_LAST_CHANGED (
+        type: displayOnly
+        label {
+            label: Loglevel last changed
+            alignment: left
+        }
+        layout {
+            sequence: 40
+            region: @searchfield
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        source {
+            used: always
+        }
+        default {
+            type: sqlQuerySingleValue
+            sqlQuerySingleValue:
+                ```sql
+                select value from ll_system_parameters where name='LOGLASTCHANGE';
+                
+                ```
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9601_LOGLEVEL (
+        type: checkboxGroup
+        label {
+            label: Loglevel
+            alignment: left
+        }
+        settings {
+            noOfCols: 5
+        }
+        lov {
+            type: sharedComponent
+            lov: @loglevel
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 30
+            region: @loglevel
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: [
+                #DEFAULT#
+                margin-top-sm
+            ]
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery:
+                ```sql
+                select value
+                from ll_system_parameters
+                where name='LOGLEVEL'
+                ```
+            used: always
+        }
+        security {
+            authorizationScheme: @superrrrr-user
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9601_LOGVAL (
+        type: textField
+        label {
+            label: Filter value, user and reservation id
+            alignment: left
+        }
+        layout {
+            sequence: 20
+            region: @searchfield
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery:
+                ```sql
+                select value
+                from ll_system_parameters
+                where name='LOGVALUE'
+                ```
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button set (
+        buttonName: Set
+        label: Set filter
+        layout {
+            sequence: 30
+            region: @searchfield
+            slot: regionBody
+            startNewRow: false
+            columnSpan: 2
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--large
+                t-Button--gapTop
+            ]
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button truncatelogging (
+        buttonName: TruncateLogging
+        label: Truncate Logging
+        layout {
+            sequence: 10
+            region: @logging
+            slot: regionBody
+            columnSpan: 2
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: [
+                #DEFAULT#
+                t-Button--large
+            ]
+        }
+        behavior {
+            action: definedByDynamicAction
+            executeValidations: false
+        }
+    )
+
+    dynamicAction changednew (
+        name: ChangedNew
+        execution {
+            sequence: 40
+        }
+        when {
+            selectionType: items
+            items: P9601_LAST_CHANGED
+        }
+    )
+
+    dynamicAction loglevel-changed (
+        name: Loglevel_changed
+        execution {
+            sequence: 10
+        }
+        when {
+            selectionType: items
+            items: P9601_LOGLEVEL
+        }
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    declare
+                      v_error  varchar2(4000);
+                    begin
+                      update ll_system_parameters set value = :P9601_LOGLEVEL where name='LOGLEVEL';
+                      commit;
+                      update ll_system_parameters set value = substr(:APP_USER,1,instr(:APP_USER,'@')-1)||' at (GMT) '||to_char(sysdate,'DD-MON-YYYY HH24:MI:SS') where name='LOGLASTCHANGE';
+                      commit;
+                    exception
+                      when others then begin
+                                         v_error := SQLERRM;
+                                         ll_pkg_log.log(1,'Error during update of loglevel:'||v_error);
+                                       end;
+                    end;
+                    ```
+                itemsToSubmit: P9601_LOGLEVEL
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction setfilter (
+        name: SetFilter
+        execution {
+            sequence: 30
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @set
+        }
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    declare
+                      v_error  varchar2(4000);
+                    begin
+                      update ll_system_parameters set value = :P9601_LOGVAL where name='LOGVALUE';
+                      commit;
+                    exception
+                      when others then begin
+                                         v_error := SQLERRM;
+                                         ll_pkg_log.log(1,'Error during update of logvalue:'||v_error);
+                                       end;
+                    end;
+                    ```
+                itemsToSubmit: P9601_LOGVAL
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction truncatepushed (
+        name: TruncatePushed
+        execution {
+            sequence: 20
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @truncatelogging
+        }
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    begin
+                      execute immediate('truncate table LL_LOGGING');
+                    end;
+                    ```
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @logging
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    process logging-save-interactive-grid-data (
+        name: Logging - Save Interactive Grid Data
+        type: interactiveGridAutoRowProcessing
+        editableRegion: @logging
+        execution {
+            sequence: 10
+        }
+        advanced {
+            executionMappingIdentifier: 353085975469728939
+        }
+    )
+
+)
+

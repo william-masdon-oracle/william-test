@@ -1,0 +1,254 @@
+page 9221 (
+    name: Labs
+    alias: LABS
+    title: Labs
+    appearance {
+        pageTemplate: @standard-trustarc
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        authorizationScheme: @superrrrr-user
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region lab-sources (
+        name: Lab sources
+        type: interactiveGrid
+        source {
+            location: localDatabase
+            tableName: LL_LABS
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        toolbar {
+            controls: [
+                searchCol
+                searchField
+                actionsMenu
+                resetButton
+                saveButton
+            ]
+        }
+        download {
+            formats: [
+                csv
+                html
+                pdf
+            ]
+        }
+        advanced {
+            savedReportMappingIdentifier: 179562746988515418
+        }
+
+        savedReport 931024 (
+            visibility: primary
+            view {
+                default: grid
+            }
+            singleRowView {
+                displayedColumns: true
+            }
+
+            displayColumn (
+                column: @APEX$LINK
+                layout {
+                    sequence: 1
+                }
+            )
+
+            displayColumn (
+                column: @ID
+                layout {
+                    sequence: 2
+                }
+            )
+
+            displayColumn (
+                column: @TITLE
+                layout {
+                    sequence: 3
+                }
+            )
+
+            displayColumn (
+                column: @AREA
+                layout {
+                    sequence: 4
+                }
+            )
+
+            displayColumn (
+                column: @LAB_OWNER
+                layout {
+                    sequence: 5
+                }
+            )
+
+        )
+
+        column APEX$LINK (
+            type: link
+            heading {
+                alignment: center
+            }
+            layout {
+                sequence: 0
+                columnAlignment: center
+            }
+            link {
+                target: {
+                    page: 9222
+                    items: {
+                        P9222_ID: \&ID.\
+                    }
+                    action: resetPagination
+                }
+                linkText: <span aria-label="Edit"><span class="fa fa-edit" aria-hidden="true" title="Edit"></span></span>
+            }
+            source {
+                type: none
+            }
+        )
+
+        column AREA (
+            type: textField
+            heading {
+                heading: Area
+            }
+            layout {
+                sequence: 3
+            }
+            validation {
+                maxLength: 50
+            }
+            source {
+                databaseColumn: AREA
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column ID (
+            type: textField
+            heading {
+                heading: Id
+                alignment: end
+            }
+            layout {
+                sequence: 1
+                columnAlignment: end
+            }
+            validation {
+                valueRequired: true
+            }
+            source {
+                databaseColumn: ID
+                dataType: number
+                primaryKey: true
+            }
+        )
+
+        column LAB_OWNER (
+            type: textField
+            heading {
+                heading: Lab Owner
+            }
+            layout {
+                sequence: 4
+            }
+            validation {
+                maxLength: 50
+            }
+            source {
+                databaseColumn: LAB_OWNER
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column TITLE (
+            type: textField
+            heading {
+                heading: Title
+            }
+            layout {
+                sequence: 2
+            }
+            validation {
+                maxLength: 50
+            }
+            source {
+                databaseColumn: TITLE
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: Lab sources
+        }
+    )
+
+    button create (
+        buttonName: CREATE
+        label: Create
+        layout {
+            sequence: 30
+            region: @lab-sources
+            slot: edit
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 9222
+                clearCache: 9222
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+)
+

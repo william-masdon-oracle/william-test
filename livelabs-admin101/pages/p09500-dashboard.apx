@@ -1,0 +1,1672 @@
+page 9500 (
+    name: Dashboard
+    alias: DASHBOARD
+    title: Dashboard
+    appearance {
+        pageTemplate: @standard-trustarc
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        authorizationScheme: mustNotBePublicUser
+        deepLinking: false
+        formAutoComplete: false
+    }
+
+    region avg-event-attendees (
+        name: Avg Event Attendees
+        type: reflowReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery: select round(avg(USERS_MAXIMUM)) as avgattendees   from LL_VOUCHERS
+        }
+        layout {
+            sequence: 100
+            parentRegion: @total-page-views
+            slot: subRegions
+            startNewRow: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--scrollBody
+            ]
+        }
+        settings {
+            layoutOptions: [
+                stripes
+                stroke
+            ]
+        }
+
+        column AVGATTENDEES (
+            source {
+                dataType: NUMBER
+            }
+            heading {
+                heading: Avg. No of Attendees / Event
+                alignment: end
+            }
+            layout {
+                sequence: 10
+                columnAlignment: end
+            }
+        )
+
+    )
+
+    region database-workshops (
+        name: Database Workshops
+        type: staticContent
+        layout {
+            sequence: 80
+            parentRegion: @reports
+            slot: tabs
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    region db-unique (
+        name: DB Unique
+        type: reflowReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select count(app_session) as distsessions from 
+                ( 
+                    SELECT distinct  app_session FROM LL_PAGE_VISITS WHERE workshop_id IN  ( SELECT workshop_id FROM ll_workshops where name like '%Database%' )
+                )
+                ```
+        }
+        layout {
+            sequence: 20
+            parentRegion: @database-workshops
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--scrollBody
+            ]
+        }
+        settings {
+            layoutOptions: [
+                stripes
+                stroke
+            ]
+        }
+
+        column DISTSESSIONS (
+            source {
+                dataType: NUMBER
+            }
+            heading {
+                heading: Unique visits
+                alignment: end
+            }
+            layout {
+                sequence: 10
+                columnAlignment: end
+            }
+        )
+
+    )
+
+    region db-workshop-ranks (
+        name: DB Workshop Ranks
+        type: staticContent
+        layout {
+            sequence: 80
+            parentRegion: @database-workshops
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    region environments (
+        name: Environments
+        type: reflowReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery: select sum(environments) as env from LL_RESERVATIONS;
+        }
+        layout {
+            sequence: 90
+            parentRegion: @database-workshops
+            slot: subRegions
+            startNewRow: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--scrollBody
+            ]
+        }
+        serverSideCondition {
+            type: never
+        }
+        settings {
+            layoutOptions: [
+                stripes
+                stroke
+            ]
+        }
+
+        column ENV (
+            source {
+                dataType: NUMBER
+            }
+            heading {
+                heading: Environments Provisioned
+                alignment: end
+            }
+            layout {
+                sequence: 10
+                columnAlignment: end
+            }
+        )
+
+    )
+
+    region environments-2 (
+        name: Environments
+        type: reflowReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery: select sum(environments) as env from LL_RESERVATIONS;
+        }
+        layout {
+            sequence: 70
+            parentRegion: @total-page-views
+            slot: subRegions
+            startNewRow: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--scrollBody
+            ]
+        }
+        settings {
+            layoutOptions: [
+                stripes
+                stroke
+            ]
+        }
+
+        column ENV (
+            source {
+                dataType: NUMBER
+            }
+            heading {
+                heading: Environments Provisioned
+                alignment: end
+            }
+            layout {
+                sequence: 10
+                columnAlignment: end
+            }
+        )
+
+    )
+
+    region environments-3 (
+        name: Environments
+        type: staticContent
+        layout {
+            sequence: 40
+            parentRegion: @reports
+            slot: tabs
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    region events (
+        name: Events
+        type: reflowReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select   w.name as workshop_name, v.reason as eventname, TO_CHAR( v.valid_from, 'FMMonth DD, YYYY' ) valid_from  , TO_CHAR( v.valid_to, 'FMMonth DD, YYYY' ) valid_to , v.workshop_id, v.USERS_MAXIMUM as event_attendees
+                from LL_VOUCHERS v , LL_WORKSHOPS w where w.id = v.workshop_id order by v.valid_from;
+                ```
+        }
+        layout {
+            sequence: 30
+            parentRegion: @reports
+            slot: tabs
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        settings {
+            layoutOptions: [
+                stripes
+                stroke
+            ]
+        }
+
+        column EVENTNAME (
+            source {
+                dataType: VARCHAR2
+            }
+            heading {
+                heading: Event Name
+            }
+            layout {
+                sequence: 20
+            }
+        )
+
+        column EVENT_ATTENDEES (
+            source {
+                dataType: NUMBER
+            }
+            heading {
+                heading: Event Attendees
+                alignment: end
+            }
+            layout {
+                sequence: 60
+                columnAlignment: end
+            }
+        )
+
+        column VALID_FROM (
+            source {
+                dataType: VARCHAR2
+            }
+            heading {
+                heading: Valid From
+                alignment: center
+            }
+            layout {
+                sequence: 30
+                columnAlignment: center
+            }
+        )
+
+        column VALID_TO (
+            source {
+                dataType: VARCHAR2
+            }
+            heading {
+                heading: Valid To
+                alignment: center
+            }
+            layout {
+                sequence: 40
+                columnAlignment: center
+            }
+        )
+
+        column WORKSHOP_ID (
+            show: false
+            source {
+                dataType: NUMBER
+            }
+            layout {
+                sequence: 50
+            }
+        )
+
+        column WORKSHOP_NAME (
+            settings {
+                type: link
+                target: {
+                    page: 180
+                    items: {
+                        WID: &WORKSHOP_ID.
+                    }
+                }
+                linkText: &WORKSHOP_NAME.
+            }
+            source {
+                dataType: VARCHAR2
+            }
+            heading {
+                heading: Workshop Name
+            }
+            layout {
+                sequence: 10
+            }
+        )
+
+    )
+
+    region free-paid-workshops (
+        name: Free/Paid workshops
+        type: reflowReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery: " select  count(*) as freeworkshopscount  from LL_PAGE_VISITS where page_id=210"
+        }
+        layout {
+            sequence: 60
+            parentRegion: @database-workshops
+            slot: subRegions
+            startNewRow: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--scrollBody
+            ]
+        }
+        serverSideCondition {
+            type: never
+        }
+        settings {
+            layoutOptions: [
+                stripes
+                stroke
+            ]
+        }
+
+        column FREEWORKSHOPSCOUNT (
+            source {
+                dataType: NUMBER
+            }
+            heading {
+                heading: Free/Paid workshop views
+                alignment: end
+            }
+            layout {
+                sequence: 10
+                columnAlignment: end
+            }
+        )
+
+    )
+
+    region free-paid-workshops-2 (
+        name: Free/Paid workshops
+        type: reflowReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery: " select  count(*) as freeworkshopscount  from LL_PAGE_VISITS where page_id=210"
+        }
+        layout {
+            sequence: 50
+            parentRegion: @total-page-views
+            slot: subRegions
+            startNewRow: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--scrollBody
+            ]
+        }
+        settings {
+            layoutOptions: [
+                stripes
+                stroke
+            ]
+        }
+
+        column FREEWORKSHOPSCOUNT (
+            source {
+                dataType: NUMBER
+            }
+            heading {
+                heading: Free/Paid workshop views
+                alignment: end
+            }
+            layout {
+                sequence: 10
+                columnAlignment: end
+            }
+        )
+
+    )
+
+    region month-wise-page-views (
+        name: Month-wise page views
+        type: chart
+        layout {
+            sequence: 110
+            parentRegion: @total-page-views
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        chartLayout {
+            height: 400
+        }
+        legend {
+            show: false
+        }
+
+        series new (
+            name: New
+            execution {
+                sequence: 10
+            }
+            source {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select dt, dtmon, count(*) as viewcount   from
+                    (
+                        select to_char(entry_date,'MM/yyyy') as dt,  PAGE_ID , to_char(entry_date,'Mon/yyyy') as dtmon ,  to_char(entry_date,'yyyy/MM') as fulldt from LL_PAGE_VISITS g
+                        right outer join
+                        (select add_months(to_date('01'||to_char(add_months(sysdate,-11),'MMYY'),'DDMMYY'), level -1) entry_date_2 from dual connect by level <=12 ) a on (to_char(entry_date,'MM/yyyy') = to_char(entry_date_2,'MM/yyyy') )
+                        where  PAGE_ID is not null
+                        order by entry_date_2
+                    )
+                    group by dt , dtmon, fulldt
+                    order by fulldt
+                    
+                    ```
+            }
+            columnMapping {
+                label: DTMON
+                value: VIEWCOUNT
+            }
+        )
+
+        axis x (
+            name: x
+            minorTicks {
+                show: false
+            }
+        )
+
+        axis y (
+            name: y
+            value {
+                format: decimal
+                decimalPlaces: 0
+                formatScaling: none
+            }
+            minorTicks {
+                show: false
+            }
+        )
+
+    )
+
+    region month-wise-workshop-views (
+        name: Month-wise workshop views
+        type: chart
+        layout {
+            sequence: 120
+            parentRegion: @total-page-views
+            slot: subRegions
+            startNewRow: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        chartLayout {
+            height: 400
+        }
+        legend {
+            show: false
+        }
+
+        series new (
+            name: New
+            execution {
+                sequence: 10
+            }
+            source {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select  dt, dtmon, count(*) as viewcount from 
+                    ( 
+                        select entry_date, to_char(entry_date,'MM/yyyy') as dt,   workshop_id, to_char(entry_date,'Mon/yyyy') as dtmon ,  to_char(entry_date,'yyyy/MM') as fulldt  from LL_PAGE_VISITS g  
+                        right outer join
+                        (select add_months(to_date('01'||to_char(add_months(sysdate,-11),'MMYY'),'DDMMYY'), level -1) entry_date_2 from dual connect by level <=12 ) a on (to_char(entry_date,'MM/yyyy') = to_char(entry_date_2,'MM/yyyy') ) 
+                        where  workshop_id is not null   
+                        order by entry_date desc   
+                    )   
+                    group by  dt, dtmon , fulldt
+                    order by fulldt
+                    ```
+            }
+            columnMapping {
+                label: DTMON
+                value: VIEWCOUNT
+            }
+            link {
+                type: redirectThisApp
+                target: {
+                    page: 9501
+                    items: {
+                        P9501_DT: &DT.
+                    }
+                }
+            }
+        )
+
+        axis x (
+            name: x
+            minorTicks {
+                show: false
+            }
+        )
+
+        axis y (
+            name: y
+            value {
+                format: decimal
+                decimalPlaces: 0
+                formatScaling: none
+            }
+            minorTicks {
+                show: false
+            }
+        )
+
+    )
+
+    region new (
+        name: New
+        type: reflowReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select name, views, workshop_rank, id from 
+                ( 
+                    select w.name , count(*) as views,  RANK() OVER (ORDER BY count(*) DESC NULLS LAST) AS workshop_rank , w.id
+                    from LL_PAGE_VISITS lp , ll_workshops w
+                    where 
+                    lp.workshop_id is not null  
+                    AND w.id=lp.workshop_id   AND w.name like '%Database%'
+                    group by w.name , w.id
+                )
+                ```
+        }
+        layout {
+            sequence: 10
+            parentRegion: @db-workshop-ranks
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--scrollBody
+            ]
+        }
+        settings {
+            layoutOptions: [
+                stripes
+                stroke
+            ]
+        }
+
+        column ID (
+            show: false
+            source {
+                dataType: NUMBER
+            }
+            layout {
+                sequence: 20
+            }
+        )
+
+        column NAME (
+            settings {
+                type: link
+                target: {
+                    page: 180
+                    items: {
+                        P180_ID: &ID.
+                    }
+                }
+                linkText: &NAME.
+            }
+            source {
+                dataType: VARCHAR2
+            }
+            heading {
+                heading: Name
+            }
+            layout {
+                sequence: 10
+            }
+        )
+
+        column VIEWS (
+            source {
+                dataType: NUMBER
+            }
+            heading {
+                heading: Views
+                alignment: end
+            }
+            layout {
+                sequence: 30
+                columnAlignment: end
+            }
+        )
+
+        column WORKSHOP_RANK (
+            source {
+                dataType: NUMBER
+            }
+            heading {
+                heading: Rank
+                alignment: end
+            }
+            layout {
+                sequence: 40
+                columnAlignment: end
+            }
+        )
+
+    )
+
+    region new-2 (
+        name: New
+        type: chart
+        layout {
+            sequence: 20
+            parentRegion: @db-workshop-ranks
+            slot: subRegions
+            startNewRow: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--scrollBody
+            ]
+        }
+        chartLayout {
+            height: 400
+        }
+        legend {
+            show: false
+        }
+
+        series new (
+            name: New
+            execution {
+                sequence: 10
+            }
+            source {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select name, views, workshop_rank, id from 
+                    ( 
+                        select w.name , count(*) as views,  RANK() OVER (ORDER BY count(*) DESC NULLS LAST) AS workshop_rank , w.id
+                        from LL_PAGE_VISITS lp , ll_workshops w
+                        where 
+                        lp.workshop_id is not null  
+                        AND w.id=lp.workshop_id  AND name like '%Database%'
+                        group by w.name , w.id
+                    )
+                    ```
+            }
+            columnMapping {
+                label: NAME
+                value: VIEWS
+            }
+        )
+
+        axis x (
+            name: x
+            minorTicks {
+                show: false
+            }
+        )
+
+        axis y (
+            name: y
+            value {
+                format: decimal
+                decimalPlaces: 0
+                formatScaling: none
+            }
+            minorTicks {
+                show: false
+            }
+        )
+
+    )
+
+    region new-3 (
+        name: New
+        type: chart
+        layout {
+            sequence: 30
+            parentRegion: @workshop-ranks
+            slot: subRegions
+            startNewRow: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--scrollBody
+            ]
+        }
+        chartLayout {
+            height: 400
+        }
+        legend {
+            show: false
+        }
+
+        series new (
+            name: New
+            execution {
+                sequence: 10
+            }
+            source {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select name, views, workshop_rank, id from 
+                    ( 
+                        select w.name , count(*) as views,  RANK() OVER (ORDER BY count(*) DESC NULLS LAST) AS workshop_rank , w.id
+                        from LL_PAGE_VISITS lp , ll_workshops w
+                        where 
+                        lp.workshop_id is not null  
+                        AND w.id=lp.workshop_id  
+                        and entry_date > nvl(sysdate - :P9500_DATES, sysdate - 365)
+                        group by w.name , w.id
+                    )
+                    ```
+            }
+            columnMapping {
+                label: NAME
+                value: VIEWS
+            }
+        )
+
+        axis x (
+            name: x
+            minorTicks {
+                show: false
+            }
+        )
+
+        axis y (
+            name: y
+            value {
+                format: decimal
+                decimalPlaces: 0
+                formatScaling: none
+            }
+            minorTicks {
+                show: false
+            }
+        )
+
+    )
+
+    region new-4 (
+        name: New
+        type: reflowReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery: select distinct * from LL_RES_RESERVATION_VW
+        }
+        layout {
+            sequence: 10
+            parentRegion: @environments-3
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--scrollBody
+            ]
+        }
+        settings {
+            layoutOptions: [
+                stripes
+                stroke
+            ]
+        }
+
+        column ENVIRONMENTS (
+            source {
+                dataType: NUMBER
+            }
+            heading {
+                heading: Environments
+                alignment: end
+            }
+            layout {
+                sequence: 50
+                columnAlignment: end
+            }
+        )
+
+        column ID (
+            show: false
+            source {
+                dataType: NUMBER
+            }
+            layout {
+                sequence: 10
+            }
+        )
+
+        column REGION_ID (
+            source {
+                dataType: NUMBER
+            }
+            heading {
+                heading: Region Id
+                alignment: end
+            }
+            layout {
+                sequence: 30
+                columnAlignment: end
+            }
+        )
+
+        column RESOURCE_ID (
+            source {
+                dataType: NUMBER
+            }
+            heading {
+                heading: Resource Id
+                alignment: end
+            }
+            layout {
+                sequence: 40
+                columnAlignment: end
+            }
+        )
+
+        column TENANCY_ID (
+            source {
+                dataType: NUMBER
+            }
+            heading {
+                heading: Tenancy Id
+                alignment: end
+            }
+            layout {
+                sequence: 20
+                columnAlignment: end
+            }
+        )
+
+    )
+
+    region new-5 (
+        name: New
+        type: reflowReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select name, views, workshop_rank, id from 
+                ( 
+                    select w.name , count(*) as views,  RANK() OVER (ORDER BY count(*) DESC NULLS LAST) AS workshop_rank , w.id
+                    from LL_PAGE_VISITS lp , ll_workshops w
+                    where 
+                    lp.workshop_id is not null  
+                    AND w.id=lp.workshop_id  
+                    and entry_date > nvl(sysdate-:P9500_DATES, sysdate-30)
+                    group by w.name , w.id
+                   
+                )
+                ```
+        }
+        layout {
+            sequence: 10
+            parentRegion: @workshop-ranks
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--scrollBody
+            ]
+        }
+        settings {
+            layoutOptions: [
+                stripes
+                stroke
+            ]
+        }
+
+        column ID (
+            show: false
+            source {
+                dataType: NUMBER
+            }
+            layout {
+                sequence: 40
+            }
+        )
+
+        column NAME (
+            settings {
+                type: link
+                target: {
+                    page: 180
+                    items: {
+                        WID: &ID.
+                    }
+                }
+                linkText: &NAME.
+            }
+            source {
+                dataType: VARCHAR2
+            }
+            heading {
+                heading: Name
+            }
+            layout {
+                sequence: 10
+            }
+        )
+
+        column VIEWS (
+            source {
+                dataType: NUMBER
+            }
+            heading {
+                heading: Views
+                alignment: end
+            }
+            layout {
+                sequence: 20
+                columnAlignment: end
+            }
+        )
+
+        column WORKSHOP_RANK (
+            source {
+                dataType: NUMBER
+            }
+            heading {
+                heading: Rank
+                alignment: end
+            }
+            layout {
+                sequence: 30
+                columnAlignment: end
+            }
+        )
+
+    )
+
+    region no-of-events (
+        name: No. of Events
+        type: reflowReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery: select count(*) as eventcount from LL_VOUCHERS
+        }
+        layout {
+            sequence: 90
+            parentRegion: @total-page-views
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--scrollBody
+            ]
+        }
+        settings {
+            layoutOptions: [
+                stripes
+                stroke
+            ]
+        }
+
+        column EVENTCOUNT (
+            source {
+                dataType: NUMBER
+            }
+            heading {
+                heading: No. of Events
+                alignment: end
+            }
+            layout {
+                sequence: 10
+                columnAlignment: end
+            }
+        )
+
+    )
+
+    region page-views (
+        name: Page Views
+        type: reflowReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select count(page_id) as pageviewcount from
+                (
+                    SELECT    page_id FROM LL_PAGE_VISITS WHERE workshop_id IN  ( SELECT workshop_id FROM ll_workshops where name like '%Database%' )
+                )
+                ```
+        }
+        layout {
+            sequence: 40
+            parentRegion: @database-workshops
+            slot: subRegions
+            startNewRow: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--scrollBody
+            ]
+        }
+        settings {
+            layoutOptions: [
+                stripes
+                stroke
+            ]
+        }
+
+        column PAGEVIEWCOUNT (
+            source {
+                dataType: NUMBER
+            }
+            heading {
+                heading: Total page view count
+                alignment: end
+            }
+            layout {
+                sequence: 10
+                columnAlignment: end
+            }
+        )
+
+    )
+
+    region page-views-2 (
+        name: Page Views
+        type: reflowReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery: select  count(page_id) as pageviewcount from LL_PAGE_VISITS   ;
+        }
+        layout {
+            sequence: 30
+            parentRegion: @total-page-views
+            slot: subRegions
+            startNewRow: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--scrollBody
+            ]
+        }
+        settings {
+            layoutOptions: [
+                stripes
+                stroke
+            ]
+        }
+
+        column PAGEVIEWCOUNT (
+            source {
+                dataType: NUMBER
+            }
+            heading {
+                heading: Total page view count
+                alignment: end
+            }
+            layout {
+                sequence: 10
+                columnAlignment: end
+            }
+        )
+
+    )
+
+    region reports (
+        name: Reports
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @tabs-container
+            templateOptions: [
+                #DEFAULT#
+                t-TabsRegion-mod--simple
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region top-10-workshops (
+        name: "Top 10 Workshops "
+        type: reflowReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                 select name, views, id from
+                (
+                        select     w.name , count(*) as views , w.id
+                        from LL_PAGE_VISITS lp , ll_workshops w
+                        where w.id=lp.workshop_id AND name like '%Database%'
+                        group by w.name, w.id order by views desc
+                )
+                where rownum <= 10
+                ```
+        }
+        layout {
+            sequence: 70
+            parentRegion: @database-workshops
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        settings {
+            layoutOptions: [
+                stripes
+                stroke
+            ]
+        }
+
+        column ID (
+            show: false
+            source {
+                dataType: NUMBER
+            }
+            layout {
+                sequence: 30
+            }
+        )
+
+        column NAME (
+            settings {
+                type: link
+                target: {
+                    page: 180
+                    items: {
+                        P180_ID: &ID.
+                    }
+                }
+                linkText: &NAME.
+            }
+            source {
+                dataType: VARCHAR2
+            }
+            heading {
+                heading: Name
+            }
+            layout {
+                sequence: 10
+            }
+        )
+
+        column VIEWS (
+            source {
+                dataType: NUMBER
+            }
+            heading {
+                heading: Views
+                alignment: end
+            }
+            layout {
+                sequence: 20
+                columnAlignment: end
+            }
+        )
+
+    )
+
+    region top-10-workshops-2 (
+        name: "Top 10 Workshops "
+        type: reflowReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select name, views, id from 
+                (
+                        select     w.name , count(*) as views , w.id
+                        from LL_PAGE_VISITS lp , ll_workshops w
+                        where  
+                          w.id=lp.workshop_id  
+                        group by w.name, w.id order by views desc 
+                )
+                where rownum <= 10
+                ```
+        }
+        layout {
+            sequence: 130
+            parentRegion: @total-page-views
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        settings {
+            layoutOptions: [
+                stripes
+                stroke
+            ]
+        }
+
+        column ID (
+            show: false
+            source {
+                dataType: NUMBER
+            }
+            layout {
+                sequence: 30
+            }
+        )
+
+        column NAME (
+            settings {
+                type: link
+                target: {
+                    page: 180
+                    items: {
+                        WID: &ID.
+                    }
+                }
+                linkText: &NAME.
+            }
+            source {
+                dataType: VARCHAR2
+            }
+            heading {
+                heading: Name
+            }
+            layout {
+                sequence: 10
+            }
+        )
+
+        column VIEWS (
+            source {
+                dataType: NUMBER
+            }
+            heading {
+                heading: Views
+                alignment: end
+            }
+            layout {
+                sequence: 20
+                columnAlignment: end
+            }
+        )
+
+    )
+
+    region total-page-views (
+        name: Total Page Views
+        type: staticContent
+        layout {
+            sequence: 10
+            parentRegion: @reports
+            slot: tabs
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    region unique (
+        name: Unique
+        type: reflowReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select count(app_session) as distsessions from 
+                (
+                    select distinct app_session   from LL_PAGE_VISITS  
+                )
+                ```
+        }
+        layout {
+            sequence: 10
+            parentRegion: @total-page-views
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--scrollBody
+            ]
+        }
+        settings {
+            layoutOptions: [
+                stripes
+                stroke
+            ]
+        }
+
+        column DISTSESSIONS (
+            source {
+                dataType: NUMBER
+            }
+            heading {
+                heading: Unique visits
+                alignment: end
+            }
+            layout {
+                sequence: 10
+                columnAlignment: end
+            }
+        )
+
+    )
+
+    region workshop-ranks (
+        name: Workshop Ranks
+        type: staticContent
+        layout {
+            sequence: 60
+            parentRegion: @reports
+            slot: tabs
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    region workshop-views (
+        name: Workshop Views
+        type: classicReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select name, views  from 
+                (
+                    select w.name , count(*) as views 
+                    from LL_PAGE_VISITS lp , ll_workshops w
+                    where 
+                    lp.workshop_id is not null 
+                    AND w.id = :P9500_WSID
+                    AND w.id=lp.workshop_id  
+                    group by w.name 
+                )  
+                ```
+            pageItemsToSubmit: P9500_WSID
+        }
+        layout {
+            sequence: 150
+            parentRegion: @total-page-views
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        componentAppearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Report--altRowsDefault
+                t-Report--rowHighlight
+            ]
+        }
+        pagination {
+            type: nextAndPreviousLinks
+        }
+
+        column NAME (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            heading {
+                heading: Name
+                alignment: center
+            }
+            layout {
+                sequence: 1
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column VIEWS (
+            reportColumnQueryId: 2
+            derivedColumn: N
+            heading {
+                heading: Views
+                alignment: center
+            }
+            layout {
+                sequence: 2
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+    )
+
+    pageItem P9500_DATES (
+        type: selectList
+        label {
+            label: Dates
+            alignment: left
+        }
+        settings {
+            pageActionOnSelection: submitPage
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC2:Last Week;7,Last Two Weeks;14,Last Month;30,Last 90 Days;90,Last 180 Days;180,Last Year;365
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 10
+            region: @workshop-ranks
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9500_WSID (
+        type: selectList
+        label {
+            label: Workshop Name
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select distinct w.name as d , w.id as v
+                from LL_PAGE_VISITS lp , ll_workshops w
+                where 
+                lp.workshop_id is not null
+                AND w.id=lp.workshop_id order by w.name
+                --select name as d, id as v from LL_WORKSHOPS order by name
+                ```
+        }
+        layout {
+            sequence: 10
+            region: @workshop-views
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    dynamicAction new (
+        name: New
+        execution {
+            sequence: 10
+        }
+        when {
+            selectionType: items
+            items: P9500_FROMDATE
+        }
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @workshop-views
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction new-2 (
+        name: New
+        execution {
+            sequence: 10
+        }
+        when {
+            selectionType: items
+            items: P9500_WSID
+        }
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @workshop-views
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+)
+

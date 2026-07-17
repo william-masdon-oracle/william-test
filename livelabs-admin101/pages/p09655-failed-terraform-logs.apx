@@ -1,0 +1,433 @@
+page 9655 (
+    name: Failed Terraform Logs
+    alias: FAILED-TERRAFORM-LOGS
+    title: Failed Terraform Logs
+    appearance {
+        pageTemplate: @standard-trustarc
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region failed-terraform-logs (
+        name: Failed Terraform Logs
+        type: interactiveGrid
+        source {
+            location: localDatabase
+            tableName: LL_RESERVATION_TF_LOG
+            includeRowidColumn: true
+            whereClause: reservation_id = :P9655_RESID or :P9655_RESID is null
+            orderByClause: ID
+            pageItemsToSubmit: :P9655_RESID
+        }
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        toolbar {
+            controls: [
+                searchCol
+                searchField
+                actionsMenu
+                resetButton
+                saveButton
+            ]
+        }
+        download {
+            formats: [
+                csv
+                html
+                pdf
+                excel
+            ]
+        }
+        advanced {
+            savedReportMappingIdentifier: 37164222827078013
+        }
+
+        savedReport 371647 (
+            visibility: primary
+            view {
+                default: grid
+            }
+            singleRowView {
+                displayedColumns: true
+            }
+
+            displayColumn (
+                column: @ROWID
+                layout {
+                    sequence: 1
+                }
+            )
+
+            displayColumn (
+                column: @ID
+                layout {
+                    width: 52.531000000000006
+                    sequence: 2
+                }
+            )
+
+            displayColumn (
+                column: @RESERVATION_ID
+                layout {
+                    width: 109.52799999999999
+                    sequence: 3
+                }
+            )
+
+            displayColumn (
+                column: @TENANCY_ID
+                layout {
+                    width: 93.51400000000001
+                    sequence: 4
+                }
+            )
+
+            displayColumn (
+                column: @JOB_OCID
+                layout {
+                    width: 217.53500000000003
+                    sequence: 5
+                }
+            )
+
+            displayColumn (
+                column: @LOG_TYPE
+                layout {
+                    width: 193.521
+                    sequence: 6
+                }
+            )
+
+            displayColumn (
+                column: @LOG_LEVEL
+                layout {
+                    width: 68.54500000000002
+                    sequence: 7
+                }
+            )
+
+            displayColumn (
+                column: @LOG_TIMESTAMP
+                layout {
+                    width: 207.531
+                    sequence: 8
+                }
+            )
+
+            displayColumn (
+                column: @LOG_MESSAGE
+                layout {
+                    sequence: 9
+                }
+            )
+
+        )
+
+        column ID (
+            type: numberField
+            heading {
+                heading: Id
+                alignment: end
+            }
+            settings {
+                numberAlignment: end
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 20
+                columnAlignment: end
+            }
+            validation {
+                valueRequired: true
+            }
+            source {
+                databaseColumn: ID
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column JOB_OCID (
+            type: textarea
+            heading {
+                heading: Job Ocid
+            }
+            layout {
+                sequence: 50
+            }
+            validation {
+                maxLength: 200
+            }
+            source {
+                databaseColumn: JOB_OCID
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column LOG_LEVEL (
+            type: textarea
+            heading {
+                heading: Log Level
+            }
+            layout {
+                sequence: 70
+            }
+            validation {
+                maxLength: 200
+            }
+            source {
+                databaseColumn: LOG_LEVEL
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column LOG_MESSAGE (
+            type: textarea
+            heading {
+                heading: Log Message
+            }
+            layout {
+                sequence: 90
+            }
+            validation {
+                maxLength: 4000
+            }
+            source {
+                databaseColumn: LOG_MESSAGE
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column LOG_TIMESTAMP (
+            type: textarea
+            heading {
+                heading: Log Timestamp
+            }
+            layout {
+                sequence: 80
+            }
+            validation {
+                maxLength: 200
+            }
+            source {
+                databaseColumn: LOG_TIMESTAMP
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column LOG_TYPE (
+            type: textarea
+            heading {
+                heading: Log Type
+            }
+            layout {
+                sequence: 60
+            }
+            validation {
+                maxLength: 200
+            }
+            source {
+                databaseColumn: LOG_TYPE
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column RESERVATION_ID (
+            type: numberField
+            heading {
+                heading: Reservation Id
+                alignment: end
+            }
+            settings {
+                numberAlignment: end
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 30
+                columnAlignment: end
+            }
+            source {
+                databaseColumn: RESERVATION_ID
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column ROWID (
+            type: hidden
+            layout {
+                sequence: 10
+            }
+            source {
+                databaseColumn: ROWID
+                dataType: rowid
+                primaryKey: true
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column TENANCY_ID (
+            type: numberField
+            heading {
+                heading: Tenancy Id
+                alignment: end
+            }
+            settings {
+                numberAlignment: end
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 40
+                columnAlignment: end
+            }
+            source {
+                databaseColumn: TENANCY_ID
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: Failed Terraform Logs
+        }
+    )
+
+    pageItem P9655_RESID (
+        type: popupLov
+        label {
+            label: Reservation ID
+            alignment: left
+        }
+        settings {
+            fetchOnSearch: true
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select distinct reservation_id as a, reservation_id as b
+                from LL_RESERVATION_TF_LOG
+                ```
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 10
+            region: @failed-terraform-logs
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    dynamicAction whenvaluechanged (
+        name: WhenValueChanged
+        execution {
+            sequence: 10
+        }
+        when {
+            selectionType: items
+            items: P9655_RESID
+        }
+
+        action native-submit-page (
+            action: submitPage
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+)
+

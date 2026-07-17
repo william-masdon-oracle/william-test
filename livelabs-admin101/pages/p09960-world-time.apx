@@ -1,0 +1,135 @@
+page 9960 (
+    name: World Time
+    alias: WORLD-TIME
+    title: World Time
+    appearance {
+        pageTemplate: @standard-trustarc
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region world-time (
+        name: World Time
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select KEY_NAME,
+                       KEY_VALUE,
+                       ll_pkg_reservation.date_timezone (sysdate, KEY_VALUE ) as current_time
+                  from LL_KEYS
+                  where key_type='TIMEZONE'
+                ```
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        pagination {
+            type: rowRangesXToY
+        }
+        messages {
+            whenNoDataFound: No data found.
+            whenMoreDataFound: The maximum row count for this report is #MAX_ROW_COUNT# rows.  Please apply a filter to reduce the number of records in your query.
+        }
+        actionsMenu {
+            subscription: false
+        }
+        advanced {
+            savedReportMappingIdentifier: 176612255005914987
+        }
+
+        column CURRENT_TIME (
+            type: plainText
+            heading {
+                heading: Current Time
+            }
+            layout {
+                sequence: 14
+            }
+            appearance {
+                formatMask: HH24:MI:SS (DD-MM-YYYY)
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: I
+            }
+        )
+
+        column KEY_NAME (
+            type: plainText
+            heading {
+                heading: Key Name
+            }
+            layout {
+                sequence: 3
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: C
+            }
+        )
+
+        column KEY_VALUE (
+            type: plainText
+            heading {
+                heading: Key Value
+            }
+            layout {
+                sequence: 4
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: D
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: World Time
+        }
+
+        savedReport 1766161 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn CURRENT_TIME (
+                sequence: 3
+            )
+
+            displayColumn KEY_NAME (
+                sequence: 1
+            )
+
+            displayColumn KEY_VALUE (
+                sequence: 2
+            )
+
+        )
+
+    )
+
+)
+

@@ -1,0 +1,120 @@
+app LIVELABS-ADMIN (
+    name: LiveLabsAdmin
+    version: Admin Release 2026.04.01
+    logo {
+        type: text
+        text: LiveLabs
+    }
+    navigation {
+        homeUrl: {
+            page: 1
+        }
+        loginUrl: {
+            page: LOGIN
+        }
+    }
+    navigationMenu {
+        listTemplate: @top-navigation-menu
+        templateOptions: [
+            #DEFAULT#
+            js-tabLike
+            js-showSubMenuIcons
+        ]
+        listPosition: top
+        list: @livelabs-dynamic-menu
+    }
+    navigationBar {
+        list: @desktop-navigation-bar
+        listTemplate: @navigation-bar
+        templateOptions: #DEFAULT#
+    }
+    userInterface {
+        currentTheme: @universal-theme
+        globalPage: 0
+    }
+    appFormatMasks {
+        date: DS
+        timestamp: DS
+        timestampTimeZone: DS
+    }
+    javaScript {
+        fileUrls: [
+            #APP_IMAGES#js/livelabs#MIN#.js?version=#APP_VERSION#
+            #APP_IMAGES#js/turl#MIN#.js
+        ]
+    }
+    css {
+        fileUrls: [
+            #APP_IMAGES#app-icon.css?version=#APP_VERSION#
+            #APP_IMAGES#css/livelabs#MIN#.css?version=#APP_VERSION#
+        ]
+    }
+    authentication {
+        scheme: @oracle-sso
+        publicUser: APEX_PUBLIC_USER
+    }
+    security {
+        deepLinking: true
+        embedInFrames: allow
+        referrerPolicy: sameOrigin
+    }
+    sessionStateProtection {
+        checksumSalt: E592F708A605A68BB740D3382D7154AD4E3C59A380E19D6C859A636C0C4EB402
+        acceptPre202UrlChecksums: false
+    }
+    sessionManagement {
+        sessionStateCommits: immediate
+        maxSessionLength: 28800
+        sessionTimeoutUrl: " #LOGOUT_URL#"
+        maxSessionIdleTime: 28800
+        sessionIdleTimeoutUrl: " #LOGOUT_URL#"
+    }
+    globalization {
+        documentDirection: leftToRight
+    }
+    progressiveWebApp {
+        enable: false
+    }
+    rowSearch {
+        tokenize: false
+    }
+    reportPrinting {
+        type: useInstanceSettings
+    }
+    runtime {
+        allowFeedback: true
+        compatibilityMode: 19.2-20.1-20.2-21.1
+        accessibleReadOnlyItems: false
+    }
+    staticFiles {
+        appFilesPath: https://livelabs.oracle.com/cdn/livelabsappfiles/adminappfiles/
+    }
+    advanced {
+        passEcid: false
+        modernizeApp: true
+    }
+    comments {
+        comments: Application created from create application wizard 2020.06.09.
+    }
+
+    substitution APP_NAME (
+        value {
+            staticValue: LiveLabs-v2.0
+        }
+    )
+
+    appSetting FEEDBACK_ATTACHMENTS_YN (
+        value {
+            staticValue: Y
+            onUpgradeKeepValue: true
+        }
+        validation {
+            validValues: Y, N
+        }
+        config {
+            buildOption: @feature-feedback
+        }
+    )
+
+)
+

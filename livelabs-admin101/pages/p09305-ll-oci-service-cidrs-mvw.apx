@@ -1,0 +1,199 @@
+page 9305 (
+    name: LL_OCI_SERVICE_CIDRS_MVW
+    alias: LL-OCI-SERVICE-CIDRS-MVW
+    title: LL_OCI_SERVICE_CIDRS_MVW
+    appearance {
+        pageTemplate: @standard-trustarc
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        authorizationScheme: @superrrrr-user
+        formAutoComplete: false
+    }
+
+    region ll-oci-service-cidrs-mvw (
+        name: LL_OCI_SERVICE_CIDRS_MVW
+        type: interactiveReport
+        source {
+            location: localDatabase
+            tableName: LL_OCI_SERVICE_CIDRS_MVW
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        pagination {
+            type: rowRangesXToY
+        }
+        performance {
+            maxRowsToProcess: 1000000
+        }
+        advanced {
+            savedReportMappingIdentifier: 161913565858836533
+        }
+
+        column CIDR (
+            type: plainText
+            heading {
+                heading: Cidr
+                alignment: center
+            }
+            layout {
+                sequence: 20
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: B
+            }
+        )
+
+        column PROTOCOL (
+            type: plainText
+            heading {
+                heading: Protocol
+            }
+            layout {
+                sequence: 40
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: D
+            }
+        )
+
+        column REGION (
+            type: plainText
+            heading {
+                heading: Region
+                alignment: center
+            }
+            layout {
+                sequence: 10
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: A
+            }
+        )
+
+        column TAG (
+            type: plainText
+            heading {
+                heading: Tag
+                alignment: center
+            }
+            layout {
+                sequence: 30
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: C
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: LL_OCI_SERVICE_CIDRS_MVW
+        }
+
+        savedReport 1670399 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn CIDR (
+                sequence: 2
+            )
+
+            displayColumn PROTOCOL (
+                sequence: 4
+            )
+
+            displayColumn REGION (
+                sequence: 1
+            )
+
+            displayColumn TAG (
+                sequence: 3
+            )
+
+        )
+
+    )
+
+    button refresh (
+        buttonName: Refresh
+        label: Refresh
+        layout {
+            sequence: 10
+            region: @ll-oci-service-cidrs-mvw
+            slot: rightOfInteractiveReportSearchBar
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    dynamicAction buttonpressed (
+        name: ButtonPressed
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @refresh
+        }
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    begin
+                      dbms_mview.refresh('LL_OCI_SERVICE_CIDRS_MVW');
+                    end;
+                    ```
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+        action native-submit-page (
+            action: submitPage
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+    )
+
+)
+

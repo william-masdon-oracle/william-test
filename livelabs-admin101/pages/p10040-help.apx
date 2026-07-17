@@ -1,0 +1,54 @@
+page 10040 (
+    name: About
+    alias: HELP
+    title: About
+    pageGroup: @administration
+    appearance {
+        pageTemplate: @standard-trustarc
+    }
+    security {
+        authentication: public
+        formAutoComplete: false
+    }
+    help {
+        helpText: All application help text can be accessed from this page. The links in the "Documentation" region give a much more in-depth explanation of the application's features and functionality.
+    }
+    config {
+        buildOption: @feature-about-page
+    }
+
+    region about-page (
+        name: About Page
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <h2>Oracle LiveLabs</h2>
+                
+                <p>Version 3.1</p>
+                
+                <p><a href="https://www.oracle.com/legal/copyright.html" target="_blank">© 2022 Oracle</a> | 
+                <a href="https://www.oracle.com/legal/privacy/">Terms of Use & Privacy</a> | 
+                <a href="https://www.oracle.com/corporate/index.html" target="_blank">About Oracle</a> | 
+                <a href="https://www.oracle.com/corporate/contact/" target="_blank">Contact Us</a></p>
+                
+                ```
+        }
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+)
+

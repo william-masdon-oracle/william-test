@@ -1,0 +1,912 @@
+page 33 (
+    name: View Image Details
+    alias: VIEW-IMAGE-DETAILS1
+    title: View Image Details
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @modal-dialog
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region advanced-settings (
+        name: Advanced Settings
+        title: Advanced Settings
+        type: staticContent
+        layout {
+            sequence: 70
+            parentRegion: @view-image-details
+            slot: regionBody
+        }
+        appearance {
+            template: @collapsible
+            templateOptions: [
+                #DEFAULT#
+                is-collapsed
+                t-Region--accent1
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    region basic-information (
+        name: Basic Information
+        title: Basic Information
+        type: staticContent
+        layout {
+            sequence: 20
+            parentRegion: @view-image-details
+            slot: regionBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--accent1
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    region buttons (
+        name: Buttons
+        type: staticContent
+        layout {
+            sequence: 20
+            slot: dialogFooter
+        }
+        appearance {
+            template: @buttons-container
+            templateOptions: #DEFAULT#
+        }
+        settings {
+            outputAs: text
+        }
+    )
+
+    region view-image-details (
+        name: View Image Details
+        type: form
+        source {
+            location: localDatabase
+            tableName: LL_IMAGES
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+        edit {
+            enabled: true
+            allowedOperations: [
+                add
+                update
+                delete
+            ]
+        }
+    )
+
+    pageItem P33_ACTIVE_FLG (
+        type: switch
+        label {
+            label: Active Flg
+            alignment: left
+        }
+        layout {
+            sequence: 190
+            region: @advanced-settings
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @view-image-details
+            column: ACTIVE_FLG
+            dataType: varchar2
+        }
+        default {
+            type: static
+            staticValue: Y
+        }
+    )
+
+    pageItem P33_ADDED_BY (
+        type: displayOnly
+        label {
+            label: Added By
+            alignment: left
+        }
+        layout {
+            sequence: 210
+            region: @advanced-settings
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @view-image-details
+            column: ADDED_BY
+            dataType: varchar2
+        }
+        default {
+            type: expression
+            plsqlExpression: v('APP_USER')
+        }
+    )
+
+    pageItem P33_ADDED_ON (
+        type: displayOnly
+        label {
+            label: Added On
+            alignment: left
+        }
+        layout {
+            sequence: 200
+            region: @advanced-settings
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @view-image-details
+            column: ADDED_ON
+            dataType: timestamp
+        }
+        default {
+            type: expression
+            plsqlExpression: sysdate
+        }
+    )
+
+    pageItem P33_DATABASE_VERSION (
+        type: popupLov
+        label {
+            label: Database Version
+            alignment: left
+        }
+        lov {
+            type: sharedComponent
+            lov: @database-versions
+        }
+        layout {
+            sequence: 110
+            region: @advanced-settings
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 20
+        }
+        source {
+            formRegion: @view-image-details
+            column: DATABASE_VERSION
+            dataType: varchar2
+        }
+    )
+
+    pageItem P33_ID (
+        type: hidden
+        layout {
+            sequence: 10
+            region: @view-image-details
+            slot: regionBody
+        }
+        source {
+            formRegion: @view-image-details
+            column: ID
+            dataType: number
+            primaryKey: true
+        }
+        security {
+            sessionStateProtection: checksumRequiredSessionLevel
+        }
+    )
+
+    pageItem P33_IMAGE_OCID (
+        type: textarea
+        label {
+            label: Image OCID
+            alignment: left
+        }
+        layout {
+            sequence: 40
+            region: @basic-information
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 60
+            height: 1
+        }
+        validation {
+            valueRequired: true
+            maxLength: 500
+        }
+        source {
+            formRegion: @view-image-details
+            column: IMAGE_OCID
+            dataType: varchar2
+        }
+    )
+
+    pageItem P33_IMAGE_REQ (
+        type: textField
+        label {
+            label: Image Req
+            alignment: left
+        }
+        layout {
+            sequence: 140
+            region: @advanced-settings
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 60
+        }
+        validation {
+            maxLength: 2000
+        }
+        source {
+            formRegion: @view-image-details
+            column: IMAGE_REQ
+            dataType: varchar2
+        }
+    )
+
+    pageItem P33_INSTANCE_PREFIX (
+        type: textField
+        label {
+            label: Instance Prefix
+            alignment: left
+        }
+        layout {
+            sequence: 120
+            region: @advanced-settings
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 10
+        }
+        source {
+            formRegion: @view-image-details
+            column: INSTANCE_PREFIX
+            dataType: varchar2
+        }
+    )
+
+    pageItem P33_LISTING_ID (
+        type: selectList
+        label {
+            label: "Listing "
+            alignment: left
+        }
+        lov {
+            type: sharedComponent
+            lov: @omp-listings-listing-name
+        }
+        layout {
+            sequence: 30
+            region: @basic-information
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            formRegion: @view-image-details
+            column: LISTING_ID
+            dataType: number
+        }
+    )
+
+    pageItem P33_NOVNC_ENABLED (
+        type: checkbox
+        label {
+            label: NoVNC Enabled
+            alignment: left
+        }
+        layout {
+            sequence: 80
+            region: @advanced-settings
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @view-image-details
+            column: NOVNC_ENABLED
+            dataType: varchar2
+        }
+    )
+
+    pageItem P33_OCPU_REQUIRED (
+        type: popupLov
+        label {
+            label: Ocpu Required
+            alignment: left
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC:1;1,2;2,4;4
+        }
+        layout {
+            sequence: 100
+            region: @advanced-settings
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 255
+        }
+        source {
+            formRegion: @view-image-details
+            column: OCPU_REQUIRED
+            dataType: number
+        }
+    )
+
+    pageItem P33_PUBKEY_REQ (
+        type: checkbox
+        label {
+            label: SSH Key Req
+            alignment: left
+        }
+        layout {
+            sequence: 90
+            region: @advanced-settings
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @view-image-details
+            column: PUBKEY_REQ
+            dataType: varchar2
+        }
+    )
+
+    pageItem P33_REGION_ID (
+        type: popupLov
+        label {
+            label: Region
+            alignment: left
+        }
+        lov {
+            type: sharedComponent
+            lov: @ll-regions
+        }
+        layout {
+            sequence: 170
+            region: @advanced-settings
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 255
+        }
+        source {
+            formRegion: @view-image-details
+            column: REGION_ID
+            dataType: number
+        }
+    )
+
+    pageItem P33_REMARKS (
+        type: textarea
+        label {
+            label: Remarks
+            alignment: left
+        }
+        layout {
+            sequence: 180
+            region: @advanced-settings
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 60
+            height: 4
+        }
+        validation {
+            maxLength: 4000
+        }
+        source {
+            formRegion: @view-image-details
+            column: REMARKS
+            dataType: varchar2
+        }
+    )
+
+    pageItem P33_RESOURCE_ID (
+        type: popupLov
+        label {
+            label: Compute Resource
+            alignment: left
+        }
+        lov {
+            type: sharedComponent
+            lov: @ll-resources-for-images
+        }
+        layout {
+            sequence: 60
+            region: @basic-information
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            valueRequired: true
+            maxLength: 255
+        }
+        source {
+            formRegion: @view-image-details
+            column: RESOURCE_ID
+            dataType: number
+        }
+    )
+
+    pageItem P33_SECLIST_REQ (
+        type: textField
+        label {
+            label: Access Control List
+            alignment: left
+        }
+        layout {
+            sequence: 130
+            region: @advanced-settings
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 60
+        }
+        validation {
+            maxLength: 4000
+        }
+        source {
+            formRegion: @view-image-details
+            column: SECLIST_REQ
+            dataType: varchar2
+        }
+    )
+
+    pageItem P33_TENANCY_ID (
+        type: popupLov
+        label {
+            label: "Tenancy "
+            alignment: left
+        }
+        lov {
+            type: sharedComponent
+            lov: @ll-tenancies
+        }
+        layout {
+            sequence: 160
+            region: @advanced-settings
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 255
+        }
+        source {
+            formRegion: @view-image-details
+            column: TENANCY_ID
+            dataType: number
+        }
+    )
+
+    pageItem P33_VERSION (
+        type: textField
+        label {
+            label: Version
+            alignment: left
+        }
+        layout {
+            sequence: 50
+            region: @basic-information
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            valueRequired: true
+            maxLength: 100
+        }
+        source {
+            formRegion: @view-image-details
+            column: VERSION
+            dataType: varchar2
+        }
+    )
+
+    button cancel (
+        buttonName: CANCEL
+        label: Cancel
+        layout {
+            sequence: 10
+            region: @buttons
+            slot: close
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button create (
+        buttonName: CREATE
+        label: Create
+        layout {
+            sequence: 40
+            region: @buttons
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            showProcessing: true
+            warnOnUnsavedChanges: doNotCheck
+        }
+        serverSideCondition {
+            type: itemIsNull
+            item: P33_ID
+        }
+    )
+
+    button delete (
+        buttonName: DELETE
+        label: Delete
+        layout {
+            sequence: 20
+            region: @buttons
+            slot: delete
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            executeValidations: false
+            showProcessing: true
+            warnOnUnsavedChanges: doNotCheck
+            requiresConfirmation: true
+        }
+        confirmation {
+            message: &APP_TEXT$DELETE_MSG!RAW.
+            style: danger
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P33_ID
+        }
+    )
+
+    button save (
+        buttonName: SAVE
+        label: Apply Changes
+        layout {
+            sequence: 30
+            region: @buttons
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            showProcessing: true
+            warnOnUnsavedChanges: doNotCheck
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P33_ID
+        }
+    )
+
+    dynamicAction cancel-dialog (
+        name: Cancel Dialog
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @cancel
+        }
+
+        action native-dialog-cancel (
+            action: cancelDialog
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    validation p33-added-on-must-be-timestamp (
+        name: P33_ADDED_ON must be timestamp
+        execution {
+            sequence: 130
+        }
+        validation {
+            type: itemIsAValidTimestamp
+            item: P33_ADDED_ON
+        }
+        error {
+            errorMessage: #LABEL# must be a valid timestamp.
+            associatedItem: @P33_ADDED_ON
+        }
+    )
+
+    process close-dialog (
+        name: Close Dialog
+        type: closeDialog
+        execution {
+            sequence: 90
+        }
+        advanced {
+            executionMappingIdentifier: 3935006744140006
+        }
+        serverSideCondition {
+            type: requestIsContainedInValue
+            value: CREATE,SAVE,DELETE
+        }
+    )
+
+    process initialize-form-view-image-details (
+        name: Initialize form View Image Details
+        type: formInitialization
+        formRegion: @view-image-details
+        execution {
+            sequence: 10
+            point: beforeHeader
+        }
+        advanced {
+            executionMappingIdentifier: 3919938957139998
+        }
+    )
+
+    process sync-to-wms-create (
+        name: Sync to WMS - Create
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                BEGIN
+                    -- Insert the new image record
+                    INSERT INTO LL_IMAGES (
+                        RESOURCE_ID,
+                        ACTIVE_FLG,
+                        REMARKS,
+                        OCPU_REQUIRED,
+                        INSTANCE_PREFIX,
+                        SECLIST_REQ,
+                        IMAGE_REQ,
+                        PUBKEY_REQ,
+                        NOVNC_ENABLED,
+                        DATABASE_VERSION,
+                        LISTING_ID,
+                        ADDED_ON,
+                        ADDED_BY,
+                        VERSION,
+                        IMAGE_OCID,
+                        TENANCY_ID,
+                        REGION_ID
+                    ) VALUES (
+                        :P33_RESOURCE_ID,
+                        :P33_ACTIVE_FLG,
+                        :P33_REMARKS,
+                        :P33_OCPU_REQUIRED,
+                        :P33_INSTANCE_PREFIX,
+                        :P33_SECLIST_REQ,
+                        :P33_IMAGE_REQ,
+                        :P33_PUBKEY_REQ,
+                        :P33_NOVNC_ENABLED,
+                        :P33_DATABASE_VERSION,
+                        :P33_LISTING_ID,
+                        SYSTIMESTAMP,
+                        :APP_USER,
+                        :P33_VERSION,
+                        :P33_IMAGE_OCID,
+                        :P33_TENANCY_ID,
+                        :P33_REGION_ID
+                    )
+                    RETURNING ID INTO :P33_ID;
+                
+                    -- Call your sync job by passing the newly created image ID, or use arguments as per your API
+                    ll_pkg_ords.createImage(:P33_ID);
+                
+                EXCEPTION
+                    WHEN OTHERS THEN
+                        apex_error.add_error(
+                            p_message          => 'Error creating image #' || :P39_ID || ': ' || SQLERRM,
+                            p_display_location => 'ON_PAGE'
+                        );
+                        RAISE;
+                END;
+                ```
+        }
+        execution {
+            sequence: 60
+        }
+        advanced {
+            executionMappingIdentifier: 3934611698140006
+        }
+        serverSideCondition {
+            whenButtonPressed: @create
+        }
+    )
+
+    process sync-to-wms-delete (
+        name: Sync to WMS - Delete
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                begin
+                    delete from ll_images where id = :P33_ID;
+                commit;
+                    ll_pkg_ords.deleteImage(:P33_ID);
+                
+                exception when others then
+                    rollback;
+                    raise;
+                end;
+                ```
+        }
+        execution {
+            sequence: 80
+        }
+        advanced {
+            executionMappingIdentifier: 3933892914140005
+        }
+        serverSideCondition {
+            whenButtonPressed: @delete
+        }
+    )
+
+    process sync-to-wms-update (
+        name: Sync to WMS - Update
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                BEGIN
+                    -- Update the existing image record
+                    UPDATE LL_IMAGES
+                    SET
+                        RESOURCE_ID      = :P33_RESOURCE_ID,
+                        ACTIVE_FLG       = :P33_ACTIVE_FLG,
+                        REMARKS          = :P33_REMARKS,
+                        OCPU_REQUIRED    = :P33_OCPU_REQUIRED,
+                        INSTANCE_PREFIX  = :P33_INSTANCE_PREFIX,
+                        SECLIST_REQ      = :P33_SECLIST_REQ,
+                        IMAGE_REQ        = :P33_IMAGE_REQ,
+                        PUBKEY_REQ       = :P33_PUBKEY_REQ,
+                        NOVNC_ENABLED    = :P33_NOVNC_ENABLED,
+                        DATABASE_VERSION = :P33_DATABASE_VERSION,
+                        LISTING_ID       = :P33_LISTING_ID,
+                        VERSION          = :P33_VERSION,
+                        IMAGE_OCID       = :P33_IMAGE_OCID,
+                        TENANCY_ID       = :P33_TENANCY_ID,
+                        REGION_ID        = :P33_REGION_ID
+                    WHERE
+                        ID = :P33_ID;
+                
+                    -- Call your sync job by passing the updated image ID
+                    ll_pkg_ords.updateImage(:P33_ID);
+                
+                    -- Optional info logging
+                    ll_pkg_log.log(60, 'Updated image with id = ' || :P33_ID);
+                
+                EXCEPTION
+                    WHEN OTHERS THEN
+                        ll_pkg_log.log(60, 'Error updating image id ' || :P33_ID || ': ' || SQLERRM);
+                        apex_error.add_error(
+                            p_message          => 'Error updating image or during sync: ' || SQLERRM,
+                            p_display_location => 'ON_PAGE'
+                        );
+                        RAISE;
+                END;
+                ```
+        }
+        execution {
+            sequence: 70
+        }
+        advanced {
+            executionMappingIdentifier: 3934298908140006
+        }
+        serverSideCondition {
+            whenButtonPressed: @save
+        }
+    )
+
+)
+

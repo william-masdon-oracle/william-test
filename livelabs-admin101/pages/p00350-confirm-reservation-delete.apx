@@ -1,0 +1,162 @@
+page 350 (
+    name: Confirm Reservation Delete
+    alias: CONFIRM-RESERVATION-DELETE
+    title: LiveLabs - Confirm Reservation Delete
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @modal-dialog
+        templateOptions: #DEFAULT#
+    }
+    dialog {
+        resizable: false
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        authorizationScheme: @superrrrr-user
+        formAutoComplete: false
+    }
+
+    region buttons-container (
+        name: Buttons Container
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: dialogFooter
+        }
+        appearance {
+            template: @buttons-container
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region confirmation (
+        name: Confirmation
+        type: staticContent
+        source {
+            htmlCode: Confirm you want to delete this workshop reservation.
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    pageItem P350_ID (
+        type: hidden
+        layout {
+            sequence: 10
+            region: @confirmation
+            slot: regionBody
+        }
+        security {
+            sessionStateProtection: checksumRequiredSessionLevel
+        }
+    )
+
+    button cancel (
+        buttonName: Cancel
+        label: Cancel
+        layout {
+            sequence: 20
+            region: @buttons-container
+            slot: close
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button delete (
+        buttonName: Delete
+        label: Delete
+        layout {
+            sequence: 10
+            region: @buttons-container
+            slot: edit
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    dynamicAction cancel-dialog (
+        name: Cancel dialog
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @cancel
+        }
+
+        action native-dialog-cancel (
+            action: cancelDialog
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction set-active-flg-to-n-for-reservation (
+        name: Set active_flg to N for reservation
+        execution {
+            sequence: 20
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @delete
+        }
+
+        action native-dialog-close (
+            action: closeDialog
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    UPDATE ll_reservations 
+                    SET ACTIVE_FLG = 'N'
+                    WHERE ID = :P350_ID;
+                    ```
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+)
+

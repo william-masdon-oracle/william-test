@@ -1,0 +1,716 @@
+page 31 (
+    name: View Image Details
+    alias: VIEW-IMAGE-DETAILS
+    title: View Image Details
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @modal-dialog
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region buttons (
+        name: Buttons
+        type: staticContent
+        layout {
+            sequence: 20
+            slot: dialogFooter
+        }
+        appearance {
+            template: @buttons-container
+            templateOptions: #DEFAULT#
+        }
+        settings {
+            outputAs: text
+        }
+    )
+
+    region view-image-details (
+        name: View Image Details
+        type: form
+        source {
+            location: localDatabase
+            tableName: LL_IMAGES
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+        edit {
+            enabled: true
+            allowedOperations: [
+                add
+                update
+                delete
+            ]
+        }
+    )
+
+    pageItem P31_ACTIVE_FLG (
+        type: textField
+        label {
+            label: Active Flg
+            alignment: right
+        }
+        layout {
+            sequence: 40
+            region: @view-image-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 1
+        }
+        source {
+            formRegion: @view-image-details
+            column: ACTIVE_FLG
+            dataType: varchar2
+        }
+    )
+
+    pageItem P31_ADDED_BY (
+        type: textField
+        label {
+            label: New
+            alignment: left
+        }
+        layout {
+            sequence: 150
+            region: @view-image-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        source {
+            formRegion: @view-image-details
+            column: ADDED_BY
+            dataType: varchar2
+        }
+    )
+
+    pageItem P31_ADDED_ON (
+        type: textField
+        label {
+            label: New
+            alignment: left
+        }
+        layout {
+            sequence: 140
+            region: @view-image-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        source {
+            formRegion: @view-image-details
+            column: ADDED_ON
+            dataType: timestamp
+        }
+    )
+
+    pageItem P31_DATABASE_VERSION (
+        type: textField
+        label {
+            label: Database Version
+            alignment: right
+        }
+        layout {
+            sequence: 120
+            region: @view-image-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 20
+        }
+        source {
+            formRegion: @view-image-details
+            column: DATABASE_VERSION
+            dataType: varchar2
+        }
+    )
+
+    pageItem P31_ID (
+        type: hidden
+        layout {
+            sequence: 10
+            region: @view-image-details
+            slot: regionBody
+        }
+        source {
+            formRegion: @view-image-details
+            column: ID
+            dataType: number
+            primaryKey: true
+        }
+        security {
+            sessionStateProtection: checksumRequiredSessionLevel
+        }
+    )
+
+    pageItem P31_IMAGE_OCID (
+        type: textarea
+        label {
+            label: Image Ocid
+            alignment: right
+        }
+        layout {
+            sequence: 170
+            region: @view-image-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 60
+            height: 4
+        }
+        validation {
+            maxLength: 500
+        }
+        source {
+            formRegion: @view-image-details
+            column: IMAGE_OCID
+            dataType: varchar2
+        }
+    )
+
+    pageItem P31_IMAGE_REQ (
+        type: textarea
+        label {
+            label: Image Req
+            alignment: right
+        }
+        layout {
+            sequence: 90
+            region: @view-image-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 60
+            height: 4
+        }
+        validation {
+            maxLength: 2000
+        }
+        source {
+            formRegion: @view-image-details
+            column: IMAGE_REQ
+            dataType: varchar2
+        }
+    )
+
+    pageItem P31_INSTANCE_PREFIX (
+        type: textField
+        label {
+            label: Instance Prefix
+            alignment: right
+        }
+        layout {
+            sequence: 70
+            region: @view-image-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 10
+        }
+        source {
+            formRegion: @view-image-details
+            column: INSTANCE_PREFIX
+            dataType: varchar2
+        }
+    )
+
+    pageItem P31_LISTING_ID (
+        type: hidden
+        layout {
+            sequence: 130
+            region: @view-image-details
+            slot: regionBody
+        }
+        source {
+            formRegion: @view-image-details
+            column: LISTING_ID
+            dataType: number
+        }
+    )
+
+    pageItem P31_NAME (
+        type: textField
+        label {
+            label: Name
+            alignment: right
+        }
+        layout {
+            sequence: 20
+            region: @view-image-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 50
+        }
+        source {
+            formRegion: @view-image-details
+            column: NAME
+            dataType: varchar2
+        }
+    )
+
+    pageItem P31_NOVNC_ENABLED (
+        type: textField
+        label {
+            label: Novnc Enabled
+            alignment: right
+        }
+        layout {
+            sequence: 110
+            region: @view-image-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 1
+        }
+        source {
+            formRegion: @view-image-details
+            column: NOVNC_ENABLED
+            dataType: varchar2
+        }
+    )
+
+    pageItem P31_OCPU_REQUIRED (
+        type: numberField
+        label {
+            label: Ocpu Required
+            alignment: right
+        }
+        layout {
+            sequence: 60
+            region: @view-image-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 255
+        }
+        source {
+            formRegion: @view-image-details
+            column: OCPU_REQUIRED
+            dataType: number
+        }
+    )
+
+    pageItem P31_PUBKEY_REQ (
+        type: textField
+        label {
+            label: Pubkey Req
+            alignment: right
+        }
+        layout {
+            sequence: 100
+            region: @view-image-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 1
+        }
+        source {
+            formRegion: @view-image-details
+            column: PUBKEY_REQ
+            dataType: varchar2
+        }
+    )
+
+    pageItem P31_REGION_ID (
+        type: numberField
+        label {
+            label: Region Id
+            alignment: right
+        }
+        layout {
+            sequence: 190
+            region: @view-image-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 255
+        }
+        source {
+            formRegion: @view-image-details
+            column: REGION_ID
+            dataType: number
+        }
+    )
+
+    pageItem P31_REMARKS (
+        type: textarea
+        label {
+            label: Remarks
+            alignment: right
+        }
+        layout {
+            sequence: 50
+            region: @view-image-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 60
+            height: 4
+        }
+        validation {
+            maxLength: 4000
+        }
+        source {
+            formRegion: @view-image-details
+            column: REMARKS
+            dataType: varchar2
+        }
+    )
+
+    pageItem P31_RESOURCE_ID (
+        type: numberField
+        label {
+            label: Resource Id
+            alignment: right
+        }
+        layout {
+            sequence: 30
+            region: @view-image-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 255
+        }
+        source {
+            formRegion: @view-image-details
+            column: RESOURCE_ID
+            dataType: number
+        }
+    )
+
+    pageItem P31_SECLIST_REQ (
+        type: textarea
+        label {
+            label: Seclist Req
+            alignment: right
+        }
+        layout {
+            sequence: 80
+            region: @view-image-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 60
+            height: 4
+        }
+        validation {
+            maxLength: 4000
+        }
+        source {
+            formRegion: @view-image-details
+            column: SECLIST_REQ
+            dataType: varchar2
+        }
+    )
+
+    pageItem P31_TENANCY_ID (
+        type: numberField
+        label {
+            label: Tenancy Id
+            alignment: right
+        }
+        layout {
+            sequence: 180
+            region: @view-image-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 255
+        }
+        source {
+            formRegion: @view-image-details
+            column: TENANCY_ID
+            dataType: number
+        }
+    )
+
+    pageItem P31_VERSION (
+        type: textField
+        label {
+            label: Version
+            alignment: right
+        }
+        layout {
+            sequence: 160
+            region: @view-image-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 100
+        }
+        source {
+            formRegion: @view-image-details
+            column: VERSION
+            dataType: varchar2
+        }
+    )
+
+    button cancel (
+        buttonName: CANCEL
+        label: Cancel
+        layout {
+            sequence: 10
+            region: @buttons
+            slot: close
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button create (
+        buttonName: CREATE
+        label: Create
+        layout {
+            sequence: 40
+            region: @buttons
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: insert
+        }
+        serverSideCondition {
+            type: itemIsNull
+            item: P31_ID
+        }
+    )
+
+    button delete (
+        buttonName: DELETE
+        label: Delete
+        layout {
+            sequence: 20
+            region: @buttons
+            slot: delete
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            executeValidations: false
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: delete
+            requiresConfirmation: true
+        }
+        confirmation {
+            message: &APP_TEXT$DELETE_MSG!RAW.
+            style: danger
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P31_ID
+        }
+    )
+
+    button save (
+        buttonName: SAVE
+        label: Apply Changes
+        layout {
+            sequence: 30
+            region: @buttons
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: update
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P31_ID
+        }
+    )
+
+    dynamicAction cancel-dialog (
+        name: Cancel Dialog
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @cancel
+        }
+
+        action native-dialog-cancel (
+            action: cancelDialog
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    validation p31-added-on-must-be-timestamp (
+        name: P31_ADDED_ON must be timestamp
+        execution {
+            sequence: 130
+        }
+        validation {
+            type: itemIsAValidTimestamp
+            item: P31_ADDED_ON
+        }
+        error {
+            errorMessage: #LABEL# must be a valid timestamp.
+            associatedItem: @P31_ADDED_ON
+        }
+    )
+
+    process close-dialog (
+        name: Close Dialog
+        type: closeDialog
+        execution {
+            sequence: 50
+        }
+        advanced {
+            executionMappingIdentifier: 2777669535036079
+        }
+        serverSideCondition {
+            type: requestIsContainedInValue
+            value: CREATE,SAVE,DELETE
+        }
+    )
+
+    process initialize-form-view-image-details (
+        name: Initialize form View Image Details
+        type: formInitialization
+        formRegion: @view-image-details
+        execution {
+            sequence: 10
+            point: beforeHeader
+        }
+        advanced {
+            executionMappingIdentifier: 2776837653036079
+        }
+    )
+
+    process process-form-view-image-details (
+        name: Process form View Image Details
+        type: formAutoRowProcessing
+        formRegion: @view-image-details
+        execution {
+            sequence: 10
+        }
+        advanced {
+            executionMappingIdentifier: 2777247312036079
+        }
+    )
+
+)
+

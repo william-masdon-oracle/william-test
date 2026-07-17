@@ -1841,25 +1841,6 @@ page 400 (
         }
     )
 
-    process check-auth-for-livestack-event-code (
-        name: Check Auth for LiveStack Event Code
-        type: executeCode
-        source {
-            plsqlCode:
-                ```plsql
-                begin
-                  if APEX_AUTHENTICATION.IS_AUTHENTICATED = false and :WEC is not null then
-                    apex_util.redirect_url(p_url => apex_page.get_url(p_page => 11, p_items => 'P11_WEC', p_values => :WEC ));
-                  end if;
-                end;
-                ```
-        }
-        execution {
-            sequence: 5
-            point: beforeHeader
-        }
-    )
-
     process insert-livestack-event-user (
         name: Insert LiveStack Event User
         type: executeCode
@@ -1898,11 +1879,11 @@ page 400 (
                       and instr(nvl(upper(v_email_requestor),'X'), upper(:APP_USER)) = 0
                       and nvl(ll_pkg_security.am_i_allowed(
                             p_apex_user    => :APP_USER,
-                            p_access_type  => 'LIVESTACK_EVENT_CODE_ADMIN',
+                            p_access_type  => 'EVENT_CODE_ADMIN',
                             p_access_value => v_livestack_event_id), 'N') <> 'Y'
                     then
-                      insert into ll_livestack_event_users (livestack_event_id, owner1, date_entered)
-                      values (v_livestack_event_id, :APP_USER, sysdate);
+                      insert into ll_livestack_event_users (livestack_event_id, owner1)
+                      values (v_livestack_event_id, :APP_USER);
                       commit;
                     end if;
 
@@ -1951,7 +1932,7 @@ page 400 (
                                  or instr(upper(email_creator), upper(:APP_USER)) > 0
                                  or ll_pkg_security.am_i_allowed(
                                       p_apex_user    => :APP_USER,
-                                      p_access_type  => 'LIVESTACK_EVENT_CODE_ADMIN',
+                                      p_access_type  => 'EVENT_CODE_ADMIN',
                                       p_access_value => id) = 'Y'
                                then 'Y'
                                else 'N'
@@ -1963,19 +1944,12 @@ page 400 (
                        where event_code = :WEC
                          and active_flg = 'Y'
                          and (
-                               (
-                                 sysdate between nvl(valid_from, sysdate) and nvl(valid_to, sysdate)
-                                 and id in (
-                                       select livestack_event_id
-                                         from ll_livestack_event_users
-                                        where upper(owner1) = upper(:APP_USER)
-                                     )
-                               )
+                               (sysdate between nvl(valid_from, sysdate) and nvl(valid_to, sysdate))
                                or instr(upper(email_requestor), upper(:APP_USER)) > 0
                                or instr(upper(email_creator), upper(:APP_USER)) > 0
                                or ll_pkg_security.am_i_allowed(
                                     p_apex_user    => :APP_USER,
-                                    p_access_type  => 'LIVESTACK_EVENT_CODE_ADMIN',
+                                    p_access_type  => 'EVENT_CODE_ADMIN',
                                     p_access_value => id) = 'Y'
                              );
                 
@@ -2013,11 +1987,7 @@ page 400 (
                    where id = :P400_ID
                      and (
                            active_flg in ('Y', 'U')
-                           or ll_pkg_security.am_i_allowed(
-                                p_apex_user    => :APP_USER,
-                                p_access_type  => 'LIVESTACK_VIEW',
-                                p_access_value => id) = 'Y'
-                           or l_event_admin = 'Y'
+                           or (active_flg = 'E' and :WEC is not null)
                          );
                 exception
                   when e_apex_engine_stop then

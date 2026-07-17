@@ -1,0 +1,10 @@
+appComputation f9906-refresh (
+    itemName: F9906_REFRESH
+    execution {
+        sequence: 10
+    }
+    computation {
+        staticValue: 10
+    }
+)
+

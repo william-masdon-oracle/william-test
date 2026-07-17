@@ -1,0 +1,553 @@
+page 9160 (
+    name: Event Codes
+    alias: EVENT-CODES
+    title: Event Codes
+    appearance {
+        pageTemplate: @standard-trustarc
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region event-codes (
+        name: Event Codes
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select ID,
+                       ID as ID_LINK,
+                       REASON,
+                       VOUCHER_CODE,
+                       WORKSHOP_ID,
+                       EMAIL_CREATOR,
+                       EMAIL_REQUESTOR,
+                       VALID_FROM_GMT,
+                       VALID_TO_GMT,
+                       USERS_MAXIMUM,
+                       USERS_CONCURRENT,
+                       USERS_REGISTERED,
+                       USERS_ACTIVE,
+                       USERS_RESERVED,
+                       TENANCY_ID,
+                       REGION_ID,
+                       ACTIVE_FLG,
+                       'Link' as QR_LINK
+                  from LL_VOUCHERS_VW
+                  where instr(upper(email_requestor), upper(:app_user)) > 0
+                     or instr(upper(email_creator), upper(:app_user)) > 0
+                     or ll_pkg_security.am_i_allowed(:app_user,'EVENT_CODE', id) = 'Y'
+                     or upper(:app_user) in ('ANOOSHA.PILLI@ORACLE.COM','KAMRYN.VINSON@ORACLE.COM')
+                     
+                ```
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        link {
+            linkColumn: customTarget
+            target: {
+                page: 9161
+                items: {
+                    P9161_ID: \#ID#\
+                }
+                action: resetPagination
+            }
+            linkIcon: <span aria-label="Edit"><span class="fa fa-edit" aria-hidden="true" title="Edit"></span></span>
+        }
+        pagination {
+            type: rowRangesXToY
+        }
+        messages {
+            whenNoDataFound: No data found.
+            whenMoreDataFound: The maximum row count for this report is #MAX_ROW_COUNT# rows.  Please apply a filter to reduce the number of records in your query.
+        }
+        actionsMenu {
+            subscription: false
+        }
+        advanced {
+            savedReportMappingIdentifier: 11904305505128169665
+        }
+
+        column ACTIVE_FLG (
+            type: plainTextBasedOnLov
+            heading {
+                heading: Active
+            }
+            lov {
+                lov: @active-flg
+            }
+            layout {
+                sequence: 80
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: N
+            }
+        )
+
+        column EMAIL_CREATOR (
+            type: plainText
+            heading {
+                heading: Event Creator
+            }
+            layout {
+                sequence: 50
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AE
+            }
+        )
+
+        column EMAIL_REQUESTOR (
+            type: plainText
+            heading {
+                heading: Additional Owners
+            }
+            layout {
+                sequence: 60
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: E
+            }
+        )
+
+        column ID (
+            type: plainText
+            heading {
+                heading: ID
+            }
+            layout {
+                sequence: 10
+                columnAlignment: center
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: A
+            }
+        )
+
+        column ID_LINK (
+            type: link
+            heading {
+                heading: Attendees
+            }
+            layout {
+                sequence: 20
+            }
+            link {
+                target: {
+                    page: 9163
+                    items: {
+                        P9163_VOUCHER_ID_SOURCE: #ID#
+                    }
+                }
+                linkText: Attendees
+                linkAttributes: #ID#
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: AD
+            }
+        )
+
+        column QR_LINK (
+            type: link
+            heading {
+                heading: Qr Link
+                alignment: center
+            }
+            layout {
+                sequence: 180
+            }
+            link {
+                target: {
+                    page: 9162
+                    items: {
+                        P9162_VOUCHER_CODE: #VOUCHER_CODE#
+                    }
+                    clearCache: 9162
+                    action: clearRegions
+                }
+                linkText: #QR_LINK#
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AC
+            }
+        )
+
+        column REASON (
+            type: plainText
+            heading {
+                heading: Event Title
+            }
+            layout {
+                sequence: 30
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: B
+            }
+        )
+
+        column REGION_ID (
+            type: plainTextBasedOnLov
+            heading {
+                heading: Region
+            }
+            lov {
+                lov: @ll-regions-3
+            }
+            layout {
+                sequence: 150
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: U
+            }
+        )
+
+        column TENANCY_ID (
+            type: plainTextBasedOnLov
+            heading {
+                heading: Tenancy
+            }
+            lov {
+                lov: @ll-tenancies-2
+            }
+            layout {
+                sequence: 140
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: T
+            }
+        )
+
+        column USERS_ACTIVE (
+            type: plainText
+            heading {
+                heading: Users Active
+                alignment: center
+            }
+            layout {
+                sequence: 120
+                columnAlignment: center
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: Z
+            }
+        )
+
+        column USERS_CONCURRENT (
+            type: plainText
+            heading {
+                heading: Concurrent Users
+                alignment: center
+            }
+            layout {
+                sequence: 100
+                columnAlignment: center
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: V
+            }
+        )
+
+        column USERS_MAXIMUM (
+            type: plainText
+            heading {
+                heading: Max Users
+                alignment: center
+            }
+            layout {
+                sequence: 90
+                columnAlignment: center
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: Q
+            }
+        )
+
+        column USERS_REGISTERED (
+            type: plainText
+            heading {
+                heading: Users Registered
+                alignment: center
+            }
+            layout {
+                sequence: 110
+                columnAlignment: center
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: Y
+            }
+        )
+
+        column USERS_RESERVED (
+            type: plainText
+            heading {
+                heading: Users Reserved
+                alignment: center
+            }
+            layout {
+                sequence: 130
+                columnAlignment: center
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: AA
+            }
+        )
+
+        column VALID_FROM_GMT (
+            type: plainText
+            heading {
+                heading: Start Date (Gmt)
+            }
+            layout {
+                sequence: 160
+            }
+            appearance {
+                formatMask: DD Mon YYYY HH24:MI:SS
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: W
+            }
+        )
+
+        column VALID_TO_GMT (
+            type: plainText
+            heading {
+                heading: End Date (Gmt)
+            }
+            layout {
+                sequence: 170
+            }
+            appearance {
+                formatMask: DD Mon YYYY HH24:MI:SS
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: X
+            }
+        )
+
+        column VOUCHER_CODE (
+            type: plainText
+            heading {
+                heading: Event Code
+            }
+            layout {
+                sequence: 40
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: C
+            }
+        )
+
+        column WORKSHOP_ID (
+            type: plainTextBasedOnLov
+            heading {
+                heading: Workshop
+            }
+            lov {
+                lov: @ll-workshops
+            }
+            layout {
+                sequence: 70
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: I
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: Event Codes
+        }
+
+        savedReport 119042312 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn ACTIVE_FLG (
+                sequence: 2
+            )
+
+            displayColumn EMAIL_CREATOR (
+                sequence: 3
+            )
+
+            displayColumn ID (
+                sequence: 1
+            )
+
+            displayColumn REASON (
+                sequence: 5
+            )
+
+            displayColumn REGION_ID (
+                sequence: 12
+            )
+
+            displayColumn TENANCY_ID (
+                sequence: 11
+            )
+
+            displayColumn USERS_CONCURRENT (
+                sequence: 8
+            )
+
+            displayColumn USERS_MAXIMUM (
+                sequence: 7
+            )
+
+            displayColumn VALID_FROM_GMT (
+                sequence: 9
+            )
+
+            displayColumn VALID_TO_GMT (
+                sequence: 10
+            )
+
+            displayColumn VOUCHER_CODE (
+                sequence: 6
+            )
+
+            displayColumn WORKSHOP_ID (
+                sequence: 4
+            )
+
+            sort (
+                column: ID
+                sort {
+                    direction: desc
+                    sequence: 1
+                }
+            )
+
+            sort (
+                column: ID_LINK
+                sort {
+                    sequence: 2
+                }
+            )
+
+        )
+
+    )
+
+    button create (
+        buttonName: CREATE
+        label: Create
+        layout {
+            sequence: 30
+            region: @event-codes
+            slot: rightOfInteractiveReportSearchBar
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 9161
+                clearCache: 9161
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    dynamicAction edit-report-dialog-closed (
+        name: Edit Report - Dialog Closed
+        execution {
+            sequence: 10
+        }
+        when {
+            event: apexafterclosedialog
+            selectionType: region
+            region: @event-codes
+        }
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @event-codes
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+)
+

@@ -1,0 +1,383 @@
+page 9141 (
+    name: Email template details
+    alias: EMAIL-TEMPLATE-DETAILS
+    title: Email template details
+    appearance {
+        pageTemplate: @standard-trustarc
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    javaScript {
+        functionAndGlobalVariableDeclaration: var htmldb_delete_message='"DELETE_CONFIRM_MSG"';
+    }
+    security {
+        authorizationScheme: @superrrrr-user
+        formAutoComplete: false
+    }
+
+    region breadcrumb (
+        name: Breadcrumb
+        type: breadcrumb
+        source {
+            breadcrumb: @breadcrumb
+        }
+        layout {
+            sequence: 10
+            slot: breadcrumbBar
+        }
+        appearance {
+            template: @title-bar
+            templateOptions: [
+                #DEFAULT#
+                t-BreadcrumbRegion--useBreadcrumbTitle
+            ]
+        }
+        componentAppearance {
+            breadcrumbTemplate: @breadcrumb
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    region email-template-details (
+        name: Email template details
+        type: form
+        source {
+            location: localDatabase
+            tableName: LL_EMAIL_TEMPLATE
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        edit {
+            enabled: true
+            allowedOperations: [
+                add
+                update
+                delete
+            ]
+        }
+    )
+
+    pageItem P9141_ACTIVE_FLG (
+        type: textField
+        label {
+            label: Active
+            alignment: left
+        }
+        settings {
+            trimSpaces: none
+        }
+        layout {
+            sequence: 50
+            region: @email-template-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 1
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 1
+        }
+        source {
+            formRegion: @email-template-details
+            column: ACTIVE_FLG
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9141_EMAIL_HTML (
+        type: richTextEditor
+        label {
+            label: Email Html
+            alignment: left
+        }
+        settings {
+            format: html
+            toolbar: full
+            toolbarStyle: multiline
+            minHeight: 180
+            allowCustomHtml: true
+        }
+        layout {
+            sequence: 60
+            region: @email-template-details
+            slot: regionBody
+            alignment: left
+            columnSpan: 6
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @email-template-details
+            column: EMAIL_HTML
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9141_EMAIL_SUBJECT (
+        type: textField
+        label {
+            label: Email Subject
+            alignment: left
+        }
+        layout {
+            sequence: 30
+            region: @email-template-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            maxLength: 200
+        }
+        source {
+            formRegion: @email-template-details
+            column: EMAIL_SUBJECT
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9141_ID (
+        type: hidden
+        layout {
+            sequence: 20
+            region: @email-template-details
+            slot: regionBody
+        }
+        source {
+            formRegion: @email-template-details
+            column: ID
+            dataType: number
+            primaryKey: true
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9141_NAME (
+        type: textField
+        label {
+            label: Name
+            alignment: left
+        }
+        settings {
+            trimSpaces: none
+        }
+        layout {
+            sequence: 10
+            region: @email-template-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 50
+        }
+        source {
+            formRegion: @email-template-details
+            column: NAME
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9141_PHASE (
+        type: textField
+        label {
+            label: Phase
+            alignment: left
+        }
+        layout {
+            sequence: 40
+            region: @email-template-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 2
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            maxLength: 4000
+        }
+        source {
+            formRegion: @email-template-details
+            column: PHASE
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button cancel (
+        buttonName: CANCEL
+        label: Cancel
+        layout {
+            sequence: 10
+            region: @email-template-details
+            slot: close
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 9140
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button create (
+        buttonName: CREATE
+        label: Create
+        layout {
+            sequence: 40
+            region: @email-template-details
+            slot: create
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: insert
+        }
+        serverSideCondition {
+            type: itemIsNull
+            item: P9141_ID
+        }
+    )
+
+    button delete (
+        buttonName: DELETE
+        label: Delete
+        layout {
+            sequence: 20
+            region: @email-template-details
+            slot: delete
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectUrl
+            targetUrl: javascript:apex.confirm(htmldb_delete_message,'DELETE');
+            executeValidations: false
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: delete
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P9141_ID
+        }
+    )
+
+    button save (
+        buttonName: SAVE
+        label: Apply Changes
+        layout {
+            sequence: 30
+            region: @email-template-details
+            slot: change
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: update
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P9141_ID
+        }
+    )
+
+    process initialize-form-email-template-details (
+        name: Initialize form Email template details
+        type: formInitialization
+        formRegion: @email-template-details
+        execution {
+            sequence: 10
+            point: beforeHeader
+        }
+        advanced {
+            executionMappingIdentifier: 11184024531633088382
+        }
+    )
+
+    process process-form-email-template-details (
+        name: Process form Email template details
+        type: formAutoRowProcessing
+        formRegion: @email-template-details
+        execution {
+            sequence: 10
+        }
+        advanced {
+            executionMappingIdentifier: 11184024984508088382
+        }
+    )
+
+    branch (
+        execution {
+            sequence: 1
+        }
+        behavior {
+            target: {
+                page: 9140
+            }
+        }
+    )
+
+)
+

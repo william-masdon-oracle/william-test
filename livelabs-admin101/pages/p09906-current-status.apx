@@ -1,0 +1,947 @@
+page 9906 (
+    name: Current status
+    alias: CURRENT-STATUS
+    title: Current status
+    appearance {
+        pageTemplate: @standard-trustarc
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+        warnOnUnsavedChanges: false
+    }
+    htmlHeader {
+        htmlHeader:
+            ```html
+            <meta http-equiv="refresh" content="&P9906_REFRESH." />
+            
+            ```
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region charts (
+        name: Charts
+        type: chart
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @collapsible
+            templateOptions: [
+                #DEFAULT#
+                js-useLocalStorage
+                t-Region--hideShowIconsMath
+                is-expanded
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        title {
+            title: Pageviews per hour
+        }
+        chartLayout {
+            height: 400
+        }
+        legend {
+            title: Page IDs
+        }
+
+        series pageviews (
+            name: Pageviews
+            execution {
+                sequence: 10
+            }
+            source {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select b.ref_order, substr(b.ref_date,1,11) as ref_date, count(a.page_id) as mycount
+                    from (select page_id, workshop_id, substr(to_char(entry_date,'DD-MM HH24:MI'),1,8) list_date from ll_page_visits) a,
+                          JSON_TABLE ( ll_pkg_apex.json_list_dates (p_start_date => trunc(sysdate-2) + (1/24), p_minutes_apart => 60 ), '$[*]' columns (ref_date, ref_order) ) b
+                    where substr(b.ref_date,1,8) = a.list_date(+)
+                    group by b.ref_order, b.ref_date
+                    order by to_number(b.ref_order)
+                    
+                    
+                    ```
+            }
+            columnMapping {
+                label: REF_DATE
+                value: MYCOUNT
+            }
+        )
+
+        series pageviews-per-page (
+            name: Pageviews per page
+            execution {
+                sequence: 20
+            }
+            source {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select b.ref_order, page_id, substr(b.ref_date,1,11) as ref_date, count(a.page_id) as mycount
+                    from (select page_id, workshop_id, substr(to_char(entry_date,'DD-MM HH24:MI'),1,8) list_date from ll_page_visits) a,
+                          JSON_TABLE ( ll_pkg_apex.json_list_dates (p_start_date => trunc(sysdate-2) + (1/24), p_minutes_apart => 60 ), '$[*]' columns (ref_date, ref_order) ) b
+                    where substr(b.ref_date,1,8) = a.list_date(+)
+                    and a.page_id is not null
+                    group by b.ref_order, page_id, b.ref_date
+                    order by to_number(b.ref_order)
+                    
+                    
+                    ```
+            }
+            columnMapping {
+                seriesName: PAGE_ID
+                label: REF_DATE
+                value: MYCOUNT
+            }
+        )
+
+        axis x (
+            name: x
+            title: Pageviews
+            value {
+                format: timeShort
+                pattern: DD-MM-YYYY HH24
+            }
+            minorTicks {
+                show: false
+            }
+        )
+
+        axis y (
+            name: y
+            value {
+                format: decimal
+                decimalPlaces: 0
+                formatScaling: none
+            }
+            minorTicks {
+                show: false
+            }
+        )
+
+    )
+
+    region details (
+        name: Details
+        type: staticContent
+        layout {
+            sequence: 40
+            slot: contentBody
+        }
+        appearance {
+            template: @collapsible
+            templateOptions: [
+                #DEFAULT#
+                js-useLocalStorage
+                t-Region--hideShowIconsMath
+                is-expanded
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region emails-send (
+        name: Emails send
+        type: chart
+        layout {
+            sequence: 40
+            parentRegion: @details
+            slot: subRegions
+            startNewRow: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        security {
+            escapeSpecialChars: false
+        }
+        chartLayout {
+            height: 100
+        }
+        legend {
+            show: false
+        }
+
+        series series (
+            name: Series 1
+            execution {
+                sequence: 10
+            }
+            source {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select case nvl(mail_send_error,'Empty') when 'Empty' then 'Success' else 'Failed' end as label, count(*) as value
+                    from apex_mail_log
+                    where last_updated_on > sysdate-7
+                    group by case nvl(mail_send_error,'Empty') when 'Empty' then 'Success' else 'Failed' end
+                    
+                    ```
+            }
+            columnMapping {
+                label: LABEL
+                value: VALUE
+            }
+            performance {
+                maxRowsToProcess: 20
+            }
+        )
+
+        axis x (
+            name: x
+            majorTicks {
+                show: auto
+            }
+        )
+
+        axis y (
+            name: y
+            majorTicks {
+                show: auto
+            }
+        )
+
+    )
+
+    region failed-emails (
+        name: Failed Emails
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select last_updated_on, mail_subj as mail_subject
+                from apex_mail_log
+                where last_updated_on > sysdate-7
+                and mail_send_error is not null
+                order by last_updated_on desc
+                ```
+        }
+        layout {
+            sequence: 80
+            parentRegion: @details
+            slot: subRegions
+            startNewRow: false
+            columnSpan: 4
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        pagination {
+            type: rowRangesXToY
+        }
+        performance {
+            maxRowsToProcess: 1000000
+        }
+        searchBar {
+            reportsSelectList: false
+        }
+        actionsMenu {
+            includeActionsMenu: false
+        }
+        advanced {
+            savedReportMappingIdentifier: 88119703165141810
+        }
+
+        column LAST_UPDATED_ON (
+            type: plainText
+            heading {
+                heading: Last Updated On
+                alignment: center
+            }
+            layout {
+                sequence: 10
+                columnAlignment: center
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: A
+            }
+        )
+
+        column MAIL_SUBJECT (
+            type: plainText
+            heading {
+                heading: Mail Subject
+                alignment: center
+            }
+            layout {
+                sequence: 20
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: B
+            }
+        )
+
+        savedReport 880957 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn LAST_UPDATED_ON (
+                sequence: 1
+            )
+
+            displayColumn MAIL_SUBJECT (
+                sequence: 2
+            )
+
+        )
+
+    )
+
+    region failed-jobs (
+        name: Failed jobs
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select log_date, job_name
+                from user_scheduler_job_log 
+                where log_date > sysdate-2
+                and status in ('FAILED', 'STOPPED')
+                order by log_date desc
+                ```
+        }
+        layout {
+            sequence: 70
+            parentRegion: @details
+            slot: subRegions
+            startNewRow: false
+            columnSpan: 4
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        pagination {
+            type: rowRangesXToY
+        }
+        performance {
+            maxRowsToProcess: 1000000
+        }
+        searchBar {
+            reportsSelectList: false
+        }
+        actionsMenu {
+            includeActionsMenu: false
+        }
+        advanced {
+            savedReportMappingIdentifier: 88119084936141803
+        }
+
+        column JOB_NAME (
+            type: plainText
+            heading {
+                heading: Job Name
+                alignment: center
+            }
+            layout {
+                sequence: 20
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: B
+            }
+        )
+
+        column LOG_DATE (
+            type: plainText
+            heading {
+                heading: Log Date
+                alignment: center
+            }
+            layout {
+                sequence: 10
+                columnAlignment: center
+            }
+            appearance {
+                formatMask: DD Mon YYYY HH24:MI:SS
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: A
+            }
+        )
+
+        savedReport 880948 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn JOB_NAME (
+                sequence: 2
+            )
+
+            displayColumn LOG_DATE (
+                sequence: 1
+            )
+
+        )
+
+    )
+
+    region failed-steps (
+        name: Failed Steps
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select llr.id, 
+                       sum(case llrs.create_success when 'N' then 1 else 0 end) create_errors,
+                       sum(case llrs.delete_success when 'N' then 1 else 0 end) delete_errors
+                from ll_reservation_steps llrs, ll_reservations_vw llr
+                where llr.id = llrs.reservation_id
+                and llr.start_gmt > sysdate -2
+                and (llrs.create_success = 'N' or llrs.delete_success = 'N')
+                group by llr.id
+                order by llr.id desc
+                ```
+        }
+        layout {
+            sequence: 60
+            parentRegion: @details
+            slot: subRegions
+            columnSpan: 4
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        pagination {
+            type: rowRangesXToY
+        }
+        performance {
+            maxRowsToProcess: 1000000
+        }
+        searchBar {
+            reportsSelectList: false
+        }
+        actionsMenu {
+            includeActionsMenu: false
+        }
+        advanced {
+            savedReportMappingIdentifier: 99505297104082033
+        }
+
+        column CREATE_ERRORS (
+            type: plainText
+            heading {
+                heading: Create Errors
+                alignment: center
+            }
+            layout {
+                sequence: 20
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: B
+            }
+        )
+
+        column DELETE_ERRORS (
+            type: plainText
+            heading {
+                heading: Delete Errors
+                alignment: center
+            }
+            layout {
+                sequence: 30
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: C
+            }
+        )
+
+        column ID (
+            type: link
+            heading {
+                heading: Id
+                alignment: center
+            }
+            layout {
+                sequence: 10
+                columnAlignment: end
+            }
+            link {
+                target: {
+                    page: 9653
+                    items: {
+                        P9653_RESERVATION_ID: #ID#
+                    }
+                }
+                linkText: #ID#
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: A
+            }
+        )
+
+        savedReport 995759 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn CREATE_ERRORS (
+                sequence: 2
+            )
+
+            displayColumn DELETE_ERRORS (
+                sequence: 3
+            )
+
+            displayColumn ID (
+                sequence: 1
+            )
+
+        )
+
+    )
+
+    region jobs-status (
+        name: Jobs status
+        type: chart
+        layout {
+            sequence: 30
+            parentRegion: @details
+            slot: subRegions
+            startNewRow: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        security {
+            escapeSpecialChars: false
+        }
+        chartLayout {
+            height: 100
+        }
+        legend {
+            show: false
+        }
+
+        series job-status (
+            name: Job Status
+            execution {
+                sequence: 20
+            }
+            source {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select status as label, count(*) value from user_scheduler_job_log
+                    where log_date > sysdate-2
+                    group by status
+                    ```
+            }
+            columnMapping {
+                label: LABEL
+                value: VALUE
+            }
+            label {
+                show: true
+            }
+            performance {
+                maxRowsToProcess: 20
+            }
+        )
+
+        axis x (
+            name: x
+            minorTicks {
+                show: false
+            }
+        )
+
+        axis y (
+            name: y
+            value {
+                format: decimal
+                decimalPlaces: 0
+                formatScaling: none
+            }
+            minorTicks {
+                show: false
+            }
+        )
+
+    )
+
+    region number-workshops-running (
+        name: Number workshops running
+        type: chart
+        layout {
+            sequence: 30
+            slot: contentBody
+        }
+        appearance {
+            template: @collapsible
+            templateOptions: [
+                #DEFAULT#
+                js-useLocalStorage
+                t-Region--hideShowIconsMath
+                is-expanded
+                t-Region--scrollBody
+            ]
+        }
+        security {
+            escapeSpecialChars: false
+        }
+        chart {
+            type: lineWithArea
+        }
+        chartLayout {
+            height: 300
+        }
+        legend {
+            show: false
+        }
+
+        series baseline (
+            name: Baseline
+            execution {
+                sequence: 30
+            }
+            source {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select b.ref_order, substr(b.ref_date,1,11) as ref_date, 0 as mycount
+                    from JSON_TABLE ( ll_pkg_apex.json_list_dates (p_start_date => trunc(sysdate-1) , p_end_date => sysdate+1, p_minutes_apart => 60 ), '$[*]' columns (ref_date, ref_order) ) b
+                    order by to_number(b.ref_order)
+                    
+                    
+                    
+                    ```
+            }
+            columnMapping {
+                label: REF_DATE
+                value: MYCOUNT
+            }
+        )
+
+        series workshops-running (
+            name: Workshops_Running
+            execution {
+                sequence: 20
+            }
+            source {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select b.ref_order, substr(b.ref_date,1,11) as ref_date, count(*) as mycount
+                    from ll_reservations_vw a,
+                          JSON_TABLE ( ll_pkg_apex.json_list_dates (p_start_date => trunc(sysdate-1) , p_end_date => sysdate+1, p_minutes_apart => 60 ), '$[*]' columns (ref_date, ref_order) ) b
+                    where to_date('2020-'||substr(b.ref_date,1,8),'YYYY-DD-MM HH24') between start_gmt(+) and stop_gmt(+)
+                    group by b.ref_order, b.ref_date
+                    order by to_number(b.ref_order)
+                    
+                    
+                    
+                    ```
+            }
+            columnMapping {
+                label: REF_DATE
+                value: MYCOUNT
+            }
+            performance {
+                maxRowsToProcess: 20
+            }
+        )
+
+        axis x (
+            name: x
+            title: Date/Time in GMT
+            title {
+                fontSize: 8
+            }
+            value {
+                format: timeShort
+                pattern: DD-MM-YYYY HH24
+            }
+        )
+
+        axis y (
+            name: y
+            value {
+                format: decimal
+                decimalPlaces: 0
+                baselineScaling: min
+                step: 1
+            }
+        )
+
+    )
+
+    region reservation-steps (
+        name: Reservation steps
+        type: chart
+        layout {
+            sequence: 10
+            parentRegion: @details
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        security {
+            escapeSpecialChars: false
+        }
+        chartLayout {
+            height: 100
+        }
+        legend {
+            show: false
+        }
+
+        series delete (
+            name: Delete
+            execution {
+                sequence: 20
+            }
+            source {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select 'Create' as label, sum(case nvl(create_success,'Open') when 'N' then 1 else 0 end) as value
+                    from ll_reservation_steps
+                    where reservation_id in (select id from ll_reservations_vw where start_gmt > sysdate-2)
+                    group by nvl(create_success,'Open')
+                    union all
+                    select 'Delete' as label, sum(case nvl(delete_success,'Open') when 'N' then 1 else 0 end) as value
+                    from ll_reservation_steps
+                    where reservation_id in (select id from ll_reservations_vw where start_gmt > sysdate-2)
+                    group by nvl(create_success,'Open')
+                    
+                    ```
+            }
+            columnMapping {
+                label: LABEL
+                value: VALUE
+            }
+            performance {
+                maxRowsToProcess: 20
+            }
+        )
+
+        series open (
+            name: Open
+            execution {
+                sequence: 30
+            }
+            source {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select 'Create' as label, sum(case nvl(create_success,'Open') when 'Open' then 1 else 0 end) as value
+                    from ll_reservation_steps
+                    where create_order is not null
+                    and create_success is null
+                    and reservation_id in (select id from ll_reservations_vw where sysdate between stop_gmt and stop_gmt + 2)
+                    union all
+                    select 'Delete' as label, sum(case nvl(delete_success,'Open') when 'Open' then 1 else 0 end) as value
+                    from ll_reservation_steps
+                    where delete_order is not null
+                    and delete_success is null
+                    and reservation_id in (select id from ll_reservations_vw where sysdate between stop_gmt and stop_gmt + 2)
+                    
+                    ```
+            }
+            columnMapping {
+                label: LABEL
+                value: VALUE
+            }
+            performance {
+                maxRowsToProcess: 20
+            }
+        )
+
+        series success (
+            name: Success
+            execution {
+                sequence: 10
+            }
+            source {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select 'Create' as label, sum(case nvl(create_success,'Open') when 'Y' then 1 else 0 end) as value
+                    from ll_reservation_steps
+                    where reservation_id in (select id from ll_reservations_vw where start_gmt > sysdate-2)
+                    group by nvl(create_success,'Open')
+                    union all
+                    select 'Delete' as label, sum(case nvl(delete_success,'Open') when 'Y' then 1 else 0 end) as value
+                    from ll_reservation_steps
+                    where reservation_id in (select id from ll_reservations_vw where start_gmt > sysdate-2)
+                    group by nvl(create_success,'Open')
+                    
+                    ```
+            }
+            columnMapping {
+                label: LABEL
+                value: VALUE
+            }
+            performance {
+                maxRowsToProcess: 20
+            }
+        )
+
+        axis x (
+            name: x
+            majorTicks {
+                show: auto
+            }
+        )
+
+        axis y (
+            name: y
+            majorTicks {
+                show: auto
+            }
+        )
+
+    )
+
+    region settings (
+        name: Settings
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @collapsible
+            templateOptions: [
+                #DEFAULT#
+                js-useLocalStorage
+                t-Region--hideShowIconsMath
+                is-expanded
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    pageItem P9906_LAST_REFRESH (
+        type: displayOnly
+        label {
+            label: Last Refresh
+            alignment: left
+        }
+        layout {
+            sequence: 10
+            region: @settings
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        source {
+            type: expression
+            plsqlExpression: to_char(sysdate,'DD Mon HH24:MI:SS')||' in GMT'
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9906_REFRESH (
+        type: selectList
+        label {
+            label: Refresh rate
+            alignment: left
+        }
+        settings {
+            pageActionOnSelection: submitPage
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC2:10 seconds;10,30 seconds;30,1 minute;60,5 minutes;300,10 minutes;600,20 minutes;1200,30 minutes;1800,1 hour;3600
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 20
+            region: @settings
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        validation {
+            valueRequired: true
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        default {
+            type: item
+            item: F9906_REFRESH
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+)
+

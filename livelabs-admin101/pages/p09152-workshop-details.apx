@@ -1,0 +1,5324 @@
+page 9152 (
+    name: Workshop details
+    alias: WORKSHOP-DETAILS
+    title: Workshop details
+    appearance {
+        pageTemplate: @standard-trustarc
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    javaScript {
+        functionAndGlobalVariableDeclaration: var htmldb_delete_message='"DELETE_CONFIRM_MSG"';
+    }
+    css {
+        inline:
+            ```css
+            .p9152-workshop-details .p9152-workshop-section {
+                margin: 0;
+            }
+            
+            .p9152-workshop-details .p9152-workshop-section > .t-Region-header {
+                background: transparent;
+                padding: .75rem 0 .25rem;
+            }
+            
+            .p9152-workshop-details .p9152-workshop-section > .t-Region-header .t-Region-title {
+                margin-inline-start: -2px;
+            }
+            
+            .p9152-workshop-details .p9152-workshop-section > .t-Region-bodyWrap > .t-Region-body {
+                padding: .5rem 1rem 1rem;
+            }
+            
+            .p9152-outer-selector a[href$="#SHOW_ALL"],
+            .p9152-workshop-details a[href$="#SHOW_ALL"] {
+                display: none;
+            }
+            
+            .p9152-workshop-details .p9152-inner-tabs {
+                border-bottom: 0;
+                margin: 0 0 .75rem;
+            }
+            
+            .p9152-workshop-details .p9152-inner-tabs > .t-TabsRegion-items {
+                min-height: 0 !important;
+            }
+            
+            .p9152-workshop-details .p9152-workshop-section input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]),
+            .p9152-workshop-details .p9152-workshop-section textarea {
+                box-sizing: border-box;
+                width: 100%;
+                min-height: 44px;
+                font-size: 16px;
+            }
+            
+            .p9152-workshop-details .p9152-workshop-section select {
+                box-sizing: border-box;
+                width: 100%;
+                height: 44px;
+                min-height: 44px;
+                font-size: 16px;
+            }
+            
+            #P9152_DESC_OUTLINE_CONTAINER .ck-editor__editable,
+            #P9152_DESC_OUTLINE_CONTAINER [contenteditable="true"],
+            #P9152_DESC_PREREQUISITES_CONTAINER .ck-editor__editable,
+            #P9152_DESC_PREREQUISITES_CONTAINER [contenteditable="true"] {
+                box-sizing: border-box;
+                min-height: 10rem !important;
+                height: 10rem !important;
+                max-height: 10rem !important;
+                overflow-y: auto !important;
+            }
+            
+            #P9152_ID_DISPLAY:empty::before {
+              content: "TBD";
+              color: #666;
+              /* font-style: italic; */
+            }
+            ```
+    }
+    security {
+        authorizationScheme: @superrrrr-user
+        formAutoComplete: false
+    }
+
+    region availability-per-resource-type (
+        name: Availability Per Resource Type
+        type: classicReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select b.workshop_id, b.resource_id, b.environments, LISTAGG (a.tenancy_name||' ('||a.list_regions||')',', ') as locations
+                from (select llwrr.workshop_id, llwrr.resource_id, llwrr.environments, llt.tenancy_name, LISTAGG(llor.region_key, ',') within group (order by llt.tenancy_name) as list_regions
+                      from LL_RES_AVAILABLE_VW llra, ll_tenancies llt, ll_oci_regions llor, ll_ws_resources_required_vw llwrr
+                      where llra.resource_id = llwrr.resource_id
+                      and llra.num_available >= llwrr.environments
+                      and llt.id = llra.tenancy_id
+                      and llor.id = llra.region_id
+                      and llwrr.workshop_id = :P9152_ID
+                      group by llwrr.workshop_id, llwrr.resource_id, llwrr.environments, llt.tenancy_name) a,
+                    ll_ws_resources_required_vw b
+                    where b.workshop_id = a.workshop_id(+)
+                    and b.resource_id = a.resource_id(+)
+                    and b.workshop_id = :P9152_ID 
+                group by b.workshop_id, b.resource_id, b.environments
+                
+                ```
+            pageItemsToSubmit: P9152_ID
+        }
+        layout {
+            sequence: 10
+            parentRegion: @overview
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        componentAppearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Report--altRowsDefault
+                t-Report--rowHighlight
+            ]
+        }
+        pagination {
+            type: nextAndPreviousLinks
+        }
+        performance {
+            maxRowsToProcess: 500
+        }
+        messages {
+            whenNoDataFound: no data found
+        }
+        componentAdvanced {
+            stripHtml: true
+        }
+
+        column ENVIRONMENTS (
+            reportColumnQueryId: 3
+            derivedColumn: N
+            heading {
+                heading: Environments
+                alignment: center
+            }
+            layout {
+                sequence: 30
+            }
+        )
+
+        column LOCATIONS (
+            reportColumnQueryId: 4
+            derivedColumn: N
+            heading {
+                heading: Can run on tenancies (and regions)
+                alignment: center
+            }
+            layout {
+                sequence: 40
+            }
+        )
+
+        column RESOURCE_ID (
+            reportColumnQueryId: 2
+            derivedColumn: N
+            type: plainTextBasedOnLov
+            heading {
+                heading: Resource Name
+            }
+            lov {
+                type: sharedComponent
+                lov: @ll-resources-3
+            }
+            layout {
+                sequence: 20
+            }
+        )
+
+        column WORKSHOP_ID (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 10
+            }
+            sorting {
+                defaultSequence: 1
+            }
+        )
+
+    )
+
+    region custom-cidrs (
+        name: Custom CIDRs
+        type: interactiveGrid
+        source {
+            location: localDatabase
+            tableName: LL_WORKSHOP_CIDRS_REF
+            whereClause: workshop_id = :P9152_ID
+            pageItemsToSubmit: P9152_ID
+        }
+        layout {
+            sequence: 110
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        edit {
+            enabled: true
+            allowedOperations: [
+                add
+                update
+                delete
+            ]
+        }
+        componentAppearance {
+            selectFirstRow: false
+        }
+        toolbar {
+            controls: [
+                searchCol
+                searchField
+                actionsMenu
+                resetButton
+                saveButton
+            ]
+        }
+        download {
+            formats: [
+                csv
+                html
+                pdf
+                excel
+            ]
+        }
+        advanced {
+            savedReportMappingIdentifier: 208873421731103071
+        }
+
+        savedReport 2063491 (
+            visibility: primary
+            view {
+                default: grid
+            }
+            singleRowView {
+                displayedColumns: true
+            }
+
+            displayColumn (
+                column: @APEX$ROW_ACTION
+                layout {
+                    sequence: 0
+                }
+            )
+
+            displayColumn (
+                column: @ID
+                layout {
+                    sequence: 2
+                }
+            )
+
+            displayColumn (
+                column: @WORKSHOP_ID
+                layout {
+                    sequence: 3
+                }
+            )
+
+            displayColumn (
+                column: @CIDR_ID
+                layout {
+                    sequence: 4
+                }
+            )
+
+        )
+
+        column APEX$ROW_ACTION (
+            type: actionsMenu
+            layout {
+                sequence: 20
+            }
+        )
+
+        column APEX$ROW_SELECTOR (
+            type: rowSelector
+            layout {
+                sequence: 10
+            }
+        )
+
+        column CIDR_ID (
+            type: popupLov
+            heading {
+                heading: CIDR
+            }
+            lov {
+                type: sharedComponent
+                lov: @ll-custom-cidrs
+                displayExtraValues: false
+                displayNullValue: false
+            }
+            layout {
+                sequence: 60
+            }
+            source {
+                databaseColumn: CIDR_ID
+                dataType: number
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: useLov
+            }
+        )
+
+        column ID (
+            type: hidden
+            layout {
+                sequence: 40
+            }
+            source {
+                databaseColumn: ID
+                dataType: number
+                primaryKey: true
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column WORKSHOP_ID (
+            type: hidden
+            layout {
+                sequence: 50
+            }
+            source {
+                databaseColumn: WORKSHOP_ID
+                dataType: number
+            }
+            default {
+                type: item
+                item: P9152_ID
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: Custom CIDRs
+        }
+    )
+
+    region emails (
+        name: Emails
+        type: interactiveGrid
+        source {
+            location: localDatabase
+            tableName: LL_WORKSHOP_EMAILS
+            includeRowidColumn: true
+            whereClause: workshop_id = :P9152_ID
+            pageItemsToSubmit: P9152_ID
+        }
+        layout {
+            sequence: 160
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        edit {
+            enabled: true
+            allowedOperations: [
+                add
+                update
+                delete
+            ]
+            addRowIfEmpty: false
+        }
+        componentAppearance {
+            selectFirstRow: false
+        }
+        toolbar {
+            controls: [
+                searchCol
+                searchField
+                actionsMenu
+                resetButton
+                saveButton
+            ]
+        }
+        download {
+            formats: [
+                csv
+                html
+                pdf
+                excel
+            ]
+        }
+        advanced {
+            savedReportMappingIdentifier: 264404205788739602
+        }
+
+        savedReport 740501 (
+            visibility: primary
+            view {
+                default: grid
+            }
+            singleRowView {
+                displayedColumns: true
+            }
+
+            displayColumn (
+                column: @APEX$ROW_ACTION
+                layout {
+                    sequence: 0
+                }
+            )
+
+            displayColumn (
+                column: @ROWID
+                layout {
+                    sequence: 1
+                }
+            )
+
+            displayColumn (
+                column: @ID
+                layout {
+                    sequence: 2
+                }
+            )
+
+            displayColumn (
+                column: @WORKSHOP_ID
+                layout {
+                    sequence: 3
+                }
+            )
+
+            displayColumn (
+                column: @EMAIL_TEMPLATE_ID
+                layout {
+                    sequence: 4
+                }
+            )
+
+        )
+
+        column APEX$ROW_ACTION (
+            type: actionsMenu
+            layout {
+                sequence: 20
+            }
+        )
+
+        column APEX$ROW_SELECTOR (
+            type: rowSelector
+            layout {
+                sequence: 10
+            }
+        )
+
+        column EMAIL_TEMPLATE_ID (
+            type: selectList
+            heading {
+                heading: Email Template
+            }
+            lov {
+                type: sharedComponent
+                lov: @ll-email-template
+                displayExtraValues: false
+            }
+            layout {
+                sequence: 60
+            }
+            validation {
+                valueRequired: true
+            }
+            source {
+                databaseColumn: EMAIL_TEMPLATE_ID
+                dataType: number
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: useLov
+            }
+        )
+
+        column ID (
+            type: hidden
+            layout {
+                sequence: 40
+            }
+            source {
+                databaseColumn: ID
+                dataType: number
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column ROWID (
+            type: hidden
+            layout {
+                sequence: 30
+            }
+            source {
+                databaseColumn: ROWID
+                dataType: rowid
+                primaryKey: true
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column WORKSHOP_ID (
+            type: hidden
+            layout {
+                sequence: 50
+            }
+            source {
+                databaseColumn: WORKSHOP_ID
+                dataType: number
+            }
+            default {
+                type: item
+                item: P9152_ID
+                duplicateCopiesExistingValue: false
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: Emails
+        }
+    )
+
+    region environments-available (
+        name: Environments Available
+        type: classicReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select tenancy_id, region_id, environments, preference_points
+                from JSON_TABLE ( :P9152_ENVIRONMENT_JSON, '$[*]' COLUMNS (tenancy_id, region_id, environments, preference_points))            
+                  
+                
+                
+                
+                ```
+            pageItemsToSubmit: P9152_ENVIRONMENT_JSON
+        }
+        layout {
+            sequence: 20
+            parentRegion: @overview
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        componentAppearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Report--altRowsDefault
+                t-Report--rowHighlight
+            ]
+        }
+        pagination {
+            type: nextAndPreviousLinks
+        }
+        performance {
+            maxRowsToProcess: 500
+        }
+        messages {
+            whenNoDataFound: no data found
+        }
+        componentAdvanced {
+            stripHtml: true
+        }
+
+        column ENVIRONMENTS (
+            reportColumnQueryId: 3
+            derivedColumn: N
+            heading {
+                heading: Environments
+                alignment: center
+            }
+            layout {
+                sequence: 30
+            }
+        )
+
+        column PREFERENCE_POINTS (
+            reportColumnQueryId: 4
+            derivedColumn: N
+            heading {
+                heading: Preference Points
+                alignment: center
+            }
+            layout {
+                sequence: 40
+            }
+        )
+
+        column REGION_ID (
+            reportColumnQueryId: 2
+            derivedColumn: N
+            type: plainTextBasedOnLov
+            heading {
+                heading: Region
+                alignment: center
+            }
+            lov {
+                type: sharedComponent
+                lov: @ll-regions-2
+            }
+            layout {
+                sequence: 20
+            }
+        )
+
+        column TENANCY_ID (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            type: plainTextBasedOnLov
+            heading {
+                heading: Tenancy
+                alignment: center
+            }
+            lov {
+                type: sharedComponent
+                lov: @ll-tenancies-2
+            }
+            layout {
+                sequence: 10
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+    )
+
+    region explanation (
+        name: Explanation
+        type: staticContent
+        source {
+            htmlCode: <br>Only specify resources that the attendee needs to startup/setup <b>while executing the steps in the HandsOn Lab</b>. <br><br><big><b>!! DO NOT !!</big></b> specify any resources here that are used by the Livelabs Automation (like automatically setting up an image or resources that are needed during Terraform execution). <br>Resources needed during Terraform execution need to be indicated in the Terraform script setup.
+        }
+        layout {
+            sequence: 10
+            parentRegion: @resources
+            slot: subRegions
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: [
+                #DEFAULT#
+                t-Form--slimPadding
+            ]
+        }
+    )
+
+    region guides-links-2 (
+        name: Miscellaneous
+        type: staticContent
+        layout {
+            sequence: 70
+            parentRegion: @workshop-publishing-access-tab
+            slot: subRegions
+            startNewRow: false
+            columnCssClasses: p9152-workshop-section
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noBorder
+                t-Region--scrollBody
+                margin-left-lg
+            ]
+            cssClasses: [
+                p9152-workshop-section
+                p9152-right-col
+            ]
+        }
+    )
+
+    region images (
+        name: Images
+        type: interactiveGrid
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select *
+                  from LL_WORKSHOP_IMAGES
+                 where workshop_id = :P9152_ID
+                ```
+            pageItemsToSubmit: P9152_ID
+        }
+        layout {
+            sequence: 130
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        edit {
+            enabled: true
+            allowedOperations: [
+                add
+                update
+                delete
+            ]
+            addRowIfEmpty: false
+        }
+        toolbar {
+            controls: [
+                searchCol
+                searchField
+                actionsMenu
+                resetButton
+                saveButton
+            ]
+        }
+        download {
+            formats: [
+                csv
+                html
+                pdf
+                excel
+            ]
+        }
+        advanced {
+            savedReportMappingIdentifier: 263653296262452012
+        }
+
+        savedReport 732992 (
+            visibility: primary
+            view {
+                default: grid
+            }
+            singleRowView {
+                displayedColumns: true
+            }
+
+            displayColumn (
+                column: @UPDATED_FLG
+                layout {
+                    sequence: 6
+                }
+            )
+
+            displayColumn (
+                column: @APEX$ROW_ACTION
+                layout {
+                    sequence: 0
+                }
+            )
+
+            displayColumn (
+                column: @ID
+                layout {
+                    sequence: 2
+                }
+            )
+
+            displayColumn (
+                column: @WORKSHOP_ID
+                layout {
+                    sequence: 3
+                }
+            )
+
+            displayColumn (
+                column: @IMAGE_ID
+                layout {
+                    sequence: 4
+                }
+            )
+
+            displayColumn (
+                column: @ACTIVE_FLG
+                layout {
+                    sequence: 5
+                }
+            )
+
+        )
+
+        column ACTIVE_FLG (
+            type: selectList
+            heading {
+                heading: Active
+            }
+            lov {
+                type: sharedComponent
+                lov: @active-flg
+                displayExtraValues: false
+                displayNullValue: false
+            }
+            layout {
+                sequence: 70
+            }
+            source {
+                databaseColumn: ACTIVE_FLG
+                dataType: varchar2
+            }
+            default {
+                type: static
+                staticValue: Y
+                duplicateCopiesExistingValue: false
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: useLov
+            }
+        )
+
+        column APEX$ROW_ACTION (
+            type: actionsMenu
+            layout {
+                sequence: 20
+            }
+        )
+
+        column APEX$ROW_SELECTOR (
+            type: rowSelector
+            layout {
+                sequence: 10
+            }
+        )
+
+        column ID (
+            type: hidden
+            layout {
+                sequence: 40
+            }
+            source {
+                databaseColumn: ID
+                dataType: number
+                primaryKey: true
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column IMAGE_ID (
+            type: popupLov
+            heading {
+                heading: Image Name
+            }
+            settings {
+                fetchOnSearch: true
+            }
+            lov {
+                type: sharedComponent
+                lov: @ll-images-2
+                displayExtraValues: false
+            }
+            layout {
+                sequence: 60
+            }
+            validation {
+                valueRequired: true
+            }
+            source {
+                databaseColumn: IMAGE_ID
+                dataType: number
+            }
+            default {
+                duplicateCopiesExistingValue: false
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: useLov
+            }
+        )
+
+        column UPDATED_FLG (
+            type: numberField
+            heading {
+                heading: Updated Flg
+                alignment: end
+            }
+            layout {
+                sequence: 80
+                columnAlignment: end
+            }
+            source {
+                databaseColumn: UPDATED_FLG
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column WORKSHOP_ID (
+            type: hidden
+            layout {
+                sequence: 50
+            }
+            source {
+                databaseColumn: WORKSHOP_ID
+                dataType: number
+            }
+            default {
+                type: item
+                item: P9152_ID
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: Images
+        }
+    )
+
+    region overview (
+        name: Overview
+        type: staticContent
+        layout {
+            sequence: 170
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--scrollBody
+            ]
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P9152_ID
+        }
+    )
+
+    region policies (
+        name: Policies
+        type: interactiveGrid
+        source {
+            location: localDatabase
+            tableName: LL_WORKSHOP_POLICIES
+            includeRowidColumn: true
+            whereClause: workshop_id = :P9152_ID
+            pageItemsToSubmit: P9152_ID
+        }
+        layout {
+            sequence: 120
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        edit {
+            enabled: true
+            allowedOperations: [
+                add
+                update
+                delete
+            ]
+        }
+        componentAppearance {
+            selectFirstRow: false
+        }
+        toolbar {
+            controls: [
+                searchCol
+                searchField
+                actionsMenu
+                resetButton
+                saveButton
+            ]
+        }
+        download {
+            formats: [
+                csv
+                html
+                pdf
+                excel
+            ]
+        }
+        advanced {
+            savedReportMappingIdentifier: 264387925289688775
+        }
+
+        savedReport 740339 (
+            visibility: primary
+            view {
+                default: grid
+            }
+            singleRowView {
+                displayedColumns: true
+            }
+
+            displayColumn (
+                column: @APEX$ROW_ACTION
+                layout {
+                    sequence: 0
+                }
+            )
+
+            displayColumn (
+                column: @ROWID
+                layout {
+                    sequence: 1
+                }
+            )
+
+            displayColumn (
+                column: @ID
+                layout {
+                    sequence: 2
+                }
+            )
+
+            displayColumn (
+                column: @WORKSHOP_ID
+                layout {
+                    sequence: 3
+                }
+            )
+
+            displayColumn (
+                column: @POLICY_ID
+                layout {
+                    sequence: 4
+                }
+            )
+
+            displayColumn (
+                column: @RESTRICT_REGION
+                layout {
+                    sequence: 5
+                }
+            )
+
+            displayColumn (
+                column: @ACTIVE_FLG
+                layout {
+                    sequence: 6
+                }
+            )
+
+        )
+
+        column ACTIVE_FLG (
+            type: selectList
+            heading {
+                heading: Active
+            }
+            lov {
+                type: sharedComponent
+                lov: @active-flg
+                displayExtraValues: false
+            }
+            layout {
+                sequence: 80
+            }
+            validation {
+                valueRequired: true
+            }
+            source {
+                databaseColumn: ACTIVE_FLG
+                dataType: varchar2
+            }
+            default {
+                type: static
+                staticValue: Y
+                duplicateCopiesExistingValue: false
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: useLov
+            }
+        )
+
+        column APEX$ROW_ACTION (
+            type: actionsMenu
+            layout {
+                sequence: 20
+            }
+        )
+
+        column APEX$ROW_SELECTOR (
+            type: rowSelector
+            layout {
+                sequence: 10
+            }
+        )
+
+        column ID (
+            type: hidden
+            layout {
+                sequence: 40
+            }
+            source {
+                databaseColumn: ID
+                dataType: number
+                primaryKey: true
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column POLICY_ID (
+            type: popupLov
+            heading {
+                heading: Policy
+            }
+            lov {
+                type: sharedComponent
+                lov: @ll-policies
+                displayExtraValues: false
+            }
+            layout {
+                sequence: 60
+            }
+            validation {
+                valueRequired: true
+            }
+            source {
+                databaseColumn: POLICY_ID
+                dataType: number
+            }
+            default {
+                duplicateCopiesExistingValue: false
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: useLov
+            }
+        )
+
+        column RESTRICT_REGION (
+            type: selectList
+            heading {
+                heading: Restrict Region
+            }
+            lov {
+                type: sharedComponent
+                lov: @active-flg
+                displayExtraValues: false
+            }
+            layout {
+                sequence: 70
+            }
+            source {
+                databaseColumn: RESTRICT_REGION
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: useLov
+            }
+        )
+
+        column ROWID (
+            type: hidden
+            layout {
+                sequence: 30
+            }
+            source {
+                databaseColumn: ROWID
+                dataType: rowid
+                primaryKey: true
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column WORKSHOP_ID (
+            type: hidden
+            layout {
+                sequence: 50
+            }
+            source {
+                databaseColumn: WORKSHOP_ID
+                dataType: number
+            }
+            default {
+                type: item
+                item: P9152_ID
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: Policies
+        }
+    )
+
+    region resources (
+        name: Resources
+        type: interactiveGrid
+        source {
+            location: localDatabase
+            tableName: LL_WORKSHOP_REQUIRES
+            includeRowidColumn: true
+            whereClause: workshop_id = :P9152_ID
+            pageItemsToSubmit: P9152_ID
+        }
+        layout {
+            sequence: 140
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        edit {
+            enabled: true
+            allowedOperations: [
+                add
+                update
+                delete
+            ]
+        }
+        toolbar {
+            controls: [
+                searchCol
+                searchField
+                actionsMenu
+                resetButton
+                saveButton
+            ]
+        }
+        download {
+            formats: [
+                csv
+                html
+                pdf
+                excel
+            ]
+        }
+        advanced {
+            savedReportMappingIdentifier: 264362760367463591
+        }
+
+        savedReport 740087 (
+            visibility: primary
+            view {
+                default: grid
+            }
+            singleRowView {
+                displayedColumns: true
+            }
+
+            displayColumn (
+                column: @APEX$ROW_ACTION
+                layout {
+                    sequence: 0
+                }
+            )
+
+            displayColumn (
+                column: @ROWID
+                layout {
+                    sequence: 1
+                }
+            )
+
+            displayColumn (
+                column: @ID
+                layout {
+                    sequence: 2
+                }
+            )
+
+            displayColumn (
+                column: @WORKSHOP_ID
+                layout {
+                    sequence: 3
+                }
+            )
+
+            displayColumn (
+                column: @RESOURCE_ID
+                layout {
+                    sequence: 4
+                }
+            )
+
+            displayColumn (
+                column: @NUM_REQUIRED
+                layout {
+                    sequence: 5
+                }
+            )
+
+        )
+
+        column APEX$ROW_ACTION (
+            type: actionsMenu
+            layout {
+                sequence: 20
+            }
+        )
+
+        column APEX$ROW_SELECTOR (
+            type: rowSelector
+            layout {
+                sequence: 10
+            }
+        )
+
+        column ID (
+            type: hidden
+            layout {
+                sequence: 40
+            }
+            source {
+                databaseColumn: ID
+                dataType: number
+                primaryKey: true
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column NUM_REQUIRED (
+            type: numberField
+            heading {
+                heading: Number required
+            }
+            settings {
+                numberAlignment: end
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 70
+            }
+            validation {
+                valueRequired: true
+            }
+            source {
+                databaseColumn: NUM_REQUIRED
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column RESOURCE_ID (
+            type: popupLov
+            heading {
+                heading: Resource <b>(READ THE HELPTEXT BELOW)</b>, only specify resources the Attendee needs to setup manually
+            }
+            settings {
+                fetchOnSearch: true
+            }
+            search {
+                minChars: 2
+            }
+            lov {
+                type: sharedComponent
+                lov: @ll-resources-3
+                displayExtraValues: false
+            }
+            layout {
+                sequence: 60
+            }
+            validation {
+                valueRequired: true
+            }
+            source {
+                databaseColumn: RESOURCE_ID
+                dataType: number
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: useLov
+            }
+            help {
+                helpText: Only specify resources that the attendee needs to startup/setup while executing the steps in the HandsOn Lab. DO NOT specify any resources here that are used by the Livelabs Automation (like automatically setting up an image or resources that are needed during Terraform execution).
+            }
+        )
+
+        column ROWID (
+            type: hidden
+            layout {
+                sequence: 30
+            }
+            source {
+                databaseColumn: ROWID
+                dataType: rowid
+                primaryKey: true
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column WORKSHOP_ID (
+            type: hidden
+            layout {
+                sequence: 50
+            }
+            source {
+                databaseColumn: WORKSHOP_ID
+                dataType: number
+            }
+            default {
+                type: item
+                item: P9152_ID
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: Resources
+        }
+    )
+
+    region setup-steps (
+        name: Setup steps
+        type: interactiveGrid
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select ID,
+                       STEP_ID,
+                       WORKSHOP_ID,
+                       PARAMETERS,
+                       (select create_order from ll_flow_steps llfs where llfs.id = llwf.step_id) "ORDER"
+                  from LL_WORKSHOP_FLOW LLWF
+                  where WORKSHOP_ID = :P9152_ID
+                ```
+            pageItemsToSubmit: P9152_ID
+        }
+        layout {
+            sequence: 100
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        edit {
+            enabled: true
+            allowedOperations: [
+                add
+                update
+                delete
+            ]
+            addRowIfEmpty: false
+        }
+        toolbar {
+            controls: [
+                searchCol
+                searchField
+                actionsMenu
+                resetButton
+                saveButton
+            ]
+        }
+        download {
+            formats: [
+                csv
+                html
+                pdf
+                excel
+            ]
+        }
+        advanced {
+            savedReportMappingIdentifier: 263599509649389371
+        }
+
+        savedReport 732454 (
+            visibility: primary
+            view {
+                default: grid
+            }
+            singleRowView {
+                displayedColumns: true
+            }
+
+            displayColumn (
+                column: @APEX$ROW_ACTION
+                layout {
+                    sequence: 0
+                }
+            )
+
+            displayColumn (
+                column: @ROWID
+                layout {
+                    sequence: 1
+                }
+            )
+
+            displayColumn (
+                column: @ID
+                layout {
+                    sequence: 2
+                }
+            )
+
+            displayColumn (
+                column: @STEP_ID
+                layout {
+                    width: 530.111
+                    sequence: 4
+                }
+            )
+
+            displayColumn (
+                column: @WORKSHOP_ID
+                layout {
+                    width: 425.556
+                    sequence: 5
+                }
+            )
+
+            displayColumn (
+                column: @PARAMETERS
+                layout {
+                    sequence: 5
+                }
+            )
+
+            displayColumn (
+                column: @ORDER
+                layout {
+                    sequence: 7
+                }
+            )
+
+            sort (
+                column: @ORDER
+                sort {
+                    nulls: last
+                    sequence: 1
+                }
+            )
+
+        )
+
+        column APEX$ROW_ACTION (
+            type: actionsMenu
+            layout {
+                sequence: 20
+            }
+        )
+
+        column APEX$ROW_SELECTOR (
+            type: rowSelector
+            layout {
+                sequence: 10
+            }
+        )
+
+        column ID (
+            type: hidden
+            layout {
+                sequence: 40
+            }
+            source {
+                databaseColumn: ID
+                dataType: number
+                primaryKey: true
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column ORDER (
+            type: displayOnly
+            heading {
+                heading: Order (read-only, cannot change)
+            }
+            layout {
+                sequence: 80
+            }
+            source {
+                databaseColumn: ORDER
+                dataType: number
+                queryOnly: true
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column PARAMETERS (
+            type: textarea
+            heading {
+                heading: Parameters (optional)
+            }
+            layout {
+                sequence: 70
+            }
+            validation {
+                maxLength: 4000
+            }
+            source {
+                databaseColumn: PARAMETERS
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column ROWID (
+            type: hidden
+            layout {
+                sequence: 30
+            }
+            source {
+                databaseColumn: ROWID
+                dataType: rowid
+                primaryKey: true
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column STEP_ID (
+            type: selectList
+            heading {
+                heading: Step
+            }
+            lov {
+                type: sharedComponent
+                lov: @ll-flow-steps
+                displayExtraValues: false
+                displayNullValue: false
+            }
+            layout {
+                sequence: 50
+            }
+            validation {
+                valueRequired: true
+            }
+            source {
+                databaseColumn: STEP_ID
+                dataType: number
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: useLov
+            }
+        )
+
+        column WORKSHOP_ID (
+            type: hidden
+            layout {
+                sequence: 60
+            }
+            source {
+                databaseColumn: WORKSHOP_ID
+                dataType: number
+            }
+            default {
+                type: item
+                item: P9152_ID
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: Setup steps
+        }
+    )
+
+    region specific-tenancy-and-region-restrictions (
+        name: Specific Tenancy and Region restrictions
+        type: interactiveGrid
+        source {
+            location: localDatabase
+            tableName: LL_WORKSHOP_REGIONS
+            includeRowidColumn: true
+            whereClause: workshop_id = :P9152_ID
+            pageItemsToSubmit: P9152_ID
+        }
+        layout {
+            sequence: 150
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        edit {
+            enabled: true
+            allowedOperations: [
+                add
+                update
+                delete
+            ]
+        }
+        toolbar {
+            controls: [
+                searchCol
+                searchField
+                actionsMenu
+                resetButton
+                saveButton
+            ]
+        }
+        download {
+            formats: [
+                csv
+                html
+                pdf
+                excel
+            ]
+        }
+        advanced {
+            savedReportMappingIdentifier: 347379127674844916
+        }
+
+        savedReport 1570533 (
+            visibility: primary
+            view {
+                default: grid
+            }
+            singleRowView {
+                displayedColumns: true
+            }
+
+            displayColumn (
+                column: @APEX$ROW_ACTION
+                layout {
+                    sequence: 0
+                }
+            )
+
+            displayColumn (
+                column: @ROWID
+                layout {
+                    sequence: 1
+                }
+            )
+
+            displayColumn (
+                column: @ID
+                layout {
+                    sequence: 2
+                }
+            )
+
+            displayColumn (
+                column: @WORKSHOP_ID
+                layout {
+                    sequence: 3
+                }
+            )
+
+            displayColumn (
+                column: @TENANCY_ID
+                layout {
+                    sequence: 4
+                }
+            )
+
+            displayColumn (
+                column: @REGION_ID
+                layout {
+                    sequence: 5
+                }
+            )
+
+            displayColumn (
+                column: @ACTIVE_FLG
+                layout {
+                    sequence: 6
+                }
+            )
+
+        )
+
+        column ACTIVE_FLG (
+            type: selectList
+            heading {
+                heading: Active Flg
+            }
+            lov {
+                type: sharedComponent
+                lov: @active-flg
+                displayExtraValues: false
+                displayNullValue: false
+            }
+            layout {
+                sequence: 80
+            }
+            source {
+                databaseColumn: ACTIVE_FLG
+                dataType: varchar2
+            }
+            default {
+                type: static
+                staticValue: Y
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: useLov
+            }
+        )
+
+        column APEX$ROW_ACTION (
+            type: actionsMenu
+            layout {
+                sequence: 20
+            }
+        )
+
+        column APEX$ROW_SELECTOR (
+            type: rowSelector
+            layout {
+                sequence: 10
+            }
+        )
+
+        column ID (
+            type: hidden
+            layout {
+                sequence: 40
+            }
+            source {
+                databaseColumn: ID
+                dataType: number
+                primaryKey: true
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column REGION_ID (
+            type: popupLov
+            heading {
+                heading: Region
+            }
+            settings {
+                fetchOnSearch: true
+            }
+            search {
+                minChars: 1
+            }
+            lov {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select region_name||', '||region_identifier, id
+                    from ll_oci_regions
+                    ```
+                displayExtraValues: false
+                displayNullValue: false
+            }
+            layout {
+                sequence: 70
+            }
+            source {
+                databaseColumn: REGION_ID
+                dataType: number
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: useLov
+            }
+        )
+
+        column ROWID (
+            type: hidden
+            layout {
+                sequence: 30
+            }
+            source {
+                databaseColumn: ROWID
+                dataType: rowid
+                primaryKey: true
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column TENANCY_ID (
+            type: textField
+            heading {
+                heading: Tenancy
+            }
+            layout {
+                sequence: 60
+            }
+            validation {
+                valueRequired: true
+            }
+            source {
+                databaseColumn: TENANCY_ID
+                dataType: number
+            }
+            columnFilter {
+                lovType: useLov
+            }
+        )
+
+        column WORKSHOP_ID (
+            type: hidden
+            layout {
+                sequence: 50
+            }
+            source {
+                databaseColumn: WORKSHOP_ID
+                dataType: number
+            }
+            default {
+                type: item
+                item: P9152_ID
+                duplicateCopiesExistingValue: false
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: Specific Tenancy and Region restrictions
+        }
+    )
+
+    region tags (
+        name: Tags
+        type: interactiveGrid
+        source {
+            location: localDatabase
+            tableName: LL_WORKSHOP_TAGS
+            includeRowidColumn: true
+            whereClause: workshop_id = :P9152_ID
+            pageItemsToSubmit: P9152_ID
+        }
+        layout {
+            sequence: 90
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        edit {
+            enabled: true
+            allowedOperations: [
+                add
+                update
+                delete
+            ]
+            addRowIfEmpty: false
+        }
+        componentAppearance {
+            selectFirstRow: false
+        }
+        toolbar {
+            controls: [
+                searchCol
+                searchField
+                actionsMenu
+                resetButton
+                saveButton
+            ]
+        }
+        download {
+            formats: [
+                csv
+                html
+                pdf
+                excel
+            ]
+        }
+        advanced {
+            savedReportMappingIdentifier: 264416583387796447
+        }
+
+        savedReport 740625 (
+            visibility: primary
+            view {
+                default: grid
+            }
+            singleRowView {
+                displayedColumns: true
+            }
+
+            displayColumn (
+                column: @APEX$ROW_ACTION
+                layout {
+                    sequence: 0
+                }
+            )
+
+            displayColumn (
+                column: @ROWID
+                layout {
+                    sequence: 1
+                }
+            )
+
+            displayColumn (
+                column: @ID
+                layout {
+                    sequence: 2
+                }
+            )
+
+            displayColumn (
+                column: @WORKSHOP_ID
+                layout {
+                    sequence: 3
+                }
+            )
+
+            displayColumn (
+                column: @TAG_ID
+                layout {
+                    sequence: 4
+                }
+            )
+
+        )
+
+        column APEX$ROW_ACTION (
+            type: actionsMenu
+            layout {
+                sequence: 20
+            }
+        )
+
+        column APEX$ROW_SELECTOR (
+            type: rowSelector
+            layout {
+                sequence: 10
+            }
+        )
+
+        column ID (
+            type: hidden
+            layout {
+                sequence: 40
+            }
+            source {
+                databaseColumn: ID
+                dataType: number
+                primaryKey: true
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column ROWID (
+            type: hidden
+            layout {
+                sequence: 30
+            }
+            source {
+                databaseColumn: ROWID
+                dataType: rowid
+                primaryKey: true
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column TAG_ID (
+            type: selectList
+            heading {
+                heading: Tag
+            }
+            lov {
+                type: sharedComponent
+                lov: @ll-tags
+                displayExtraValues: false
+            }
+            layout {
+                sequence: 60
+            }
+            validation {
+                valueRequired: true
+            }
+            source {
+                databaseColumn: TAG_ID
+                dataType: number
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: useLov
+            }
+        )
+
+        column WORKSHOP_ID (
+            type: hidden
+            layout {
+                sequence: 50
+            }
+            source {
+                databaseColumn: WORKSHOP_ID
+                dataType: number
+            }
+            default {
+                type: item
+                item: P9152_ID
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: Tags
+        }
+    )
+
+    region title-bar (
+        name: Title Bar
+        title: &P9152_PAGE_TITLE.
+        type: staticContent
+        source {
+            htmlCode: Workshop ID: &P9152_WORKSHOP_UID. &nbsp;&nbsp;|&nbsp;&nbsp; LiveLab ID: &P9152_ID.
+        }
+        layout {
+            sequence: 70
+            slot: contentBody
+        }
+        appearance {
+            template: @title-bar
+            templateOptions: [
+                #DEFAULT#
+                t-BreadcrumbRegion--useRegionTitle
+                margin-top-md
+                margin-bottom-md
+            ]
+        }
+    )
+
+    region workshop (
+        name: Workshop
+        type: staticContent
+        layout {
+            sequence: 90
+            parentRegion: @workshop-technical-configuration-tab
+            slot: subRegions
+            startNewRow: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noBorder
+                t-Region--scrollBody
+            ]
+            cssClasses: [
+                p9152-workshop-section
+                p9152-row-divider
+            ]
+        }
+    )
+
+    region workshop-configuration (
+        name: Sandbox
+        type: staticContent
+        layout {
+            sequence: 80
+            parentRegion: @workshop-technical-configuration-tab
+            slot: subRegions
+            columnSpan: 5
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noBorder
+                t-Region--scrollBody
+            ]
+            cssClasses: [
+                p9152-workshop-section
+                p9152-row-divider
+            ]
+        }
+    )
+
+    region workshop-content-tab (
+        name: Landing Page
+        type: staticContent
+        layout {
+            sequence: 30
+            parentRegion: @workshop-detail-tabs
+            slot: tabs
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    region workshop-description (
+        name: Display Fields
+        type: staticContent
+        layout {
+            sequence: 30
+            parentRegion: @workshop-content-tab
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noBorder
+                t-Region--scrollBody
+                margin-right-md
+            ]
+            cssClasses: [
+                p9152-workshop-section
+                p9152-row-divider
+            ]
+        }
+    )
+
+    region workshop-description_1 (
+        name: Display Fields
+        title: &nbsp;
+        type: staticContent
+        layout {
+            sequence: 40
+            parentRegion: @workshop-content-tab
+            slot: subRegions
+            startNewRow: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noBorder
+                t-Region--scrollBody
+            ]
+            cssClasses: [
+                p9152-workshop-section
+                p9152-row-divider
+            ]
+        }
+    )
+
+    region workshop-detail-tabs (
+        name: Tabs
+        type: staticContent
+        layout {
+            sequence: 5
+            parentRegion: @workshop-details
+            slot: subRegions
+            columnSpan: 12
+        }
+        appearance {
+            template: @tabs-container
+            templateOptions: [
+                #DEFAULT#
+                t-TabsRegion-mod--simple
+            ]
+            cssClasses: p9152-inner-tabs
+        }
+    )
+
+    region workshop-details (
+        name: Workshop details
+        type: form
+        source {
+            location: localDatabase
+            tableName: LL_WORKSHOPS
+        }
+        layout {
+            sequence: 80
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noBorder
+            ]
+            cssClasses: p9152-workshop-details
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        edit {
+            enabled: true
+            allowedOperations: [
+                add
+                update
+                delete
+            ]
+        }
+    )
+
+    region workshop-details-tab (
+        name: Overview
+        type: staticContent
+        layout {
+            sequence: 10
+            parentRegion: @workshop-detail-tabs
+            slot: tabs
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    region workshop-identity (
+        name: Basic Information
+        type: staticContent
+        layout {
+            sequence: 10
+            parentRegion: @workshop-details-tab
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noBorder
+                t-Region--scrollBody
+            ]
+            cssClasses: [
+                p9152-workshop-section
+                p9152-left-col
+            ]
+        }
+    )
+
+    region workshop-information-selector (
+        name: Workshop information
+        type: regionDisplaySelector
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+            cssClasses: p9152-outer-selector
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        settings {
+            rememberSelection: bySession
+        }
+    )
+
+    region workshop-json (
+        name: Workshop JSON
+        type: staticContent
+        layout {
+            sequence: 180
+            slot: contentBody
+        }
+        appearance {
+            template: @inline-dialog
+            templateOptions: [
+                js-dialog-autoheight
+                js-modal
+                js-draggable
+                js-dialog-size720x480
+            ]
+        }
+    )
+
+    region workshop-livestack (
+        name: Deployment Options
+        type: staticContent
+        layout {
+            sequence: 60
+            parentRegion: @workshop-publishing-access-tab
+            slot: subRegions
+            startNewRow: false
+            columnCssClasses: p9152-workshop-section
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noBorder
+                t-Region--scrollBody
+            ]
+            cssClasses: [
+                p9152-workshop-section
+                p9152-left-col
+            ]
+        }
+    )
+
+    region workshop-publishing-access-tab (
+        name: Deployment
+        type: staticContent
+        layout {
+            sequence: 20
+            parentRegion: @workshop-detail-tabs
+            slot: tabs
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    region workshop-technical-configuration-tab (
+        name: Advanced Configuration
+        type: staticContent
+        layout {
+            sequence: 40
+            parentRegion: @workshop-detail-tabs
+            slot: tabs
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    pageItem P9152_ACTIVE_FLG (
+        type: selectList
+        label {
+            label: Active
+            alignment: left
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC:Yes;Y,No;N,Event;E,Internal Test;T,Hidden;H,Unlisted;U
+            displayNullValue: false
+        }
+        layout {
+            sequence: 50
+            region: @workshop-identity
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 1
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--large
+            ]
+            height: 1
+        }
+        advanced {
+            customAttributes: style="height: 44px; min-height: 44px;"
+        }
+        source {
+            formRegion: @workshop-details
+            column: ACTIVE_FLG
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9152_APPROVAL_REQUIRED (
+        type: hidden
+        layout {
+            sequence: 200
+            region: @workshop-details
+            slot: regionBody
+        }
+        source {
+            formRegion: @workshop-details
+            column: APPROVAL_REQUIRED
+            dataType: varchar2
+        }
+    )
+
+    pageItem P9152_AUTHOR_EMAIL (
+        type: textField
+        label {
+            label: Owner
+            alignment: left
+        }
+        settings {
+            trimSpaces: none
+        }
+        layout {
+            sequence: 80
+            region: @workshop-identity
+            slot: regionBody
+            alignment: left
+            columnSpan: 2
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+                t-Form-fieldContainer--large
+            ]
+            width: 32
+        }
+        validation {
+            maxLength: 50
+        }
+        source {
+            formRegion: @workshop-details
+            column: AUTHOR_EMAIL
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9152_DESC_LONG (
+        type: textarea
+        label {
+            label: Long Description
+            alignment: left
+        }
+        layout {
+            sequence: 20
+            region: @workshop-description
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 6
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+                t-Form-fieldContainer--large
+            ]
+            height: 5
+        }
+        validation {
+            maxLength: 4000
+        }
+        advanced {
+            customAttributes: style="height: 44px; min-height: 44px;"
+        }
+        source {
+            formRegion: @workshop-details
+            column: DESC_LONG
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9152_DESC_OUTLINE (
+        type: richTextEditor
+        label {
+            label: Outline
+            alignment: left
+        }
+        settings {
+            format: html
+            toolbar: basic
+            maxHeight: 100
+        }
+        layout {
+            sequence: 30
+            region: @workshop-description
+            slot: regionBody
+            alignment: left
+            columnSpan: 6
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--large
+            ]
+        }
+        source {
+            formRegion: @workshop-details
+            column: DESC_OUTLINE
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9152_DESC_PREREQUISITES (
+        type: richTextEditor
+        label {
+            label: Prerequisites
+            alignment: left
+        }
+        settings {
+            format: html
+            toolbar: basic
+            maxHeight: 100
+        }
+        layout {
+            sequence: 50
+            region: @workshop-description
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 6
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--large
+            ]
+        }
+        source {
+            formRegion: @workshop-details
+            column: DESC_PREREQUISITES
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9152_DESC_SHORT (
+        type: textarea
+        label {
+            label: Short Description
+            alignment: left
+        }
+        layout {
+            sequence: 10
+            region: @workshop-description
+            slot: regionBody
+            alignment: left
+            columnSpan: 6
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+                t-Form-fieldContainer--large
+            ]
+            height: 5
+        }
+        validation {
+            maxLength: 4000
+        }
+        advanced {
+            customAttributes: style="height: 44px; min-height: 44px;"
+        }
+        source {
+            formRegion: @workshop-details
+            column: DESC_SHORT
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9152_DESKTOP_GUIDE_URL (
+        type: hidden
+        layout {
+            sequence: 330
+            region: @workshop-details
+            slot: regionBody
+        }
+    )
+
+    pageItem P9152_DISPLAY_INSTANCE (
+        type: switch
+        label {
+            label: Display Instance Info
+            alignment: left
+        }
+        settings {
+            useDefaults: false
+            onValue: Y
+            onLabel: Yes
+            offValue: N
+            offLabel: No
+        }
+        layout {
+            sequence: 30
+            region: @workshop-configuration
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 3
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--large
+            ]
+        }
+        validation {
+            valueRequired: true
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            type: expression
+            plsqlExpression: json_value(:P9152_SANDBOX_CONFIG,'$.displayInstances')
+            used: always
+        }
+        default {
+            type: static
+            staticValue: Y
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9152_DISPLAY_LOGIN (
+        type: switch
+        label {
+            label: Display Login Info
+            alignment: left
+        }
+        settings {
+            useDefaults: false
+            onValue: Y
+            onLabel: Yes
+            offValue: N
+            offLabel: No
+        }
+        layout {
+            sequence: 10
+            region: @workshop-configuration
+            slot: regionBody
+            alignment: left
+            columnSpan: 3
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--large
+            ]
+        }
+        validation {
+            valueRequired: true
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            type: expression
+            plsqlExpression: json_value(:P9152_SANDBOX_CONFIG, '$.displayLogin')
+            used: always
+        }
+        default {
+            type: static
+            staticValue: Y
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9152_DISPLAY_TENANCY (
+        type: switch
+        label {
+            label: Display Tenancy Info
+            alignment: left
+        }
+        settings {
+            useDefaults: false
+            onValue: Y
+            onLabel: Yes
+            offValue: N
+            offLabel: No
+        }
+        layout {
+            sequence: 20
+            region: @workshop-configuration
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 3
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--large
+            ]
+        }
+        validation {
+            valueRequired: true
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            type: expression
+            plsqlExpression: json_value(:P9152_SANDBOX_CONFIG, '$.displayTenancy')
+            used: always
+        }
+        default {
+            type: static
+            staticValue: Y
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9152_DISPLAY_TERRAFORM (
+        type: switch
+        label {
+            label: Display Terraform Outputs
+            alignment: left
+        }
+        settings {
+            useDefaults: false
+            onValue: Y
+            onLabel: Yes
+            offValue: N
+            offLabel: No
+        }
+        layout {
+            sequence: 110
+            region: @workshop-configuration
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        validation {
+            valueRequired: true
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            type: expression
+            plsqlExpression: json_value(:P9152_SANDBOX_CONFIG, '$.displayTerraform')
+        }
+        default {
+            type: static
+            staticValue: Y
+        }
+        sessionState {
+            storage: request
+        }
+        serverSideCondition {
+            type: never
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9152_ENVIRONMENT_JSON (
+        type: hidden
+        layout {
+            sequence: 10
+            region: @environments-available
+            slot: regionBody
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            used: always
+        }
+        default {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                declare
+                  v_tenancy_id number;
+                  v_region_id  number;
+                  v_available  clob;
+                begin
+                    ll_pkg_reservation.find_available_tenancy (p_tenancy_id => v_tenancy_id, p_region_id => v_region_id, p_available_json => v_available, p_workshop_id => :P9152_ID);
+                	return (v_available);
+                end;
+                ```
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9152_FEATURED_FLG (
+        type: selectList
+        label {
+            label: Featured
+            alignment: left
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC:Yes;Y,No;N
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 60
+            region: @workshop-identity
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 1
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--large
+            ]
+            height: 1
+        }
+        advanced {
+            customAttributes: style="height: 44px; min-height: 44px;"
+        }
+        source {
+            formRegion: @workshop-details
+            column: FEATURED_FLG
+            dataType: varchar2
+        }
+        default {
+            type: static
+            staticValue: N
+        }
+    )
+
+    pageItem P9152_ICON_ID (
+        type: numberField
+        label {
+            label: Icon ID
+            alignment: left
+        }
+        layout {
+            sequence: 20
+            region: @workshop-description_1
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 3
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--large
+            ]
+            width: 5
+        }
+        validation {
+            maxLength: 5
+        }
+        source {
+            formRegion: @workshop-details
+            column: ICON_ID
+            dataType: number
+        }
+    )
+
+    pageItem P9152_ID (
+        type: displayOnly
+        label {
+            label: LiveLab ID
+            alignment: left
+        }
+        layout {
+            sequence: 10
+            region: @workshop-identity
+            slot: regionBody
+            alignment: left
+            columnSpan: 1
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--large
+            ]
+        }
+        source {
+            formRegion: @workshop-details
+            column: ID
+            dataType: number
+            primaryKey: true
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9152_JSON_ADVERT_DATE (
+        type: textField
+        label {
+            label: Advert Date
+            alignment: left
+        }
+        layout {
+            sequence: 90
+            region: @workshop
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 2
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--large
+            ]
+            width: 30
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            type: expression
+            plsqlExpression: json_value(:P9152_WORKSHOP_JSON, '$.AdvertDate')
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9152_JSON_ADVERT_ICON_LINK (
+        type: textField
+        label {
+            label: Advert Icon Link
+            alignment: left
+        }
+        layout {
+            sequence: 70
+            region: @workshop
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--large
+            ]
+            width: 30
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            type: expression
+            plsqlExpression: json_value(:P9152_WORKSHOP_JSON, '$.AdvertIcon')
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9152_JSON_ADVERT_LINK (
+        type: textField
+        label {
+            label: Advert Link
+            alignment: left
+        }
+        layout {
+            sequence: 60
+            region: @workshop
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--large
+            ]
+            width: 120
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            type: expression
+            plsqlExpression: json_value(:P9152_WORKSHOP_JSON, '$.AdvertLink')
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9152_JSON_ADVERT_LOCATION (
+        type: textField
+        label {
+            label: Advert Location
+            alignment: left
+        }
+        layout {
+            sequence: 100
+            region: @workshop
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 2
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--large
+            ]
+            width: 30
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            type: expression
+            plsqlExpression: json_value(:P9152_WORKSHOP_JSON, '$.AdvertLocation')
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9152_JSON_ADVERT_PRESENTER (
+        type: textField
+        label {
+            label: Advert Presenter
+            alignment: left
+        }
+        layout {
+            sequence: 110
+            region: @workshop
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--large
+            ]
+            width: 30
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            type: expression
+            plsqlExpression: json_value(:P9152_WORKSHOP_JSON, '$.AdvertPresenter')
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9152_JSON_ADVERT_THEME (
+        type: textField
+        label {
+            label: Advert Theme
+            alignment: left
+        }
+        layout {
+            sequence: 80
+            region: @workshop
+            slot: regionBody
+            alignment: left
+            columnSpan: 2
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--large
+            ]
+            width: 30
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            type: expression
+            plsqlExpression: json_value(:P9152_WORKSHOP_JSON, '$.AdvertTheme')
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9152_JSON_ALWAYSFREE_URL (
+        type: textField
+        label {
+            label: Always Free URL
+            alignment: left
+        }
+        layout {
+            sequence: 110
+            region: @workshop-livestack
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            used: always
+        }
+        serverSideCondition {
+            type: never
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9152_JSON_DESKTOP_APP1_URL (
+        type: textField
+        label {
+            label: Desktop App 1 Link
+            alignment: left
+        }
+        layout {
+            sequence: 30
+            region: @guides-links-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--large
+            ]
+            width: 30
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            type: expression
+            plsqlExpression: json_value(:P9152_LAB_URL, '$.DESKTOP_APP1_URL')
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9152_JSON_DESKTOP_APP2_URL (
+        type: textField
+        label {
+            label: Desktop App 2 Link
+            alignment: left
+        }
+        layout {
+            sequence: 40
+            region: @guides-links-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--large
+            ]
+            width: 30
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            type: expression
+            plsqlExpression: json_value(:P9152_LAB_URL, '$.DESKTOP_APP2_URL')
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9152_JSON_DESKTOP_GUIDE_URL (
+        type: textField
+        label {
+            label: Remote Desktop Guide
+            alignment: left
+        }
+        layout {
+            sequence: 10
+            region: @guides-links-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--large
+            ]
+            width: 30
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            type: expression
+            plsqlExpression: json_value(:P9152_LAB_URL, '$.DESKTOP_GUIDE_URL')
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9152_JSON_DISP_OCI_INSTR (
+        type: hidden
+        layout {
+            sequence: 120
+            region: @workshop-configuration
+            slot: regionBody
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            type: expression
+            plsqlExpression: nvl(json_value(:P9152_WORKSHOP_JSON, '$.DisplayOciInstructions'), 'Y')
+            used: always
+        }
+        default {
+            type: static
+            staticValue: Y
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9152_JSON_ENABLE_ADVERT (
+        type: switch
+        label {
+            label: Enable Advert
+            alignment: left
+        }
+        settings {
+            useDefaults: false
+            onValue: Y
+            onLabel: Yes
+            offValue: N
+            offLabel: No
+        }
+        layout {
+            sequence: 30
+            region: @workshop
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 2
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--large
+                margin-top-sm
+            ]
+        }
+        validation {
+            valueRequired: true
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            type: expression
+            plsqlExpression: nvl(json_value(:P9152_WORKSHOP_JSON, '$.AdvertEnabled'), 'N')
+            used: always
+        }
+        default {
+            type: static
+            staticValue: N
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9152_JSON_ENABLE_LIVELABS (
+        type: switch
+        label {
+            label: Run on Sandbox
+            alignment: left
+        }
+        settings {
+            useDefaults: false
+            onValue: Y
+            onLabel: Yes
+            offValue: N
+            offLabel: No
+        }
+        layout {
+            sequence: 10
+            region: @workshop-livestack
+            slot: regionBody
+            alignment: left
+            columnSpan: 2
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--large
+            ]
+        }
+        validation {
+            valueRequired: true
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            type: expression
+            plsqlExpression: nvl(json_value(:P9152_WORKSHOP_JSON, '$.LiveLabsGreenEnabled'), 'Y')
+            used: always
+        }
+        default {
+            type: static
+            staticValue: Y
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9152_JSON_ENABLE_LIVESQL (
+        type: switch
+        label {
+            label: Run on LiveSQL
+            alignment: left
+        }
+        settings {
+            useDefaults: false
+            onValue: Y
+            onLabel: Yes
+            offValue: N
+            offLabel: No
+        }
+        layout {
+            sequence: 50
+            region: @workshop-livestack
+            slot: regionBody
+            alignment: left
+            columnSpan: 2
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--large
+            ]
+        }
+        validation {
+            valueRequired: true
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            type: expression
+            plsqlExpression: nvl(json_value(:P9152_WORKSHOP_JSON, '$.LiveSQLEnabled'), 'Y')
+            used: always
+        }
+        default {
+            type: static
+            staticValue: Y
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9152_JSON_ENABLE_PAID (
+        type: switch
+        label {
+            label: Run on Your Tenancy
+            alignment: left
+        }
+        settings {
+            useDefaults: false
+            onValue: Y
+            onLabel: Yes
+            offValue: N
+            offLabel: No
+        }
+        layout {
+            sequence: 30
+            region: @workshop-livestack
+            slot: regionBody
+            alignment: left
+            columnSpan: 2
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--large
+            ]
+        }
+        validation {
+            valueRequired: true
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            type: expression
+            plsqlExpression: nvl(json_value(:P9152_WORKSHOP_JSON, '$.PaidTenancyEnabled'), 'Y')
+            used: always
+        }
+        default {
+            type: static
+            staticValue: Y
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9152_JSON_ENABLE_SPRINT (
+        type: switch
+        label {
+            label: Enable Sprint
+            alignment: left
+        }
+        settings {
+            useDefaults: false
+            onValue: Y
+            onLabel: Yes
+            offValue: N
+            offLabel: No
+        }
+        layout {
+            sequence: 20
+            region: @workshop
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 2
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--large
+            ]
+        }
+        source {
+            type: expression
+            plsqlExpression: nvl(json_value(:P9152_WORKSHOP_JSON, '$.SprintEnabled'), 'Y')
+        }
+    )
+
+    pageItem P9152_JSON_FREETIER_URL (
+        type: textField
+        label {
+            label: Freetier URL
+            alignment: left
+        }
+        layout {
+            sequence: 100
+            region: @workshop-livestack
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            used: always
+        }
+        serverSideCondition {
+            type: never
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9152_JSON_LIVELABS_URL (
+        type: textField
+        label {
+            label: Run on Sandbox Guide
+            alignment: left
+        }
+        layout {
+            sequence: 20
+            region: @workshop-livestack
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--large
+            ]
+            width: 30
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            type: expression
+            plsqlExpression: json_value(:P9152_LAB_URL, '$.LIVELABS_URL')
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9152_JSON_LIVESQL_URL (
+        type: textField
+        label {
+            label: Run on LiveSQL Guide
+            alignment: left
+        }
+        layout {
+            sequence: 60
+            region: @workshop-livestack
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--large
+            ]
+            width: 30
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            type: expression
+            plsqlExpression: json_value(:P9152_LAB_URL, '$.LIVESQL_URL')
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9152_JSON_NOVNC (
+        type: switch
+        label {
+            label: NoVNC Image
+            alignment: left
+        }
+        settings {
+            useDefaults: false
+            onValue: Y
+            onLabel: Yes
+            offValue: N
+            offLabel: No
+        }
+        layout {
+            sequence: 50
+            region: @workshop-configuration
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 3
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--large
+            ]
+        }
+        validation {
+            valueRequired: true
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            type: expression
+            plsqlExpression: nvl(json_value(:P9152_WORKSHOP_JSON, '$.NoVNC'), 'Y')
+            used: always
+        }
+        default {
+            type: static
+            staticValue: Y
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9152_JSON_PAID_URL (
+        type: textField
+        label {
+            label: Run on Your Tenancy Guide
+            alignment: left
+        }
+        layout {
+            sequence: 40
+            region: @workshop-livestack
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--large
+            ]
+            width: 30
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            type: expression
+            plsqlExpression: json_value(:P9152_LAB_URL, '$.PAID_URL')
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9152_JSON_PRIMARY_PRODUCT (
+        type: textField
+        label {
+            label: Primary Product
+            alignment: left
+        }
+        layout {
+            sequence: 10
+            region: @workshop
+            slot: regionBody
+            alignment: left
+            columnSpan: 2
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--large
+                margin-right-md
+            ]
+            width: 30
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            type: expression
+            plsqlExpression: json_value(:P9152_WORKSHOP_JSON, '$.PrimaryProduct')
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9152_JSON_YOUTUBE_LINK (
+        type: textField
+        label {
+            label: Youtube Link
+            alignment: left
+        }
+        layout {
+            sequence: 30
+            region: @workshop-description_1
+            slot: regionBody
+            alignment: left
+            columnSpan: 6
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--large
+            ]
+            width: 30
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            type: expression
+            plsqlExpression: json_value(:P9152_WORKSHOP_JSON, '$.YoutubeLink')
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9152_LAB_URL (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 170
+            region: @workshop-details
+            slot: regionBody
+        }
+        source {
+            formRegion: @workshop-details
+            column: LAB_URL
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9152_LIVESTACK_URL (
+        type: textField
+        label {
+            label: LiveStack Demo Link
+            alignment: left
+        }
+        layout {
+            sequence: 50
+            region: @guides-links-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+                t-Form-fieldContainer--large
+            ]
+            width: 100
+        }
+        validation {
+            maxLength: 1000
+        }
+        source {
+            formRegion: @workshop-details
+            column: LIVESTACK_DEMO_URL
+            dataType: varchar2
+        }
+    )
+
+    pageItem P9152_MAX_PARALLEL_NON_EC (
+        type: numberField
+        label {
+            label: Max Concurrent Users
+            alignment: left
+        }
+        settings {
+            minValue: 1
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 70
+            region: @workshop-configuration
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 3
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--large
+            ]
+            width: 30
+        }
+        source {
+            formRegion: @workshop-details
+            column: MAX_PARALLEL_NON_EC
+            dataType: number
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9152_NAME (
+        type: textField
+        label {
+            label: Title
+            alignment: left
+        }
+        settings {
+            trimSpaces: none
+        }
+        layout {
+            sequence: 70
+            region: @workshop-identity
+            slot: regionBody
+            alignment: left
+            columnSpan: 4
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+                t-Form-fieldContainer--large
+            ]
+            width: 100
+        }
+        validation {
+            valueRequired: true
+            maxLength: 200
+        }
+        source {
+            formRegion: @workshop-details
+            column: NAME
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9152_ORIGINAL_TYPE_ID (
+        type: hidden
+        layout {
+            sequence: 315
+            region: @workshop-details
+            slot: regionBody
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery: select type_id from ll_workshops where id = :P9152_ID
+            used: always
+        }
+        sessionState {
+            storage: request
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P9152_ID
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9152_PACKAGE_TYPE (
+        type: hidden
+        layout {
+            sequence: 140
+            region: @workshop-details
+            slot: regionBody
+        }
+        source {
+            formRegion: @workshop-details
+            column: PACKAGE_TYPE
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9152_PAGE_TITLE (
+        type: hidden
+        layout {
+            sequence: 316
+            region: @workshop-details
+            slot: regionBody
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9152_PROGRAM_CODE (
+        type: hidden
+        layout {
+            sequence: 180
+            region: @workshop-details
+            slot: regionBody
+        }
+        source {
+            formRegion: @workshop-details
+            column: PROGRAM_CODE
+            dataType: varchar2
+        }
+    )
+
+    pageItem P9152_SANDBOX_CONFIG (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 310
+            region: @workshop-details
+            slot: regionBody
+        }
+        source {
+            formRegion: @workshop-details
+            column: SANDBOX_CONFIG
+            dataType: clob
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9152_TENANCIES_ALLOWED (
+        type: textarea
+        label {
+            label: Tenancies Allowed
+            alignment: left
+        }
+        layout {
+            sequence: 90
+            region: @workshop-configuration
+            slot: regionBody
+            alignment: left
+            columnSpan: 6
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+                t-Form-fieldContainer--large
+            ]
+            height: 2
+        }
+        source {
+            formRegion: @workshop-details
+            column: TENANCIES_ALLOWED
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9152_TERRAFORM_CONFIG (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 320
+            region: @workshop-details
+            slot: regionBody
+        }
+        source {
+            formRegion: @workshop-details
+            column: TERRAFORM_VALUES_JSON
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9152_TERRAFORM_CONFIG_DISPLAY (
+        type: textarea
+        label {
+            label: Terraform Config
+            alignment: left
+        }
+        layout {
+            sequence: 100
+            region: @workshop-configuration
+            slot: regionBody
+            alignment: left
+            columnSpan: 12
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            width: 30
+            height: 10
+        }
+        source {
+            type: item
+            item: P9152_TERRAFORM_CONFIG
+            used: always
+        }
+        serverSideCondition {
+            type: never
+        }
+        readOnly {
+            type: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9152_TIME_AVAILABLE (
+        type: numberField
+        label {
+            label: Duration (Hours)
+            alignment: left
+        }
+        settings {
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 60
+            region: @workshop-configuration
+            slot: regionBody
+            alignment: left
+            columnSpan: 3
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--large
+            ]
+            width: 32
+        }
+        source {
+            formRegion: @workshop-details
+            column: TIME_AVAILABLE
+            dataType: number
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9152_TIME_IN_HOURS (
+        type: numberField
+        label {
+            label: Expected Completion Time  (Hours)
+            alignment: left
+        }
+        settings {
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 10
+            region: @workshop-description_1
+            slot: regionBody
+            alignment: left
+            columnSpan: 3
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--large
+            ]
+            width: 5
+        }
+        validation {
+            maxLength: 255
+        }
+        source {
+            formRegion: @workshop-details
+            column: TIME_IN_HOURS
+            dataType: number
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9152_TRACKING_URL (
+        type: hidden
+        layout {
+            sequence: 190
+            region: @workshop-details
+            slot: regionBody
+        }
+        source {
+            formRegion: @workshop-details
+            column: TRACKING_URL
+            dataType: varchar2
+        }
+    )
+
+    pageItem P9152_TYPE_ID (
+        type: selectList
+        label {
+            label: LiveLab Type
+            alignment: left
+        }
+        lov {
+            type: sharedComponent
+            lov: @workshop-types
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 40
+            region: @workshop-identity
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 1
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+                t-Form-fieldContainer--large
+            ]
+            height: 1
+        }
+        advanced {
+            customAttributes: style="height: 44px; min-height: 44px;"
+        }
+        source {
+            formRegion: @workshop-details
+            column: TYPE_ID
+            dataType: number
+        }
+        default {
+            type: sqlQuerySingleValue
+            sqlQuerySingleValue: select id from ll_types where name = 'Workshop';
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9152_WORKSHOP_JSON (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 300
+            region: @workshop-details
+            slot: regionBody
+        }
+        source {
+            formRegion: @workshop-details
+            column: WORKSHOP_JSON
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9152_WORKSHOP_OWNER_GROUP (
+        type: textField
+        label {
+            label: Owner Group
+            alignment: left
+        }
+        layout {
+            sequence: 90
+            region: @workshop-identity
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 2
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+                t-Form-fieldContainer--large
+            ]
+            width: 32
+        }
+        validation {
+            maxLength: 4000
+        }
+        source {
+            formRegion: @workshop-details
+            column: WS_OWNER_GROUP
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9152_WORKSHOP_UID (
+        type: textField
+        label {
+            label: Workshop ID
+            alignment: left
+        }
+        layout {
+            sequence: 20
+            region: @workshop-identity
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 1
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--large
+            ]
+            width: 30
+        }
+        source {
+            formRegion: @workshop-details
+            column: WORKSHOP_UID
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button cancel (
+        buttonName: CANCEL
+        label: Cancel
+        layout {
+            sequence: 80
+            region: @title-bar
+            slot: close
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 9151
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button canceleventjson (
+        buttonName: CancelEventJson
+        label: Cancel
+        layout {
+            sequence: 30
+            region: @workshop-json
+            slot: belowBox
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button create (
+        buttonName: CREATE
+        label: Create
+        layout {
+            sequence: 100
+            region: @title-bar
+            slot: create
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: insert
+        }
+        serverSideCondition {
+            type: itemIsNull
+            item: P9152_ID
+        }
+    )
+
+    button delete (
+        buttonName: DELETE
+        label: Delete
+        layout {
+            sequence: 70
+            region: @title-bar
+            slot: delete
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectUrl
+            targetUrl: javascript:apex.confirm(htmldb_delete_message,'DELETE');
+            executeValidations: false
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: delete
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P9152_ID
+        }
+    )
+
+    button save (
+        buttonName: SAVE
+        label: Apply Changes
+        layout {
+            sequence: 90
+            region: @title-bar
+            slot: change
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: update
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P9152_ID
+        }
+    )
+
+    button submiteventjson (
+        buttonName: SubmitEventJson
+        label: Submit
+        layout {
+            sequence: 10
+            region: @workshop-json
+            slot: belowBox
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button vcn-helper (
+        buttonName: VCN-Helper
+        label: Vcn-helper
+        layout {
+            sequence: 10
+            region: @setup-steps
+            slot: edit
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 9201
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    dynamicAction ckeditor-change-fix (
+        name: Ckeditor change fix
+        execution {
+            sequence: 70
+        }
+        when {
+            event: ready
+        }
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    $('.rich_text_editor').each( function (index, elem) {
+                        
+                        function strip( pValue ){
+                            return pValue.replace(/[\n\t\s]/g, '');  
+                        }
+                    
+                        let elemId    = elem.id,
+                            initValue = strip(elem.defaultValue);
+                        
+                        apex.item(elemId).isChanged = function () {
+                           return initValue !== strip(this.getValue());
+                        }
+                    });
+                    ```
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    dynamicAction closeworkshopjson (
+        name: CloseWorkshopJson
+        execution {
+            sequence: 60
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @canceleventjson
+        }
+
+        action native-close-region (
+            action: closeRegion
+            affectedElements {
+                selectionType: region
+                region: @workshop-json
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction submitpressed (
+        name: SubmitPressed
+        execution {
+            sequence: 50
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @submiteventjson
+        }
+
+        action native-close-region (
+            action: closeRegion
+            affectedElements {
+                selectionType: region
+                region: @workshop-json
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    declare
+                    
+                    -- WORKSHOP JSON DETAILS
+                    
+                      v_new_json  clob;
+                    begin
+                      v_new_json := JSON_OBJECT ('PrimaryProduct'         value :P9152_JSON_PRIMARY_PRODUCT    ,
+                                                 'YoutubeLink'            value :P9152_JSON_YOUTUBE_LINK       ,
+                                                 'AlwaysFreeEnabled'      value :P9152_JSON_ENABLE_ALWAYSFREE  ,
+                                                 'FreeTierEnabled'        value :P9152_JSON_ENABLE_FREETIER    ,
+                                                 'PaidTenancyEnabled'     value :P9152_JSON_ENABLE_PAID        ,
+                                                 'LiveLabsGreenEnabled'   value :P9152_JSON_ENABLE_LIVELABS    ,
+                                                 'LiveSQLEnabled'         value :P9152_JSON_ENABLE_LIVESQL     ,
+                                                 'SprintEnabled'          value :P9152_JSON_ENABLE_SPRINT      ,
+                                                 'DisplayOciInstructions' value :P9152_JSON_DISP_OCI_INSTR     ,
+                                                 'NoVNC'                  value :P9152_JSON_NOVNC              ,
+                                                 'AdvertEnabled'          value :P9152_JSON_ENABLE_ADVERT      ,
+                                                 'AdvertLink'             value :P9152_JSON_ADVERT_LINK        ,
+                                                 'AdvertIcon'             value :P9152_JSON_ADVERT_ICON_LINK   ,
+                                                 'AdvertTheme'            value :P9152_JSON_ADVERT_THEME       ,
+                                                 'AdvertDate'             value :P9152_JSON_ADVERT_DATE        ,
+                                                 'AdvertLocation'         value :P9152_JSON_ADVERT_LOCATION    ,
+                                                 'AdvertPresenter'        value :P9152_JSON_ADVERT_PRESENTER  
+                                                  ABSENT ON NULL );
+                    
+                      v_new_json := replace(v_new_json,'{}','');
+                    
+                      if nvl(:P9152_WORKSHOP_JSON,'X') <> nvl(v_new_json,'X') then 
+                        :P9152_WORKSHOP_JSON := v_new_json;
+                      end if;
+                    
+                    end;
+                    
+                    ```
+                itemsToSubmit: [
+                    P9152_JSON_YOUTUBE_LINK
+                    P9152_JSON_ENABLE_PAID
+                    P9152_JSON_ENABLE_SPRINT
+                    P9152_JSON_ENABLE_LIVELABS
+                    P9152_JSON_ENABLE_ADVERT
+                    P9152_JSON_ADVERT_LINK
+                    P9152_JSON_ADVERT_ICON_LINK
+                    P9152_JSON_ADVERT_THEME
+                    P9152_JSON_ADVERT_DATE
+                    P9152_JSON_ADVERT_LOCATION
+                    P9152_JSON_ADVERT_PRESENTER
+                    P9152_JSON_DISP_OCI_INSTR
+                    P9152_JSON_NOVNC
+                    P9152_JSON_PRIMARY_PRODUCT
+                    P9152_JSON_ENABLE_LIVESQL
+                ]
+                itemsToReturn: P9152_WORKSHOP_JSON
+                showProcessing: true
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: items
+                items: P9152_WORKSHOP_JSON_DISPLAY
+            }
+            execution {
+                sequence: 30
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    validation time-available-not-1-5x-workshop-time (
+        name: Time Available not >1.5x Workshop Time
+        execution {
+            sequence: 40
+        }
+        validation {
+            plsqlExpression: (:P9152_TIME_IN_HOURS*1.5 >= :P9152_TIME_AVAILABLE)
+        }
+        error {
+            errorMessage: "Time Available should not be more than 1.5x the value of Workshop Time. "
+            associatedItem: @P9152_TIME_AVAILABLE
+        }
+    )
+
+    validation time-available-not-null (
+        name: Time Available Not Null
+        execution {
+            sequence: 20
+        }
+        validation {
+            type: itemIsNotNull
+            item: P9152_TIME_AVAILABLE
+            alwaysExecute: true
+        }
+        error {
+            errorMessage: "Time Available must be declared. Should not be more than 1.5x the Workshop Time field. "
+            associatedItem: @P9152_TIME_AVAILABLE
+        }
+    )
+
+    validation workshop-time-not-null (
+        name: Workshop Time Not Null
+        execution {
+            sequence: 10
+        }
+        validation {
+            type: itemIsNotNull
+            item: P9152_TIME_IN_HOURS
+            alwaysExecute: true
+        }
+        error {
+            errorMessage: Workshop Time must be declared
+            associatedItem: @P9152_TIME_IN_HOURS
+        }
+    )
+
+    computation p9152-desktop-guide-url (
+        itemName: P9152_DESKTOP_GUIDE_URL
+        execution {
+            sequence: 10
+        }
+        computation {
+            type: expression
+            plsqlExpression: json_value(:P9152_LAB_URL,'$.DESKTOP_GUIDE_URL')
+        }
+    )
+
+    process custom-cidrs-save-interactive-grid-data (
+        name: Custom CIDRs - Save Interactive Grid Data
+        type: interactiveGridAutoRowProcessing
+        editableRegion: @custom-cidrs
+        execution {
+            sequence: 50
+        }
+        advanced {
+            executionMappingIdentifier: 4125454036755859
+        }
+    )
+
+    process emails-save-interactive-grid-data (
+        name: Emails - Save Interactive Grid Data
+        type: interactiveGridAutoRowProcessing
+        editableRegion: @emails
+        execution {
+            sequence: 70
+        }
+        advanced {
+            executionMappingIdentifier: 4163503061755872
+        }
+    )
+
+    process images-save-interactive-grid-data (
+        name: Images - Save Interactive Grid Data
+        type: interactiveGridAutoRowProcessing
+        editableRegion: @images
+        target {
+            targetType: plsqlCode
+            dmlPlsqlCode:
+                ```plsql
+                BEGIN
+                    -- 1. Access the row status: U (update), C (create), D (delete)
+                    IF :APEX$ROW_STATUS = 'C' THEN
+                      -- Run procedure for Created rows
+                      INSERT INTO LL_WORKSHOP_IMAGES VALUES (:ID, :WORKSHOP_ID, :IMAGE_ID, :ACTIVE_FLG, 0) RETURNING ID INTO :ID;
+                      ll_pkg_ords.createImageConnection(:ID);
+                
+                    ELSIF :APEX$ROW_STATUS = 'U' THEN
+                      -- Run procedure for Updated rows
+                      update ll_workshop_images set
+                        workshop_id = :WORKSHOP_ID,
+                        image_id = :IMAGE_ID,
+                        active_flg = :ACTIVE_FLG
+                      where id = :ID
+                      RETURNING ID INTO :ID;
+                      ll_pkg_ords.updateImageConnection(:ID);
+                
+                    ELSIF :APEX$ROW_STATUS = 'D' THEN
+                      delete from ll_workshop_images where id = :ID;
+                      ll_pkg_ords.deleteImageConnection(:ID);
+                    END IF;
+                EXCEPTION
+                    WHEN OTHERS THEN
+                        -- Build comprehensive error message
+                        DECLARE
+                            v_error_msg VARCHAR2(32767);
+                        BEGIN
+                            v_error_msg := 'Error in Images DML Process' || CHR(10) ||
+                                'SQLCODE: ' || SQLCODE || CHR(10) ||
+                                'SQLERRM: ' || SQLERRM || CHR(10) ||
+                                'Error Stack: ' || CHR(10) || DBMS_UTILITY.FORMAT_ERROR_STACK || CHR(10) ||
+                                'Error Backtrace: ' || CHR(10) || DBMS_UTILITY.FORMAT_ERROR_BACKTRACE || CHR(10) ||
+                                'Call Stack: ' || CHR(10) || DBMS_UTILITY.FORMAT_CALL_STACK || CHR(10) ||
+                                'Row Status: ' || :APEX$ROW_STATUS || CHR(10) ||
+                                'ID: ' || :ID || CHR(10) ||
+                                'WORKSHOP_ID: ' || :WORKSHOP_ID || CHR(10) ||
+                                'IMAGE_ID: ' || :IMAGE_ID || CHR(10) ||
+                                'ACTIVE_FLG: ' || :ACTIVE_FLG;
+                            
+                            -- Log to APEX debug
+                            APEX_DEBUG.ERROR(v_error_msg);
+                            
+                            -- Re-raise with full context
+                            RAISE_APPLICATION_ERROR(-20001, v_error_msg);
+                        END;
+                END;
+                ```
+        }
+        execution {
+            sequence: 100
+        }
+        advanced {
+            executionMappingIdentifier: 4150243294755868
+        }
+    )
+
+    process initialize-form-workshop-details (
+        name: Initialize form Workshop details
+        type: formInitialization
+        formRegion: @workshop-details
+        execution {
+            sequence: 10
+            point: beforeHeader
+        }
+        advanced {
+            executionMappingIdentifier: 4190047239755880
+        }
+    )
+
+    process ll-workshop-regions-save-interactive-grid-data (
+        name: LL_WORKSHOP_REGIONS - Save Interactive Grid Data
+        type: interactiveGridAutoRowProcessing
+        editableRegion: @specific-tenancy-and-region-restrictions
+        execution {
+            sequence: 40
+        }
+        advanced {
+            executionMappingIdentifier: 4172146205755875
+        }
+    )
+
+    process ll-workshop-requires-save-interactive-grid-data (
+        name: LL_WORKSHOP_REQUIRES - Save Interactive Grid Data
+        type: interactiveGridAutoRowProcessing
+        editableRegion: @resources
+        execution {
+            sequence: 30
+        }
+        advanced {
+            executionMappingIdentifier: 4154546510755869
+        }
+    )
+
+    process policies-save-interactive-grid-data (
+        name: Policies - Save Interactive Grid Data
+        type: interactiveGridAutoRowProcessing
+        editableRegion: @policies
+        execution {
+            sequence: 60
+        }
+        advanced {
+            executionMappingIdentifier: 4159675708755871
+        }
+    )
+
+    process process-form-workshop-details (
+        name: Process form Workshop details
+        type: formAutoRowProcessing
+        formRegion: @workshop-details
+        execution {
+            sequence: 90
+        }
+        advanced {
+            executionMappingIdentifier: 4190461535755880
+        }
+    )
+
+    process set-workshop-page-title (
+        name: Set Workshop Page Title
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                begin
+                  :P9152_PAGE_TITLE := case
+                                         when :P9152_ID is null then 'New LiveLab'
+                                         else :P9152_NAME
+                                       end;
+                end;
+                ```
+        }
+        execution {
+            sequence: 20
+            point: beforeHeader
+        }
+        advanced {
+            executionMappingIdentifier: 260716185100002
+        }
+    )
+
+    process setup-livestack-demo-on-type-transition (
+        name: Set Up New LiveStack Demo Workshop
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                declare
+                  l_livestack_demo_type_id ll_types.id%type;
+                begin
+                  select id
+                    into l_livestack_demo_type_id
+                    from ll_types
+                   where name = 'LiveStack Demo';
+                
+                  if :P9152_TYPE_ID = l_livestack_demo_type_id
+                     and nvl(:P9152_ORIGINAL_TYPE_ID, -1) <> l_livestack_demo_type_id
+                  then
+                    setup_livestack_demo_sandbox(:P9152_ID);
+                  end if;
+                end;
+                ```
+        }
+        execution {
+            sequence: 95
+        }
+        advanced {
+            executionMappingIdentifier: 260716184100006
+        }
+        serverSideCondition {
+            type: requestIsContainedInValue
+            value: CREATE,SAVE
+        }
+    )
+
+    process tags-save-interactive-grid-data (
+        name: Tags - Save Interactive Grid Data
+        type: interactiveGridAutoRowProcessing
+        editableRegion: @tags
+        execution {
+            sequence: 80
+        }
+        advanced {
+            executionMappingIdentifier: 4167465899755873
+        }
+    )
+
+    process update-lab-url-json (
+        name: Update Workshop Guide JSON
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                declare
+                
+                -- WORKSHOP JSON DETAILS
+                
+                  v_new_json  clob;
+                begin
+                  v_new_json := JSON_OBJECT ('PrimaryProduct'         value :P9152_JSON_PRIMARY_PRODUCT    ,
+                                             'YoutubeLink'            value :P9152_JSON_YOUTUBE_LINK       ,
+                                             'AlwaysFreeEnabled'      value :P9152_JSON_ENABLE_ALWAYSFREE  ,
+                                             'FreeTierEnabled'        value :P9152_JSON_ENABLE_FREETIER    ,
+                                             'PaidTenancyEnabled'     value :P9152_JSON_ENABLE_PAID        ,
+                                             'LiveLabsGreenEnabled'   value :P9152_JSON_ENABLE_LIVELABS    ,
+                                             'LiveSQLEnabled'         value :P9152_JSON_ENABLE_LIVESQL     ,
+                                             'SprintEnabled'          value :P9152_JSON_ENABLE_SPRINT      ,
+                                             'DisplayOciInstructions' value :P9152_JSON_DISP_OCI_INSTR     ,
+                                             'NoVNC'                  value :P9152_JSON_NOVNC              ,
+                                             'AdvertEnabled'          value :P9152_JSON_ENABLE_ADVERT      ,
+                                             'AdvertLink'             value :P9152_JSON_ADVERT_LINK        ,
+                                             'AdvertIcon'             value :P9152_JSON_ADVERT_ICON_LINK   ,
+                                             'AdvertTheme'            value :P9152_JSON_ADVERT_THEME       ,
+                                             'AdvertDate'             value :P9152_JSON_ADVERT_DATE        ,
+                                             'AdvertLocation'         value :P9152_JSON_ADVERT_LOCATION    ,
+                                             'AdvertPresenter'        value :P9152_JSON_ADVERT_PRESENTER  
+                                              ABSENT ON NULL );
+                
+                  v_new_json := replace(v_new_json,'{}','');
+                
+                  if nvl(:P9152_WORKSHOP_JSON,'X') <> nvl(v_new_json,'X') then 
+                    :P9152_WORKSHOP_JSON := v_new_json;
+                  end if;
+                
+                end;
+                
+                ```
+        }
+        execution {
+            sequence: 10
+            point: afterSubmit
+        }
+        advanced {
+            executionMappingIdentifier: 6995428168770610
+        }
+    )
+
+    process update-sandbox-configuration-json (
+        name: Update Sandbox Configuration JSON
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                declare
+                  v_new_json clob;
+                begin
+                  v_new_json := json_object(
+                    'displayLogin'     value :P9152_DISPLAY_LOGIN,
+                    'displayTenancy'   value :P9152_DISPLAY_TENANCY,
+                    'displayTerraform' value :P9152_DISPLAY_TERRAFORM,
+                    'displayInstances' value :P9152_DISPLAY_INSTANCE
+                    absent on null
+                  );
+                
+                  v_new_json := replace(v_new_json, '{}', '');
+                
+                  if nvl(:P9152_SANDBOX_CONFIG, 'X') <> nvl(v_new_json, 'X') then
+                    :P9152_SANDBOX_CONFIG := v_new_json;
+                  end if;
+                end;
+                ```
+        }
+        execution {
+            sequence: 30
+            point: afterSubmit
+        }
+        advanced {
+            executionMappingIdentifier: 6995733758770613
+        }
+    )
+
+    process update-workshop-configuration-json (
+        name: Update Workshop Configuration JSON
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                declare
+                
+                -- WORKSHOP JSON DETAILS
+                
+                  v_new_json  clob;
+                begin
+                  v_new_json := JSON_OBJECT ('PrimaryProduct'         value :P9152_JSON_PRIMARY_PRODUCT    ,
+                                             'YoutubeLink'            value :P9152_JSON_YOUTUBE_LINK       ,
+                                             'AlwaysFreeEnabled'      value :P9152_JSON_ENABLE_ALWAYSFREE  ,
+                                             'FreeTierEnabled'        value :P9152_JSON_ENABLE_FREETIER    ,
+                                             'PaidTenancyEnabled'     value :P9152_JSON_ENABLE_PAID        ,
+                                             'LiveLabsGreenEnabled'   value :P9152_JSON_ENABLE_LIVELABS    ,
+                                             'LiveSQLEnabled'         value :P9152_JSON_ENABLE_LIVESQL     ,
+                                             'SprintEnabled'          value :P9152_JSON_ENABLE_SPRINT      ,
+                                             'DisplayOciInstructions' value :P9152_JSON_DISP_OCI_INSTR     ,
+                                             'NoVNC'                  value :P9152_JSON_NOVNC              ,
+                                             'AdvertEnabled'          value :P9152_JSON_ENABLE_ADVERT      ,
+                                             'AdvertLink'             value :P9152_JSON_ADVERT_LINK        ,
+                                             'AdvertIcon'             value :P9152_JSON_ADVERT_ICON_LINK   ,
+                                             'AdvertTheme'            value :P9152_JSON_ADVERT_THEME       ,
+                                             'AdvertDate'             value :P9152_JSON_ADVERT_DATE        ,
+                                             'AdvertLocation'         value :P9152_JSON_ADVERT_LOCATION    ,
+                                             'AdvertPresenter'        value :P9152_JSON_ADVERT_PRESENTER  
+                                              ABSENT ON NULL );
+                
+                  v_new_json := replace(v_new_json,'{}','');
+                
+                  if nvl(:P9152_WORKSHOP_JSON,'X') <> nvl(v_new_json,'X') then 
+                    :P9152_WORKSHOP_JSON := v_new_json;
+                  end if;
+                
+                end;
+                
+                ```
+        }
+        execution {
+            sequence: 20
+            point: afterSubmit
+        }
+        advanced {
+            executionMappingIdentifier: 6995555864770611
+        }
+    )
+
+    process workshop-setup-steps-save-interactive-grid-data (
+        name: Workshop Setup Steps - Save Interactive Grid Data
+        type: interactiveGridAutoRowProcessing
+        editableRegion: @setup-steps
+        execution {
+            sequence: 20
+        }
+        advanced {
+            executionMappingIdentifier: 4145935833755866
+        }
+    )
+
+    branch (
+        name: Go To Page 151
+        execution {
+            sequence: 1
+        }
+        behavior {
+            target: {
+                page: 9151
+            }
+        }
+    )
+
+)
+

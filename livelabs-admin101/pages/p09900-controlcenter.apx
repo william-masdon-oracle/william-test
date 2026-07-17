@@ -1,0 +1,1026 @@
+page 9900 (
+    name: Controlcenter
+    alias: CONTROLCENTER
+    title: Controlcenter
+    appearance {
+        pageTemplate: @standard-trustarc
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+        warnOnUnsavedChanges: false
+    }
+    security {
+        authorizationScheme: @superrrrr-user
+        formAutoComplete: false
+    }
+
+    region alternative-url (
+        name: Alternative URL
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <a href="&P9900_APEX." target="_blank">APEX link</a><br>
+                <a href="&P9900_SSO." target="_blank">SSO link</a><br>
+                
+                ```
+        }
+        layout {
+            sequence: 60
+            slot: contentBody
+            startNewRow: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region backup-data (
+        name: Backup_data
+        type: staticContent
+        layout {
+            sequence: 40
+            slot: contentBody
+            columnSpan: 3
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region jobs (
+        name: Jobs
+        type: staticContent
+        layout {
+            sequence: 30
+            slot: contentBody
+            startNewRow: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region panic (
+        name: Panic
+        type: staticContent
+        source {
+            htmlCode: <br>The buttons in this field drop and create the table LL_PANIC_DO_NOT_DELETE. <br><br>When the LL_PANIC_DO_NOT_DELETE is dropped, all packaged will become invalid and all processing will stop. Create the table again (no matter which layout) and packages will be valid again.
+        }
+        layout {
+            sequence: 20
+            slot: contentBody
+            startNewRow: false
+            columnSpan: 3
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region reservation-steps (
+        name: Reservation Steps
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: contentBody
+            columnSpan: 3
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region various (
+        name: Various
+        type: staticContent
+        layout {
+            sequence: 50
+            slot: contentBody
+            startNewRow: false
+            columnSpan: 3
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    pageItem P9900_APEX (
+        type: hidden
+        layout {
+            sequence: 10
+            region: @alternative-url
+            slot: regionBody
+        }
+        default {
+            type: expression
+            plsqlExpression: apex_util.host_url('NULL')||'pls/apex/f?p=&APP_ID.:9900::APEX_AUTHENTICATION=Apex%20Express'
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9900_ENABLE_JOBS (
+        type: radioGroup
+        label {
+            label: Enable new jobs
+            alignment: left
+        }
+        settings {
+            noOfCols: 2
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC:Yes;TRUE,No;FALSE
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 70
+            region: @jobs
+            slot: regionBody
+            alignment: left
+            columnSpan: 2
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        validation {
+            valueRequired: true
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery: select value from ll_system_parameters where name='ENABLE_JOBS'
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9900_JOBS (
+        type: selectList
+        label {
+            label: Jobs
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery: select job_name || '(' || enabled || ',' || state ||')', job_name from user_scheduler_jobs
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 10
+            region: @jobs
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9900_RESERVATION_ID (
+        type: selectList
+        label {
+            label: Reservation ID
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select llr.id||' - '||case nvl(llr.title,'Empty') when 'Empty' then llw.name else llr.title end || 
+                       ' - '||llr.owner1|| ' - ' || to_char(llr.start_gmt,'DD-Mon HH24:MI') as display_value, llr.id as return_value
+                from ll_reservations_vw llr, ll_workshops llw
+                where llr.workshop_id = llw.id
+                and start_gmt > sysdate-20
+                order by llr.id desc
+                ```
+        }
+        layout {
+            sequence: 10
+            region: @reservation-steps
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9900_SSO (
+        type: hidden
+        layout {
+            sequence: 20
+            region: @alternative-url
+            slot: regionBody
+        }
+        default {
+            type: expression
+            plsqlExpression: apex_util.host_url('NULL')||'pls/apex/f?p=&APP_ID.:9900::APEX_AUTHENTICATION=Oracle%20SSO'
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button backup (
+        buttonName: Backup
+        label: Backup Data
+        layout {
+            sequence: 10
+            region: @backup-data
+            slot: regionBody
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button createdummy (
+        buttonName: CreateDummy
+        label: Create Panic table
+        layout {
+            sequence: 20
+            region: @panic
+            slot: regionBody
+            startNewRow: false
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button delete (
+        buttonName: Delete
+        label: Delete
+        layout {
+            sequence: 50
+            region: @reservation-steps
+            slot: regionBody
+            startNewRow: false
+            newColumn: false
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button disable (
+        buttonName: Disable
+        label: Disable
+        layout {
+            sequence: 30
+            region: @jobs
+            slot: regionBody
+            startNewRow: false
+            newColumn: false
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button drop (
+        buttonName: Drop
+        label: Drop
+        layout {
+            sequence: 50
+            region: @jobs
+            slot: regionBody
+            startNewRow: false
+            newColumn: false
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+            requiresConfirmation: true
+        }
+        confirmation {
+            message: Are you sure you want to drop this job? This will permanently delete the job and it's information from the database.
+            style: danger
+        }
+    )
+
+    button dropdummy (
+        buttonName: DropDummy
+        label: Drop Panic table
+        layout {
+            sequence: 10
+            region: @panic
+            slot: regionBody
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button enable (
+        buttonName: Enable
+        label: Enable
+        layout {
+            sequence: 20
+            region: @jobs
+            slot: regionBody
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button provision (
+        buttonName: Provision
+        label: Provision
+        layout {
+            sequence: 30
+            region: @reservation-steps
+            slot: regionBody
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button run (
+        buttonName: Run
+        label: Run
+        layout {
+            sequence: 60
+            region: @jobs
+            slot: regionBody
+            startNewRow: false
+            newColumn: false
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button setup (
+        buttonName: Setup
+        label: Setup
+        layout {
+            sequence: 40
+            region: @reservation-steps
+            slot: regionBody
+            startNewRow: false
+            newColumn: false
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button stop (
+        buttonName: Stop
+        label: Stop / Kill
+        layout {
+            sequence: 40
+            region: @jobs
+            slot: regionBody
+            startNewRow: false
+            newColumn: false
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button truncate-logging (
+        buttonName: Truncate-Logging
+        label: Truncate Logging
+        layout {
+            sequence: 10
+            region: @various
+            slot: regionBody
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    dynamicAction backup (
+        name: Backup
+        execution {
+            sequence: 130
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @backup
+        }
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    ll_pkg_admin.create_job ( p_type     => 'BACKUP',
+                                              p_parameters => '{"P1" : "'||
+                                                              case SYS_CONTEXT('APEX$SESSION','WORKSPACE_ID')
+                                                                 when 9449295532339933007 then 36727
+                                                                 else 133 end||'"}',
+                                              p_jobname    => 'BACKUP_CTRL' );
+                    ```
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction changed (
+        name: Changed
+        execution {
+            sequence: 120
+        }
+        when {
+            selectionType: items
+            items: P9900_ENABLE_JOBS
+        }
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                      declare
+                        v_jobstates  varchar2(100);
+                      begin
+                        if :P9900_ENABLE_JOBS = 'TRUE' then
+                          ll_pkg_security.change_jobstates (p_jobs_enabled => 'TRUE');
+                        else
+                          ll_pkg_security.change_jobstates (p_jobs_enabled => 'FALSE');
+                        end if;
+                      end;
+                        
+                    ```
+                itemsToSubmit: P9900_ENABLE_JOBS
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: items
+                items: P9900_JOBS
+            }
+            execution {
+                sequence: 30
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction createme (
+        name: CreateMe
+        execution {
+            sequence: 40
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @createdummy
+        }
+
+        action native-alert (
+            action: alert
+            settings {
+                message: Table LL_PANIC_DO_NOT_DELETE has been created again; all packages should work again.
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode: execute immediate('create table LL_PANIC_DO_NOT_DELETE (do_not_drop_me number)');
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction deleteitems (
+        name: DeleteItems
+        execution {
+            sequence: 50
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @delete
+        }
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                          ll_pkg_admin.create_job (p_type        => 'CLEAN_RES_OBJECTS',
+                                                   p_parameters  => json_object('P1' value :P9900_RESERVATION_ID),
+                                                   p_jobname     => replace('CLEANOBJ'||:P9900_RESERVATION_ID,' ',''));
+                    
+                    ```
+                itemsToSubmit: P9900_RESERVATION_ID
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction drop (
+        name: Drop
+        execution {
+            sequence: 100
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @drop
+        }
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    DBMS_SCHEDULER.drop_job (job_name => :P9900_JOBS );
+                    
+                    ```
+                itemsToSubmit: P9900_JOBS
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: items
+                items: P9900_JOBS
+            }
+            execution {
+                sequence: 30
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction dropme (
+        name: DropMe
+        execution {
+            sequence: 30
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @dropdummy
+        }
+
+        action native-alert (
+            action: alert
+            settings {
+                message: Table LL_DUMMY has been dropped. All Livelabs packages are now invalid !
+            }
+            execution {
+                sequence: 40
+                fireOnInit: false
+            }
+        )
+
+        action native-confirm (
+            action: confirm
+            settings {
+                message: Are you sure you want to drop the table and STOP ALL PROCESSING of Livelabs ?
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+        action native-confirm-2 (
+            action: confirm
+            settings {
+                message: Are you REALLY REALLY REALLY sure ???
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode: execute immediate('drop table LL_PANIC_DO_NOT_DELETE');
+            }
+            execution {
+                sequence: 30
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction dsiable (
+        name: Dsiable
+        execution {
+            sequence: 80
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @disable
+        }
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode: dbms_scheduler.DISABLE( :P9900_JOBS );
+                itemsToSubmit: P9900_JOBS
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: items
+                items: P9900_JOBS
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction enable (
+        name: Enable
+        execution {
+            sequence: 60
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @enable
+        }
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode: dbms_scheduler.ENABLE( :P9900_JOBS );
+                itemsToSubmit: P9900_JOBS
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: items
+                items: P9900_JOBS
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction provision-steps (
+        name: Provision steps
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @provision
+        }
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    begin
+                      ll_pkg_reservation.create_reservation_steps (p_reservation_id => :P9900_RESERVATION_ID ); 
+                    end;
+                      
+                    ```
+                itemsToSubmit: P9900_RESERVATION_ID
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction run (
+        name: Run
+        execution {
+            sequence: 110
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @run
+        }
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode: DBMS_SCHEDULER.run_job (job_name => :P9900_JOBS );
+                itemsToSubmit: P9900_JOBS
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+                waitForResult: false
+            }
+        )
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: items
+                items: P9900_JOBS
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction setup (
+        name: Setup
+        execution {
+            sequence: 20
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @setup
+        }
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    begin
+                       ll_pkg_reservation.setup_reservation (p_reservation_id => :P9900_RESERVATION_ID);
+                    end;
+                    ```
+                itemsToSubmit: P9900_RESERVATION_ID
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction stop (
+        name: Stop
+        execution {
+            sequence: 90
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @stop
+        }
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    DBMS_SCHEDULER.STOP_JOB( :P9900_JOBS ,force => FALSE);
+                    
+                    ```
+                itemsToSubmit: P9900_JOBS
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: items
+                items: P9900_JOBS
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction truncatepressed (
+        name: TruncatePressed
+        execution {
+            sequence: 140
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @truncate-logging
+        }
+
+        action native-confirm (
+            action: confirm
+            settings {
+                message: Truncate command has been executed..
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    begin
+                    update LL_KEYS set key_value='' where key_type='LOGLEVEL';
+                      execute immediate('truncate table LL_LOGGING');
+                    end;
+                    ```
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+)
+

@@ -1,0 +1,381 @@
+page 9122 (
+    name: Tenancy provides
+    alias: TENANCY-PROVIDES
+    title: Tenancy provides
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @modal-dialog
+        templateOptions: #DEFAULT#
+    }
+    dialog {
+        width: 1300
+        height: 750
+        resizable: false
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        authorizationScheme: @superrrrr-user
+        formAutoComplete: false
+    }
+
+    region tenancy-provides (
+        name: Tenancy provides
+        type: interactiveGrid
+        source {
+            location: localDatabase
+            tableName: LL_TENANCY_PROVIDES
+            includeRowidColumn: true
+            whereClause: tenancy_id = :P9122_TENANCY_ID
+            pageItemsToSubmit: P9122_TENANCY_ID
+        }
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                js-showMaximizeButton
+                t-Region--scrollBody
+            ]
+        }
+        edit {
+            enabled: true
+            allowedOperations: [
+                add
+                update
+                delete
+            ]
+        }
+        toolbar {
+            controls: [
+                searchCol
+                searchField
+                actionsMenu
+                resetButton
+                saveButton
+            ]
+        }
+        download {
+            formats: [
+                csv
+                html
+                pdf
+            ]
+        }
+        heading {
+            fixedTo: region
+            fixedReportHeight: 1200
+        }
+        advanced {
+            savedReportMappingIdentifier: 71137178437577103
+        }
+
+        savedReport 930959 (
+            visibility: primary
+            view {
+                default: grid
+            }
+            singleRowView {
+                displayedColumns: true
+            }
+
+            displayColumn (
+                column: @APEX$ROW_ACTION
+                layout {
+                    sequence: 0
+                }
+            )
+
+            displayColumn (
+                column: @ROWID
+                layout {
+                    sequence: 1
+                }
+            )
+
+            displayColumn (
+                column: @ID
+                layout {
+                    sequence: 2
+                }
+            )
+
+            displayColumn (
+                column: @TENANCY_ID
+                layout {
+                    sequence: 3
+                }
+            )
+
+            displayColumn (
+                column: @REGION_ID
+                layout {
+                    sequence: 4
+                }
+            )
+
+            displayColumn (
+                column: @AD
+                layout {
+                    sequence: 5
+                }
+            )
+
+            displayColumn (
+                column: @RESOURCE_ID
+                layout {
+                    sequence: 10
+                }
+            )
+
+            displayColumn (
+                column: @NUM_PROVIDED
+                layout {
+                    sequence: 11
+                }
+            )
+
+            displayColumn (
+                column: @RESOURCE_VALUE
+                layout {
+                    sequence: 12
+                }
+            )
+
+        )
+
+        column AD (
+            type: selectList
+            heading {
+                heading: AD
+            }
+            lov {
+                type: staticValues
+                staticValues: STATIC:1;1,2;2,3;3
+                displayExtraValues: false
+            }
+            layout {
+                sequence: 70
+            }
+            source {
+                databaseColumn: AD
+                dataType: number
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: useLov
+            }
+        )
+
+        column APEX$ROW_ACTION (
+            type: actionsMenu
+            layout {
+                sequence: 20
+            }
+        )
+
+        column APEX$ROW_SELECTOR (
+            type: rowSelector
+            layout {
+                sequence: 10
+            }
+        )
+
+        column ID (
+            type: hidden
+            layout {
+                sequence: 40
+            }
+            source {
+                databaseColumn: ID
+                dataType: number
+            }
+            default {
+                duplicateCopiesExistingValue: false
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column NUM_PROVIDED (
+            type: numberField
+            heading {
+                heading: Num Provided
+                alignment: end
+            }
+            settings {
+                numberAlignment: end
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 130
+                columnAlignment: end
+            }
+            source {
+                databaseColumn: NUM_PROVIDED
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column REGION_ID (
+            type: selectList
+            heading {
+                heading: Region Id
+            }
+            lov {
+                type: sharedComponent
+                lov: @ll-region-keys
+                displayExtraValues: false
+            }
+            layout {
+                sequence: 60
+            }
+            source {
+                databaseColumn: REGION_ID
+                dataType: number
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: useLov
+            }
+        )
+
+        column RESOURCE_ID (
+            type: selectList
+            heading {
+                heading: Resource Id
+            }
+            lov {
+                type: sharedComponent
+                lov: @ll-resources-5
+            }
+            layout {
+                sequence: 120
+            }
+            source {
+                databaseColumn: RESOURCE_ID
+                dataType: number
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: useLov
+            }
+        )
+
+        column RESOURCE_VALUE (
+            type: textarea
+            heading {
+                heading: Resource Value
+            }
+            layout {
+                sequence: 140
+            }
+            validation {
+                maxLength: 200
+            }
+            source {
+                databaseColumn: RESOURCE_VALUE
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column ROWID (
+            type: hidden
+            layout {
+                sequence: 30
+            }
+            source {
+                databaseColumn: ROWID
+                dataType: rowid
+                primaryKey: true
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column TENANCY_ID (
+            type: hidden
+            layout {
+                sequence: 50
+            }
+            source {
+                databaseColumn: TENANCY_ID
+                dataType: number
+            }
+            default {
+                type: item
+                item: P9122_TENANCY_ID
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: Tenancy provides
+        }
+    )
+
+    pageItem P9122_TENANCY_ID (
+        type: hidden
+        layout {
+            sequence: 10
+            region: @tenancy-provides
+            slot: regionBody
+        }
+    )
+
+    process tenancy-provides-save-interactive-grid-data (
+        name: Tenancy provides - Save Interactive Grid Data
+        type: interactiveGridAutoRowProcessing
+        editableRegion: @tenancy-provides
+        execution {
+            sequence: 10
+        }
+        advanced {
+            executionMappingIdentifier: 11197023077971975590
+        }
+    )
+
+)
+

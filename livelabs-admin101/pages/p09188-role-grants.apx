@@ -1,0 +1,279 @@
+page 9188 (
+    name: Role Grants
+    alias: ROLE-GRANTS
+    title: Role Grants
+    appearance {
+        pageTemplate: @standard-trustarc
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        authorizationScheme: @superrrrr-user
+        formAutoComplete: false
+    }
+
+    region role-grants (
+        name: Role Grants
+        type: interactiveGrid
+        source {
+            location: localDatabase
+            tableName: LL_ROLE_GRANTS
+            includeRowidColumn: true
+        }
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        edit {
+            enabled: true
+            allowedOperations: [
+                add
+                update
+                delete
+            ]
+        }
+        toolbar {
+            controls: [
+                searchCol
+                searchField
+                actionsMenu
+                resetButton
+                saveButton
+            ]
+        }
+        download {
+            formats: [
+                csv
+                html
+                pdf
+            ]
+        }
+        advanced {
+            savedReportMappingIdentifier: 99427380124318379
+        }
+
+        savedReport 931016 (
+            visibility: primary
+            view {
+                default: grid
+            }
+            singleRowView {
+                displayedColumns: true
+            }
+
+            displayColumn (
+                column: @APEX$ROW_ACTION
+                layout {
+                    sequence: 0
+                }
+            )
+
+            displayColumn (
+                column: @ROWID
+                layout {
+                    sequence: 1
+                }
+            )
+
+            displayColumn (
+                column: @ID
+                layout {
+                    sequence: 2
+                }
+            )
+
+            displayColumn (
+                column: @ROLE_ID
+                layout {
+                    sequence: 3
+                }
+            )
+
+            displayColumn (
+                column: @PERMISSION_ID
+                layout {
+                    sequence: 4
+                }
+            )
+
+            displayColumn (
+                column: @ROLE_ID_GRANTED
+                layout {
+                    sequence: 5
+                }
+            )
+
+        )
+
+        column APEX$ROW_ACTION (
+            type: actionsMenu
+            layout {
+                sequence: 20
+            }
+        )
+
+        column APEX$ROW_SELECTOR (
+            type: rowSelector
+            layout {
+                sequence: 10
+            }
+        )
+
+        column ID (
+            type: displayOnly
+            heading {
+                heading: ID
+            }
+            layout {
+                sequence: 40
+            }
+            source {
+                databaseColumn: ID
+                dataType: number
+                primaryKey: true
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column PERMISSION_ID (
+            type: selectList
+            heading {
+                heading: Permission
+            }
+            lov {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select name, id
+                    from ll_role_permissions
+                    ```
+                displayExtraValues: false
+                displayNullValue: false
+            }
+            layout {
+                sequence: 60
+            }
+            validation {
+                valueRequired: true
+            }
+            source {
+                databaseColumn: PERMISSION_ID
+                dataType: number
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: useLov
+            }
+        )
+
+        column ROLE_ID (
+            type: selectList
+            heading {
+                heading: Role
+            }
+            lov {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select name, id
+                    from ll_roles
+                    order by name
+                    ```
+                displayExtraValues: false
+                displayNullValue: false
+            }
+            layout {
+                sequence: 50
+            }
+            validation {
+                valueRequired: true
+            }
+            source {
+                databaseColumn: ROLE_ID
+                dataType: number
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: useLov
+            }
+        )
+
+        column ROLE_ID_GRANTED (
+            type: numberField
+            heading {
+                heading: Role Id Granted
+                alignment: end
+            }
+            settings {
+                numberAlignment: end
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 70
+                columnAlignment: end
+            }
+            source {
+                databaseColumn: ROLE_ID_GRANTED
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column ROWID (
+            type: hidden
+            layout {
+                sequence: 30
+            }
+            source {
+                databaseColumn: ROWID
+                dataType: rowid
+                primaryKey: true
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: Role Grants
+        }
+    )
+
+    process role-grants-save-interactive-grid-data (
+        name: Role Grants - Save Interactive Grid Data
+        type: interactiveGridAutoRowProcessing
+        editableRegion: @role-grants
+        execution {
+            sequence: 10
+        }
+        advanced {
+            executionMappingIdentifier: 11225311385113716851
+        }
+    )
+
+)
+

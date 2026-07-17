@@ -1,0 +1,244 @@
+page 9205 (
+    name: Livelabs Admins
+    alias: LIVELABS-ADMINS
+    title: Livelabs Admins
+    appearance {
+        pageTemplate: @standard-trustarc
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        authorizationScheme: @superrrrr-user
+        formAutoComplete: false
+    }
+
+    region livelabs-admins (
+        name: Livelabs Admins
+        type: interactiveGrid
+        source {
+            location: localDatabase
+            tableName: LL_LIVELABS_ADMINS
+            includeRowidColumn: true
+        }
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        edit {
+            enabled: true
+            allowedOperations: [
+                add
+                update
+                delete
+            ]
+        }
+        componentAppearance {
+            selectFirstRow: false
+        }
+        toolbar {
+            controls: [
+                searchCol
+                searchField
+                actionsMenu
+                resetButton
+                saveButton
+            ]
+        }
+        download {
+            formats: [
+                csv
+                html
+                pdf
+                excel
+            ]
+        }
+        advanced {
+            savedReportMappingIdentifier: 103732080447484132
+        }
+
+        savedReport 1037325 (
+            visibility: primary
+            view {
+                default: grid
+            }
+            singleRowView {
+                displayedColumns: true
+            }
+
+            displayColumn (
+                column: @APEX$ROW_ACTION
+                layout {
+                    sequence: 0
+                }
+            )
+
+            displayColumn (
+                column: @ROWID
+                layout {
+                    sequence: 1
+                }
+            )
+
+            displayColumn (
+                column: @USERNAME
+                layout {
+                    sequence: 2
+                }
+            )
+
+            displayColumn (
+                column: @ADDED_BY
+                layout {
+                    sequence: 3
+                }
+            )
+
+            displayColumn (
+                column: @DATE_ADDED
+                layout {
+                    sequence: 4
+                }
+            )
+
+        )
+
+        column ADDED_BY (
+            type: displayOnly
+            heading {
+                heading: Added By
+            }
+            layout {
+                sequence: 50
+            }
+            source {
+                databaseColumn: ADDED_BY
+                dataType: varchar2
+            }
+            default {
+                type: expression
+                plsqlExpression: :APP_USER
+                duplicateCopiesExistingValue: false
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column APEX$ROW_ACTION (
+            type: actionsMenu
+            layout {
+                sequence: 20
+            }
+        )
+
+        column APEX$ROW_SELECTOR (
+            type: rowSelector
+            layout {
+                sequence: 10
+            }
+        )
+
+        column DATE_ADDED (
+            type: displayOnly
+            heading {
+                heading: Date Added
+            }
+            layout {
+                sequence: 60
+            }
+            appearance {
+                formatMask: DD-Mon-YYYY HH24:MI:SS
+            }
+            source {
+                databaseColumn: DATE_ADDED
+                dataType: date
+            }
+            default {
+                duplicateCopiesExistingValue: false
+            }
+        )
+
+        column ROWID (
+            type: hidden
+            layout {
+                sequence: 30
+            }
+            source {
+                databaseColumn: ROWID
+                dataType: rowid
+                primaryKey: true
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column USERNAME (
+            type: textField
+            heading {
+                heading: Username
+            }
+            layout {
+                sequence: 40
+            }
+            validation {
+                valueRequired: true
+                maxLength: 2000
+            }
+            source {
+                databaseColumn: USERNAME
+                dataType: varchar2
+            }
+            default {
+                duplicateCopiesExistingValue: false
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                textCase: upper
+                lovType: none
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: Livelabs Admins
+        }
+    )
+
+    process livelabs-admins-save-interactive-grid-data (
+        name: Livelabs Admins - Save Interactive Grid Data
+        type: interactiveGridAutoRowProcessing
+        editableRegion: @livelabs-admins
+        execution {
+            sequence: 10
+        }
+        advanced {
+            executionMappingIdentifier: 282672001177937307
+        }
+    )
+
+)
+

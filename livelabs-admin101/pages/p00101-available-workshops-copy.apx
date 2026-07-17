@@ -1,0 +1,1494 @@
+page 101 (
+    name: Available Workshops Copy
+    alias: AVAILABLE-WORKSHOPS-COPY
+    title: Available Workshops Copy
+    appearance {
+        pageTemplate: @standard-trustarc
+        templateOptions: #DEFAULT#
+        cssClasses: page-w1280p
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+        warnOnUnsavedChanges: false
+    }
+    javaScript {
+        functionAndGlobalVariableDeclaration:
+            ```javascript-browser
+            //Get the button:
+            mybutton = document.getElementById("myBtn");
+            
+            // When the user scrolls down 20px from the top of the document, show the button
+            window.onscroll = function() {scrollFunction()};
+            
+            function scrollFunction() {
+              if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
+                mybutton.style.display = "block";
+              } else {
+                mybutton.style.display = "none";
+              }
+            }
+            
+            // When the user clicks on the button, scroll to the top of the document
+            function topFunction() {
+                $('html, body').animate({scrollTop:0}, 'slow');
+                document.body.scrollTop = 0; // For Safari
+                document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+            }
+            ```
+    }
+    css {
+        inline:
+            ```css
+            body  {
+                margin: 0 auto;
+                background-image: url(#APP_IMAGES#ll_bg_tile.png);
+                background-repeat: repeat;
+            }
+            
+            .t-Card-info { 
+                line-height: unset;
+            }
+            .t-Card-info a {
+                font-size: 12px;
+            }
+            
+            .reserve-W {  
+                font-size:0.9em;
+                font-weight:600;
+                background-color: #8dab86; // #719668;
+                color:#FCFBFA; //JR: was #776f6b; //    color: #4c4642; // #FCFBFA;
+                border:0.5px #776f6b solid;
+                border-radius:5px;
+                padding:5px 10px 5px 10px; //JR: was 5px
+            }
+            
+            a.reserve-W:hover {
+                background:#40553b; //JR: was #eae7e5;
+                color:#FCFBFA; //JR: was #776f6b;
+                font-weight: 600;
+                box-shadow: none;
+            }
+            
+            //.reserve-W {  
+            //    font-size:0.8em;
+            //    font-weight:600;
+            //    background:#eae7e5;
+            //    color:#776f6b;
+            //    border:0.5px #776f6b solid;
+            //    border-radius:5px;
+            //    padding:5px 5px 5px 5px;
+            //}
+            
+            //a.reserve-W:hover {
+            //    background-color: #719668;
+            //    color: #FCFBFA;
+            //    box-shadow: none;
+            //}
+            
+            .details-W {  
+                background-color: gray;
+                color: white;
+                padding: 10px;
+            }
+            
+            a.details-W:hover {
+                background-color: dimgray;
+                color: #FCFBFA;
+                box-shadow: none;
+            }
+            //.reserve-W {  
+            //    background-color: #759C6C;
+            //    color: white;
+            //    padding: 10px;
+            //}
+            //
+            //a.reserve-W:hover {
+            //    background-color: #719668;
+            //    color: #FCFBFA;
+            //    box-shadow: none;
+            //}
+            //
+            //.details-W {  
+            //    background-color: gray;
+            //    color: white;
+            //    padding: 10px;
+            //}
+            //
+            //a.details-W:hover {
+            //    background-color: dimgray;
+            //    color: #FCFBFA;
+            //    box-shadow: none;
+            //}
+            //
+            //*search bar hidden */
+            #SEARCH {
+                display:none;
+            }
+            
+            /* change expand collapse icons
+            .a-icon.a-Collapsible-icon:before{
+                background-image: fa fa-chevron-right;
+            }
+            
+            .a-icon.a-Collapsible-icon:after{
+                background-image: fa fa-chevron-right;    
+            }
+            */
+            
+            /* Set background color for page 
+            body, html{
+                height: 100%;
+                background-color: #46423F;
+                background-image: url(	#APP_IMAGES#rw_dots_bg_wht.png);
+                background-position: center;
+                background-repeat: repeat;
+                background-size: cover;
+            }
+            */
+            
+            .card_ribbon{
+                //style for ribbon
+            }
+            
+            .card_ribbon:empty{
+                display: none;
+            }
+            
+            #TITLEBAR{
+                color: white;
+                background: url(#APP_IMAGES#ll_region_bg_green.png);
+                min-height: 100%;
+                margin: 0px 40px 20px 30px;
+                padding: 20px 40px 20px 20px;
+                border-radius: 0;
+            }
+                
+            #myBtn {
+              display: none; /* Hidden by default */
+              position: fixed; /* Fixed/sticky position */
+              bottom: 20px; /* Place the button at the bottom of the page */
+            //  right: 20px; /* Place the button 30px from the right */
+              right: 50%;
+              z-index: 999999; /* Make sure it does not overlap */
+              border: none; /* Remove borders */
+              outline: none; /* Remove outline */
+              background-color: #46423f; /* Set a background color */
+              color: white; /* Text color */
+              cursor: pointer; /* Add a mouse pointer on hover */
+              padding: 5px 15px 5px 15px; /* Some padding */
+              border-radius: 5px; /* Rounded corners */
+              font-size: 14px; /* Increase font size */
+            }
+            
+            #myBtn:hover {
+              background-color: #719668; /* Add a dark-grey background on hover */
+            }
+            ```
+    }
+    security {
+        authentication: public
+        deepLinking: true
+        formAutoComplete: false
+        browserCache: false
+    }
+    errorHandling {
+        inLineErrorNotificationText: Error - unhanded.
+    }
+
+    region bottom (
+        name: BOTTOM
+        type: staticContent
+        layout {
+            sequence: 40
+            parentRegion: @choose-workshop-tags
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--hiddenOverflow
+                t-Form--noPadding
+                margin-top-none
+                margin-bottom-none
+                margin-left-none
+                margin-right-none
+            ]
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    region choose-workshop-tags (
+        name: Choose workshop tags
+        type: staticContent
+        layout {
+            sequence: 50
+            slot: contentBody
+            startNewRow: false
+            columnSpan: 3
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: [
+                #DEFAULT#
+                margin-left-lg
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        headerAndFooter {
+            headerText: <div style="background: white; opacity: 0.5">
+            footerText: </div>
+        }
+    )
+
+    region current-workshops (
+        name: Current workshops
+        type: cards
+        source {
+            location: localDatabase
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                declare
+                v_sql clob := q'~
+                Select A.ID, null header ,
+                     "NAME" card_title,
+                     ll_pkg_admin.cut_off_at_space (A.DESC_SHORT, 100) card_text,
+                     ll_pkg_admin.hours_readable (A.TIME_IN_HOURS, 'SHORT', 'N') card_subtext,
+                     null card_icon,
+                     (
+                        CASE
+                           WHEN B.TAG_ID = (select ID from LL_TAGS where LEVEL2 = 'Sprints') THEN APEX_PAGE.GET_URL (
+                                                        p_page   => 210,
+                                                        p_clear_cache => 210,
+                                                        p_items  => 'p210_workshop_id,p210_type,sc',
+                                                        p_values => A.ID||','||1||','||1)
+                           ELSE APEX_PAGE.GET_URL (
+                                    p_page   => 180,
+                                    p_clear_cache => 180,
+                                    p_items  => 'WID',
+                                    p_values => A.ID)
+                        END  
+                     ) card_link,
+                      (
+                       CASE
+                           WHEN A.pg_views < 500 THEN ''
+                           ELSE A.pg_views || ' Views'
+                        END
+                    ) card_views,
+                    (
+                       CASE
+                           WHEN A.pg_views < 500 THEN ''
+                           ELSE 'fa fa-eye'
+                        END
+                    ) card_views_eye,
+                    null as bookmark_enable,
+                    ll_pkg_apex.user_attended_ws (p_workshop_id => A.id, p_username => :app_user) as workshop_attended,
+                    ll_pkg_apex.card_ribbon ( p_workshop_id => A.id, p_username => :app_user) as card_ribbon ,
+                    (select key_value from ll_keys C where C.key_type='CARD_RIBBON' and C.key_name=ll_pkg_apex.card_ribbon ( p_workshop_id => A.id, p_username => :app_user)) as card_ribbon_color,
+                    'star_0_0.png' star_rating,
+                     null star_votes,
+                     nvl2(A.TIME_IN_HOURS, 'fa fa-clock-o', null) as time_display,
+                     null card_image,
+                     A.pg_views,
+                     (select listagg(c.tag_id,':') within group (order by c.tag_id) "tags"
+                     from ll_workshop_tags c
+                     where c.workshop_id = a.id
+                     and c.tag_id in (select id from ll_tags where level1 = 'Level')
+                     group by b.workshop_id) as LEVEL_TAG,
+                     (select listagg(c.tag_id,':') within group (order by c.tag_id) "tags"
+                     from ll_workshop_tags c
+                     where c.workshop_id = a.id
+                     and c.tag_id in (select id from ll_tags where level1 = 'Workshop Type')
+                     group by b.workshop_id) as WORKSHOP_TYPE_TAG,
+                     (select listagg(c.tag_id,':') within group (order by c.tag_id) "tags"
+                     from ll_workshop_tags c
+                     where c.workshop_id = a.id
+                     and c.tag_id in (select id from ll_tags where level1 = 'Workshop Series')
+                     group by b.workshop_id) as WORKSHOP_SERIES_TAG,
+                     (select listagg(c.tag_id,':') within group (order by c.tag_id) "tags"
+                     from ll_workshop_tags c
+                     where c.workshop_id = a.id
+                     and c.tag_id in (select id from ll_tags where level1 = 'Role')
+                     group by b.workshop_id) as ROLE_TAG,
+                     (select listagg(c.tag_id,':') within group (order by c.tag_id) "tags"
+                     from ll_workshop_tags c
+                     where c.workshop_id = a.id
+                     and c.tag_id in (select id from ll_tags where level1 = 'Focus')
+                     group by b.workshop_id) as FOCUS_TAG,
+                     (select listagg(c.tag_id,':') within group (order by c.tag_id) "tags"
+                     from ll_workshop_tags c
+                     where c.workshop_id = a.id
+                     and c.tag_id in (select id from ll_tags where level1 = 'Product')
+                     group by b.workshop_id) as PRODUCT_TAG,
+                     (select listagg(c.tag_id,':') within group (order by c.tag_id) "tags"
+                     from ll_workshop_tags c
+                     where c.workshop_id = a.id
+                     and c.tag_id in (select id from ll_tags where level1 = 'Sales Focus')
+                     group by b.workshop_id) as SALES_FOCUS_TAG,
+                     (select listagg(c.tag_id,':') within group (order by c.tag_id) "tags"
+                     from ll_workshop_tags c
+                     where c.workshop_id = a.id
+                     and c.tag_id in (select id from ll_tags where level1 = 'Sales Play')
+                     group by b.workshop_id) as SALES_PLAY_TAG
+                     from ll_workshops A 
+                     left join (select WORKSHOP_ID, TAG_ID from LL_WORKSHOP_TAGS llwt, LL_TAGS llt where llwt.TAG_ID = llt.ID and llt.level2 = 'Sprints') B
+                     on A.ID = B.WORKSHOP_ID
+                     where A.ACTIVE_FLG='Y'
+                ~';
+                v_search varchar2(4000);
+                first_loop number;
+                begin
+                
+                --Clean up input search, get rid of single quote
+                    v_search := REGEXP_REPLACE(:101_SEARCH,chr(39),'');
+                    v_search := REGEXP_REPLACE(:101_SEARCH,chr(38),'');
+                       
+                    --This takes out all of the stop words
+                    v_search := ll_pkg_apex.clean_searchstr(v_search);
+                    
+                    if(v_search is not null) then
+                
+                        v_search := ltrim(rtrim(v_search));
+                        --Convert to a comma separated list
+                        v_search := REGEXP_REPLACE(v_search,' ',',');
+                
+                        --For each search word add a where clause
+                        first_loop := 0;
+                        v_sql := ''||v_sql||' and ';
+                
+                        for x in (select column_value from table(apex_string.split(v_search, ','))) loop
+                            if(first_loop != 0) then
+                                v_sql := v_sql || ' and ';
+                            end if;
+                            v_sql :=  v_sql || '((upper('' '' || NAME || '' '') like  upper(''% '||x.column_value||' %'')   ) or ';
+                            v_sql :=  v_sql || '(upper('' '' || DESC_SHORT || '' '') like  upper(''% '||x.column_value||' %'')   ))';
+                            first_loop := 1;
+                        end loop;
+                    end if;
+                
+                    -- add order by
+                    return v_sql;
+                end;
+                ```
+        }
+        layout {
+            sequence: 40
+            slot: contentBody
+        }
+        appearance {
+            template: @blank-with-attributes-no-grid
+            templateOptions: [
+                #DEFAULT#
+                t-Form--slimPadding
+                margin-left-md
+                margin-right-md
+            ]
+            icon: fa-button
+        }
+        componentAppearance {
+            gridColumns: 3
+        }
+        card {
+            primaryKeyColumn1: ID
+            primaryKeyColumn2: ID
+        }
+        title {
+            advancedFormatting: true
+            htmlExpression:
+                ```html
+                <div style="float:left;position:absolute">
+                    <p style="font-size:0.8em;font-weight:600;margin:-5px 0px 5px -16px">
+                        <span style="padding:3px 5px 3px 5px;border-radius:0px 5px 5px 0px;background:&CARD_RIBBON_COLOR.;color:white" class="card_ribbon">
+                            &CARD_RIBBON.
+                        </span>
+                    </p>
+                </div>
+                
+                <p style="font-size:1.0em;font-weight:600;line-height:1.3em;padding:20px 0px 0px 0px">
+                    &CARD_TITLE.
+                </p>
+                
+                <p style="font-size:0.85em;font-weight:400;line-height:1.15em;padding:0px 0px 5px 0px">
+                    &CARD_TEXT.
+                </p>
+                
+                <div style="color:darkgrey;font-size:0.9em;position: absolute;top: 15px;right: 10px;">
+                    <span style="float:right;text-align:right;vertical-align:baseline;color: #776f6b">
+                        <!-- <span style="float:right;text-align:right;margin:-10px 0px 20px 0px:10px;color: #776f6b;"> -->
+                        <!-- <span style="margin-top:-20px"><img src=#APP_IMAGES#&STAR_RATING. style="align:top"></span> -->
+                        <span style="font-size:0.9em;font-weight:400;margin:-5px 10px 0px 0px;padding:-10px 0px 0px 0px;vertical-align:top">  &STAR_VOTES.</span>
+                        <span class="&WORKSHOP_ATTENDED." style="color:#719668;"></span>
+                        <span class="&BOOKMARK_ENABLE."></span>
+                    </span>
+                </div>
+                
+                <!-- pre-card facelift
+                <div style="float:left;position:absolute">
+                    <p style="font-size:0.8em;margin:-5px 0px 5px -16px"><span style="padding:3px 5px 3px 5px;border-radius:0px 5px 5px 0px;background:&CARD_RIBBON_COLOR.;color:white" class="card_ribbon">&CARD_RIBBON.</span></p>
+                </div>
+                <p style="font-size:1.0em;font-weight:400;line-height:1.3em;padding:20px 0px 0px 0px">&CARD_TITLE.</p>
+                <p style="font-size:0.85em;font-weight:350;line-height:1.15em;padding:0px 0px 15px 0px">&CARD_TEXT.</p>
+                
+                <div style="color:darkgrey;font-size:0.9em;position: absolute;top: 15px;right: 20px">
+                    <span style="float:right;text-align:right;vertical-align:baseline;color: #c74634 ">
+                        <span class="&WORKSHOP_ATTENDED." style="color:#719668;"></span>
+                        <span class="&BOOKMARK_ENABLE."></span>
+                    </span>
+                </div>
+                -->
+                
+                ```
+        }
+        body {
+            advancedFormatting: true
+            htmlExpression:
+                ```html
+                <div style="color:darkgrey;font-size:0.9em;position: absolute;bottom: 5px;">
+                    <a class="reserve-W" href=&CARD_LINK.>Launch</a> 
+                        <span style="color:black;font-size:0.8em;font-weight:400;line-height:0.7em;margin:-10px 0px 10px 10px;">
+                            <i>
+                                <!-- <span class="&CARD_VIEWS_EYE." style="color:darkgray;padding: 5px 3px 0px 0px"></span> -->
+                                &CARD_VIEWS.
+                            </i>
+                        </span>
+                        <p style="line-height:0.3em;margin:5px 0px 10px 0px;"></p>
+                </div>
+                <div style="font-size:0.9em;position: absolute;bottom: 15px;right: 10px">
+                    <span style="float:right;text-align:right;vertical-align:top">
+                            <span style="font-weight:400;font-size:0.8em;margin:-20px 0px 20px 0px;">
+                                <span class="&TIME_DISPLAY." style="font-size:1em;vertical-align:baseline;"></span>&nbsp;&nbsp;&CARD_SUBTEXT.
+                    </span>
+                </div>
+                
+                <!-- pre-card facelift
+                <div style="color:darkgrey;font-size:0.9em;position: absolute;bottom: 5px;">
+                    <a class="reserve-W" href=&CARD_LINK.>Launch</a> 
+                        <span style="color:black;font-size:0.8em;font-weight:300;line-height:0.7em;margin:-10px 0px 10px 10px;">
+                            <i><span class="&CARD_VIEWS_EYE." style="color:darkgray;padding: 5px 3px 0px 0px"></span>&CARD_VIEWS.</i>
+                        </span>
+                        <p style="line-height:0.3em;margin:5px 0px 10px 0px;"></p>
+                
+                        <span style=";vertical-align:middle;margin:20px 0px 0px 0px:10px;color: #776f6b;font-size:0.7em;font-weight:400">
+                            <span style="margin:3px 0px 0px 0px"><img src="#APP_IMAGES#&STAR_RATING." style="vertical-align:middle"> &STAR_VOTES.</span>
+                        </span>
+                </div>
+                
+                <div style="color:darkgrey;font-size:0.9em;position: absolute;bottom: 5px;right: 20px">
+                    <span style="float:right;text-align:right;">
+                            <span style="font-weight:400;font-size:0.8em;margin:-10px 0px 10px 0px;color:#776f6b">
+                                <span class="&TIME_DISPLAY." style="font-size:1em;vertical-align:baseline;color:#776f6b"></span>&nbsp;&nbsp;&CARD_SUBTEXT.
+                    </span>
+                </div>
+                -->
+                ```
+        }
+        pagination {
+            type: page
+            showTotalCount: true
+            cardsPerPage: 30
+        }
+    )
+
+    region facets (
+        name: Facets
+        type: facetedSearch
+        source {
+            filteredRegion: @current-workshops
+        }
+        layout {
+            sequence: 30
+            parentRegion: @choose-workshop-tags
+            slot: subRegions
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+        settings {
+            compactNosThreshold: 10000
+            showCurrentFacets: true
+            showTotalRowCount: true
+            totalRowCountLabel: Number of Workshops:
+            showCharts: false
+        }
+
+        facet P101_FOCUS_TAG (
+            type: checkboxGroup
+            label {
+                label: Focus Area
+            }
+            lov {
+                type: sqlQuery
+                sqlQuery: select level3, id from ll_tags where level1 = 'Focus'
+            }
+            layout {
+                sequence: 60
+            }
+            listEntries {
+                zeroCountEntries: disable
+                maxDisplayedEntries: 5
+            }
+            actionsMenu {
+                filter: false
+            }
+            advanced {
+                collapsible: true
+            }
+            source {
+                databaseColumn: FOCUS_TAG
+            }
+            multipleValues {
+                type: delimitedList
+            }
+        )
+
+        facet P101_LEVEL_TAG (
+            type: checkboxGroup
+            label {
+                label: Level
+            }
+            lov {
+                type: sqlQuery
+                sqlQuery: select level2, id from ll_tags where level1 = 'Level'
+            }
+            layout {
+                sequence: 20
+            }
+            listEntries {
+                zeroCountEntries: disable
+                maxDisplayedEntries: 5
+            }
+            actionsMenu {
+                filter: false
+            }
+            advanced {
+                collapsible: true
+            }
+            source {
+                databaseColumn: LEVEL_TAG
+            }
+            multipleValues {
+                type: delimitedList
+            }
+        )
+
+        facet P101_PRODUCT_TAG (
+            type: checkboxGroup
+            label {
+                label: Product
+            }
+            lov {
+                type: sqlQuery
+                sqlQuery: select level3, id from ll_tags where level1 = 'Product'
+            }
+            layout {
+                sequence: 70
+            }
+            listEntries {
+                zeroCountEntries: disable
+                maxDisplayedEntries: 5
+            }
+            actionsMenu {
+                filter: false
+            }
+            advanced {
+                collapsible: true
+            }
+            source {
+                databaseColumn: PRODUCT_TAG
+            }
+            multipleValues {
+                type: delimitedList
+            }
+        )
+
+        facet P101_ROLE_TAG (
+            type: checkboxGroup
+            label {
+                label: Role
+            }
+            lov {
+                type: sqlQuery
+                sqlQuery: select level2, id from ll_tags where level1 = 'Role'
+            }
+            layout {
+                sequence: 50
+            }
+            listEntries {
+                zeroCountEntries: disable
+                maxDisplayedEntries: 5
+            }
+            actionsMenu {
+                filter: false
+            }
+            advanced {
+                collapsible: true
+            }
+            source {
+                databaseColumn: ROLE_TAG
+            }
+        )
+
+        facet P101_SALES_FOCUS_TAG (
+            type: checkboxGroup
+            label {
+                label: Sales Focus
+            }
+            lov {
+                type: sqlQuery
+                sqlQuery: select level2, id from ll_tags where level1 = 'Sales Focus'
+            }
+            layout {
+                sequence: 80
+            }
+            listEntries {
+                zeroCountEntries: disable
+                maxDisplayedEntries: 5
+            }
+            actionsMenu {
+                filter: false
+            }
+            advanced {
+                collapsible: true
+            }
+            source {
+                databaseColumn: SALES_FOCUS_TAG
+            }
+            multipleValues {
+                type: delimitedList
+            }
+            serverSideCondition {
+                type: expression
+                plsqlExpression: instr(upper(:app_user),'@ORACLE.COM')>0
+            }
+        )
+
+        facet P101_SALES_PLAY_TAG (
+            type: checkboxGroup
+            label {
+                label: Sales Play
+            }
+            lov {
+                type: sqlQuery
+                sqlQuery: select level2, id from ll_tags where level1 = 'Sales Play'
+            }
+            layout {
+                sequence: 90
+            }
+            listEntries {
+                zeroCountEntries: disable
+                maxDisplayedEntries: 5
+            }
+            actionsMenu {
+                filter: false
+            }
+            advanced {
+                collapsible: true
+            }
+            source {
+                databaseColumn: SALES_PLAY_TAG
+            }
+            multipleValues {
+                type: delimitedList
+            }
+            serverSideCondition {
+                type: expression
+                plsqlExpression: instr(upper(:app_user),'@ORACLE.COM')>0
+            }
+        )
+
+        facet P101_WORKSHOP_SERIES_TAG (
+            type: checkboxGroup
+            label {
+                label: Workshop Series
+            }
+            lov {
+                type: sqlQuery
+                sqlQuery: select level2, id from ll_tags where level1 = 'Workshop Series'
+            }
+            layout {
+                sequence: 40
+            }
+            listEntries {
+                zeroCountEntries: disable
+                maxDisplayedEntries: 5
+            }
+            actionsMenu {
+                filter: false
+            }
+            advanced {
+                collapsible: true
+            }
+            source {
+                databaseColumn: WORKSHOP_SERIES_TAG
+            }
+            multipleValues {
+                type: delimitedList
+            }
+        )
+
+        facet P101_WORKSHOP_TYPE_TAG (
+            type: checkboxGroup
+            label {
+                label: Workshop Type
+            }
+            lov {
+                type: sqlQuery
+                sqlQuery: select level2, id from ll_tags where level1 = 'Workshop Type'
+            }
+            layout {
+                sequence: 30
+            }
+            listEntries {
+                zeroCountEntries: disable
+                maxDisplayedEntries: 5
+            }
+            actionsMenu {
+                filter: false
+            }
+            advanced {
+                collapsible: true
+            }
+            source {
+                databaseColumn: WORKSHOP_TYPE_TAG
+            }
+            multipleValues {
+                type: delimitedList
+            }
+        )
+
+    )
+
+    region header-text-before-cards (
+        name: Header text before cards
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                Click <strong>Launch</strong> for a workshop to find out more, or to launch the workshop. Use the search and filters to find just what you need.<br>To explore only the <strong>new LiveLabs Sprints</strong>, filter the workshop type category to <strong>Sprints</strong>.
+                <button onclick="topFunction()" id="myBtn" title="Go to top">Return to top of page</button>
+                ```
+        }
+        layout {
+            sequence: 30
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--scrollBody
+                t-Form--noPadding
+                margin-top-none
+                margin-bottom-md
+                margin-left-md
+                margin-right-md
+            ]
+            renderComponents: belowContent
+        }
+    )
+
+    region search-results (
+        name: search-results
+        type: staticContent
+        source {
+            htmlCode: <strong>Search results</strong>
+        }
+        layout {
+            sequence: 20
+            parentRegion: @header-text-before-cards
+            slot: subRegions
+            startNewRow: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--scrollBody
+                t-Form--noPadding
+                margin-top-none
+                margin-bottom-none
+                margin-left-none
+                margin-right-none
+            ]
+        }
+    )
+
+    region search-spacer (
+        name: Search spacer
+        type: staticContent
+        layout {
+            sequence: 30
+            parentRegion: @header-text-before-cards
+            slot: subRegions
+            startNewRow: false
+            columnSpan: 3
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    region share-url-for-current-filters (
+        name: Share URL for Current Filters
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <span style="font-size:1.3em">
+                <p><strong>The URL for the current search and filter selection has been copied to the clipboard.</strong></p>
+                <p><i>This QR code is the URL for the filters you’ve set.</i></p>
+                <p><i>Share this QR code with others by right-clicking to save the image.</i></p>
+                </span>
+                
+                
+                ```
+        }
+        layout {
+            sequence: 60
+            slot: contentBody
+        }
+        appearance {
+            template: @inline-dialog
+            templateOptions: [
+                #DEFAULT#
+                js-dialog-autoheight
+                js-dialog-size480x320
+                margin-bottom-none
+                margin-right-none
+            ]
+            renderComponents: belowContent
+        }
+        advanced {
+            htmlDomId: SHARE_FLTR_URL
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    region span-style-font-weight-400-workshops-sprints-span-span-style-font-weight-200-p101-pagetitle-span (
+        name: <span style="font-weight: 400">Workshops & Sprints </span><span style="font-weight:200">&P101_PAGETITLE.</span>
+        type: staticContent
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @title-bar
+            templateOptions: [
+                #DEFAULT#
+                t-BreadcrumbRegion--useRegionTitle
+                t-Form--noPadding
+                margin-bottom-none
+                margin-left-none
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region top (
+        name: TOP
+        type: staticContent
+        layout {
+            sequence: 20
+            parentRegion: @choose-workshop-tags
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--hiddenOverflow
+                t-Form--noPadding
+                margin-top-none
+                margin-bottom-none
+                margin-left-none
+                margin-right-none
+            ]
+        }
+    )
+
+    region workshop-or-event-not-found (
+        name: Workshop or Event Not Found
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <span style="font-size:1.2em;font-weight: 400">
+                    <table>
+                        <tr>
+                            <td>
+                                <img src="#APP_IMAGES#ll_error.png" width="70px">
+                            </td>
+                            <td width="2px">
+                            </td>
+                            <td>
+                                <p>The workshop or event code you entered could not be found.</p>
+                                <p>Please confirm you have the correct link to the workshop or event, 
+                                    or search for the event on the <b>Available Workshops</b> page.</p><br>
+                            <td>
+                        <tr>
+                    </table>
+                </span>
+                ```
+        }
+        layout {
+            sequence: 70
+            slot: contentBody
+        }
+        appearance {
+            template: @inline-dialog
+            templateOptions: [
+                js-dialog-autoheight
+                js-modal
+                js-dialog-size480x320
+            ]
+        }
+        advanced {
+            htmlDomId: ERROR_DIALOG
+            regionDisplaySelector: true
+        }
+    )
+
+    pageItem 101_C (
+        type: hidden
+        layout {
+            sequence: 50
+            region: @choose-workshop-tags
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem 101_ME (
+        type: hidden
+        layout {
+            sequence: 30
+            region: @choose-workshop-tags
+            slot: regionBody
+        }
+        source {
+            used: always
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem 101_SEARCH (
+        type: hidden
+        layout {
+            sequence: 20
+            region: @header-text-before-cards
+            slot: regionBody
+        }
+    )
+
+    pageItem 101_SENFS (
+        type: hidden
+        layout {
+            sequence: 10
+            region: @header-text-before-cards
+            slot: regionBody
+        }
+        source {
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P101_HOST_URL (
+        type: hidden
+        layout {
+            sequence: 20
+            region: @choose-workshop-tags
+            slot: regionBody
+        }
+        source {
+            type: expression
+            plsqlExpression: apex_util.host_url('NULL')
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P101_PAGETITLE (
+        type: hidden
+        layout {
+            sequence: 40
+            region: @choose-workshop-tags
+            slot: regionBody
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery: select ' ('||nvl(title, item_name)||')' from ll_dynamic_menu where id = :ME
+            used: always
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P101_QR (
+        type: plugin/qrCode
+        label {
+            alignment: left
+        }
+        settings {
+            displayType: bmpImage
+            imageSize: 150
+            margines: true
+        }
+        layout {
+            sequence: 30
+            region: @bottom
+            slot: regionBody
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: [
+                #DEFAULT#
+                margin-left-sm
+            ]
+        }
+        source {
+            type: expression
+            plsqlExpression: :P101_HOST_URL||:P101_SHARE_URL
+            used: always
+        }
+        serverSideCondition {
+            type: never
+        }
+        help {
+            inlineHelpText:
+                ```html
+                <i>This QR code is the URL for the filters you’ve set.<br/>
+                Share this QR code with others by right-clicking to save the image.</i>
+                ```
+        }
+    )
+
+    pageItem P101_QR_1 (
+        type: plugin/qrCode
+        label {
+            alignment: left
+        }
+        settings {
+            displayType: bmpImage
+            imageSize: 150
+            margines: true
+        }
+        layout {
+            sequence: 250
+            region: @share-url-for-current-filters
+            slot: regionBody
+            column: 4
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        source {
+            type: expression
+            plsqlExpression: :P101_HOST_URL||:P101_SHARE_URL
+            used: always
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    pageItem P101_SHARE_URL (
+        type: hidden
+        layout {
+            sequence: 10
+            region: @choose-workshop-tags
+            slot: regionBody
+        }
+        source {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                declare
+                  v_items   clob;
+                  v_values  clob;
+                  v_url     varchar2(4000);
+                  
+                  procedure add_value (p_item varchar2, p_value varchar2) is
+                  begin
+                    if p_value is not null then
+                      if v_items is not null  then
+                        v_items := v_items || ',' || p_item;
+                      else
+                        v_items := p_item;
+                      end if;
+                    
+                      if v_values is not null then
+                        v_values := v_values || ',' || p_value;
+                      else
+                        v_values := p_value;
+                      end if;
+                    end if;
+                  end;
+                    
+                begin
+                
+                  add_value('C', 'y');
+                  add_value('SEARCH',:SEARCH);
+                  add_value('P101_WORKSHOP_TYPE',:P101_WORKSHOP_TYPE);
+                  add_value('P101_CERTIFICATION',:P101_CERTIFICATION);
+                  add_value('P101_ROLE',:P101_ROLE);
+                  add_value('P101_FOCUS_AREA',:P101_FOCUS_AREA);
+                  add_value('P101_PRODUCT',:P101_PRODUCT);
+                  add_value('P101_SALES_FOCUS',:P101_SALES_FOCUS);
+                  add_value('P101_SALES_PLAY',:P101_SALES_PLAY);
+                  add_value('P101_LEVEL',:P101_LEVEL);
+                  
+                  ll_pkg_log.log(10,'v_items: '||v_items);
+                  ll_pkg_log.log(10,'v_values: '||v_values);
+                
+                  v_url := substr( APEX_PAGE.GET_URL ( p_page   => 100,
+                                                       p_items  => v_items,
+                                                       p_values => v_values),2);
+                                                       
+                  v_url := replace(v_url,'%3A',':'); 
+                  v_url := substr(v_url,1,instr(v_url,'&session')-1);
+                
+                  return(v_url);
+                end;
+                ```
+            used: always
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            sessionStateProtection: checksumRequiredAppLevel
+            encryptSessionState: false
+        }
+    )
+
+    button close (
+        buttonName: Close
+        label: Close
+        layout {
+            sequence: 10
+            region: @workshop-or-event-not-found
+            slot: belowBox
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button close-share (
+        buttonName: Close-share
+        label: Close
+        layout {
+            sequence: 10
+            region: @share-url-for-current-filters
+            slot: belowBox
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    button copy-url-for-filter (
+        buttonName: copy-url-for-filter
+        label: Share URL for Current Filters
+        layout {
+            sequence: 20
+            region: @bottom
+            slot: regionBody
+            startNewRow: false
+            newColumn: false
+        }
+        appearance {
+            buttonTemplate: @text-with-icon
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--small
+                t-Button--noUI
+                t-Button--iconLeft
+            ]
+            icon: fa-copy
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    button enter-event-code (
+        buttonName: Enter-event-code
+        label: Enter Event Code
+        layout {
+            sequence: 10
+            region: @top
+            slot: regionBody
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--simple
+                t-Button--padLeft
+                t-Button--gapBottom
+            ]
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 150
+                clearCache: 150
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    dynamicAction clear-cache (
+        name: Clear Cache
+        execution {
+            sequence: 320
+        }
+        when {
+            event: ready
+        }
+        clientSideCondition {
+            type: item=value
+            item: C
+            value: y
+        }
+
+        action native-set-value (
+            action: setValue
+            settings {
+                value: 100
+            }
+            affectedElements {
+                selectionType: items
+                items: CLEAR
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    dynamicAction close-error-dialog (
+        name: Close error dialog
+        execution {
+            sequence: 330
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @close
+        }
+
+        action native-close-region (
+            action: closeRegion
+            affectedElements {
+                selectionType: region
+                region: @workshop-or-event-not-found
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+        action native-set-value (
+            action: setValue
+            settings {
+                value: 0
+            }
+            affectedElements {
+                selectionType: items
+                items: SENFSWS
+            }
+            execution {
+                sequence: 30
+                fireOnInit: false
+                stopExecutionOnError: false
+            }
+        )
+
+    )
+
+    dynamicAction hide-search-caption-if-not-search (
+        name: hide search caption if not search
+        execution {
+            sequence: 230
+        }
+        when {
+            event: ready
+        }
+        clientSideCondition {
+            type: itemIsNull
+            item: SENFS
+        }
+
+        action native-hide (
+            action: hide
+            affectedElements {
+                selectionType: region
+                region: @search-results
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+        action native-hide-2 (
+            action: hide
+            affectedElements {
+                selectionType: region
+                region: @search-spacer
+            }
+            execution {
+                sequence: 20
+            }
+        )
+
+    )
+
+    dynamicAction refresh-on-order-by (
+        name: refresh on order by
+        execution {
+            sequence: 360
+        }
+        when {
+            selectionType: items
+            items: P101_ORDER_BY
+        }
+
+        action native-submit-page (
+            action: submitPage
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction show-error-dialog (
+        name: Show Error Dialog
+        execution {
+            sequence: 340
+        }
+        when {
+            event: ready
+        }
+        clientSideCondition {
+            type: item=value
+            item: SENFS
+            value: 1
+        }
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode: apex_util.redirect_url(p_url => apex_page.get_url(p_page => 100, p_clear_cache => 100 ));
+            }
+            execution {
+                sequence: 40
+            }
+        )
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode: javascript:openModal('ERROR_DIALOG');
+            }
+            execution {
+                sequence: 30
+            }
+        )
+
+    )
+
+    process count-page (
+        name: Count page
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                begin
+                  insert into ll_page_visits (page_id, app_session) values (100, :APP_SESSION);
+                  commit;
+                exception
+                  when others then
+                    ll_pkg_log.log(1,'Error during insert on ll_page_visits for page_id 100, app_session '||:APP_SESSION);
+                end;
+                ```
+        }
+        execution {
+            sequence: 20
+            point: afterFooter
+        }
+        advanced {
+            executionMappingIdentifier: 300972190471754322
+        }
+    )
+
+)
+

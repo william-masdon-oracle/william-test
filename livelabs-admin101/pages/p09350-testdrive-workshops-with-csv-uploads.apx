@@ -1,0 +1,2032 @@
+page 9350 (
+    name: Testdrive Workshops with CSV Uploads
+    alias: TESTDRIVE-WORKSHOPS-WITH-CSV-UPLOADS
+    title: Testdrive Workshops with CSV Uploads
+    appearance {
+        pageTemplate: @standard-trustarc
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region button-bar (
+        name: Button Bar
+        type: staticContent
+        layout {
+            sequence: 30
+            slot: contentBody
+        }
+        appearance {
+            template: @buttons-container
+            templateOptions: [
+                #DEFAULT#
+                t-ButtonRegion--noPadding
+                t-ButtonRegion--noUI
+            ]
+        }
+    )
+
+    region preview-csv-upload (
+        name: Preview CSV Upload
+        type: classicReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                 
+                select p.line_number, p.col001 as Emails
+                       -- add more columns (col011 to col300) here.
+                  from apex_application_temp_files f, 
+                       table( apex_data_parser.parse(
+                                  p_content          => f.blob_content,
+                                  p_file_name        => f.filename,
+                                  p_add_headers_row   => 'Y',
+                                  p_csv_enclosed      => '"',
+                                  p_file_charset      => 'WE8ISO8859P1',
+                                  p_max_rows         => 10 ) ) p
+                 where f.name = :P9350_FILE
+                 
+                 /*
+                 select p.col002 as email , 'DEMO1', :P9350_WORKSHOP_ID, sysdate, 'GMT', 'Y'  
+                      from apex_application_temp_files f, 
+                           table( apex_data_parser.parse(
+                                  p_content          => f.blob_content,
+                                  p_file_name        => f.filename,
+                                  p_add_headers_row   => 'Y',
+                                  p_csv_enclosed      => '"',
+                                  p_file_charset      => 'WE8ISO8859P1',
+                                  p_max_rows         => 10 ) ) p
+                     where f.name = :P9350_FILE
+                     */
+                ```
+            pageItemsToSubmit: P9350_FILE
+        }
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P9350_FILE
+        }
+        componentAppearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Report--altRowsDefault
+                t-Report--rowHighlight
+            ]
+        }
+        pagination {
+            type: nextAndPreviousLinks
+        }
+
+        column EMAILS (
+            reportColumnQueryId: 2
+            derivedColumn: N
+            heading {
+                heading: Emails
+                alignment: center
+            }
+            layout {
+                sequence: 20
+            }
+        )
+
+        column LINE_NUMBER (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            heading {
+                heading: Line Number
+                alignment: center
+            }
+            layout {
+                sequence: 10
+            }
+        )
+
+    )
+
+    region reservation-steps (
+        name: Reservation Steps
+        type: interactiveGrid
+        source {
+            location: localDatabase
+            tableName: LL_RESERVATION_STEPS
+        }
+        layout {
+            sequence: 50
+            slot: contentBody
+            startNewRow: false
+            newColumn: false
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        masterDetail {
+            masterRegion: @reservations
+        }
+        edit {
+            enabled: true
+            allowedOperations: [
+                add
+                update
+                delete
+            ]
+        }
+        toolbar {
+            controls: [
+                searchCol
+                searchField
+                actionsMenu
+                resetButton
+            ]
+        }
+        download {
+            formats: [
+                csv
+                html
+                pdf
+                excel
+            ]
+        }
+        advanced {
+            savedReportMappingIdentifier: 195416085384865742
+        }
+
+        savedReport 1214119 (
+            visibility: primary
+            view {
+                default: grid
+            }
+            singleRowView {
+                displayedColumns: true
+            }
+
+            displayColumn (
+                column: @APEX$ROW_ACTION
+                layout {
+                    frozen: true
+                    sequence: 0
+                }
+            )
+
+            displayColumn (
+                column: @ID
+                layout {
+                    sequence: 1
+                }
+            )
+
+            displayColumn (
+                column: @FLOW_STEP_ID
+                layout {
+                    width: 87
+                    sequence: 2
+                }
+            )
+
+            displayColumn (
+                column: @FLOW_STEP_PARAM
+                layout {
+                    width: 222
+                    sequence: 3
+                }
+            )
+
+            displayColumn (
+                column: @FLOW_STEP_RESULT
+                layout {
+                    width: 197
+                    sequence: 4
+                }
+            )
+
+            displayColumn (
+                column: @CREATE_ORDER
+                layout {
+                    sequence: 10
+                }
+            )
+
+            displayColumn (
+                column: @CREATE_DATE
+                layout {
+                    sequence: 9
+                }
+            )
+
+            displayColumn (
+                column: @CREATE_SUCCESS
+                layout {
+                    sequence: 6
+                }
+            )
+
+            displayColumn (
+                column: @CREATE_RESULT
+                layout {
+                    sequence: 8
+                }
+            )
+
+            displayColumn (
+                column: @CREATE_RETRY
+                layout {
+                    sequence: 7
+                }
+            )
+
+            displayColumn (
+                column: @OBJECT_OCID
+                layout {
+                    sequence: 5
+                }
+            )
+
+            displayColumn (
+                column: @DELETE_ORDER
+                layout {
+                    sequence: 15
+                }
+            )
+
+            displayColumn (
+                column: @DELETE_DATE
+                layout {
+                    sequence: 14
+                }
+            )
+
+            displayColumn (
+                column: @DELETE_SUCCESS
+                layout {
+                    sequence: 11
+                }
+            )
+
+            displayColumn (
+                column: @DELETE_RETRY
+                layout {
+                    sequence: 12
+                }
+            )
+
+            displayColumn (
+                column: @DELETE_RESULT
+                layout {
+                    sequence: 13
+                }
+            )
+
+            displayColumn (
+                column: @RESERVATION_ID
+                layout {
+                    sequence: 16
+                }
+            )
+
+            sort (
+                column: @CREATE_ORDER
+                sort {
+                    nulls: last
+                    sequence: 1
+                }
+            )
+
+        )
+
+        column APEX$ROW_ACTION (
+            type: actionsMenu
+            layout {
+                sequence: 20
+            }
+        )
+
+        column APEX$ROW_SELECTOR (
+            type: rowSelector
+            layout {
+                sequence: 10
+            }
+        )
+
+        column CREATE_DATE (
+            type: datePickerJquery
+            heading {
+                heading: Create Date
+                alignment: center
+            }
+            layout {
+                sequence: 80
+                columnAlignment: center
+            }
+            source {
+                databaseColumn: CREATE_DATE
+                dataType: date
+            }
+        )
+
+        column CREATE_ORDER (
+            type: numberField
+            heading {
+                heading: Create Order
+            }
+            settings {
+                numberAlignment: end
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 70
+            }
+            source {
+                databaseColumn: CREATE_ORDER
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column CREATE_RESULT (
+            type: textarea
+            heading {
+                heading: Create Result
+            }
+            layout {
+                sequence: 100
+            }
+            validation {
+                maxLength: 4000
+            }
+            source {
+                databaseColumn: CREATE_RESULT
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column CREATE_RETRY (
+            type: numberField
+            heading {
+                heading: Create Retry
+                alignment: end
+            }
+            settings {
+                numberAlignment: end
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 110
+                columnAlignment: end
+            }
+            source {
+                databaseColumn: CREATE_RETRY
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column CREATE_SUCCESS (
+            type: textField
+            heading {
+                heading: Create Success
+                alignment: center
+            }
+            layout {
+                sequence: 90
+                columnAlignment: center
+            }
+            validation {
+                maxLength: 1
+            }
+            source {
+                databaseColumn: CREATE_SUCCESS
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column DELETE_DATE (
+            type: datePickerJquery
+            heading {
+                heading: Delete Date
+                alignment: center
+            }
+            layout {
+                sequence: 140
+                columnAlignment: center
+            }
+            source {
+                databaseColumn: DELETE_DATE
+                dataType: date
+            }
+        )
+
+        column DELETE_ORDER (
+            type: numberField
+            heading {
+                heading: Delete Order
+            }
+            settings {
+                numberAlignment: end
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 130
+            }
+            source {
+                databaseColumn: DELETE_ORDER
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column DELETE_RESULT (
+            type: textarea
+            heading {
+                heading: Delete Result
+            }
+            layout {
+                sequence: 170
+            }
+            validation {
+                maxLength: 4000
+            }
+            source {
+                databaseColumn: DELETE_RESULT
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column DELETE_RETRY (
+            type: numberField
+            heading {
+                heading: Delete Retry
+                alignment: end
+            }
+            settings {
+                numberAlignment: end
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 160
+                columnAlignment: end
+            }
+            source {
+                databaseColumn: DELETE_RETRY
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column DELETE_SUCCESS (
+            type: textField
+            heading {
+                heading: Delete Success
+                alignment: center
+            }
+            layout {
+                sequence: 150
+                columnAlignment: center
+            }
+            validation {
+                maxLength: 1
+            }
+            source {
+                databaseColumn: DELETE_SUCCESS
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column FLOW_STEP_ID (
+            type: numberField
+            heading {
+                heading: Flow Step Id
+            }
+            settings {
+                numberAlignment: end
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 40
+            }
+            validation {
+                valueRequired: true
+            }
+            source {
+                databaseColumn: FLOW_STEP_ID
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column FLOW_STEP_PARAM (
+            type: textarea
+            heading {
+                heading: Flow Step Param
+            }
+            layout {
+                sequence: 50
+            }
+            validation {
+                maxLength: 4000
+            }
+            source {
+                databaseColumn: FLOW_STEP_PARAM
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column FLOW_STEP_RESULT (
+            type: textarea
+            heading {
+                heading: Flow Step Result
+            }
+            layout {
+                sequence: 60
+            }
+            validation {
+                maxLength: 4000
+            }
+            source {
+                databaseColumn: FLOW_STEP_RESULT
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column ID (
+            type: hidden
+            layout {
+                sequence: 30
+            }
+            source {
+                databaseColumn: ID
+                dataType: number
+                primaryKey: true
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column OBJECT_OCID (
+            type: textarea
+            heading {
+                heading: Object Ocid
+            }
+            layout {
+                sequence: 120
+            }
+            validation {
+                maxLength: 200
+            }
+            source {
+                databaseColumn: OBJECT_OCID
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column RESERVATION_ID (
+            type: hidden
+            layout {
+                sequence: 180
+            }
+            source {
+                databaseColumn: RESERVATION_ID
+                dataType: number
+            }
+            masterDetail {
+                masterColumn: @ID
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: Reservation Steps
+        }
+    )
+
+    region reservations (
+        name: Reservations
+        type: interactiveGrid
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                 select ID,
+                       OWNER1,
+                       REGION_ID,
+                       TENANCY_ID,
+                       START_GMT,
+                       STOP_GMT,
+                       (select count(*) from ll_reservation_steps where reservation_id = llr.id) as Steps,
+                       (select count(*) from ll_reservation_steps where reservation_id = llr.id and create_order is not null and create_success is null) as Create_Todo,
+                       (select count(*) from ll_reservation_steps where reservation_id = llr.id and delete_order is not null and delete_success is null) as Delete_Todo,
+                       (select count(*) from ll_reservation_steps where reservation_id = llr.id and create_order is not null and create_success='N') as Create_error,
+                       (select count(*) from ll_reservation_steps where reservation_id = llr.id and delete_order is not null and delete_success='N') as Delete_error,
+                       (select count(*) from user_scheduler_jobs where job_name like '%'||llr.id||'%') jobs_running
+                  from LL_RESERVATIONS_VW llr
+                  where owner1 like '%'||:P9350_PREFIX||'%'
+                
+                ```
+            pageItemsToSubmit: P9350_PREFIX
+        }
+        layout {
+            sequence: 40
+            slot: contentBody
+        }
+        appearance {
+            template: @collapsible
+            templateOptions: [
+                #DEFAULT#
+                t-Region--hideShowIconsMath
+                is-expanded
+                t-Region--scrollBody
+            ]
+        }
+        edit {
+            enabled: true
+            allowedOperations: update
+        }
+        performance {
+            lazyLoading: true
+        }
+        pagination {
+            type: page
+        }
+        toolbar {
+            controls: [
+                searchCol
+                searchField
+                actionsMenu
+                resetButton
+            ]
+        }
+        download {
+            formats: [
+                csv
+                html
+                pdf
+                excel
+            ]
+        }
+        advanced {
+            savedReportMappingIdentifier: 195406026665865689
+        }
+
+        savedReport 1214018 (
+            visibility: primary
+            view {
+                default: grid
+                rowsPerPage: 5
+            }
+            singleRowView {
+                displayedColumns: true
+            }
+
+            displayColumn (
+                column: @STEPS
+                layout {
+                    width: 80
+                    sequence: 7
+                }
+            )
+
+            displayColumn (
+                column: @CREATE_TODO
+                layout {
+                    width: 107
+                    sequence: 8
+                }
+            )
+
+            displayColumn (
+                column: @DELETE_TODO
+                layout {
+                    width: 84
+                    sequence: 10
+                }
+            )
+
+            displayColumn (
+                column: @CREATE_ERROR
+                layout {
+                    width: 99
+                    sequence: 9
+                }
+            )
+
+            displayColumn (
+                column: @DELETE_ERROR
+                layout {
+                    width: 142
+                    sequence: 11
+                }
+            )
+
+            displayColumn (
+                column: @ID
+                layout {
+                    sequence: 1
+                }
+            )
+
+            displayColumn (
+                column: @OWNER1
+                layout {
+                    width: 143
+                    sequence: 2
+                }
+            )
+
+            displayColumn (
+                column: @REGION_ID
+                layout {
+                    width: 230
+                    sequence: 3
+                }
+            )
+
+            displayColumn (
+                column: @TENANCY_ID
+                layout {
+                    width: 182
+                    sequence: 2
+                }
+            )
+
+            displayColumn (
+                column: @START_GMT
+                layout {
+                    width: 161
+                    sequence: 4
+                }
+            )
+
+            displayColumn (
+                column: @STOP_GMT
+                layout {
+                    width: 155
+                    sequence: 5
+                }
+            )
+
+            displayColumn (
+                column: @JOBS_RUNNING
+                layout {
+                    width: 89
+                    sequence: 6
+                }
+            )
+
+            sort (
+                column: @OWNER1
+                sort {
+                    nulls: last
+                    sequence: 1
+                }
+            )
+
+        )
+
+        column CREATE_ERROR (
+            type: numberField
+            heading {
+                heading: Create Error
+                alignment: center
+            }
+            settings {
+                numberAlignment: center
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 130
+                columnAlignment: center
+            }
+            source {
+                databaseColumn: CREATE_ERROR
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column CREATE_TODO (
+            type: numberField
+            heading {
+                heading: Create Todo
+                alignment: center
+            }
+            settings {
+                numberAlignment: center
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 110
+                columnAlignment: center
+            }
+            source {
+                databaseColumn: CREATE_TODO
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column DELETE_ERROR (
+            type: numberField
+            heading {
+                heading: Delete Error
+                alignment: center
+            }
+            settings {
+                numberAlignment: center
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 140
+                columnAlignment: center
+            }
+            source {
+                databaseColumn: DELETE_ERROR
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column DELETE_TODO (
+            type: numberField
+            heading {
+                heading: Delete Todo
+                alignment: center
+            }
+            settings {
+                numberAlignment: center
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 120
+                columnAlignment: center
+            }
+            source {
+                databaseColumn: DELETE_TODO
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column ID (
+            type: hidden
+            layout {
+                sequence: 30
+            }
+            source {
+                databaseColumn: ID
+                dataType: number
+                primaryKey: true
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column JOBS_RUNNING (
+            type: numberField
+            heading {
+                heading: Jobs Running
+                alignment: center
+            }
+            settings {
+                numberAlignment: end
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 150
+                columnAlignment: center
+            }
+            source {
+                databaseColumn: JOBS_RUNNING
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column OWNER1 (
+            type: textField
+            heading {
+                heading: Owner1
+            }
+            layout {
+                sequence: 40
+            }
+            validation {
+                maxLength: 50
+            }
+            source {
+                databaseColumn: OWNER1
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column REGION_ID (
+            type: popupLov
+            heading {
+                heading: Region
+            }
+            lov {
+                type: sharedComponent
+                lov: @ll-regions-3
+                displayExtraValues: false
+            }
+            layout {
+                sequence: 50
+            }
+            source {
+                databaseColumn: REGION_ID
+                dataType: number
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: useLov
+            }
+        )
+
+        column START_GMT (
+            type: datePickerJquery
+            heading {
+                heading: Start (GMT Timezone)
+            }
+            layout {
+                sequence: 80
+            }
+            appearance {
+                formatMask: DD-Mon-YYYY HH24:MI:SS
+            }
+            source {
+                databaseColumn: START_GMT
+                dataType: date
+            }
+        )
+
+        column STEPS (
+            type: numberField
+            heading {
+                heading: Steps
+                alignment: center
+            }
+            settings {
+                numberAlignment: center
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 100
+                columnAlignment: center
+            }
+            source {
+                databaseColumn: STEPS
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column STOP_GMT (
+            type: datePickerJquery
+            heading {
+                heading: Stop (GMT timezone)
+            }
+            layout {
+                sequence: 90
+            }
+            appearance {
+                formatMask: DD-Mon-YYYY HH24:MI:SS
+            }
+            source {
+                databaseColumn: STOP_GMT
+                dataType: date
+            }
+        )
+
+        column TENANCY_ID (
+            type: popupLov
+            heading {
+                heading: Tenancy
+            }
+            lov {
+                type: sharedComponent
+                lov: @ll-tenancies-2
+                displayExtraValues: false
+            }
+            layout {
+                sequence: 60
+            }
+            source {
+                databaseColumn: TENANCY_ID
+                dataType: number
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: useLov
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: Reservations
+        }
+    )
+
+    region testdrive-workshops-with-csv-upload (
+        name: Testdrive Workshops with CSV Upload
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @collapsible
+            templateOptions: [
+                #DEFAULT#
+                t-Region--hideShowIconsMath
+                is-expanded
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region wait (
+        name: Wait
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <style>
+                h1 {text-align: center;}
+                </style>
+                <h1><img src="https://i.stack.imgur.com/hzk6C.gif"></h1>
+                
+                ```
+        }
+        layout {
+            sequence: 60
+            slot: contentBody
+        }
+        appearance {
+            template: @inline-popup
+            templateOptions: [
+                #DEFAULT#
+                js-dialog-autoheight
+                t-DialogRegion--noPadding
+                js-dialog-size480x320
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    pageItem P9350_DELAY (
+        type: selectList
+        label {
+            label: Delay (seconds)
+            alignment: left
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC2:0;0,5;5,10;10,15;15,20;20,25;25,30;30,35;35,40;40,45;45,50;50,55;55,60;60
+        }
+        layout {
+            sequence: 60
+            region: @testdrive-workshops-with-csv-upload
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 1
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        default {
+            type: static
+            staticValue: 0
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9350_FILE (
+        type: fileUpload
+        label {
+            label: File
+            alignment: left
+        }
+        storage {
+            type: appTempFiles
+            allowMultipleFiles: true
+        }
+        layout {
+            sequence: 80
+            region: @testdrive-workshops-with-csv-upload
+            slot: regionBody
+            alignment: left
+            columnSpan: 2
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+    )
+
+    pageItem P9350_FILE_NAME (
+        type: textField
+        label {
+            label: File Name
+            alignment: left
+        }
+        layout {
+            sequence: 90
+            region: @testdrive-workshops-with-csv-upload
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9350_NUM_ENVIRONMENTS (
+        type: numberField
+        label {
+            label: # Environments
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 40
+            region: @testdrive-workshops-with-csv-upload
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 1
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        default {
+            type: static
+            staticValue: 5
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9350_PREFIX (
+        type: textField
+        label {
+            label: Prefix
+            alignment: left
+        }
+        layout {
+            sequence: 30
+            region: @testdrive-workshops-with-csv-upload
+            slot: regionBody
+            alignment: left
+            columnSpan: 3
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9350_SSH_KEY (
+        type: textarea
+        label {
+            label: Ssh Key
+            alignment: left
+        }
+        layout {
+            sequence: 70
+            region: @testdrive-workshops-with-csv-upload
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+            height: 5
+        }
+        default {
+            type: sqlQuerySingleValue
+            sqlQuerySingleValue:
+                ```sql
+                select public_key
+                from ll_reservations
+                where id = (select max(id) 
+                            from ll_reservations
+                            where owner1=:app_user
+                            and public_key is not null)
+                ```
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9350_START_NUMBER (
+        type: numberField
+        label {
+            label: Start Number
+            alignment: left
+        }
+        settings {
+            minValue: 1
+            maxValue: 99
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 50
+            region: @testdrive-workshops-with-csv-upload
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 1
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        default {
+            type: static
+            staticValue: 1
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9350_WORKSHOP_ID (
+        type: popupLov
+        label {
+            label: Workshop
+            alignment: left
+        }
+        lov {
+            type: sharedComponent
+            lov: @ll-workshops
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 20
+            region: @testdrive-workshops-with-csv-upload
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            valueRequired: true
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button build-environments (
+        buttonName: Build-Environments
+        label: Build environments
+        layout {
+            sequence: 10
+            region: @button-bar
+            slot: regionBody
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button charm (
+        buttonName: Charm
+        label: Charm
+        layout {
+            sequence: 60
+            region: @button-bar
+            slot: regionBody
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P9350_FILE_NAME
+        }
+    )
+
+    button clear (
+        buttonName: Clear
+        label: Clear
+        layout {
+            sequence: 40
+            region: @button-bar
+            slot: regionBody
+            startNewRow: false
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button delete-environments (
+        buttonName: Delete-Environments
+        label: Delete environments
+        layout {
+            sequence: 30
+            region: @button-bar
+            slot: regionBody
+            startNewRow: false
+            newColumn: false
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button env-for-csv (
+        buttonName: Env_for_csv
+        label: Environment for CSV
+        layout {
+            sequence: 50
+            region: @button-bar
+            slot: regionBody
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button load (
+        buttonName: Load
+        label: Load
+        layout {
+            sequence: 70
+            region: @button-bar
+            slot: regionBody
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button restart-error-environments (
+        buttonName: Restart-Error-Environments
+        label: Restart environment builds
+        layout {
+            sequence: 20
+            region: @button-bar
+            slot: regionBody
+            startNewRow: false
+            newColumn: false
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    button save (
+        buttonName: SAVE
+        label: Save
+        layout {
+            sequence: 10
+            region: @button-bar
+            slot: edit
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    dynamicAction build (
+        name: Build
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @build-environments
+        }
+
+        action native-close-region (
+            action: closeRegion
+            affectedElements {
+                selectionType: region
+                region: @wait
+            }
+            execution {
+                sequence: 70
+                fireOnInit: false
+            }
+        )
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    begin
+                    
+                      ll_pkg_admin.stress_test_build (p_workshop_id       => :P9350_WORKSHOP_ID,
+                                                      p_prefix            => :P9350_PREFIX,
+                                                      p_num_environments  => :P9350_num_environments,
+                                                      p_delay             => :P9350_delay,
+                                                      p_start_number      => :P9350_start_number,
+                                                      p_ssh_key           => :P9350_ssh_key);
+                    
+                      apex_util.pause(15);
+                    
+                    end;                                  
+                    
+                    ```
+                itemsToSubmit: [
+                    P9350_WORKSHOP_ID
+                    P9350_PREFIX
+                    P9350_NUM_ENVIRONMENTS
+                    P9350_START_NUMBER
+                    P9350_DELAY
+                    P9350_SSH_KEY
+                ]
+            }
+            execution {
+                sequence: 50
+                fireOnInit: false
+            }
+        )
+
+        action native-open-region (
+            action: openRegion
+            affectedElements {
+                selectionType: region
+                region: @wait
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+        action native-submit-page (
+            action: submitPage
+            execution {
+                sequence: 60
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction destroy (
+        name: Destroy
+        execution {
+            sequence: 20
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @delete-environments
+        }
+
+        action native-close-region (
+            action: closeRegion
+            affectedElements {
+                selectionType: region
+                region: @wait
+            }
+            execution {
+                sequence: 40
+                fireOnInit: false
+            }
+        )
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    begin
+                      ll_pkg_admin.stress_test_destroy (p_prefix => :P9350_PREFIX);
+                      apex_util.pause(20);
+                    end;
+                    
+                    ```
+                itemsToSubmit: P9350_PREFIX
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+        action native-open-region (
+            action: openRegion
+            affectedElements {
+                selectionType: region
+                region: @wait
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+        action native-submit-page (
+            action: submitPage
+            execution {
+                sequence: 30
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction envs-for-csv-action (
+        name: envs for csv action
+        execution {
+            sequence: 40
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @env-for-csv
+        }
+
+        action native-confirm (
+            action: confirm
+            settings {
+                message: Submitted !
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                     
+                    insert into ll_reservations ( OWNER1, REASON, WORKSHOP_ID, START_DATE, START_TIMEZONE, ACTIVE_FLG    ) 
+                    values ( 'demo@mail.com' , 'DEMO', :P9350_WORKSHOP_ID, sysdate, 'GMT', 'Y'  ) ;
+                    
+                    ```
+                itemsToSubmit: [
+                    P9350_FILE
+                    P9350_FILE_NAME
+                ]
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction new (
+        name: New
+        execution {
+            sequence: 50
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @charm
+        }
+
+        action native-confirm (
+            action: confirm
+            settings {
+                message: Data Submitted !
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    INSERT INTO ll_reservations (OWNER1, REASON, WORKSHOP_ID, START_DATE, START_TIMEZONE, ACTIVE_FLG    )
+                     values (  ( select p.col002 as Emails
+                           -- add more columns (col011 to col300) here.
+                      from apex_application_temp_files f, 
+                           table( apex_data_parser.parse(
+                                      p_content          => f.blob_content,
+                                      p_file_name        => f.filename,
+                                      p_add_headers_row   => 'Y',
+                                      p_csv_enclosed      => '"',
+                                      p_file_charset      => 'WE8ISO8859P1',
+                                      p_max_rows         => 10 ) ) p
+                     where f.name = :P9350_FILE) , 'DEMO4', :P9350_WORKSHOP_ID, sysdate, 'GMT', 'Y' ) ;
+                    
+                    /*
+                    INSERT INTO table2 (column1, column2, column3, ...)
+                    SELECT column1, column2, column3, ...
+                    FROM table1
+                    WHERE condition;
+                    */
+                    
+                    /*
+                    select p.line_number, p.col002 as Emails
+                           -- add more columns (col011 to col300) here.
+                      from apex_application_temp_files f, 
+                           table( apex_data_parser.parse(
+                                      p_content          => f.blob_content,
+                                      p_file_name        => f.filename,
+                                      p_add_headers_row   => 'Y',
+                                      p_csv_enclosed      => '"',
+                                      p_file_charset      => 'WE8ISO8859P1',
+                                      p_max_rows         => 10 ) ) p
+                     where f.name = :P9350_FILE
+                    
+                      insert into ll_reservations ( OWNER1, REASON, WORKSHOP_ID, START_DATE, START_TIMEZONE, ACTIVE_FLG    )
+                           values ( 'demo1@mail.com' , 'DEMO4', :P9350_WORKSHOP_ID, sysdate, 'GMT', 'Y'  ) ;
+                    
+                    
+                     */
+                    
+                    ```
+                itemsToSubmit: [
+                    P9350_FILE
+                    P9350_FILE_NAME
+                    P9350_WORKSHOP_ID
+                ]
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+            serverSideCondition {
+                type: itemIsNotNull
+                item: P9350_FILE_NAME
+            }
+        )
+
+    )
+
+    dynamicAction submit-page-on-upload (
+        name: Submit Page on Upload
+        execution {
+            sequence: 30
+        }
+        when {
+            selectionType: items
+            items: P9350_FILE
+        }
+
+        action native-submit-page (
+            action: submitPage
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    computation p9350-file-name (
+        itemName: P9350_FILE_NAME
+        execution {
+            sequence: 10
+        }
+        computation {
+            sqlQuery:
+                ```sql
+                select filename
+                  from apex_application_temp_files 
+                 where name = :P9350_FILE
+                ```
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P9350_FILE
+        }
+    )
+
+    process clear (
+        name: Clear
+        type: clearSessionState
+        execution {
+            sequence: 30
+        }
+        successMessage {
+            successMessage: Cleared!
+        }
+        advanced {
+            executionMappingIdentifier: 253081706249599571
+        }
+        serverSideCondition {
+            whenButtonPressed: @clear
+        }
+    )
+
+    process load-data (
+        name: Load Data
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                DECLARE
+                    l_file blob;
+                    l_load_result apex_data_loading.t_data_load_result;
+                    l_email varchar2(100);
+                
+                    Cursor C1 Is
+                      Select email
+                      From   TEMP_EMAILS ;
+                
+                
+                BEGIN
+                    SELECT blob_content
+                      INTO l_file
+                      FROM apex_application_temp_files
+                     WHERE name = :P9350_FILE;
+                 
+                        l_load_result := apex_data_loading.load_data (
+                                             p_static_id    => 'CSV_TEMP_EMAILS',
+                                             p_data_to_load => l_file ); 
+                
+                     -- data is now loaded get this into ll reservations table --
+                     For row_1 In C1 Loop
+                            l_email := row_1.email; 
+                            insert into ll_reservations 
+                            (REASON, OWNER1, WORKSHOP_ID, START_DATE, START_TIMEZONE, ACTIVE_FLG )
+                            values 
+                            ('DEMO4', l_email ,794, sysdate, 'GMT', 'Y' );
+                
+                     End Loop;
+                
+                     -- clean up temp table since reservation is initialized --
+                
+                     delete from temp_emails;
+                
+                END;
+                ```
+        }
+        execution {
+            sequence: 40
+        }
+        advanced {
+            executionMappingIdentifier: 253242271938440342
+        }
+        serverSideCondition {
+            whenButtonPressed: @load
+        }
+    )
+
+    process reservation-steps-save-interactive-grid-data (
+        name: Reservation Steps - Save Interactive Grid Data
+        type: interactiveGridAutoRowProcessing
+        editableRegion: @reservation-steps
+        execution {
+            sequence: 20
+        }
+        advanced {
+            executionMappingIdentifier: 252950072120206016
+        }
+        serverSideCondition {
+            whenButtonPressed: @save
+        }
+    )
+
+    process reservations-save-interactive-grid-data (
+        name: Reservations - Save Interactive Grid Data
+        type: interactiveGridAutoRowProcessing
+        editableRegion: @reservations
+        execution {
+            sequence: 10
+        }
+        advanced {
+            executionMappingIdentifier: 252956165672206026
+        }
+        serverSideCondition {
+            whenButtonPressed: @save
+        }
+    )
+
+)
+

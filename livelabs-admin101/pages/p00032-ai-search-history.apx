@@ -1,0 +1,262 @@
+page 32 (
+    name: AI Search History
+    alias: AI-SEARCH-HISTORY
+    title: AI Search History
+    appearance {
+        pageTemplate: @standard-trustarc
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region ai-search-history (
+        name: AI Search History
+        type: interactiveGrid
+        source {
+            location: localDatabase
+            tableName: LL_SEARCH_HISTORY
+        }
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        toolbar {
+            controls: [
+                searchCol
+                searchField
+                actionsMenu
+                resetButton
+                saveButton
+            ]
+        }
+        enableUsersTo {
+            savePublicReport: true
+            savePublicReportAuthorization: @superrrrr-user
+        }
+        download {
+            formats: [
+                csv
+                html
+                pdf
+                excel
+            ]
+        }
+        advanced {
+            savedReportMappingIdentifier: 6227621497602917
+        }
+
+        savedReport 62281 (
+            visibility: primary
+            view {
+                default: grid
+            }
+            singleRowView {
+                displayedColumns: true
+            }
+
+            displayColumn (
+                column: @ID
+                layout {
+                    sequence: 1
+                }
+            )
+
+            displayColumn (
+                column: @SEARCH_QUERY
+                layout {
+                    sequence: 2
+                }
+            )
+
+            displayColumn (
+                column: @CREATED_AT
+                layout {
+                    width: 99.0005
+                    sequence: 6
+                }
+            )
+
+            displayColumn (
+                column: @SEARCH_RESPONSE
+                layout {
+                    width: 478.39099999999996
+                    sequence: 3
+                }
+            )
+
+            displayColumn (
+                column: @APP_SESSION
+                layout {
+                    width: 159.39100000000002
+                    sequence: 4
+                }
+            )
+
+            displayColumn (
+                column: @APP_USER
+                layout {
+                    width: 226.39100000000002
+                    sequence: 5
+                }
+            )
+
+            sort (
+                column: @CREATED_AT
+                sort {
+                    direction: desc
+                    nulls: first
+                    sequence: 1
+                }
+            )
+
+        )
+
+        column APP_SESSION (
+            type: displayOnly
+            heading {
+                heading: App Session
+            }
+            layout {
+                sequence: 50
+            }
+            source {
+                databaseColumn: APP_SESSION
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column APP_USER (
+            type: displayOnly
+            heading {
+                heading: App User
+            }
+            layout {
+                sequence: 60
+            }
+            source {
+                databaseColumn: APP_USER
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column CREATED_AT (
+            type: displayOnly
+            heading {
+                heading: Created At
+            }
+            layout {
+                sequence: 70
+            }
+            appearance {
+                formatMask: DD-MON-YYYY HH24:MI
+            }
+            source {
+                databaseColumn: CREATED_AT
+                dataType: timestamp
+            }
+        )
+
+        column ID (
+            type: hidden
+            layout {
+                sequence: 10
+            }
+            source {
+                databaseColumn: ID
+                dataType: number
+                queryOnly: true
+                primaryKey: true
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column SEARCH_QUERY (
+            type: displayOnly
+            heading {
+                heading: Search Query
+            }
+            layout {
+                sequence: 20
+            }
+            source {
+                databaseColumn: SEARCH_QUERY
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column SEARCH_RESPONSE (
+            type: displayOnly
+            heading {
+                heading: Search Response
+            }
+            layout {
+                sequence: 40
+            }
+            source {
+                databaseColumn: SEARCH_RESPONSE
+                dataType: clob
+            }
+            sessionState {
+                dataType: clob
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: AI Search History
+        }
+    )
+
+)
+

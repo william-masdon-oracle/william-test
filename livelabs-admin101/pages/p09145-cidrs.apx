@@ -1,0 +1,351 @@
+page 9145 (
+    name: CIDRs
+    alias: CIDRS
+    title: CIDRs
+    appearance {
+        pageTemplate: @standard-trustarc
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        authorizationScheme: @superrrrr-user
+        formAutoComplete: false
+    }
+
+    region cidrs (
+        name: CIDRs
+        type: interactiveGrid
+        source {
+            location: localDatabase
+            tableName: LL_OCI_DEFAULT_CIDRS
+            includeRowidColumn: true
+        }
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        edit {
+            enabled: true
+            allowedOperations: [
+                add
+                update
+                delete
+            ]
+        }
+        toolbar {
+            controls: [
+                searchCol
+                searchField
+                actionsMenu
+                resetButton
+                saveButton
+            ]
+        }
+        download {
+            formats: [
+                csv
+                html
+                pdf
+            ]
+        }
+        advanced {
+            savedReportMappingIdentifier: 12093668520393209617
+        }
+
+        savedReport 930967 (
+            visibility: primary
+            view {
+                default: grid
+            }
+            singleRowView {
+                displayedColumns: true
+            }
+
+            displayColumn (
+                column: @PROTOCOL
+                layout {
+                    sequence: 5
+                }
+            )
+
+            displayColumn (
+                column: @HOSTNAME
+                layout {
+                    sequence: 6
+                }
+            )
+
+            displayColumn (
+                column: @APEX$ROW_ACTION
+                layout {
+                    sequence: 0
+                }
+            )
+
+            displayColumn (
+                column: @ROWID
+                layout {
+                    sequence: 1
+                }
+            )
+
+            displayColumn (
+                column: @REGION
+                layout {
+                    sequence: 2
+                }
+            )
+
+            displayColumn (
+                column: @CIDR
+                layout {
+                    sequence: 3
+                }
+            )
+
+            displayColumn (
+                column: @TAG
+                layout {
+                    sequence: 4
+                }
+            )
+
+        )
+
+        column APEX$ROW_ACTION (
+            type: actionsMenu
+            layout {
+                sequence: 20
+            }
+        )
+
+        column APEX$ROW_SELECTOR (
+            type: rowSelector
+            layout {
+                sequence: 10
+            }
+        )
+
+        column CIDR (
+            type: textField
+            heading {
+                heading: Cidr
+            }
+            layout {
+                sequence: 50
+            }
+            validation {
+                maxLength: 4000
+            }
+            source {
+                databaseColumn: CIDR
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column HOSTNAME (
+            type: textField
+            heading {
+                heading: Hostname
+            }
+            layout {
+                sequence: 80
+            }
+            validation {
+                maxLength: 200
+            }
+            source {
+                databaseColumn: HOSTNAME
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column PROTOCOL (
+            type: textField
+            heading {
+                heading: Protocol
+            }
+            layout {
+                sequence: 70
+            }
+            validation {
+                maxLength: 100
+            }
+            source {
+                databaseColumn: PROTOCOL
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column REGION (
+            type: textField
+            heading {
+                heading: Region
+            }
+            layout {
+                sequence: 40
+            }
+            validation {
+                maxLength: 4000
+            }
+            source {
+                databaseColumn: REGION
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column ROWID (
+            type: hidden
+            layout {
+                sequence: 30
+            }
+            source {
+                databaseColumn: ROWID
+                dataType: rowid
+                primaryKey: true
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column TAG (
+            type: textField
+            heading {
+                heading: Tag
+            }
+            layout {
+                sequence: 60
+            }
+            validation {
+                maxLength: 4000
+            }
+            source {
+                databaseColumn: TAG
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: CIDRs
+        }
+    )
+
+    button refresh (
+        buttonName: Refresh
+        label: Refresh
+        layout {
+            sequence: 10
+            region: @cidrs
+            slot: previous
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    dynamicAction refresh (
+        name: Refresh
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @refresh
+        }
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode: dbms_mview.refresh('LL_OCI_SERVICE_CIDRS_MVW');
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @cidrs
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    process cidrs-save-interactive-grid-data (
+        name: CIDRs - Save Interactive Grid Data
+        type: interactiveGridAutoRowProcessing
+        editableRegion: @cidrs
+        execution {
+            sequence: 10
+        }
+        advanced {
+            executionMappingIdentifier: 152426195719177921
+        }
+    )
+
+)
+

@@ -1,0 +1,449 @@
+page 9177 (
+    name: Asset Details
+    alias: ASSET-DETAILS
+    title: Asset Details
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @modal-dialog
+        templateOptions: #DEFAULT#
+    }
+    dialog {
+        chained: false
+        resizable: false
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        authorizationScheme: @superrrrr-user
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region asset-details (
+        name: Asset Details
+        type: form
+        source {
+            location: localDatabase
+            tableName: LL_ASSETS
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        edit {
+            enabled: true
+            allowedOperations: [
+                add
+                update
+                delete
+            ]
+        }
+    )
+
+    region shared-asset-warning (
+        name: Shared Asset Warning
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <div class="t-Alert t-Alert--warning t-Alert--horizontal">
+                  <div class="t-Alert-wrap">
+                    <div class="t-Alert-icon">
+                      <span class="t-Icon"></span>
+                    </div>
+                    <div class="t-Alert-content">
+                      <div class="t-Alert-title">Shared asset</div>
+                      <div class="t-Alert-body">Changes to this asset apply everywhere it is used.</div>
+                    </div>
+                  </div>
+                </div>
+                ```
+        }
+        layout {
+            sequence: 5
+            slot: contentBody
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    pageItem P9177_ACTIVE_FLG (
+        type: selectList
+        label {
+            label: Active
+            alignment: left
+        }
+        lov {
+            type: sharedComponent
+            lov: @asset-active-flg
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 40
+            region: @asset-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 2
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @asset-details
+            column: ACTIVE_FLG
+            dataType: varchar2
+        }
+        default {
+            type: static
+            staticValue: Y
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9177_DATE_ADDED (
+        type: datePicker
+        label {
+            label: Date Added
+            alignment: left
+        }
+        layout {
+            sequence: 60
+            region: @asset-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 3
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @asset-details
+            column: DATE_ADDED
+            dataType: date
+        }
+        default {
+            type: expression
+            plsqlExpression: sysdate
+        }
+    )
+
+    pageItem P9177_DATE_UPDATED (
+        type: datePicker
+        label {
+            label: Date Updated
+            alignment: left
+        }
+        layout {
+            sequence: 70
+            region: @asset-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 3
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @asset-details
+            column: DATE_UPDATED
+            dataType: date
+        }
+        default {
+            type: expression
+            plsqlExpression: sysdate
+        }
+    )
+
+    pageItem P9177_ID (
+        type: hidden
+        layout {
+            sequence: 10
+            region: @asset-details
+            slot: regionBody
+        }
+        source {
+            formRegion: @asset-details
+            column: ID
+            dataType: number
+            primaryKey: true
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9177_NAME (
+        type: textField
+        label {
+            label: Name
+            alignment: left
+        }
+        settings {
+            trimSpaces: none
+        }
+        layout {
+            sequence: 20
+            region: @asset-details
+            slot: regionBody
+            alignment: left
+            columnSpan: 7
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 64
+        }
+        validation {
+            maxLength: 1000
+        }
+        source {
+            formRegion: @asset-details
+            column: NAME
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9177_TYPE_ID (
+        type: popupLov
+        label {
+            label: Asset Type
+            alignment: left
+        }
+        lov {
+            type: sharedComponent
+            lov: @asset-types
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 30
+            region: @asset-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 3
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @asset-details
+            column: TYPE_ID
+            dataType: number
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9177_URL (
+        type: textarea
+        label {
+            label: URL
+            alignment: left
+        }
+        layout {
+            sequence: 50
+            region: @asset-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 80
+            height: 4
+        }
+        validation {
+            maxLength: 4000
+        }
+        source {
+            formRegion: @asset-details
+            column: URL
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button cancel (
+        buttonName: CANCEL
+        label: Cancel
+        layout {
+            sequence: 10
+            region: @asset-details
+            slot: close
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button create (
+        buttonName: CREATE
+        label: Create
+        layout {
+            sequence: 40
+            region: @asset-details
+            slot: create
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: insert
+        }
+        serverSideCondition {
+            type: itemIsNull
+            item: P9177_ID
+        }
+    )
+
+    button delete (
+        buttonName: DELETE
+        label: Delete
+        layout {
+            sequence: 20
+            region: @asset-details
+            slot: delete
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            executeValidations: false
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: delete
+            requiresConfirmation: true
+        }
+        confirmation {
+            message: &APP_TEXT$DELETE_MSG!RAW.
+            style: danger
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P9177_ID
+        }
+    )
+
+    button save (
+        buttonName: SAVE
+        label: Apply Changes
+        layout {
+            sequence: 30
+            region: @asset-details
+            slot: change
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: update
+            requiresConfirmation: true
+        }
+        confirmation {
+            message: This asset may be used by multiple LiveStacks. Saving changes will update it everywhere it is used.
+            style: warning
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P9177_ID
+        }
+    )
+
+    dynamicAction cancel-dialog (
+        name: Cancel Dialog
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @cancel
+        }
+
+        action native-dialog-cancel (
+            action: cancelDialog
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    process close-dialog (
+        name: Close Dialog
+        type: closeDialog
+        settings {
+            showSuccessMessages: false
+        }
+        execution {
+            sequence: 20
+        }
+        advanced {
+            executionMappingIdentifier: 9177003
+        }
+    )
+
+    process initialize-form-asset-details (
+        name: Initialize form Asset Details
+        type: formInitialization
+        formRegion: @asset-details
+        execution {
+            sequence: 10
+            point: beforeHeader
+        }
+        advanced {
+            executionMappingIdentifier: 9177001
+        }
+    )
+
+    process process-form-asset-details (
+        name: Process form Asset Details
+        type: formAutoRowProcessing
+        formRegion: @asset-details
+        execution {
+            sequence: 10
+        }
+        advanced {
+            executionMappingIdentifier: 9177002
+        }
+    )
+
+)
+

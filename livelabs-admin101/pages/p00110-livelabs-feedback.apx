@@ -1,0 +1,397 @@
+page 110 (
+    name: LiveLabs Feedback
+    alias: LIVELABS-FEEDBACK
+    title: LiveLabs Feedback
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @modal-dialog
+        templateOptions: #DEFAULT#
+    }
+    dialog {
+        resizable: false
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    javaScript {
+        functionAndGlobalVariableDeclaration: var htmldb_delete_message='"DELETE_CONFIRM_MSG"';
+    }
+    security {
+        authentication: public
+        formAutoComplete: false
+    }
+
+    region button (
+        name: Button
+        type: staticContent
+        layout {
+            sequence: 60
+            parentRegion: @livelabs-feedback-public
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--hiddenOverflow
+                t-Form--noPadding
+            ]
+        }
+    )
+
+    region button-2 (
+        name: Button
+        type: staticContent
+        layout {
+            sequence: 30
+            parentRegion: @livelabs-feedback-oracle
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--hiddenOverflow
+                t-Form--noPadding
+            ]
+        }
+    )
+
+    region livelabs-feedback-oracle (
+        name: LiveLabs Feedback - Oracle
+        type: staticContent
+        layout {
+            sequence: 30
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--hiddenOverflow
+                t-Form--noPadding
+                margin-top-md
+                margin-bottom-sm
+                margin-left-lg
+                margin-right-lg
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        serverSideCondition {
+            type: expression
+            plsqlExpression: instr(upper(:app_user),'@ORACLE.COM')>0
+        }
+    )
+
+    region livelabs-feedback-public (
+        name: LiveLabs Feedback - Public
+        type: staticContent
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--hiddenOverflow
+                t-Form--noPadding
+                margin-top-md
+                margin-bottom-sm
+                margin-left-lg
+                margin-right-lg
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        serverSideCondition {
+            type: expression
+            plsqlExpression: instr(upper(:app_user),'@ORACLE.COM')=0
+        }
+    )
+
+    region public-feedback-info (
+        name: Public feedback info
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <table>
+                    <tr>
+                        <td>
+                            <img src="#APP_IMAGES#ll_feedback.png" width="70px"> 
+                        </td>
+                        <td width="10px">
+                        </td>
+                        <td>
+                            <span style="font-size:1.2em">
+                                
+                                <p>If you have an issue you can contact support via <a href="mailto:livelabs-help-db_us@oracle.com" style="font-weight:600;border-bottom:1px dashed">email</a>.</p>
+                                <p>Otherwise you can check our <a href="f?p=&APP_ID.:10041:&SESSION." style="font-weight:600;border-bottom:1px dashed">Frequently Asked Questions</a> to see if your answer is there.</p>
+                            </span>
+                        </td>
+                    </tr>
+                </table>
+                ```
+        }
+        layout {
+            sequence: 20
+            parentRegion: @livelabs-feedback-public
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--hiddenOverflow
+                t-Form--noPadding
+            ]
+        }
+    )
+
+    region public-feedback-info-2 (
+        name: Public feedback info
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <table>
+                    <tr>
+                        <td>
+                            <img src="#APP_IMAGES#ll_feedback.png" width="70px"> 
+                        </td>
+                        <td width="10px">
+                        </td>
+                        <td>
+                            <span style="font-size:1.2em">
+                                <p>Please check our <a href="f?p=&APP_ID.:10041:&SESSION." style="font-weight:600;border-bottom:1px dashed">Frequently Asked Questions</a>.</p>
+                                <p>
+                                    As an Oracle employee, you can use our the internal <a href="https://proddev-database.slack.com/archives/CTUPZQ5HA" target="_blank" style="font-weight:600;border-bottom:1px dashed">livelabs-help Slack channel</a> for any questions or issues.
+                                </p>
+                            </span>
+                        </td>
+                    </tr>
+                </table>
+                ```
+        }
+        layout {
+            sequence: 10
+            parentRegion: @livelabs-feedback-oracle
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--hiddenOverflow
+                t-Form--noPadding
+            ]
+        }
+    )
+
+    button close (
+        buttonName: Close
+        label: Close
+        layout {
+            sequence: 10
+            region: @button
+            slot: belowBox
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button close-2 (
+        buttonName: Close_1
+        label: Close
+        layout {
+            sequence: 10
+            region: @button-2
+            slot: belowBox
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    dynamicAction close (
+        name: Close
+        execution {
+            sequence: 50
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @close
+        }
+
+        action native-dialog-cancel (
+            action: cancelDialog
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction close-dialog (
+        name: Close dialog
+        execution {
+            sequence: 60
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @close-2
+        }
+
+        action native-dialog-cancel (
+            action: cancelDialog
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction new (
+        name: New
+        execution {
+            sequence: 20
+        }
+        when {
+            selectionType: items
+            items: P110_FEEDBACK_TYPE
+        }
+        clientSideCondition {
+            type: item=value
+            item: P110_FEEDBACK_TYPE
+            value: Workshop Content
+        }
+
+        action native-show (
+            action: show
+            affectedElements {
+                selectionType: items
+                items: [
+                    P110_WK_NAME
+                    P110_LAB_NAME
+                ]
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    dynamicAction new-2 (
+        name: New_1
+        execution {
+            sequence: 30
+        }
+        when {
+            event: ready
+        }
+
+        action native-hide (
+            action: hide
+            affectedElements {
+                selectionType: items
+                items: [
+                    P110_WK_NAME
+                    P110_LAB_NAME
+                ]
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    dynamicAction new-3 (
+        name: New_2
+        execution {
+            sequence: 40
+        }
+        when {
+            selectionType: items
+            items: P110_FEEDBACK_TYPE
+        }
+        clientSideCondition {
+            type: item!=value
+            item: P110_FEEDBACK_TYPE
+            value: Workshop Content
+        }
+
+        action native-hide (
+            action: hide
+            affectedElements {
+                selectionType: items
+                items: [
+                    P110_WK_NAME
+                    P110_LAB_NAME
+                ]
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    process close-dialog (
+        name: Close Dialog
+        type: closeDialog
+        settings {
+            showSuccessMessages: false
+        }
+        execution {
+            sequence: 50
+        }
+        advanced {
+            executionMappingIdentifier: 11213254118923134576
+        }
+        serverSideCondition {
+            type: requestIsContainedInValue
+            value: CREATE,SAVE,DELETE
+        }
+    )
+
+)
+

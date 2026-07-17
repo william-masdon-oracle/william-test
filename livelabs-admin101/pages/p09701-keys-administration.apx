@@ -1,0 +1,308 @@
+page 9701 (
+    name: Keys administration
+    alias: KEYS-ADMINISTRATION
+    title: Keys administration
+    appearance {
+        pageTemplate: @standard-trustarc
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        authorizationScheme: @superrrrr-user
+        formAutoComplete: false
+    }
+
+    region keys-administration (
+        name: Keys administration
+        type: interactiveGrid
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select ID,
+                       KEY_TYPE,
+                       KEY_NAME,
+                       KEY_VALUE,
+                       KEY_ORDER,
+                       ACTIVE_FLG
+                  from LL_KEYS
+                ```
+        }
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: #DEFAULT#
+        }
+        edit {
+            enabled: true
+            allowedOperations: [
+                add
+                update
+                delete
+            ]
+        }
+        componentAppearance {
+            showNullValuesAs: -
+        }
+        toolbar {
+            controls: [
+                searchCol
+                searchField
+                actionsMenu
+                resetButton
+                saveButton
+            ]
+        }
+        download {
+            formats: [
+                csv
+                html
+                pdf
+            ]
+        }
+        advanced {
+            savedReportMappingIdentifier: 105871005077246450
+        }
+
+        savedReport 931079 (
+            visibility: primary
+            view {
+                default: grid
+            }
+            singleRowView {
+                displayedColumns: true
+            }
+
+            displayColumn (
+                column: @APEX$ROW_ACTION
+                layout {
+                    sequence: 0
+                }
+            )
+
+            displayColumn (
+                column: @ID
+                layout {
+                    sequence: 1
+                }
+            )
+
+            displayColumn (
+                column: @KEY_TYPE
+                layout {
+                    sequence: 2
+                }
+            )
+
+            displayColumn (
+                column: @KEY_NAME
+                layout {
+                    sequence: 3
+                }
+            )
+
+            displayColumn (
+                column: @KEY_VALUE
+                layout {
+                    sequence: 4
+                }
+            )
+
+            displayColumn (
+                column: @KEY_ORDER
+                layout {
+                    sequence: 5
+                }
+            )
+
+            displayColumn (
+                column: @ACTIVE_FLG
+                layout {
+                    sequence: 6
+                }
+            )
+
+        )
+
+        column ACTIVE_FLG (
+            type: textField
+            heading {
+                heading: Active Flg
+            }
+            layout {
+                sequence: 80
+            }
+            validation {
+                maxLength: 1
+            }
+            source {
+                databaseColumn: ACTIVE_FLG
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column APEX$ROW_ACTION (
+            type: actionsMenu
+            layout {
+                sequence: 20
+            }
+        )
+
+        column APEX$ROW_SELECTOR (
+            type: rowSelector
+            layout {
+                sequence: 10
+            }
+        )
+
+        column ID (
+            type: hidden
+            layout {
+                sequence: 30
+            }
+            source {
+                databaseColumn: ID
+                dataType: number
+                primaryKey: true
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column KEY_NAME (
+            type: textField
+            heading {
+                heading: Key Name
+            }
+            layout {
+                sequence: 50
+            }
+            validation {
+                maxLength: 50
+            }
+            source {
+                databaseColumn: KEY_NAME
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column KEY_ORDER (
+            type: numberField
+            heading {
+                heading: Key Order
+                alignment: end
+            }
+            settings {
+                numberAlignment: end
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 70
+                columnAlignment: end
+            }
+            source {
+                databaseColumn: KEY_ORDER
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column KEY_TYPE (
+            type: textField
+            heading {
+                heading: Key Type
+            }
+            layout {
+                sequence: 40
+            }
+            validation {
+                maxLength: 50
+            }
+            source {
+                databaseColumn: KEY_TYPE
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column KEY_VALUE (
+            type: textarea
+            heading {
+                heading: Key Value
+            }
+            layout {
+                sequence: 60
+            }
+            validation {
+                maxLength: 200
+            }
+            source {
+                databaseColumn: KEY_VALUE
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+    )
+
+    process keys-administration-save-interactive-grid-data (
+        name: Keys administration - Save Interactive Grid Data
+        type: interactiveGridAutoRowProcessing
+        editableRegion: @keys-administration
+        execution {
+            sequence: 10
+        }
+        advanced {
+            executionMappingIdentifier: 11184533467650102112
+        }
+    )
+
+)
+

@@ -1,0 +1,3227 @@
+page 9970 (
+    name: Admin Status
+    alias: ADMIN-STATUS
+    title: Admin Status
+    pageGroup: @administration
+    appearance {
+        pageTemplate: @standard-trustarc
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+        warnOnUnsavedChanges: false
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region compartment-leftovers-view (
+        name: Compartment Leftovers View
+        type: classicReport
+        source {
+            location: localDatabase
+            tableName: LL_LEFTOVERS
+            whereClause: substr(RESOURCE_NAME, LENGTH(RESOURCE_NAME)-10, 11) = 'COMPARTMENT'
+        }
+        layout {
+            sequence: 40
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        componentAppearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Report--altRowsDefault
+                t-Report--rowHighlight
+            ]
+        }
+        pagination {
+            type: nextAndPreviousLinks
+        }
+
+        column ID (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            heading {
+                heading: ID
+                alignment: center
+            }
+            layout {
+                sequence: 10
+            }
+        )
+
+        column LASTMOVEDATE (
+            reportColumnQueryId: 5
+            derivedColumn: N
+            heading {
+                heading: Last Move Date
+                alignment: center
+            }
+            layout {
+                sequence: 50
+            }
+        )
+
+        column PARENT_COMPARTMENT_OCID (
+            reportColumnQueryId: 6
+            derivedColumn: N
+            heading {
+                heading: Parent Compartment OCID
+                alignment: center
+            }
+            layout {
+                sequence: 60
+            }
+        )
+
+        column RESOURCE_NAME (
+            reportColumnQueryId: 3
+            derivedColumn: N
+            heading {
+                heading: Compartment Name
+                alignment: center
+            }
+            layout {
+                sequence: 30
+            }
+        )
+
+        column RESOURCE_OCID (
+            reportColumnQueryId: 4
+            derivedColumn: N
+            heading {
+                heading: Compartment OCID
+                alignment: center
+            }
+            layout {
+                sequence: 40
+            }
+        )
+
+        column TENANCY_ID (
+            reportColumnQueryId: 2
+            derivedColumn: N
+            type: plainTextBasedOnLov
+            heading {
+                heading: Tenancy ID
+                alignment: center
+            }
+            lov {
+                type: sharedComponent
+                lov: @ll-tenancies-2
+            }
+            layout {
+                sequence: 20
+            }
+        )
+
+    )
+
+    region low-resources-view (
+        name: Low Resources View
+        type: interactiveReport
+        source {
+            location: localDatabase
+            tableName: LL_RES_AVAILABLE_VW
+        }
+        layout {
+            sequence: 100
+            slot: contentBody
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        pagination {
+            type: rowRangesXToY
+        }
+        performance {
+            maxRowsToProcess: 1000000
+        }
+        advanced {
+            savedReportMappingIdentifier: 138244760127755036
+        }
+
+        column NUM_AVAILABLE (
+            type: plainText
+            heading {
+                heading: Num Available
+                alignment: center
+            }
+            layout {
+                sequence: 60
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: F
+            }
+        )
+
+        column NUM_PROVIDED (
+            type: plainText
+            heading {
+                heading: Num Provided
+                alignment: center
+            }
+            layout {
+                sequence: 40
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: D
+            }
+        )
+
+        column NUM_RESERVED (
+            type: plainText
+            heading {
+                heading: Num Reserved
+                alignment: center
+            }
+            layout {
+                sequence: 50
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: E
+            }
+        )
+
+        column REGION_ID (
+            type: plainTextBasedOnLov
+            heading {
+                heading: Region Id
+                alignment: center
+            }
+            lov {
+                lov: @ll-regions-3
+            }
+            layout {
+                sequence: 20
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: B
+            }
+        )
+
+        column RESOURCE_ID (
+            type: plainTextBasedOnLov
+            heading {
+                heading: Resource Id
+                alignment: center
+            }
+            lov {
+                lov: @ll-resources-5
+            }
+            layout {
+                sequence: 30
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: C
+            }
+        )
+
+        column TENANCY_ID (
+            type: plainTextBasedOnLov
+            heading {
+                heading: Tenancy Id
+                alignment: center
+            }
+            lov {
+                lov: @ll-tenancies-2
+            }
+            layout {
+                sequence: 10
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: A
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: Low Resources View
+        }
+
+        savedReport 1433986 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn NUM_AVAILABLE (
+                sequence: 6
+            )
+
+            displayColumn NUM_PROVIDED (
+                sequence: 4
+            )
+
+            displayColumn NUM_RESERVED (
+                sequence: 5
+            )
+
+            displayColumn REGION_ID (
+                sequence: 2
+            )
+
+            displayColumn RESOURCE_ID (
+                sequence: 3
+            )
+
+            displayColumn TENANCY_ID (
+                sequence: 1
+            )
+
+        )
+
+    )
+
+    region number-compartments-view (
+        name: Number Compartments View
+        type: classicReport
+        source {
+            location: localDatabase
+            tableName: LL_LEFTOVERS
+            whereClause: number_resources is not null
+        }
+        layout {
+            sequence: 80
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        componentAppearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Report--altRowsDefault
+                t-Report--rowHighlight
+            ]
+        }
+        pagination {
+            type: nextAndPreviousLinks
+        }
+
+        column ID (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            heading {
+                heading: ID
+                alignment: center
+            }
+            layout {
+                sequence: 10
+            }
+        )
+
+        column LASTMOVEDATE (
+            reportColumnQueryId: 5
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 50
+            }
+        )
+
+        column NUMBER_RESOURCES (
+            reportColumnQueryId: 7
+            derivedColumn: N
+            heading {
+                heading: Number of Compartments
+                alignment: center
+            }
+            layout {
+                sequence: 70
+            }
+        )
+
+        column PARENT_COMPARTMENT_OCID (
+            reportColumnQueryId: 6
+            derivedColumn: N
+            heading {
+                heading: Available Compartment OCID
+                alignment: center
+            }
+            layout {
+                sequence: 60
+            }
+        )
+
+        column RESOURCE_NAME (
+            reportColumnQueryId: 3
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 30
+            }
+        )
+
+        column RESOURCE_OCID (
+            reportColumnQueryId: 4
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 40
+            }
+        )
+
+        column TENANCY_ID (
+            reportColumnQueryId: 2
+            derivedColumn: N
+            type: plainTextBasedOnLov
+            heading {
+                heading: Tenancy ID
+                alignment: center
+            }
+            lov {
+                type: sharedComponent
+                lov: @ll-tenancies-2
+            }
+            layout {
+                sequence: 20
+            }
+        )
+
+    )
+
+    region quota-leftovers-view (
+        name: Quota Leftovers View
+        type: classicReport
+        source {
+            location: localDatabase
+            tableName: LL_LEFTOVERS
+            whereClause: substr(RESOURCE_NAME, 3, 5) = 'QUOTA'
+        }
+        layout {
+            sequence: 60
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        componentAppearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Report--altRowsDefault
+                t-Report--rowHighlight
+            ]
+        }
+        pagination {
+            type: nextAndPreviousLinks
+        }
+
+        column ID (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            heading {
+                heading: ID
+                alignment: center
+            }
+            layout {
+                sequence: 10
+            }
+        )
+
+        column LASTMOVEDATE (
+            reportColumnQueryId: 5
+            derivedColumn: N
+            heading {
+                heading: Creation Date
+                alignment: center
+            }
+            layout {
+                sequence: 50
+            }
+        )
+
+        column PARENT_COMPARTMENT_OCID (
+            reportColumnQueryId: 6
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 60
+            }
+        )
+
+        column RESOURCE_NAME (
+            reportColumnQueryId: 3
+            derivedColumn: N
+            heading {
+                heading: Quota Name
+                alignment: center
+            }
+            layout {
+                sequence: 30
+            }
+        )
+
+        column RESOURCE_OCID (
+            reportColumnQueryId: 4
+            derivedColumn: N
+            heading {
+                heading: Quota OCID
+                alignment: center
+            }
+            layout {
+                sequence: 40
+            }
+        )
+
+        column TENANCY_ID (
+            reportColumnQueryId: 2
+            derivedColumn: N
+            type: plainTextBasedOnLov
+            heading {
+                heading: Tenancy ID
+                alignment: center
+            }
+            lov {
+                type: sharedComponent
+                lov: @ll-tenancies-2
+            }
+            layout {
+                sequence: 20
+            }
+        )
+
+    )
+
+    region reservations-view (
+        name: Reservations View
+        type: interactiveGrid
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select ID,
+                       ID as ID_DISPLAY,
+                       TITLE,
+                       REASON,
+                       FOCUS_AREA,
+                       OWNER1,
+                       REGION_ID,
+                       WORKSHOP_ID,
+                       START_DATE,
+                       START_TIME,
+                       START_TIMEZONE,
+                       STOP_DATE,
+                       STOP_TIME,
+                       EXTENDED,
+                       ENVIRONMENTS,
+                       TENANCY_ID, 
+                       REMARKS,
+                       ACTIVE_FLG,
+                       PUBLIC_KEY,
+                       START_GMT,
+                       STOP_GMT,
+                       case abs(sysdate-start_gmt) when sysdate-start_gmt then 
+                         case abs(stop_gmt - sysdate) when stop_gmt-sysdate then 'Active' else 'Closed' end 
+                           else 'Future' end as Reservation_status,
+                       (select count(*) from ll_reservation_steps where reservation_id = llr.id) as Steps,
+                       (select count(*) from ll_reservation_steps where reservation_id = llr.id and create_order is not null and create_success='N') as Create_error,
+                       (select count(*) from ll_reservation_steps where reservation_id = llr.id and delete_order is not null and delete_success='N') as Delete_error
+                  from LL_RESERVATIONS_VW llr
+                  where (start_gmt > sysdate-:RESERVATIONS_STATUS_PERIOD or stop_gmt > sysdate-:RESERVATIONS_STATUS_PERIOD) 
+                    and (nvl((select count(*) from ll_reservation_steps where reservation_id = llr.id and create_order is not null and create_success='N'), 0) > 0 
+                        or nvl((select count(*) from ll_reservation_steps where reservation_id = llr.id and delete_order is not null and delete_success='N'), 0) > 0);
+                
+                ```
+        }
+        layout {
+            sequence: 70
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: t-Region--scrollBody
+        }
+        edit {
+            enabled: true
+            allowedOperations: [
+                add
+                update
+                delete
+            ]
+        }
+        editAuthorization {
+            update: @superrrrr-user
+            delete: @superrrrr-user
+        }
+        toolbar {
+            controls: [
+                searchCol
+                searchField
+                actionsMenu
+                resetButton
+                saveButton
+            ]
+        }
+        enableUsersTo {
+            savePublicReport: true
+            savePublicReportAuthorization: @superrrrr-user
+            flashback: false
+        }
+        download {
+            formats: [
+                csv
+                html
+                pdf
+            ]
+        }
+        advanced {
+            savedReportMappingIdentifier: 11160652366948372914
+        }
+
+        savedReport 604063 (
+            visibility: primary
+            name: All Reservations
+            view {
+                default: grid
+            }
+            singleRowView {
+                displayedColumns: true
+            }
+
+            displayColumn (
+                column: @ID_DISPLAY
+                layout {
+                    width: 52.55600000000001
+                    sequence: 2
+                }
+            )
+
+            displayColumn (
+                column: @ID
+                layout {
+                    width: 115.4444
+                    sequence: 3
+                }
+            )
+
+            displayColumn (
+                column: @TITLE
+                layout {
+                    show: false
+                    sequence: 3
+                }
+            )
+
+            displayColumn (
+                column: @REASON
+                layout {
+                    show: false
+                    sequence: 4
+                }
+            )
+
+            displayColumn (
+                column: @FOCUS_AREA
+                layout {
+                    show: false
+                    sequence: 5
+                }
+            )
+
+            displayColumn (
+                column: @OWNER1
+                layout {
+                    width: 233.667
+                    sequence: 7
+                }
+            )
+
+            displayColumn (
+                column: @REGION_ID
+                layout {
+                    width: 276
+                    sequence: 26
+                }
+            )
+
+            displayColumn (
+                column: @WORKSHOP_ID
+                layout {
+                    width: 343.333
+                    sequence: 8
+                }
+            )
+
+            displayColumn (
+                column: @START_DATE
+                layout {
+                    show: false
+                    sequence: 8
+                }
+            )
+
+            displayColumn (
+                column: @START_TIME
+                layout {
+                    show: false
+                    sequence: 9
+                }
+            )
+
+            displayColumn (
+                column: @START_TIMEZONE
+                layout {
+                    show: false
+                    sequence: 10
+                }
+            )
+
+            displayColumn (
+                column: @STOP_DATE
+                layout {
+                    show: false
+                    sequence: 11
+                }
+            )
+
+            displayColumn (
+                column: @STOP_TIME
+                layout {
+                    show: false
+                    sequence: 12
+                }
+            )
+
+            displayColumn (
+                column: @EXTENDED
+                layout {
+                    width: 92.2222
+                    sequence: 14
+                }
+            )
+
+            displayColumn (
+                column: @ENVIRONMENTS
+                layout {
+                    show: false
+                    width: 75
+                    sequence: 14
+                }
+            )
+
+            displayColumn (
+                column: @TENANCY_ID
+                layout {
+                    width: 185
+                    sequence: 25
+                }
+            )
+
+            displayColumn (
+                column: @REMARKS
+                layout {
+                    show: false
+                    sequence: 16
+                }
+            )
+
+            displayColumn (
+                column: @ACTIVE_FLG
+                layout {
+                    width: 66
+                    sequence: 17
+                }
+            )
+
+            displayColumn (
+                column: @PUBLIC_KEY
+                layout {
+                    show: false
+                    sequence: 19
+                }
+            )
+
+            displayColumn (
+                column: @START_GMT
+                layout {
+                    width: 148
+                    sequence: 21
+                }
+            )
+
+            displayColumn (
+                column: @STOP_GMT
+                layout {
+                    width: 141
+                    sequence: 21
+                }
+            )
+
+            displayColumn (
+                column: @APEX$ROW_ACTION
+                layout {
+                    frozen: true
+                    sequence: 0
+                }
+            )
+
+            displayColumn (
+                column: @STEPS
+                layout {
+                    width: 54
+                    sequence: 22
+                }
+            )
+
+            displayColumn (
+                column: @CREATE_ERROR
+                layout {
+                    width: 58
+                    sequence: 23
+                }
+            )
+
+            displayColumn (
+                column: @DELETE_ERROR
+                layout {
+                    width: 60
+                    sequence: 24
+                }
+            )
+
+            displayColumn (
+                column: @RESERVATION_STATUS
+                layout {
+                    width: 127
+                    sequence: 18
+                }
+            )
+
+            sort (
+                column: @ID_DISPLAY
+                sort {
+                    direction: desc
+                    nulls: first
+                    sequence: 1
+                }
+            )
+
+        )
+
+        column ACTIVE_FLG (
+            type: selectList
+            heading {
+                heading: Active
+            }
+            lov {
+                type: sharedComponent
+                lov: @active-flg
+                displayExtraValues: false
+                displayNullValue: false
+            }
+            layout {
+                sequence: 210
+            }
+            source {
+                databaseColumn: ACTIVE_FLG
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: useLov
+            }
+        )
+
+        column APEX$ROW_ACTION (
+            type: actionsMenu
+            layout {
+                sequence: 20
+            }
+        )
+
+        column APEX$ROW_SELECTOR (
+            type: rowSelector
+            layout {
+                sequence: 10
+            }
+        )
+
+        column CREATE_ERROR (
+            type: link
+            heading {
+                heading: Create Error
+                alignment: center
+            }
+            layout {
+                sequence: 260
+                columnAlignment: center
+            }
+            link {
+                target: {
+                    page: 9653
+                    items: {
+                        P9653_RESERVATION_ID: &ID.
+                    }
+                }
+                linkText: &CREATE_ERROR.
+            }
+            source {
+                databaseColumn: CREATE_ERROR
+                dataType: number
+                queryOnly: true
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column DELETE_ERROR (
+            type: link
+            heading {
+                heading: Delete Error
+                alignment: center
+            }
+            layout {
+                sequence: 270
+                columnAlignment: center
+            }
+            link {
+                target: {
+                    page: 9653
+                    items: {
+                        P9653_RESERVATION_ID: &ID.
+                    }
+                }
+                linkText: &DELETE_ERROR.
+            }
+            source {
+                databaseColumn: DELETE_ERROR
+                dataType: number
+                queryOnly: true
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column ENVIRONMENTS (
+            type: numberField
+            heading {
+                heading: Environments
+                alignment: center
+            }
+            settings {
+                numberAlignment: end
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 170
+                columnAlignment: center
+            }
+            source {
+                databaseColumn: ENVIRONMENTS
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column EXTENDED (
+            type: numberField
+            heading {
+                heading: Extended
+                alignment: center
+            }
+            settings {
+                numberAlignment: end
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 160
+                columnAlignment: center
+            }
+            source {
+                databaseColumn: EXTENDED
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column FOCUS_AREA (
+            type: textField
+            heading {
+                heading: Focus Area
+            }
+            layout {
+                sequence: 70
+            }
+            validation {
+                maxLength: 50
+            }
+            source {
+                databaseColumn: FOCUS_AREA
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column ID (
+            type: link
+            heading {
+                heading: Details
+                alignment: center
+            }
+            layout {
+                sequence: 30
+                columnAlignment: center
+            }
+            link {
+                target: {
+                    page: 9651
+                    items: {
+                        P9651_ID: &ID.
+                    }
+                }
+                linkText: Details for &ID.
+            }
+            source {
+                databaseColumn: ID
+                dataType: number
+                primaryKey: true
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column ID_DISPLAY (
+            type: numberField
+            heading {
+                heading: ID
+            }
+            settings {
+                numberAlignment: end
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 40
+            }
+            validation {
+                valueRequired: true
+            }
+            source {
+                databaseColumn: ID_DISPLAY
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column OWNER1 (
+            type: textField
+            heading {
+                heading: Owner1
+            }
+            layout {
+                sequence: 80
+            }
+            validation {
+                maxLength: 50
+            }
+            source {
+                databaseColumn: OWNER1
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column PUBLIC_KEY (
+            type: textarea
+            heading {
+                heading: Public Key
+            }
+            layout {
+                sequence: 220
+            }
+            validation {
+                maxLength: 4000
+            }
+            source {
+                databaseColumn: PUBLIC_KEY
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column REASON (
+            type: textField
+            heading {
+                heading: Reason
+            }
+            layout {
+                sequence: 60
+            }
+            validation {
+                maxLength: 50
+            }
+            source {
+                databaseColumn: REASON
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column REGION_ID (
+            type: selectList
+            heading {
+                heading: Region Id
+            }
+            lov {
+                type: sharedComponent
+                lov: @ll-regions-3
+                displayExtraValues: false
+            }
+            layout {
+                sequence: 90
+            }
+            source {
+                databaseColumn: REGION_ID
+                dataType: number
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: useLov
+            }
+        )
+
+        column REMARKS (
+            type: textarea
+            heading {
+                heading: Remarks
+            }
+            layout {
+                sequence: 200
+            }
+            validation {
+                maxLength: 4000
+            }
+            source {
+                databaseColumn: REMARKS
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column RESERVATION_STATUS (
+            type: textField
+            heading {
+                heading: Reservation Status
+            }
+            layout {
+                sequence: 280
+            }
+            validation {
+                maxLength: 6
+            }
+            source {
+                databaseColumn: RESERVATION_STATUS
+                dataType: varchar2
+                queryOnly: true
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column START_DATE (
+            type: datePickerJquery
+            heading {
+                heading: Start Date
+                alignment: center
+            }
+            layout {
+                sequence: 110
+                columnAlignment: center
+            }
+            appearance {
+                formatMask: DD Mon YYYY
+            }
+            source {
+                databaseColumn: START_DATE
+                dataType: date
+            }
+        )
+
+        column START_GMT (
+            type: datePickerJquery
+            heading {
+                heading: Start Gmt
+                alignment: center
+            }
+            layout {
+                sequence: 230
+                columnAlignment: center
+            }
+            appearance {
+                formatMask: DD Mon YYYY HH24:MI:SS
+            }
+            source {
+                databaseColumn: START_GMT
+                dataType: date
+                queryOnly: true
+            }
+        )
+
+        column START_TIME (
+            type: textField
+            heading {
+                heading: Start Time
+            }
+            layout {
+                sequence: 120
+            }
+            validation {
+                maxLength: 50
+            }
+            source {
+                databaseColumn: START_TIME
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column START_TIMEZONE (
+            type: textField
+            heading {
+                heading: Start Timezone
+            }
+            layout {
+                sequence: 130
+            }
+            validation {
+                maxLength: 50
+            }
+            source {
+                databaseColumn: START_TIMEZONE
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column STEPS (
+            type: link
+            heading {
+                heading: Steps
+                alignment: center
+            }
+            layout {
+                sequence: 250
+                columnAlignment: center
+            }
+            link {
+                target: {
+                    page: 9653
+                    items: {
+                        P9653_RESERVATION_ID: &ID.
+                    }
+                }
+                linkText: &STEPS.
+            }
+            source {
+                databaseColumn: STEPS
+                dataType: number
+                queryOnly: true
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column STOP_DATE (
+            type: datePickerJquery
+            heading {
+                heading: Stop Date
+                alignment: center
+            }
+            layout {
+                sequence: 140
+                columnAlignment: center
+            }
+            appearance {
+                formatMask: DD Mon YYYY
+            }
+            source {
+                databaseColumn: STOP_DATE
+                dataType: date
+            }
+        )
+
+        column STOP_GMT (
+            type: datePickerJquery
+            heading {
+                heading: Stop Gmt
+                alignment: center
+            }
+            layout {
+                sequence: 240
+                columnAlignment: center
+            }
+            appearance {
+                formatMask: DD Mon YYYY HH24:MI:SS
+            }
+            source {
+                databaseColumn: STOP_GMT
+                dataType: date
+                queryOnly: true
+            }
+        )
+
+        column STOP_TIME (
+            type: textField
+            heading {
+                heading: Stop Time
+            }
+            layout {
+                sequence: 150
+            }
+            validation {
+                maxLength: 50
+            }
+            source {
+                databaseColumn: STOP_TIME
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column TENANCY_ID (
+            type: selectList
+            heading {
+                heading: Tenancy Id
+            }
+            lov {
+                type: sharedComponent
+                lov: @ll-tenancies-2
+                displayExtraValues: false
+            }
+            layout {
+                sequence: 180
+            }
+            source {
+                databaseColumn: TENANCY_ID
+                dataType: number
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: useLov
+            }
+        )
+
+        column TITLE (
+            type: textField
+            heading {
+                heading: Title
+            }
+            layout {
+                sequence: 50
+            }
+            validation {
+                maxLength: 50
+            }
+            source {
+                databaseColumn: TITLE
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column WORKSHOP_ID (
+            type: selectList
+            heading {
+                heading: Workshop Id
+            }
+            lov {
+                type: sharedComponent
+                lov: @ll-workshops
+                displayExtraValues: false
+                displayNullValue: false
+            }
+            layout {
+                sequence: 100
+            }
+            validation {
+                valueRequired: true
+            }
+            source {
+                databaseColumn: WORKSHOP_ID
+                dataType: number
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: useLov
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: Reservations
+        }
+    )
+
+    region rest-calls-view (
+        name: REST Calls View
+        type: chart
+        source {
+            location: localDatabase
+            tableName: LL_REST_CALLS
+        }
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        chartLayout {
+            height: 400
+        }
+        settings {
+            timeAxisType: enabled
+        }
+        tooltip {
+            showSeriesName: false
+            showGroupName: false
+        }
+        legend {
+            show: false
+        }
+
+        series rest-calls (
+            name: REST Calls
+            execution {
+                sequence: 10
+            }
+            source {
+                tableName: LL_REST_CALLS
+                whereClause: requests_date > (sysdate - :REST_STATUS_PERIOD)
+            }
+            orderBy {
+                type: staticValue
+                orderByClause: REQUESTS_DATE ASC
+            }
+            columnMapping {
+                label: REQUESTS_DATE
+                value: REQUESTS_COUNT
+            }
+            appearance {
+                color: #4cd964
+            }
+        )
+
+        axis x (
+            name: x
+            value {
+                format: dateShort
+            }
+            minorTicks {
+                show: false
+            }
+        )
+
+        axis y (
+            name: y
+            title: Number of REST Calls
+            value {
+                format: decimal
+                decimalPlaces: 0
+                formatScaling: none
+            }
+            minorTicks {
+                show: false
+            }
+        )
+
+    )
+
+    region status-lights (
+        name: Status Lights
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region user-leftovers-view (
+        name: User Leftovers View
+        type: classicReport
+        source {
+            location: localDatabase
+            tableName: LL_LEFTOVERS
+            whereClause: substr(RESOURCE_NAME, 3, 4) = 'USER'
+        }
+        layout {
+            sequence: 50
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        componentAppearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Report--altRowsDefault
+                t-Report--rowHighlight
+            ]
+        }
+        pagination {
+            type: nextAndPreviousLinks
+        }
+
+        column ID (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            heading {
+                heading: ID
+                alignment: center
+            }
+            layout {
+                sequence: 10
+            }
+        )
+
+        column LASTMOVEDATE (
+            reportColumnQueryId: 5
+            derivedColumn: N
+            heading {
+                heading: Creation Date
+                alignment: center
+            }
+            layout {
+                sequence: 50
+            }
+        )
+
+        column PARENT_COMPARTMENT_OCID (
+            reportColumnQueryId: 6
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 60
+            }
+        )
+
+        column RESOURCE_NAME (
+            reportColumnQueryId: 3
+            derivedColumn: N
+            heading {
+                heading: User Name
+                alignment: center
+            }
+            layout {
+                sequence: 30
+            }
+        )
+
+        column RESOURCE_OCID (
+            reportColumnQueryId: 4
+            derivedColumn: N
+            heading {
+                heading: User OCID
+                alignment: center
+            }
+            layout {
+                sequence: 40
+            }
+        )
+
+        column TENANCY_ID (
+            reportColumnQueryId: 2
+            derivedColumn: N
+            type: plainTextBasedOnLov
+            heading {
+                heading: Tenancy ID
+                alignment: center
+            }
+            lov {
+                type: sharedComponent
+                lov: @ll-tenancies-2
+            }
+            layout {
+                sequence: 20
+            }
+        )
+
+    )
+
+    region workshops-without-resources-view (
+        name: Workshops without Resources View
+        type: classicReport
+        source {
+            location: localDatabase
+            tableName: LL_WORKSHOPS_WITHOUT_RESOURCES
+        }
+        orderBy {
+            type: staticValue
+            orderByClause: number_environments asc
+        }
+        layout {
+            sequence: 90
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        reportLayout {
+            numberOfRows: 30
+        }
+        componentAppearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Report--altRowsDefault
+                t-Report--rowHighlight
+            ]
+        }
+        pagination {
+            type: nextAndPreviousLinks
+        }
+
+        column DERIVED$01 (
+            reportColumnQueryId: 5
+            derivedColumn: Y
+            type: link
+            heading {
+                heading: Workshop ID
+                alignment: center
+            }
+            layout {
+                sequence: 10
+            }
+            link {
+                target: {
+                    page: 9152
+                    items: {
+                        P9152_ID: #WORKSHOP_ID#
+                    }
+                }
+                linkText: #WORKSHOP_ID#
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column NUMBER_ENVIRONMENTS (
+            reportColumnQueryId: 2
+            derivedColumn: N
+            heading {
+                heading: Number Environments
+                alignment: center
+            }
+            layout {
+                sequence: 30
+                columnAlignment: end
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column REGION_ID (
+            reportColumnQueryId: 4
+            derivedColumn: N
+            type: plainTextBasedOnLov
+            heading {
+                heading: Region
+                alignment: center
+            }
+            lov {
+                type: sharedComponent
+                lov: @ll-regions-3
+            }
+            layout {
+                sequence: 50
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column TENANCY_ID (
+            reportColumnQueryId: 3
+            derivedColumn: N
+            type: plainTextBasedOnLov
+            heading {
+                heading: Tenancy
+                alignment: center
+            }
+            lov {
+                type: sharedComponent
+                lov: @ll-tenancies-2
+            }
+            layout {
+                sequence: 40
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column WORKSHOP_ID (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            type: plainTextBasedOnLov
+            heading {
+                heading: Workshop Name
+                alignment: center
+            }
+            lov {
+                type: sharedComponent
+                lov: @ll-workshops
+            }
+            layout {
+                sequence: 20
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+    )
+
+    pageItem LEFTOVERS_HIDDEN (
+        type: hidden
+        layout {
+            sequence: 50
+            region: @status-lights
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem LEFTOVERS_STATUS (
+        type: displayImage
+        label {
+            label: Compartment Leftovers Status
+            alignment: left
+        }
+        settings {
+            basedOn: url
+        }
+        layout {
+            sequence: 60
+            region: @status-lights
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            customAttributes: width="100",height="100"
+        }
+    )
+
+    pageItem NUMBER_COMPARTMENTS_HIDDEN (
+        type: hidden
+        layout {
+            sequence: 130
+            region: @status-lights
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem NUMBER_COMPARTMENTS_STATUS (
+        type: displayImage
+        label {
+            label: Number of Available Compartments
+            alignment: left
+        }
+        settings {
+            basedOn: url
+        }
+        layout {
+            sequence: 140
+            region: @status-lights
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            customAttributes: width="100",height="100"
+        }
+    )
+
+    pageItem QUOTAS_HIDDEN (
+        type: hidden
+        layout {
+            sequence: 90
+            region: @status-lights
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem QUOTAS_STATUS (
+        type: displayImage
+        label {
+            label: Quota Leftovers Status
+            alignment: left
+        }
+        settings {
+            basedOn: url
+        }
+        layout {
+            sequence: 100
+            region: @status-lights
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            customAttributes: width="100",height="100"
+        }
+    )
+
+    pageItem RESERVATIONS_HIDDEN (
+        type: hidden
+        layout {
+            sequence: 110
+            region: @status-lights
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem RESERVATIONS_STATUS (
+        type: displayImage
+        label {
+            label: Failed Reservations Status
+            alignment: left
+        }
+        settings {
+            basedOn: url
+        }
+        layout {
+            sequence: 120
+            region: @status-lights
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            customAttributes: width="100",height="100"
+        }
+    )
+
+    pageItem RESERVATIONS_STATUS_PERIOD (
+        type: selectList
+        label {
+            label: Reservations Status Period
+            alignment: left
+        }
+        settings {
+            pageActionOnSelection: redirectSetValue
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC2:Past Day;1,Past 3 Days;3,Past Week;7,Past Month;30,All Available Data;999999
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 10
+            region: @reservations-view
+            slot: regionBody
+            alignment: left
+            columnSpan: 3
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem REST_HIDDEN (
+        type: hidden
+        layout {
+            sequence: 30
+            region: @status-lights
+            slot: regionBody
+        }
+        default {
+            type: static
+            staticValue: FALSE
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem REST_STATUS (
+        type: displayImage
+        label {
+            label: REST Calls Status
+            alignment: left
+        }
+        settings {
+            basedOn: url
+        }
+        layout {
+            sequence: 40
+            region: @status-lights
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            customAttributes: width="100",height="100"
+        }
+    )
+
+    pageItem REST_STATUS_PERIOD (
+        type: selectList
+        label {
+            label: REST Status Period
+            alignment: left
+        }
+        settings {
+            pageActionOnSelection: redirectSetValue
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC2:Past Week;7,Past 2 Weeks;14,Past Month;30,Past Year;365,All Available Data;999999
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 10
+            region: @rest-calls-view
+            slot: regionBody
+            alignment: left
+            columnSpan: 3
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem USERS_HIDDEN (
+        type: hidden
+        layout {
+            sequence: 70
+            region: @status-lights
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem USERS_STATUS (
+        type: displayImage
+        label {
+            label: User Leftovers Status
+            alignment: left
+        }
+        settings {
+            basedOn: url
+        }
+        layout {
+            sequence: 80
+            region: @status-lights
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            customAttributes: width="100",height="100"
+        }
+    )
+
+    pageItem WORKSHOP_RESOURCES_HIDDEN (
+        type: hidden
+        layout {
+            sequence: 150
+            region: @status-lights
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem WORKSHOP_RESOURCES_STATUS (
+        type: displayImage
+        label {
+            label: Workshops without Resources
+            alignment: left
+        }
+        settings {
+            basedOn: url
+        }
+        layout {
+            sequence: 160
+            region: @status-lights
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            customAttributes: width="100",height="100"
+        }
+    )
+
+    button refresh-status (
+        buttonName: REFRESH_STATUS
+        label: Force Refresh of Status Data
+        layout {
+            sequence: 150
+            region: @status-lights
+            slot: create
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+            executeValidations: false
+        }
+    )
+
+    button refreshrestcalls (
+        buttonName: RefreshRESTCalls
+        label: Refresh REST Calls
+        layout {
+            sequence: 10
+            region: @rest-calls-view
+            slot: regionBody
+            startNewRow: false
+            column: 12
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+            executeValidations: false
+        }
+    )
+
+    dynamicAction change-region (
+        name: change_region
+        execution {
+            sequence: 130
+        }
+        when {
+            selectionType: items
+            items: P9970_REGION_ID
+        }
+
+        action native-submit-page (
+            action: submitPage
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction change-resource (
+        name: change_resource
+        execution {
+            sequence: 140
+        }
+        when {
+            selectionType: items
+            items: P9970_RESOURCE_ID
+        }
+
+        action native-submit-page (
+            action: submitPage
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction change-tenancy (
+        name: change_tenancy
+        execution {
+            sequence: 120
+        }
+        when {
+            selectionType: items
+            items: P9970_TENANCY_ID
+        }
+
+        action native-submit-page (
+            action: submitPage
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction change-workshop (
+        name: change_workshop
+        execution {
+            sequence: 150
+        }
+        when {
+            selectionType: items
+            items: P9970_WORKSHOP_ID
+        }
+
+        action native-submit-page (
+            action: submitPage
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction hide-show-leftovers (
+        name: hide/show leftovers
+        execution {
+            sequence: 30
+        }
+        when {
+            event: mousedown
+            selectionType: items
+            items: LEFTOVERS_STATUS
+        }
+        clientSideCondition {
+            type: item=value
+            item: LEFTOVERS_HIDDEN
+            value: TRUE
+        }
+
+        action native-hide (
+            action: hide
+            affectedElements {
+                selectionType: region
+                region: @compartment-leftovers-view
+            }
+            execution {
+                sequence: 10
+                fireWhenEventResultIs: false
+            }
+        )
+
+        action native-set-value (
+            action: setValue
+            settings {
+                value: FALSE
+            }
+            affectedElements {
+                selectionType: items
+                items: LEFTOVERS_HIDDEN
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+        action native-set-value-2 (
+            action: setValue
+            settings {
+                value: TRUE
+            }
+            affectedElements {
+                selectionType: items
+                items: LEFTOVERS_HIDDEN
+            }
+            execution {
+                sequence: 20
+                fireWhenEventResultIs: false
+            }
+        )
+
+        action native-show (
+            action: show
+            affectedElements {
+                selectionType: region
+                region: @compartment-leftovers-view
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction hide-show-number-compartments (
+        name: hide/show number compartments
+        execution {
+            sequence: 100
+        }
+        when {
+            event: click
+            selectionType: items
+            items: NUMBER_COMPARTMENTS_STATUS
+        }
+        clientSideCondition {
+            type: item=value
+            item: NUMBER_COMPARTMENTS_HIDDEN
+            value: TRUE
+        }
+
+        action native-hide (
+            action: hide
+            affectedElements {
+                selectionType: region
+                region: @number-compartments-view
+            }
+            execution {
+                sequence: 20
+                fireWhenEventResultIs: false
+            }
+        )
+
+        action native-set-value (
+            action: setValue
+            settings {
+                value: FALSE
+            }
+            affectedElements {
+                selectionType: items
+                items: NUMBER_COMPARTMENTS_HIDDEN
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+        action native-set-value-2 (
+            action: setValue
+            settings {
+                value: TRUE
+            }
+            affectedElements {
+                selectionType: items
+                items: NUMBER_COMPARTMENTS_HIDDEN
+            }
+            execution {
+                sequence: 30
+                fireWhenEventResultIs: false
+            }
+        )
+
+        action native-show (
+            action: show
+            affectedElements {
+                selectionType: region
+                region: @number-compartments-view
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction hide-show-quotas (
+        name: hide/show quotas
+        execution {
+            sequence: 70
+        }
+        when {
+            event: click
+            selectionType: items
+            items: QUOTAS_STATUS
+        }
+        clientSideCondition {
+            type: item=value
+            item: QUOTAS_HIDDEN
+            value: TRUE
+        }
+
+        action native-hide (
+            action: hide
+            affectedElements {
+                selectionType: region
+                region: @quota-leftovers-view
+            }
+            execution {
+                sequence: 20
+                fireWhenEventResultIs: false
+            }
+        )
+
+        action native-set-value (
+            action: setValue
+            settings {
+                value: FALSE
+            }
+            affectedElements {
+                selectionType: items
+                items: QUOTAS_HIDDEN
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+        action native-set-value-2 (
+            action: setValue
+            settings {
+                value: TRUE
+            }
+            affectedElements {
+                selectionType: items
+                items: QUOTAS_HIDDEN
+            }
+            execution {
+                sequence: 30
+                fireWhenEventResultIs: false
+            }
+        )
+
+        action native-show (
+            action: show
+            affectedElements {
+                selectionType: region
+                region: @quota-leftovers-view
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction hide-show-reservations (
+        name: hide/show reservations
+        execution {
+            sequence: 80
+        }
+        when {
+            event: click
+            selectionType: items
+            items: RESERVATIONS_STATUS
+        }
+        clientSideCondition {
+            type: item=value
+            item: RESERVATIONS_HIDDEN
+            value: TRUE
+        }
+
+        action native-hide (
+            action: hide
+            affectedElements {
+                selectionType: region
+                region: @reservations-view
+            }
+            execution {
+                sequence: 20
+                fireWhenEventResultIs: false
+            }
+        )
+
+        action native-set-value (
+            action: setValue
+            settings {
+                value: FALSE
+            }
+            affectedElements {
+                selectionType: items
+                items: RESERVATIONS_HIDDEN
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+        action native-set-value-2 (
+            action: setValue
+            settings {
+                value: TRUE
+            }
+            affectedElements {
+                selectionType: items
+                items: RESERVATIONS_HIDDEN
+            }
+            execution {
+                sequence: 30
+                fireWhenEventResultIs: false
+            }
+        )
+
+        action native-show (
+            action: show
+            affectedElements {
+                selectionType: region
+                region: @reservations-view
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction hide-show-rest (
+        name: hide/show rest
+        execution {
+            sequence: 50
+        }
+        when {
+            event: mousedown
+            selectionType: items
+            items: REST_STATUS
+        }
+        clientSideCondition {
+            type: item=value
+            item: REST_HIDDEN
+            value: TRUE
+        }
+
+        action native-hide (
+            action: hide
+            affectedElements {
+                selectionType: region
+                region: @rest-calls-view
+            }
+            execution {
+                sequence: 20
+                fireWhenEventResultIs: false
+            }
+        )
+
+        action native-set-value (
+            action: setValue
+            settings {
+                value: FALSE
+            }
+            affectedElements {
+                selectionType: items
+                items: REST_HIDDEN
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+        action native-set-value-2 (
+            action: setValue
+            settings {
+                value: TRUE
+            }
+            affectedElements {
+                selectionType: items
+                items: REST_HIDDEN
+            }
+            execution {
+                sequence: 30
+                fireWhenEventResultIs: false
+            }
+        )
+
+        action native-show (
+            action: show
+            affectedElements {
+                selectionType: region
+                region: @rest-calls-view
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction hide-show-users (
+        name: hide/show users
+        execution {
+            sequence: 60
+        }
+        when {
+            event: click
+            selectionType: items
+            items: USERS_STATUS
+        }
+        clientSideCondition {
+            type: item=value
+            item: USERS_HIDDEN
+            value: TRUE
+        }
+
+        action native-hide (
+            action: hide
+            affectedElements {
+                selectionType: region
+                region: @user-leftovers-view
+            }
+            execution {
+                sequence: 20
+                fireWhenEventResultIs: false
+            }
+        )
+
+        action native-set-value (
+            action: setValue
+            settings {
+                value: FALSE
+            }
+            affectedElements {
+                selectionType: items
+                items: USERS_HIDDEN
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+        action native-set-value-2 (
+            action: setValue
+            settings {
+                value: TRUE
+            }
+            affectedElements {
+                selectionType: items
+                items: USERS_HIDDEN
+            }
+            execution {
+                sequence: 30
+                fireWhenEventResultIs: false
+            }
+        )
+
+        action native-show (
+            action: show
+            affectedElements {
+                selectionType: region
+                region: @user-leftovers-view
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction hide-show-workshop-resources (
+        name: hide/show workshop resources
+        execution {
+            sequence: 120
+        }
+        when {
+            event: click
+            selectionType: items
+            items: WORKSHOP_RESOURCES_STATUS
+        }
+        clientSideCondition {
+            type: item=value
+            item: WORKSHOP_RESOURCES_HIDDEN
+            value: TRUE
+        }
+
+        action native-hide (
+            action: hide
+            affectedElements {
+                selectionType: region
+                region: @workshops-without-resources-view
+            }
+            execution {
+                sequence: 10
+                fireWhenEventResultIs: false
+            }
+        )
+
+        action native-set-value (
+            action: setValue
+            settings {
+                value: FALSE
+            }
+            affectedElements {
+                selectionType: items
+                items: WORKSHOP_RESOURCES_HIDDEN
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+        action native-set-value-2 (
+            action: setValue
+            settings {
+                value: TRUE
+            }
+            affectedElements {
+                selectionType: items
+                items: WORKSHOP_RESOURCES_HIDDEN
+            }
+            execution {
+                sequence: 20
+                fireWhenEventResultIs: false
+            }
+        )
+
+        action native-show (
+            action: show
+            affectedElements {
+                selectionType: region
+                region: @workshops-without-resources-view
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction refresh-status (
+        name: REFRESH_STATUS
+        execution {
+            sequence: 110
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @refresh-status
+        }
+
+        action native-confirm (
+            action: confirm
+            settings {
+                message: Selecting OK will run the script to update all statuses. Please allow around 30 seconds for the page to refresh with new values. Do not click the button again or refresh the page manually.
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    begin
+                    ll_pkg_status.checkAllTenanciesForLeftovers;
+                    ll_pkg_status.updateRESTCalls;
+                    end;
+                    ```
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode: location.reload();
+            }
+            execution {
+                sequence: 30
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction refreshrestcalls (
+        name: RefreshRESTCalls
+        execution {
+            sequence: 90
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @refreshrestcalls
+        }
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    begin
+                    ll_pkg_status.updateRESTCalls;
+                    end;
+                    ```
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode: location.reload();
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    process check-compartment-leftovers (
+        name: Check_Compartment_Leftovers
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                declare 
+                v_count number;
+                begin
+                select count(*) into v_count from ll_leftovers where substr(RESOURCE_NAME, LENGTH(RESOURCE_NAME)-10, 11) = 'COMPARTMENT';
+                if v_count > 0 then
+                    if v_count > 4 then
+                        -- RED
+                        :LEFTOVERS_STATUS := '#APP_IMAGES#redlight.png';
+                    else 
+                        -- YELLOW
+                        :LEFTOVERS_STATUS := '#APP_IMAGES#yellowlight.png';
+                    end if;
+                else
+                    -- GREEN
+                        :LEFTOVERS_STATUS := '#APP_IMAGES#greenlight.png';
+                end if;
+                exception
+                when others then
+                    -- GREY
+                        :LEFTOVERS_STATUS := '#APP_IMAGES#greylight.png';
+                end;
+                ```
+        }
+        execution {
+            sequence: 20
+            point: beforeHeader
+        }
+        advanced {
+            executionMappingIdentifier: 288742777866162861
+        }
+    )
+
+    process check-number-compartments (
+        name: Check_Number_Compartments
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                declare
+                
+                cursor c_tenancies is select * from ll_leftovers where number_resources is not null;
+                v_red boolean := FALSE;
+                v_yellow boolean := FALSE;
+                
+                begin
+                
+                -- find if any tenancy has more than allowable number of available compartments 
+                for tenancy in c_tenancies loop
+                    if tenancy.number_resources > 700 then
+                        v_red := TRUE;
+                    elsif tenancy.number_resources > 500 then
+                        v_yellow := TRUE;
+                    end if;
+                end loop;
+                
+                -- status
+                if v_red then
+                    :NUMBER_COMPARTMENTS_STATUS := '#APP_IMAGES#redlight.png';
+                elsif v_yellow then
+                    :NUMBER_COMPARTMENTS_STATUS := '#APP_IMAGES#yellowlight.png';
+                else
+                    :NUMBER_COMPARTMENTS_STATUS := '#APP_IMAGES#greenlight.png';
+                end if;
+                exception
+                when others then
+                    -- GREY
+                        :NUMBER_COMPARTMENTS_STATUS := '#APP_IMAGES#greylight.png';
+                end;
+                
+                ```
+        }
+        execution {
+            sequence: 60
+            point: beforeHeader
+        }
+        advanced {
+            executionMappingIdentifier: 295878198758902663
+        }
+    )
+
+    process check-quota-leftovers (
+        name: Check_Quota_Leftovers
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                declare 
+                v_count number;
+                begin
+                select count(*) into v_count from ll_leftovers where substr(RESOURCE_NAME, LENGTH(RESOURCE_NAME) - 4, 5) = 'QUOTA';
+                if v_count > 0 then
+                    if v_count > 4 then
+                        -- RED
+                        :QUOTAS_STATUS := '#APP_IMAGES#redlight.png';
+                    else 
+                        -- YELLOW
+                        :QUOTAS_STATUS := '#APP_IMAGES#yellowlight.png';
+                    end if;
+                else
+                    -- GREEN
+                        :QUOTAS_STATUS := '#APP_IMAGES#greenlight.png';
+                end if;
+                exception
+                when others then
+                    -- GREY
+                        :QUOTAS_STATUS := '#APP_IMAGES#greylight.png';
+                end;
+                ```
+        }
+        execution {
+            sequence: 40
+            point: beforeHeader
+        }
+        advanced {
+            executionMappingIdentifier: 294450138909775756
+        }
+    )
+
+    process check-reservations-status (
+        name: Check_Reservations_Status
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                declare 
+                v_count number;
+                begin
+                -- Set default RESERVATIONS_STATUS_PERIOD
+                if :RESERVATIONS_STATUS_PERIOD is null then
+                    :RESERVATIONS_STATUS_PERIOD := 1;
+                end if;
+                select count(*) into v_count
+                  from LL_RESERVATIONS_VW llr
+                    where (start_gmt > sysdate-:RESERVATIONS_STATUS_PERIOD or stop_gmt > sysdate-:RESERVATIONS_STATUS_PERIOD)
+                        and (nvl((select count(*) from ll_reservation_steps where reservation_id = llr.id and create_order is not null and create_success='N'), 0) > 0 
+                        or nvl((select count(*) from ll_reservation_steps where reservation_id = llr.id and delete_order is not null and delete_success='N'), 0) > 0);
+                if v_count > 0 then
+                    if v_count > 10 then
+                        -- RED
+                        :RESERVATIONS_STATUS := '#APP_IMAGES#redlight.png';
+                    else 
+                        -- YELLOW
+                        :RESERVATIONS_STATUS := '#APP_IMAGES#yellowlight.png';
+                    end if;
+                else
+                    -- GREEN
+                        :RESERVATIONS_STATUS := '#APP_IMAGES#greenlight.png';
+                end if;
+                exception
+                when others then
+                    -- GREY
+                        :RESERVATIONS_STATUS := '#APP_IMAGES#greylight.png';
+                end;
+                ```
+        }
+        execution {
+            sequence: 50
+            point: beforeHeader
+        }
+        advanced {
+            executionMappingIdentifier: 295876335353902644
+        }
+    )
+
+    process check-rest-status (
+        name: Check_REST_Status
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                declare
+                v_count number;
+                begin
+                -- Set default REST_STATUS_PERIOD
+                if :REST_STATUS_PERIOD is null then
+                    :REST_STATUS_PERIOD := 7;
+                end if;
+                
+                select count(*) into v_count from ll_rest_calls where requests_count >= 150000 and requests_date > sysdate-:REST_STATUS_PERIOD;
+                if v_count > 0 then
+                    select count(*) into v_count from ll_rest_calls where requests_count >=180000 and requests_date > sysdate-:REST_STATUS_PERIOD;
+                    if v_count > 0 then
+                        -- RED
+                        :REST_STATUS := '#APP_IMAGES#redlight.png';
+                    else 
+                        -- YELLOW
+                        :REST_STATUS := '#APP_IMAGES#yellowlight.png';
+                    end if;
+                else
+                    -- GREEN
+                    :REST_STATUS := '#APP_IMAGES#greenlight.png';
+                end if;
+                
+                
+                exception
+                when others then
+                    -- GREY
+                    :REST_STATUS := '#APP_IMAGES#greylight.png';
+                end;
+                ```
+        }
+        execution {
+            sequence: 10
+            point: beforeHeader
+        }
+        advanced {
+            executionMappingIdentifier: 288741849067162852
+        }
+    )
+
+    process check-users-leftovers (
+        name: Check_Users_Leftovers
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                declare 
+                v_count number;
+                begin
+                select count(*) into v_count from ll_leftovers where substr(RESOURCE_NAME, LENGTH(RESOURCE_NAME) - 3, 4) = 'USER';
+                if v_count > 0 then
+                    if v_count > 4 then
+                        -- RED
+                        :USERS_STATUS := '#APP_IMAGES#redlight.png';
+                    else 
+                        -- YELLOW
+                        :USERS_STATUS := '#APP_IMAGES#yellowlight.png';
+                    end if;
+                else
+                    -- GREEN
+                        :USERS_STATUS := '#APP_IMAGES#greenlight.png';
+                end if;
+                exception
+                when others then
+                    -- GREY
+                        :USERS_STATUS := '#APP_IMAGES#greylight.png';
+                end;
+                ```
+        }
+        execution {
+            sequence: 30
+            point: beforeHeader
+        }
+        advanced {
+            executionMappingIdentifier: 294448665099775741
+        }
+    )
+
+    process check-workshop-resources (
+        name: Check_Workshop_Resources
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                declare
+                
+                v_red boolean := FALSE;
+                v_yellow boolean := FALSE;
+                
+                begin
+                
+                -- determine if there are any resources missing for workshops
+                for workshop in (select * from ll_workshops_without_resources) loop
+                    if workshop.number_environments = 0 then
+                        v_red := TRUE;
+                    elsif workshop.number_environments < ll_pkg_admin.system_parameter('MINIMUM_ENVIRONMENTS_ALLOWED') then
+                        v_yellow := TRUE;
+                    end if;
+                end loop;
+                
+                
+                -- status
+                if v_red then
+                    :WORKSHOP_RESOURCES_STATUS := '#APP_IMAGES#redlight.png';
+                elsif v_yellow then
+                    :WORKSHOP_RESOURCES_STATUS := '#APP_IMAGES#yellowlight.png';
+                else
+                    :WORKSHOP_RESOURCES_STATUS := '#APP_IMAGES#greenlight.png';
+                end if;
+                exception
+                when others then
+                    -- GREY
+                        :WORKSHOP_RESOURCES_HIDDEN := '#APP_IMAGES#greylight.png';
+                end;
+                
+                ```
+        }
+        execution {
+            sequence: 70
+            point: beforeHeader
+        }
+        advanced {
+            executionMappingIdentifier: 317177582205208061
+        }
+    )
+
+)
+

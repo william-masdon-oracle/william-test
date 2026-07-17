@@ -1,0 +1,317 @@
+page 9225 (
+    name: Labs per Workshop
+    alias: LABS-PER-WORKSHOP
+    title: Labs per Workshop
+    appearance {
+        pageTemplate: @standard-trustarc
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region labs-per-workshop (
+        name: Labs per Workshop
+        type: interactiveGrid
+        source {
+            location: localDatabase
+            tableName: LL_WORKSHOP_LABS
+            includeRowidColumn: true
+            whereClause: workshop_id=:P9225_WORKSHOP_ID
+            pageItemsToSubmit: P9225_WORKSHOP_ID
+        }
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        edit {
+            enabled: true
+            allowedOperations: [
+                add
+                update
+                delete
+            ]
+        }
+        toolbar {
+            controls: [
+                searchCol
+                searchField
+                actionsMenu
+                resetButton
+                saveButton
+            ]
+        }
+        download {
+            formats: [
+                csv
+                html
+                pdf
+            ]
+        }
+        advanced {
+            savedReportMappingIdentifier: 179573177341697820
+        }
+
+        savedReport 931027 (
+            visibility: primary
+            view {
+                default: grid
+            }
+            singleRowView {
+                displayedColumns: true
+            }
+
+            displayColumn (
+                column: @ROWID
+                layout {
+                    sequence: 1
+                }
+            )
+
+            displayColumn (
+                column: @ID
+                layout {
+                    sequence: 2
+                }
+            )
+
+            displayColumn (
+                column: @WORKSHOP_ID
+                layout {
+                    sequence: 3
+                }
+            )
+
+            displayColumn (
+                column: @LAB_ID
+                layout {
+                    sequence: 4
+                }
+            )
+
+            displayColumn (
+                column: @ORDER_BY
+                layout {
+                    sequence: 5
+                }
+            )
+
+            displayColumn (
+                column: @ACTIVE_FLG
+                layout {
+                    sequence: 6
+                }
+            )
+
+            displayColumn (
+                column: @APEX$ROW_ACTION
+                layout {
+                    sequence: 0
+                }
+            )
+
+        )
+
+        column ACTIVE_FLG (
+            type: textField
+            heading {
+                heading: Active Flg
+            }
+            layout {
+                sequence: 80
+            }
+            validation {
+                maxLength: 1
+            }
+            source {
+                databaseColumn: ACTIVE_FLG
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column APEX$ROW_ACTION (
+            type: actionsMenu
+            layout {
+                sequence: 20
+            }
+        )
+
+        column APEX$ROW_SELECTOR (
+            type: rowSelector
+            layout {
+                sequence: 10
+            }
+        )
+
+        column ID (
+            type: hidden
+            layout {
+                sequence: 40
+            }
+            source {
+                databaseColumn: ID
+                dataType: number
+                primaryKey: true
+            }
+            default {
+                duplicateCopiesExistingValue: false
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column LAB_ID (
+            type: selectList
+            heading {
+                heading: Lab Id
+            }
+            lov {
+                type: sqlQuery
+                sqlQuery: select title, id from ll_labs
+                displayExtraValues: false
+                displayNullValue: false
+            }
+            layout {
+                sequence: 60
+            }
+            source {
+                databaseColumn: LAB_ID
+                dataType: number
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: useLov
+            }
+        )
+
+        column ORDER_BY (
+            type: numberField
+            heading {
+                heading: Order By
+                alignment: end
+            }
+            settings {
+                numberAlignment: end
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 70
+                columnAlignment: end
+            }
+            source {
+                databaseColumn: ORDER_BY
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column ROWID (
+            type: hidden
+            layout {
+                sequence: 30
+            }
+            source {
+                databaseColumn: ROWID
+                dataType: rowid
+                primaryKey: true
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column WORKSHOP_ID (
+            type: hidden
+            layout {
+                sequence: 50
+            }
+            source {
+                databaseColumn: WORKSHOP_ID
+                dataType: number
+            }
+            default {
+                type: item
+                item: P9225_WORKSHOP_ID
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: Labs per Workshop
+        }
+    )
+
+    pageItem P9225_WORKSHOP_ID (
+        type: selectList
+        label {
+            label: Workshop
+            alignment: left
+        }
+        settings {
+            pageActionOnSelection: submitPage
+        }
+        lov {
+            type: sharedComponent
+            lov: @ll-workshops
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 10
+            region: @labs-per-workshop
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    process labs-per-workshop-save-interactive-grid-data (
+        name: Labs per Workshop - Save Interactive Grid Data
+        type: interactiveGridAutoRowProcessing
+        editableRegion: @labs-per-workshop
+        execution {
+            sequence: 10
+        }
+        advanced {
+            executionMappingIdentifier: 358474805419652651
+        }
+    )
+
+)
+

@@ -1,0 +1,371 @@
+page 9251 (
+    name: Terraform Scripts
+    alias: TERRAFORM-SCRIPTS
+    title: Terraform Scripts
+    appearance {
+        pageTemplate: @standard-trustarc
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        authorizationScheme: @superrrrr-user
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region tfscripts (
+        name: TfScripts
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select ID,
+                       NAME,
+                       DESCRIPTION,
+                       TERRAFORM_TEXT,
+                       TERRAFORM_VERSION,
+                       DATABASE_VERSION,
+                       ACTIVE_FLG,
+                       MAX_DURATION_MINUTES,
+                       SOURCE_URL,
+                       SSH_KEY_REQ,
+                       (select listagg(workshop_id, ',') from ll_workshop_flow b where b.parameters = a.id and b.step_id in (select id from ll_flow_steps where step_code='ociTerraform')) as workshops_using,
+                       PARALLELS
+                  from LL_TF_SCRIPTS a
+                ```
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        link {
+            linkColumn: customTarget
+            target: {
+                page: 9252
+                items: {
+                    P9252_ID: \#ID#\
+                }
+            }
+            linkIcon: <span aria-label="Edit"><span class="fa fa-edit" aria-hidden="true" title="Edit"></span></span>
+        }
+        pagination {
+            type: rowRangesXToY
+        }
+        performance {
+            maxRowsToProcess: 1000000
+        }
+        messages {
+            whenNoDataFound: No data found.
+            whenMoreDataFound: The maximum row count for this report is #MAX_ROW_COUNT# rows.  Please apply a filter to reduce the number of records in your query.
+        }
+        advanced {
+            savedReportMappingIdentifier: 465357164570658342
+        }
+
+        column ACTIVE_FLG (
+            type: plainText
+            heading {
+                heading: Active
+                alignment: center
+            }
+            layout {
+                sequence: 80
+                columnAlignment: center
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: F
+            }
+        )
+
+        column DATABASE_VERSION (
+            type: plainText
+            heading {
+                heading: Database Version
+                alignment: center
+            }
+            layout {
+                sequence: 70
+                columnAlignment: center
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: L
+            }
+        )
+
+        column DESCRIPTION (
+            type: plainText
+            heading {
+                heading: Description
+                alignment: center
+            }
+            layout {
+                sequence: 30
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: C
+            }
+        )
+
+        column ID (
+            type: plainText
+            heading {
+                heading: ID
+                alignment: center
+            }
+            layout {
+                sequence: 10
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: A
+            }
+        )
+
+        column MAX_DURATION_MINUTES (
+            type: plainText
+            heading {
+                heading: Max Duration Minutes
+                alignment: center
+            }
+            layout {
+                sequence: 90
+                columnAlignment: center
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: G
+            }
+        )
+
+        column NAME (
+            type: plainText
+            heading {
+                heading: Name
+                alignment: center
+            }
+            layout {
+                sequence: 20
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: B
+            }
+        )
+
+        column PARALLELS (
+            type: plainText
+            heading {
+                heading: Parallels
+                alignment: center
+            }
+            layout {
+                sequence: 120
+                columnAlignment: center
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: K
+            }
+        )
+
+        column SOURCE_URL (
+            type: plainText
+            heading {
+                heading: GitHub Source
+                alignment: center
+            }
+            layout {
+                sequence: 40
+                columnAlignment: center
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: H
+            }
+        )
+
+        column SSH_KEY_REQ (
+            type: plainText
+            heading {
+                heading: SSH Key Req
+                alignment: center
+            }
+            layout {
+                sequence: 100
+                columnAlignment: center
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: I
+            }
+        )
+
+        column TERRAFORM_TEXT (
+            type: hidden
+            heading {
+                heading: Terraform Text
+            }
+            layout {
+                sequence: 50
+            }
+            source {
+                dataType: CLOB
+            }
+            advanced {
+                endUserAlias: D
+            }
+        )
+
+        column TERRAFORM_VERSION (
+            type: plainText
+            heading {
+                heading: Terraform Version
+                alignment: center
+            }
+            layout {
+                sequence: 60
+                columnAlignment: center
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: E
+            }
+        )
+
+        column WORKSHOPS_USING (
+            type: plainText
+            heading {
+                heading: Workshops Using
+                alignment: center
+            }
+            layout {
+                sequence: 110
+                columnAlignment: center
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: J
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: TfScripts
+        }
+
+        savedReport 1467654 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn ACTIVE_FLG (
+                sequence: 6
+            )
+
+            displayColumn DATABASE_VERSION (
+                sequence: 5
+            )
+
+            displayColumn DESCRIPTION (
+                sequence: 3
+            )
+
+            displayColumn ID (
+                sequence: 1
+            )
+
+            displayColumn MAX_DURATION_MINUTES (
+                sequence: 7
+            )
+
+            displayColumn NAME (
+                sequence: 2
+            )
+
+            displayColumn PARALLELS (
+                sequence: 11
+            )
+
+            displayColumn SOURCE_URL (
+                sequence: 8
+            )
+
+            displayColumn SSH_KEY_REQ (
+                sequence: 9
+            )
+
+            displayColumn TERRAFORM_VERSION (
+                sequence: 4
+            )
+
+            displayColumn WORKSHOPS_USING (
+                sequence: 10
+            )
+
+        )
+
+    )
+
+    button create (
+        buttonName: CREATE
+        label: Create
+        layout {
+            sequence: 30
+            region: @tfscripts
+            slot: rightOfInteractiveReportSearchBar
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 9252
+                clearCache: 9252
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+)
+

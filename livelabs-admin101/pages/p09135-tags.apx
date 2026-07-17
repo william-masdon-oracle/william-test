@@ -1,0 +1,303 @@
+page 9135 (
+    name: Tags
+    alias: TAGS
+    title: Tags
+    appearance {
+        pageTemplate: @standard-trustarc
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        authorizationScheme: @superrrrr-user
+        formAutoComplete: false
+    }
+
+    region tags (
+        name: Tags
+        type: interactiveReport
+        source {
+            location: localDatabase
+            tableName: LL_TAGS
+        }
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        link {
+            linkColumn: customTarget
+            target: {
+                page: 24
+                items: {
+                    P24_ID: #ID#
+                }
+            }
+            linkIcon: <span role="img" aria-label="Edit" class="fa fa-edit" title="Edit"></span>
+        }
+        pagination {
+            type: rowRangesXToY
+        }
+        performance {
+            maxRowsToProcess: 1000000
+        }
+        advanced {
+            savedReportMappingIdentifier: 611919808240497331
+        }
+
+        column ACTIVE_FLG (
+            type: plainText
+            heading {
+                heading: Active Flg
+            }
+            layout {
+                sequence: 60
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: P
+            }
+        )
+
+        column DISPLAY_IMAGE (
+            type: plainText
+            heading {
+                heading: Display Image
+            }
+            layout {
+                sequence: 110
+            }
+            source {
+                dataType: OTHER
+            }
+            columnFilter {
+                type: none
+            }
+            advanced {
+                endUserAlias: U
+            }
+            enableUsersTo {
+                sort: false
+                filter: false
+                highlight: false
+                controlBreak: false
+                aggregate: false
+                compute: false
+                chart: false
+                groupBy: false
+                pivot: false
+            }
+        )
+
+        column HOME_PG_FLG (
+            type: plainText
+            heading {
+                heading: Home Page Flag
+            }
+            layout {
+                sequence: 100
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: T
+            }
+        )
+
+        column ICON_CLASS (
+            type: plainText
+            heading {
+                heading: Icon Class
+            }
+            layout {
+                sequence: 90
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: S
+            }
+        )
+
+        column ID (
+            type: plainText
+            heading {
+                heading: Id
+                alignment: end
+            }
+            layout {
+                sequence: 10
+                columnAlignment: end
+            }
+            source {
+                primaryKey: true
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: A
+            }
+        )
+
+        column LEVEL1 (
+            type: plainText
+            heading {
+                heading: Level1
+            }
+            layout {
+                sequence: 20
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: L
+            }
+        )
+
+        column LEVEL2 (
+            type: plainText
+            heading {
+                heading: Level2
+            }
+            layout {
+                sequence: 30
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: M
+            }
+        )
+
+        column LEVEL3 (
+            type: plainText
+            heading {
+                heading: Level3
+            }
+            layout {
+                sequence: 50
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: O
+            }
+        )
+
+        column LONG_DESCRIPTION (
+            type: plainText
+            heading {
+                heading: Long Description
+            }
+            layout {
+                sequence: 80
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: R
+            }
+        )
+
+        column SHORT_DESCRIPTION (
+            type: plainText
+            heading {
+                heading: Short Description
+            }
+            layout {
+                sequence: 70
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: Q
+            }
+        )
+
+        column WORKSHOP_CATEGORY_V13 (
+            type: plainText
+            heading {
+                heading: Workshop Category V13
+                alignment: end
+            }
+            layout {
+                sequence: 40
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: N
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+
+        savedReport 6448516 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn ACTIVE_FLG (
+                sequence: 7
+            )
+
+            displayColumn DISPLAY_IMAGE (
+                sequence: 10
+            )
+
+            displayColumn HOME_PG_FLG (
+                sequence: 8
+            )
+
+            displayColumn ICON_CLASS (
+                sequence: 9
+            )
+
+            displayColumn ID (
+                sequence: 1
+            )
+
+            displayColumn LEVEL1 (
+                sequence: 2
+            )
+
+            displayColumn LEVEL2 (
+                sequence: 3
+            )
+
+            displayColumn LEVEL3 (
+                sequence: 4
+            )
+
+            displayColumn LONG_DESCRIPTION (
+                sequence: 5
+            )
+
+            displayColumn SHORT_DESCRIPTION (
+                sequence: 6
+            )
+
+        )
+
+    )
+
+)
+
