@@ -1,0 +1,634 @@
+page 1 (
+    name: LiveStack Form
+    alias: LIVESTACK-REQUEST-FORM
+    title: LiveStack Form
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @modal-dialog
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region buttons (
+        name: Buttons
+        type: staticContent
+        layout {
+            sequence: 20
+            slot: dialogFooter
+        }
+        appearance {
+            template: @buttons-container
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    region livestack-request-form (
+        name: LiveStack Form
+        type: form
+        source {
+            location: localDatabase
+            tableName: WMS_LIVESTACKS
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+        edit {
+            enabled: true
+            allowedOperations: [
+                add
+                update
+                delete
+            ]
+        }
+    )
+
+    pageItem P1_CREATED_BY (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 120
+            region: @livestack-request-form
+            slot: regionBody
+        }
+        source {
+            formRegion: @livestack-request-form
+            column: CREATED_BY
+            dataType: varchar2
+        }
+        default {
+            type: expression
+            plsqlExpression: v('APP_USER')
+        }
+    )
+
+    pageItem P1_CREATED_DATE (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 80
+            region: @livestack-request-form
+            slot: regionBody
+        }
+        source {
+            formRegion: @livestack-request-form
+            column: CREATED_DATE
+            dataType: date
+        }
+        default {
+            type: expression
+            plsqlExpression: sysdate
+        }
+    )
+
+    pageItem P1_DESC_LONG (
+        type: richTextEditor
+        label {
+            label: Long Description (min 200 chars)
+            alignment: left
+        }
+        settings {
+            format: html
+            minHeight: 180
+        }
+        layout {
+            sequence: 20
+            region: @livestack-request-form
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            formRegion: @livestack-request-form
+            column: DESC_LONG
+            dataType: varchar2
+        }
+        help {
+            helpText: What's your LiveStack about?
+        }
+    )
+
+    pageItem P1_DESC_SHORT (
+        type: textarea
+        label {
+            label: Short Description (max 250 chars)
+            alignment: left
+        }
+        settings {
+            charCounter: true
+        }
+        layout {
+            sequence: 30
+            region: @livestack-request-form
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+            width: 30
+            height: 5
+        }
+        source {
+            formRegion: @livestack-request-form
+            column: DESC_SHORT
+            dataType: varchar2
+        }
+    )
+
+    pageItem P1_ID (
+        type: hidden
+        layout {
+            sequence: 10
+            region: @livestack-request-form
+            slot: regionBody
+        }
+        source {
+            formRegion: @livestack-request-form
+            column: ID
+            dataType: number
+            queryOnly: true
+            primaryKey: true
+        }
+        security {
+            sessionStateProtection: checksumRequiredSessionLevel
+        }
+    )
+
+    pageItem P1_NAME (
+        type: textField
+        label {
+            label: LiveStack Title
+            alignment: left
+        }
+        layout {
+            sequence: 10
+            region: @livestack-request-form
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+            width: 60
+        }
+        validation {
+            valueRequired: true
+            maxLength: 1000
+        }
+        source {
+            formRegion: @livestack-request-form
+            column: NAME
+            dataType: varchar2
+        }
+    )
+
+    pageItem P1_OUTLINE (
+        type: richTextEditor
+        label {
+            label: Outline
+            alignment: left
+        }
+        settings {
+            format: html
+            minHeight: 180
+        }
+        layout {
+            sequence: 40
+            region: @livestack-request-form
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            formRegion: @livestack-request-form
+            column: OUTLINE
+            dataType: varchar2
+        }
+        default {
+            type: static
+            staticValue:
+                ```
+                <ol>
+                  <li>LiveStack Demo</li>
+                  <li>Hands-On LiveLab</li>
+                </ol>
+                ```
+        }
+    )
+
+    pageItem P1_PREREQS (
+        type: richTextEditor
+        label {
+            label: User Prerequisites
+            alignment: left
+        }
+        settings {
+            format: html
+            minHeight: 180
+        }
+        layout {
+            sequence: 50
+            region: @livestack-request-form
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @required-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            formRegion: @livestack-request-form
+            column: PREREQS
+            dataType: varchar2
+        }
+        default {
+            type: static
+            staticValue:
+                ```
+                <ol>
+                  <li>Basic SQL skills</li>
+                </ol>
+                
+                ```
+        }
+        help {
+            helpText:
+                ```html
+                What is required of the user before completing the LiveStack?
+                
+                <p></br><b> Example: </b></br>
+                1. Basic database knowledge.</br>
+                2. Beginner SQL skills. </br>
+                </p>
+                ```
+        }
+    )
+
+    pageItem P1_VIDEO_LINK (
+        type: textField
+        label {
+            label: Supporting Video Link
+            alignment: left
+        }
+        layout {
+            sequence: 70
+            region: @livestack-request-form
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+            width: 30
+        }
+        source {
+            formRegion: @livestack-request-form
+            column: VIDEO_LINK
+            dataType: varchar2
+        }
+        default {
+            type: sqlQuerySingleValue
+            sqlQuerySingleValue: select value from wms_system_parameters where name = 'DEFAULT_LIVESTACK_VIDEO'
+        }
+    )
+
+    button cancel (
+        buttonName: CANCEL
+        label: Cancel
+        layout {
+            sequence: 10
+            region: @buttons
+            slot: close
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: triggerAction
+        }
+
+        triggerAction native-dialog-cancel (
+            action: cancelDialog
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    button create (
+        buttonName: CREATE
+        label: Create
+        layout {
+            sequence: 40
+            region: @buttons
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: insert
+        }
+        serverSideCondition {
+            type: itemIsNull
+            item: P1_ID
+        }
+    )
+
+    button delete (
+        buttonName: DELETE
+        label: Delete
+        layout {
+            sequence: 20
+            region: @buttons
+            slot: delete
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            executeValidations: false
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: delete
+            requiresConfirmation: true
+        }
+        confirmation {
+            message: &APP_TEXT$DELETE_MSG!RAW.
+            style: danger
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P1_ID
+        }
+    )
+
+    button save (
+        buttonName: SAVE
+        label: Apply Changes
+        layout {
+            sequence: 30
+            region: @buttons
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: update
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P1_ID
+        }
+    )
+
+    dynamicAction on-change (
+        name: Have an existing demo?
+        execution {
+            sequence: 10
+        }
+        when {
+            selectionType: items
+            items: P1_EXISTING_DEMO_FLG
+        }
+        clientSideCondition {
+            type: item=value
+            item: P1_EXISTING_DEMO_FLG
+            value: Y
+        }
+
+        action hide-demo-description (
+            name: Hide demo description
+            action: hide
+            affectedElements {
+                selectionType: items
+                items: P1_DEMO_DESC
+            }
+            execution {
+                sequence: 20
+            }
+        )
+
+        action hide-selection-field (
+            name: Hide selection field
+            action: hide
+            affectedElements {
+                selectionType: items
+                items: P1_DEMO_ID
+            }
+            execution {
+                sequence: 40
+                fireWhenEventResultIs: false
+            }
+        )
+
+        action native-show_1 (
+            name: Show selection field
+            action: show
+            affectedElements {
+                selectionType: items
+                items: P1_DEMO_ID
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+        action native-show_1_1 (
+            name: Show description field
+            action: show
+            affectedElements {
+                selectionType: items
+                items: P1_DEMO_DESC
+            }
+            execution {
+                sequence: 30
+                fireWhenEventResultIs: false
+            }
+        )
+
+    )
+
+    dynamicAction on-change_1 (
+        name: Have an existing demo?
+        execution {
+            sequence: 20
+        }
+        when {
+            selectionType: items
+            items: P1_EXISTING_LIVELAB_FLG
+        }
+        clientSideCondition {
+            type: item=value
+            item: P1_EXISTING_LIVELAB_FLG
+            value: Y
+        }
+
+        action hide-demo-description (
+            name: Hide LiveLab description
+            action: hide
+            affectedElements {
+                selectionType: items
+                items: P1_LIVELAB_DESC
+            }
+            execution {
+                sequence: 20
+            }
+        )
+
+        action hide-selection-field (
+            name: Hide selection field
+            action: hide
+            affectedElements {
+                selectionType: items
+                items: P1_LL_ID
+            }
+            execution {
+                sequence: 20
+                fireWhenEventResultIs: false
+            }
+        )
+
+        action native-show_1 (
+            name: Show selection field
+            action: show
+            affectedElements {
+                selectionType: items
+                items: P1_LL_ID
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+        action native-show_1_1 (
+            name: Show description field
+            action: show
+            affectedElements {
+                selectionType: items
+                items: P1_LIVELAB_DESC
+            }
+            execution {
+                sequence: 10
+                fireWhenEventResultIs: false
+            }
+        )
+
+    )
+
+    validation 250-chars-minimum (
+        name: 200 chars minimum
+        execution {
+            sequence: 10
+        }
+        validation {
+            language: sql
+            sqlExpression: LENGTH(:P1_DESC_LONG) >= 200
+            alwaysExecute: true
+        }
+        error {
+            errorMessage: Your description must be at least 250 characters.
+            associatedItem: @P1_DESC_LONG
+        }
+    )
+
+    process initialize-form-livestack-request-form (
+        name: Initialize form LiveStack Request Form
+        type: formInitialization
+        formRegion: @livestack-request-form
+        execution {
+            sequence: 10
+            point: beforeHeader
+        }
+        advanced {
+            executionMappingIdentifier: 1114387054601849338
+        }
+    )
+
+    process process-form-livestack-request-form (
+        name: Process form LiveStack Request Form
+        type: formAutoRowProcessing
+        formRegion: @livestack-request-form
+        execution {
+            sequence: 20
+        }
+        advanced {
+            executionMappingIdentifier: 1114387439189849339
+        }
+    )
+
+    branch (
+        name: View Full LiveStack Details
+        execution {
+            sequence: 10
+        }
+        behavior {
+            target: {
+                page: 57
+                items: {
+                    P57_ID: &P1_ID.
+                }
+            }
+        }
+    )
+
+)
+

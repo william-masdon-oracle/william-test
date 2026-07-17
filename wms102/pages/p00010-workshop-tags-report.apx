@@ -1,0 +1,531 @@
+page 10 (
+    name: Workshop by Tags (Role, Product, Focus)
+    alias: WORKSHOP-TAGS-REPORT
+    title: Workshop by Tags (Role, Product, Focus)
+    appearance {
+        pageTemplate: @standard-custom
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region span-style-font-size-1-2em-font-weight-400-workshops-by-tags-report-span (
+        name: <span style="font-size: 1.2em; font-weight: 400">Workshops by Tags Report</span>
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <table><tr><td width="120px">
+                <img src="https://c4u04.objectstorage.us-ashburn-1.oci.customer-oci.com/p/cBQqSkJksuZca_VCqfZ2uP2Tvgqafe3eBya0I-EtOKAJ77uF0nN-ygNzr4bcL8QO/n/c4u04/b/logos/o/william_wms_biglogo.png" width="100px">
+                </td><td>
+                <p>All workshops published in the LiveLabs system are listed below.  You can customize the report to your liking and save it for your next session. We also have several canned reports saved for you.<br><strong>To access all the columns or presaved reports:</strong><br>1. Click Actions -> Columns.  <br>2. You can filter, download as an excel, convert to a chart and more in the actions menu.<br><strong>To subscribe and get this report emailed to you monthly or weekly:</strong> <br>1. Click Actions -> Subscription<br>2. Enter your email, subject and frequency<br>3. Click apply<br><strong>To download:</strong> <br>1. Click Actions -> Download<br>2. Choose your report format<br></p></td></tr></table> 
+                ```
+        }
+        layout {
+            sequence: 10
+            slot: beforeContentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region workshop-by-tags-role-product-focus (
+        name: Workshop by Tags (Role, Product, Focus)
+        type: interactiveReport
+        source {
+            location: localDatabase
+            tableName: VW_WORKSHOP_TAGS
+        }
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        pagination {
+            type: rowRangesXToY
+        }
+        performance {
+            maxRowsToProcess: 1000000
+        }
+        advanced {
+            savedReportMappingIdentifier: 62582118852816667103
+        }
+
+        column CATEGORY (
+            type: plainText
+            heading {
+                heading: Tag
+                alignment: center
+            }
+            layout {
+                sequence: 80
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: CY
+            }
+        )
+
+        column COMPLETION_DATE (
+            type: plainText
+            heading {
+                heading: Completion Date
+                alignment: center
+            }
+            layout {
+                sequence: 120
+                columnAlignment: center
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: DC
+            }
+        )
+
+        column LAST_QA_DATE (
+            type: plainText
+            heading {
+                heading: Last Qa Date
+            }
+            layout {
+                sequence: 150
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: DF
+            }
+        )
+
+        column LIVELABSID (
+            type: link
+            heading {
+                heading: Livelabs Link
+                alignment: center
+            }
+            layout {
+                sequence: 130
+            }
+            link {
+                target: {
+                    type: url
+                    url: #LIVELABSID#
+                }
+                linkText: #LIVELABSID#
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: DD
+            }
+        )
+
+        column MANAGER_EMAIL (
+            type: plainText
+            heading {
+                heading: Manager Email
+            }
+            layout {
+                sequence: 170
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: DH
+            }
+        )
+
+        column PUBLISH_STATUS (
+            type: plainText
+            heading {
+                heading: Publish Status
+                alignment: center
+            }
+            layout {
+                sequence: 140
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: DE
+            }
+        )
+
+        column SHORT_DESC (
+            type: plainText
+            heading {
+                heading: Short Desc
+                alignment: center
+            }
+            layout {
+                sequence: 40
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: CA
+            }
+        )
+
+        column SUBCATEGORY (
+            type: plainText
+            heading {
+                heading: Subcategory
+                alignment: center
+            }
+            layout {
+                sequence: 90
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: CZ
+            }
+        )
+
+        column TAG_ID (
+            type: plainText
+            heading {
+                heading: Tag Id
+                alignment: center
+            }
+            layout {
+                sequence: 70
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: CX
+            }
+        )
+
+        column TAG_TYPE (
+            type: plainText
+            heading {
+                heading: Tag Type
+                alignment: center
+            }
+            layout {
+                sequence: 100
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: DA
+            }
+        )
+
+        column TITLE (
+            type: plainText
+            heading {
+                heading: Title
+                alignment: center
+            }
+            layout {
+                sequence: 30
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AX
+            }
+        )
+
+        column WORKSHOP_ID (
+            type: plainText
+            heading {
+                heading: Workshop Id
+                alignment: center
+            }
+            layout {
+                sequence: 110
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: DB
+            }
+        )
+
+        column WORKSHOP_OWNER_EMAIL (
+            type: plainText
+            heading {
+                heading: Workshop Owner Email
+            }
+            layout {
+                sequence: 160
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: DG
+            }
+        )
+
+        column WORKSHOP_STATUS (
+            type: plainText
+            heading {
+                heading: Workshop Status
+                alignment: center
+            }
+            layout {
+                sequence: 60
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: CC
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: Workshop by Tags (Role, Product, Focus)
+        }
+
+        savedReport 118041852 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn CATEGORY (
+                sequence: 1
+            )
+
+            displayColumn COMPLETION_DATE (
+                sequence: 5
+            )
+
+            displayColumn LIVELABSID (
+                sequence: 9
+            )
+
+            displayColumn PUBLISH_STATUS (
+                sequence: 8
+            )
+
+            displayColumn SHORT_DESC (
+                sequence: 6
+            )
+
+            displayColumn SUBCATEGORY (
+                sequence: 2
+            )
+
+            displayColumn TITLE (
+                sequence: 4
+            )
+
+            displayColumn WORKSHOP_ID (
+                sequence: 3
+            )
+
+            displayColumn WORKSHOP_STATUS (
+                sequence: 7
+            )
+
+        )
+
+        savedReport 19680581 (
+            visibility: alternativeDefault
+            name: Workshops by Product
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn COMPLETION_DATE (
+                sequence: 4
+            )
+
+            displayColumn LIVELABSID (
+                sequence: 8
+            )
+
+            displayColumn PUBLISH_STATUS (
+                sequence: 7
+            )
+
+            displayColumn SHORT_DESC (
+                sequence: 5
+            )
+
+            displayColumn SUBCATEGORY (
+                sequence: 1
+            )
+
+            displayColumn TITLE (
+                sequence: 3
+            )
+
+            displayColumn WORKSHOP_ID (
+                sequence: 2
+            )
+
+            displayColumn WORKSHOP_STATUS (
+                sequence: 6
+            )
+
+            filter ir-condition (
+                column: CATEGORY
+                value: Product
+            )
+
+            controlBreak (
+                column: SUBCATEGORY
+                layout {
+                    sequence: 1
+                }
+            )
+
+        )
+
+        savedReport 19734147 (
+            visibility: alternativeDefault
+            name: Workshops by Roles
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn COMPLETION_DATE (
+                sequence: 4
+            )
+
+            displayColumn LIVELABSID (
+                sequence: 8
+            )
+
+            displayColumn PUBLISH_STATUS (
+                sequence: 7
+            )
+
+            displayColumn SHORT_DESC (
+                sequence: 5
+            )
+
+            displayColumn SUBCATEGORY (
+                sequence: 1
+            )
+
+            displayColumn TITLE (
+                sequence: 3
+            )
+
+            displayColumn WORKSHOP_ID (
+                sequence: 2
+            )
+
+            displayColumn WORKSHOP_STATUS (
+                sequence: 6
+            )
+
+            filter ir-condition (
+                column: CATEGORY
+                value: Role
+            )
+
+            controlBreak (
+                column: SUBCATEGORY
+                layout {
+                    sequence: 1
+                }
+            )
+
+        )
+
+        savedReport 19739464 (
+            visibility: alternativeDefault
+            name: Workshops by Focus Area
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn COMPLETION_DATE (
+                sequence: 4
+            )
+
+            displayColumn LIVELABSID (
+                sequence: 8
+            )
+
+            displayColumn PUBLISH_STATUS (
+                sequence: 7
+            )
+
+            displayColumn SHORT_DESC (
+                sequence: 5
+            )
+
+            displayColumn SUBCATEGORY (
+                sequence: 1
+            )
+
+            displayColumn TITLE (
+                sequence: 3
+            )
+
+            displayColumn WORKSHOP_ID (
+                sequence: 2
+            )
+
+            displayColumn WORKSHOP_STATUS (
+                sequence: 6
+            )
+
+            filter ir-condition (
+                column: CATEGORY
+                value: Focus
+            )
+
+            controlBreak (
+                column: SUBCATEGORY
+                layout {
+                    sequence: 1
+                }
+            )
+
+        )
+
+    )
+
+)
+

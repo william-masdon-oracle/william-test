@@ -1,0 +1,631 @@
+page 5050 (
+    name: WMS Workshop Contacts
+    alias: WMS-WORKSHOP-CONTACTS
+    title: WMS Workshop Contacts
+    appearance {
+        pageTemplate: @standard-custom
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region new (
+        name: New
+        type: staticContent
+        source {
+            htmlCode: <HR>
+        }
+        layout {
+            sequence: 30
+            slot: contentBody
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: [
+                #DEFAULT#
+                margin-top-md
+                margin-bottom-md
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region roles (
+        name: Roles
+        type: classicReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select role_name
+                     , role_desc
+                  from wms_roles
+                 order by 1;
+                ```
+        }
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+        reportLayout {
+            numberOfRows: 500
+        }
+        componentAppearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Report--altRowsDefault
+                t-Report--rowHighlight
+                t-Report--horizontalBorders
+                t-Report--hideNoPagination
+            ]
+        }
+        performance {
+            maxRowsToProcess: 500
+        }
+        messages {
+            whenNoDataFound: no data found
+        }
+        componentAdvanced {
+            stripHtml: true
+        }
+
+        column ROLE_DESC (
+            reportColumnQueryId: 2
+            derivedColumn: N
+            heading {
+                heading: Role Desc
+                alignment: center
+            }
+            layout {
+                sequence: 20
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column ROLE_NAME (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            heading {
+                heading: Role Name
+                alignment: center
+            }
+            layout {
+                sequence: 10
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+    )
+
+    region strong-strong (
+        name: <strong></strong>
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <table><tr><td width="120px">
+                <img src="#WORKSPACE_IMAGES#ssworkshop_icon_big.png" width="100px">
+                </td><td><p><strong>WMS User Mangement </strong>
+                </td></tr></table>
+                
+                ```
+        }
+        layout {
+            sequence: 20
+            slot: beforeContentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region workshop-contacts (
+        name: Workshop Contacts
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select id
+                     , prod_id
+                     -- not used, livelabs_id
+                     , name 
+                     , workshop_creator_group
+                     -- not used, workshop_code
+                     , manager_contact
+                     , support_contact
+                     , support_url as "support_url (Stakeholder email)"
+                     -- desc of event, author_name 
+                     , email_from_address as "email_from_address (Workshop Owner Email)"
+                     , modernizer_resource as "modernizer_resource (maintained by)"
+                     , qa1_resource
+                     , qa2_resource
+                     , key_oracle_contact_1 as "key_oracle_contact_1 (Technical SME)"
+                     , key_oracle_contact_2 as "key_oracle_contact_2 (Technical SME)"
+                     , council_observer_contact as "council_observer_contact (Workshop Council Approver)"
+                     , other_contact as "other contact (Observer)"
+                     , other_contact_2 as "other contact2 (+Observer)"
+                     , other_contact_3 as "other contact3 (+Observer)"
+                     , other_contact_4 as "other contact4 (+Observer)"
+                  from workshops
+                 where active_flg > 0
+                   --and livelabs_id is not null
+                 order by 1;
+                ```
+        }
+        layout {
+            sequence: 40
+            slot: contentBody
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        performance {
+            maxRowsToProcess: 5
+        }
+        advanced {
+            savedReportMappingIdentifier: 12806679858649186510
+        }
+
+        column ID (
+            type: plainText
+            heading {
+                heading: Workshop ID
+                alignment: center
+            }
+            layout {
+                sequence: 10
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: T
+            }
+        )
+
+        column MANAGER_CONTACT (
+            type: plainText
+            heading {
+                heading: Manager Contact
+                alignment: center
+            }
+            layout {
+                sequence: 860
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: BP
+            }
+        )
+
+        column NAME (
+            type: plainText
+            heading {
+                heading: Name
+                alignment: center
+            }
+            layout {
+                sequence: 40
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: A
+            }
+        )
+
+        column PROD_ID (
+            type: plainText
+            heading {
+                heading: Production ID
+                alignment: center
+            }
+            layout {
+                sequence: 20
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: G
+            }
+        )
+
+        column QA1_RESOURCE (
+            type: plainText
+            heading {
+                heading: Qa1 Resource
+                alignment: center
+            }
+            layout {
+                sequence: 130
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AJ
+            }
+        )
+
+        column QA2_RESOURCE (
+            type: plainText
+            heading {
+                heading: Qa2 Resource
+                alignment: center
+            }
+            layout {
+                sequence: 140
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AK
+            }
+        )
+
+        column SUPPORT_CONTACT (
+            type: plainText
+            heading {
+                heading: Support Contact
+                alignment: center
+            }
+            layout {
+                sequence: 870
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: BQ
+            }
+        )
+
+        column WORKSHOP_CREATOR_GROUP (
+            type: plainText
+            heading {
+                heading: Workshop Creator Group
+                alignment: center
+            }
+            layout {
+                sequence: 30
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AU
+            }
+        )
+
+        column "council_observer_contact (Workshop Council Approver)" (
+            type: plainText
+            heading {
+                heading: Council Observer Contact (Workshop Council Approver)
+                alignment: center
+            }
+            layout {
+                sequence: 830
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: BK
+            }
+        )
+
+        column "email_from_address (Workshop Owner Email)" (
+            type: plainText
+            heading {
+                heading: Email From Address (Workshop Owner Email)
+                alignment: center
+            }
+            layout {
+                sequence: 770
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: BE
+            }
+        )
+
+        column "key_oracle_contact_1 (Technical SME)" (
+            type: plainText
+            heading {
+                heading: Key Oracle Contact 1 (Technical SME)
+                alignment: center
+            }
+            layout {
+                sequence: 840
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: BL
+            }
+        )
+
+        column "key_oracle_contact_2 (Technical SME)" (
+            type: plainText
+            heading {
+                heading: Key Oracle Contact 2 (Technical SME)
+                alignment: center
+            }
+            layout {
+                sequence: 850
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: BM
+            }
+        )
+
+        column "modernizer_resource (maintained by)" (
+            type: plainText
+            heading {
+                heading: Modernizer Resource (Maintained By)
+                alignment: center
+            }
+            layout {
+                sequence: 750
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: BC
+            }
+        )
+
+        column "other contact (Observer)" (
+            type: plainText
+            heading {
+                heading: Other Contact (observer)
+                alignment: center
+            }
+            layout {
+                sequence: 790
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: BG
+            }
+        )
+
+        column "other contact2 (+Observer)" (
+            type: plainText
+            heading {
+                heading: Other Contact2 (+observer)
+                alignment: center
+            }
+            layout {
+                sequence: 800
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: BH
+            }
+        )
+
+        column "other contact3 (+Observer)" (
+            type: plainText
+            heading {
+                heading: Other Contact3 (+observer)
+                alignment: center
+            }
+            layout {
+                sequence: 810
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: BI
+            }
+        )
+
+        column "other contact4 (+Observer)" (
+            type: plainText
+            heading {
+                heading: Other Contact4 (+observer)
+                alignment: center
+            }
+            layout {
+                sequence: 820
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: BJ
+            }
+        )
+
+        column "support_url (Stakeholder email)" (
+            type: plainText
+            heading {
+                heading: Support Url (Stakeholder Email)
+                alignment: center
+            }
+            layout {
+                sequence: 760
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: BD
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: All Workshops Report
+        }
+
+        savedReport 10026167 (
+            visibility: alternativeDefault
+            name: Workshop Detail Report - DB Prod Mgmt
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn ID (
+                sequence: 1
+            )
+
+            displayColumn NAME (
+                sequence: 3
+            )
+
+            displayColumn PROD_ID (
+                sequence: 2
+            )
+
+            displayColumn WORKSHOP_CREATOR_GROUP (
+                sequence: 4
+            )
+
+            filter ir-condition (
+                column: WORKSHOP_CREATOR_GROUP
+                value: DB Product Management
+            )
+
+        )
+
+        savedReport 10026179 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn ID (
+                sequence: 2
+            )
+
+            displayColumn MANAGER_CONTACT (
+                sequence: 11
+            )
+
+            displayColumn NAME (
+                sequence: 4
+            )
+
+            displayColumn PROD_ID (
+                sequence: 3
+            )
+
+            displayColumn QA1_RESOURCE (
+                sequence: 17
+            )
+
+            displayColumn QA2_RESOURCE (
+                sequence: 18
+            )
+
+            displayColumn SUPPORT_CONTACT (
+                sequence: 12
+            )
+
+            displayColumn WORKSHOP_CREATOR_GROUP (
+                sequence: 1
+            )
+
+            displayColumn "council_observer_contact (Workshop Council Approver)" (
+                sequence: 5
+            )
+
+            displayColumn "email_from_address (Workshop Owner Email)" (
+                sequence: 6
+            )
+
+            displayColumn "key_oracle_contact_1 (Technical SME)" (
+                sequence: 9
+            )
+
+            displayColumn "key_oracle_contact_2 (Technical SME)" (
+                sequence: 10
+            )
+
+            displayColumn "modernizer_resource (maintained by)" (
+                sequence: 8
+            )
+
+            displayColumn "other contact (Observer)" (
+                sequence: 13
+            )
+
+            displayColumn "other contact2 (+Observer)" (
+                sequence: 14
+            )
+
+            displayColumn "other contact3 (+Observer)" (
+                sequence: 15
+            )
+
+            displayColumn "other contact4 (+Observer)" (
+                sequence: 16
+            )
+
+            displayColumn "support_url (Stakeholder email)" (
+                sequence: 7
+            )
+
+            filter ir-condition (
+                type: rowSearch
+                search: madhu
+            )
+
+        )
+
+    )
+
+)
+

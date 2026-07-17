@@ -1,0 +1,2552 @@
+page 35 (
+    name: Request an Event
+    alias: REQUEST-EVENT
+    title: Request-Event
+    appearance {
+        pageTemplate: @standard-custom
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+        warnOnUnsavedChanges: false
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region button-region (
+        name: Button Region
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @title-bar
+            templateOptions: [
+                #DEFAULT#
+                t-BreadcrumbRegion--useBreadcrumbTitle
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region edit-workshop-links (
+        name: Edit Workshop Links
+        type: staticContent
+        layout {
+            sequence: 30
+            slot: contentBody
+        }
+        appearance {
+            template: @inline-dialog
+            templateOptions: [
+                #DEFAULT#
+                js-dialog-size600x400
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region qr-code (
+        name: QR Code
+        type: staticContent
+        layout {
+            sequence: 40
+            slot: contentBody
+        }
+        appearance {
+            template: @inline-dialog
+            templateOptions: [
+                #DEFAULT#
+                js-dialog-size600x400
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region request-an-event (
+        name: Request an Event
+        type: form
+        source {
+            location: localDatabase
+            tableName: WMS_EVENTS
+        }
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--noBorder
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    pageItem P35_ACTIVE_FLG (
+        type: selectList
+        label {
+            label: Active?
+            alignment: left
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC2:Yes;Y,No;N
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 50
+            region: @request-an-event
+            slot: regionBody
+            alignment: left
+            columnSpan: 2
+        }
+        appearance {
+            template: @required-floating
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            formRegion: @request-an-event
+            column: ACTIVE_FLG
+            dataType: varchar2
+        }
+        help {
+            helpText: "Should this Event be live (Yes) or not (No)? You can change this later if needed. "
+        }
+    )
+
+    pageItem P35_ALT_DESC_LONG (
+        type: textarea
+        label {
+            label: Alternative Long Description for Event
+            alignment: left
+        }
+        layout {
+            sequence: 400
+            region: @request-an-event
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+            height: 5
+        }
+        validation {
+            maxLength: 4000
+        }
+        source {
+            formRegion: @request-an-event
+            column: ALT_DESC_LONG
+            dataType: varchar2
+        }
+    )
+
+    pageItem P35_ALT_DESC_OUTLINE (
+        type: richTextEditor
+        label {
+            label: Alternative Outline for Event
+            alignment: left
+        }
+        settings {
+            format: html
+            minHeight: 180
+        }
+        layout {
+            sequence: 410
+            region: @request-an-event
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @request-an-event
+            column: ALT_DESC_OUTLINE
+            dataType: varchar2
+        }
+    )
+
+    pageItem P35_ALT_DESC_PREREQ (
+        type: richTextEditor
+        label {
+            label: Alternative Prerequisites for Event
+            alignment: left
+        }
+        settings {
+            format: html
+            minHeight: 180
+        }
+        layout {
+            sequence: 420
+            region: @request-an-event
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @request-an-event
+            column: ALT_DESC_PREREQ
+            dataType: varchar2
+        }
+    )
+
+    pageItem P35_ALT_DESC_SHORT (
+        type: textarea
+        label {
+            label: Alternative Short Description for Event
+            alignment: left
+        }
+        layout {
+            sequence: 390
+            region: @request-an-event
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+            height: 5
+        }
+        validation {
+            maxLength: 4000
+        }
+        source {
+            formRegion: @request-an-event
+            column: ALT_DESC_SHORT
+            dataType: varchar2
+        }
+    )
+
+    pageItem P35_ALT_TIME_AVAILABLE (
+        type: numberField
+        label {
+            label: Alternative Time Available
+            alignment: left
+        }
+        settings {
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 370
+            region: @request-an-event
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 3
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        source {
+            formRegion: @request-an-event
+            column: ALT_TIME_AVAILABLE
+            dataType: number
+        }
+        help {
+            inlineHelpText: LiveLabs Sandbox Only
+            helpText:
+                ```html
+                This field is how long the users will have to complete the workshop if there is a LiveLabs Sandbox. 
+                <b>The maximum allowed time for this field is 8 hours.</b>
+                <br><br>
+                Should you need more than that, please detail the reasoning behind your request in the Remarks to the LiveLabs team section below and someone will follow up with you. 
+                ```
+        }
+    )
+
+    pageItem P35_ALT_TIME_HOURS (
+        type: numberField
+        label {
+            label: Alternative Workshop Time (in hours)
+            alignment: left
+        }
+        settings {
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 360
+            region: @request-an-event
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 3
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        source {
+            formRegion: @request-an-event
+            column: ALT_TIME_HOURS
+            dataType: number
+        }
+        help {
+            helpText: This field is the estimated time it will take for a user to complete this workshop.
+        }
+    )
+
+    pageItem P35_ALT_URL (
+        type: hidden
+        layout {
+            sequence: 450
+            region: @request-an-event
+            slot: regionBody
+        }
+        source {
+            formRegion: @request-an-event
+            column: ALT_URL
+            dataType: varchar2
+        }
+    )
+
+    pageItem P35_ALWAYSFREE_FLG (
+        type: switch
+        label {
+            label: Always Free Enabled
+            alignment: left
+        }
+        settings {
+            useDefaults: false
+            onValue: Y
+            onLabel: Yes
+            offValue: N
+            offLabel: No
+        }
+        layout {
+            sequence: 10
+            region: @edit-workshop-links
+            slot: regionBody
+            alignment: left
+            columnSpan: 3
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    pageItem P35_ALWAYSFREE_URL (
+        type: textField
+        label {
+            label: Always Free URL
+            alignment: left
+        }
+        settings {
+            subtype: url
+        }
+        layout {
+            sequence: 20
+            region: @edit-workshop-links
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    pageItem P35_DESKTOP_APP_1 (
+        type: textField
+        label {
+            label: Desktop App 1 URL
+            alignment: left
+        }
+        settings {
+            subtype: url
+        }
+        layout {
+            sequence: 140
+            region: @edit-workshop-links
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+    )
+
+    pageItem P35_DESKTOP_APP_2 (
+        type: textField
+        label {
+            label: Desktop App 2 URL
+            alignment: left
+        }
+        settings {
+            subtype: url
+        }
+        layout {
+            sequence: 150
+            region: @edit-workshop-links
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+    )
+
+    pageItem P35_DESKTOP_GUIDE (
+        type: textField
+        label {
+            label: Desktop Guide URL
+            alignment: left
+        }
+        settings {
+            subtype: url
+        }
+        layout {
+            sequence: 130
+            region: @edit-workshop-links
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+    )
+
+    pageItem P35_DISPLAY_TAGS (
+        type: selectList
+        label {
+            label: Display Tags
+            alignment: left
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC2:Yes;Y,No;N
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 350
+            region: @request-an-event
+            slot: regionBody
+            alignment: left
+            columnSpan: 3
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            formRegion: @request-an-event
+            column: DISPLAY_TAGS
+            dataType: varchar2
+        }
+    )
+
+    pageItem P35_EMAIL_CREATOR (
+        type: textField
+        label {
+            label: Event Requestor
+            alignment: left
+        }
+        settings {
+            subtype: email
+        }
+        layout {
+            sequence: 130
+            region: @request-an-event
+            slot: regionBody
+            alignment: left
+            columnSpan: 4
+        }
+        appearance {
+            template: @required-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            valueRequired: true
+            maxLength: 200
+        }
+        advanced {
+            cssClasses: u-textLower
+        }
+        source {
+            formRegion: @request-an-event
+            column: EMAIL_CREATOR
+            dataType: varchar2
+        }
+        default {
+            type: static
+            staticValue: &APP_USER.
+        }
+    )
+
+    pageItem P35_EMAIL_REQUESTOR (
+        type: textField
+        label {
+            label: Who else should be notified?
+            alignment: left
+        }
+        layout {
+            sequence: 140
+            region: @request-an-event
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            column: 6
+            columnSpan: 7
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            maxLength: 4000
+        }
+        source {
+            formRegion: @request-an-event
+            column: EMAIL_REQUESTOR
+            dataType: varchar2
+        }
+        help {
+            inlineHelpText: Oracle Emails ONLY, comma separated
+        }
+    )
+
+    pageItem P35_EVENT_CODE (
+        type: textField
+        label {
+            label: Event Code
+            alignment: left
+        }
+        layout {
+            sequence: 70
+            region: @request-an-event
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            width: 30
+            valuePlaceholder: To be Assigned
+        }
+        source {
+            formRegion: @request-an-event
+            column: EVENT_CODE
+            dataType: varchar2
+        }
+        readOnly {
+            type: expression
+            plsqlExpression: not apex_authorization.is_authorized('Administration Rights')
+        }
+    )
+
+    pageItem P35_EVENT_CODE_LINK (
+        type: displayOnly
+        label {
+            label: Link to LiveLabs Event
+            alignment: left
+        }
+        settings {
+            sendOnPageSubmit: false
+        }
+        layout {
+            sequence: 20
+            region: @qr-code
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery: select 'https://livelabs.oracle.com/ords/dbpm/r/livelabs/view-workshop?wec=' || :P35_EVENT_CODE from dual
+        }
+    )
+
+    pageItem P35_EVENT_CONFIG_JSON (
+        type: hidden
+        layout {
+            sequence: 470
+            region: @request-an-event
+            slot: regionBody
+        }
+        source {
+            formRegion: @request-an-event
+            column: EVENT_CONFIG_JSON
+            dataType: varchar2
+        }
+    )
+
+    pageItem P35_EVENT_DATE (
+        type: textField
+        label {
+            label: Event Date
+            alignment: left
+        }
+        layout {
+            sequence: 210
+            region: @request-an-event
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        help {
+            helpText: This is just a text field that will be displayed on the event page, so you can add a date range if needed. If left bank it will default to the date the event page is being viewed.
+        }
+    )
+
+    pageItem P35_EVENT_ICON_URL (
+        type: textField
+        label {
+            label: Event Icon URL
+            alignment: left
+        }
+        settings {
+            subtype: url
+        }
+        layout {
+            sequence: 240
+            region: @request-an-event
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        help {
+            helpText:
+                ```html
+                For "Event" event types you can specify a graphic to be used on the orange panel on the left of the event page.
+                <br><br>
+                When adding an image URL, only use images with transparent backgrounds, and are white/light in color so they stand out from the background. Also, images should be of a high enough resolution that they do not pixelate when scaled to fit the page.
+                <br><br>
+                Default image is the ORACLE logo - white with transparent background.
+                ```
+        }
+    )
+
+    pageItem P35_EVENT_JSON (
+        type: hidden
+        layout {
+            sequence: 460
+            region: @request-an-event
+            slot: regionBody
+        }
+        source {
+            formRegion: @request-an-event
+            column: EVENT_JSON
+            dataType: varchar2
+        }
+    )
+
+    pageItem P35_EVENT_LOCATION (
+        type: textField
+        label {
+            label: Event Location
+            alignment: left
+        }
+        layout {
+            sequence: 230
+            region: @request-an-event
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        help {
+            helpText: Only applies to Get-Togethers events.
+        }
+    )
+
+    pageItem P35_EVENT_ORGANIZER (
+        type: textField
+        label {
+            label: Event Organizer
+            alignment: left
+        }
+        layout {
+            sequence: 220
+            region: @request-an-event
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        help {
+            helpText: "This field will display under the Organizer heading of the event. If left blank, the field will not show up on the event page at all. Do not use \"Oracle\" as that is already on the page by default. "
+        }
+    )
+
+    pageItem P35_EVENT_STATUS (
+        type: selectList
+        label {
+            label: Update Status
+            alignment: left
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC2:Submitted;Submitted,Changes Requested;Changes Requested,Event Approved;Event Approved,Event Published;Event Published
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 90
+            region: @request-an-event
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            column: 9
+            columnSpan: 2
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            formRegion: @request-an-event
+            column: EVENT_STATUS
+            dataType: varchar2
+        }
+        default {
+            type: static
+            staticValue: Submitted
+        }
+        serverSideCondition {
+            type: rowsReturned
+            sqlQuery:
+                ```sql
+                select email from workshop_person_role 
+                where workshop_id is null 
+                and lower(email) = lower(:APP_USER) 
+                and livelabs_publisher_flg = 1 
+                and :P35_ID is not null
+                ```
+        }
+    )
+
+    pageItem P35_EVENT_STATUS_SHOW (
+        type: displayOnly
+        label {
+            label: Current Status
+            alignment: left
+        }
+        settings {
+            sendOnPageSubmit: false
+        }
+        layout {
+            sequence: 80
+            region: @request-an-event
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            column: 7
+            columnSpan: 2
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        source {
+            type: item
+            item: P35_EVENT_STATUS
+        }
+    )
+
+    pageItem P35_EVENT_TYPE (
+        type: selectList
+        label {
+            label: Event Type
+            alignment: left
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC2:Event;Event,PTS;PTS,GetTogether;GetTogether,AskTom;AskTom
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 200
+            region: @request-an-event
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        help {
+            helpText: Use the event type "Event" unless specifically creating a Get-Togethers, AskTom, or PTS event as the latter all have specific fixed branding.
+        }
+    )
+
+    pageItem P35_FREETIER_FLG (
+        type: switch
+        label {
+            label: Free Tier Enabled
+            alignment: left
+        }
+        settings {
+            useDefaults: false
+            onValue: Y
+            onLabel: Yes
+            offValue: N
+            offLabel: No
+        }
+        layout {
+            sequence: 30
+            region: @edit-workshop-links
+            slot: regionBody
+            alignment: left
+            columnSpan: 3
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    pageItem P35_FREETIER_URL (
+        type: textField
+        label {
+            label: Free Tier URL
+            alignment: left
+        }
+        settings {
+            subtype: url
+        }
+        layout {
+            sequence: 40
+            region: @edit-workshop-links
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    pageItem P35_GREENBUTTON_FLG (
+        type: switch
+        label {
+            label: Run on LiveLabs Sandbox Enabled
+            alignment: left
+        }
+        settings {
+            useDefaults: false
+            onValue: Y
+            onLabel: Yes
+            offValue: N
+            offLabel: No
+        }
+        layout {
+            sequence: 70
+            region: @edit-workshop-links
+            slot: regionBody
+            alignment: left
+            columnSpan: 4
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    pageItem P35_GREENBUTTON_URL (
+        type: textField
+        label {
+            label: Run on LiveLabs Sandbox URL
+            alignment: left
+        }
+        settings {
+            subtype: url
+        }
+        layout {
+            sequence: 90
+            region: @edit-workshop-links
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+    )
+
+    pageItem P35_ID (
+        type: hidden
+        layout {
+            sequence: 110
+            region: @request-an-event
+            slot: regionBody
+        }
+        source {
+            formRegion: @request-an-event
+            column: ID
+            dataType: number
+            primaryKey: true
+        }
+        security {
+            sessionStateProtection: checksumRequiredSessionLevel
+        }
+    )
+
+    pageItem P35_ID_SHOW (
+        type: displayOnly
+        label {
+            label: Event ID
+            alignment: left
+        }
+        settings {
+            sendOnPageSubmit: false
+        }
+        layout {
+            sequence: 60
+            region: @request-an-event
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            column: 3
+            columnSpan: 2
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        source {
+            type: item
+            item: P35_ID
+        }
+        default {
+            type: static
+            staticValue: To be assigned
+        }
+        security {
+            sessionStateProtection: checksumRequiredSessionLevel
+        }
+    )
+
+    pageItem P35_JSON_ENABLE_CONFIG (
+        type: switch
+        label {
+            label: Lab Restrictions Enabled
+            alignment: left
+        }
+        settings {
+            useDefaults: false
+            onValue: Y
+            onLabel: Yes
+            offValue: N
+            offLabel: No
+        }
+        layout {
+            sequence: 160
+            region: @edit-workshop-links
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        help {
+            inlineHelpText: Green Button Only
+            helpText: Used to apply restrictions to lab to disallow specific domains
+        }
+    )
+
+    pageItem P35_LIVELABS_ID (
+        type: popupLov
+        label {
+            label: Workshop
+            alignment: left
+        }
+        settings {
+            fetchOnSearch: true
+            title: Select a Workshop for this Event
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery: select nvl(ll.title_override, w.title) || ' (WMS ID: ' || w.id || ', LiveLabs ID: ' || ll.id || ')', ll.id from workshop w, workshop_ll ll where w.id = ll.workshop_id and ll.publish_type in ('Public', 'Event') and ll.publish_status in ('Published') and w.workshop_status in ('Completed', 'Quarterly QA', 'Quarterly QA Complete');
+        }
+        layout {
+            sequence: 150
+            region: @request-an-event
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            formRegion: @request-an-event
+            column: LIVELABS_ID
+            dataType: number
+        }
+    )
+
+    pageItem P35_LIVESQL_FLG (
+        type: switch
+        label {
+            label: Run on LiveSQL Enabled
+            alignment: left
+        }
+        settings {
+            useDefaults: false
+            onValue: Y
+            onLabel: Yes
+            offValue: N
+            offLabel: No
+        }
+        layout {
+            sequence: 110
+            region: @edit-workshop-links
+            slot: regionBody
+            alignment: left
+            columnSpan: 4
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    pageItem P35_LIVESQL_URL (
+        type: textField
+        label {
+            label: Run on LiveSQL URL
+            alignment: left
+        }
+        settings {
+            subtype: url
+        }
+        layout {
+            sequence: 120
+            region: @edit-workshop-links
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+    )
+
+    pageItem P35_MARKETING_CODE (
+        type: textField
+        label {
+            label: Opportunity ID
+            alignment: left
+        }
+        layout {
+            sequence: 260
+            region: @request-an-event
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        help {
+            helpText: Only applies to Get-Togethers events.
+        }
+    )
+
+    pageItem P35_OCI_INSTRUCTIONS (
+        type: switch
+        label {
+            label: Display OCI Login Instructions?
+            alignment: left
+        }
+        settings {
+            useDefaults: false
+            onValue: Y
+            onLabel: Yes
+            offValue: N
+            offLabel: No
+        }
+        layout {
+            sequence: 180
+            region: @edit-workshop-links
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        serverSideCondition {
+            type: never
+        }
+        help {
+            inlineHelpText: Green Button Only
+            helpText: Should the green button display how to login to OCI before the workshop instructions? If this workshop uses a NoVNC Image, this field should be switched off.
+        }
+    )
+
+    pageItem P35_PAIDTIER_FLG (
+        type: switch
+        label {
+            label: Run on your Tenancy Enabled
+            alignment: left
+        }
+        settings {
+            useDefaults: false
+            onValue: Y
+            onLabel: Yes
+            offValue: N
+            offLabel: No
+        }
+        layout {
+            sequence: 50
+            region: @edit-workshop-links
+            slot: regionBody
+            alignment: left
+            columnSpan: 4
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    pageItem P35_PAIDTIER_URL (
+        type: textField
+        label {
+            label: Run on your Tenancy URL
+            alignment: left
+        }
+        settings {
+            subtype: url
+        }
+        layout {
+            sequence: 60
+            region: @edit-workshop-links
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+    )
+
+    pageItem P35_QR (
+        type: plugin/qrCode
+        label {
+            alignment: left
+        }
+        settings {
+            errorCorrectionLevel: mMedium15OfData
+            displayType: bmpImage
+            imageSize: 200
+            margines: true
+        }
+        layout {
+            sequence: 10
+            region: @qr-code
+            slot: regionBody
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery: select 'https://livelabs.oracle.com/ords/dbpm/r/livelabs/view-workshop?wec=' || :P35_EVENT_CODE from dual
+        }
+    )
+
+    pageItem P35_REMARKS (
+        type: textarea
+        label {
+            alignment: left
+        }
+        layout {
+            sequence: 440
+            region: @request-an-event
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+            height: 5
+        }
+        validation {
+            maxLength: 4000
+        }
+        source {
+            formRegion: @request-an-event
+            column: REMARKS
+            dataType: varchar2
+        }
+        default {
+            type: static
+            staticValue:
+                ```
+                Is there anything the LiveLabs Team should know about this event?
+                
+                Please include any explanation for an Event Duration longer than 30 days or a Time Available higher than 8 hours. 
+                
+                This is also where the LiveLabs team will put their notes if they request any additional information.
+                ```
+        }
+    )
+
+    pageItem P35_SECURE_DESKTOPS_ENABLE (
+        type: switch
+        label {
+            label: Secure Desktops Enabled
+            alignment: left
+        }
+        settings {
+            useDefaults: false
+            onValue: Y
+            onLabel: Yes
+            offValue: N
+            offLabel: No
+        }
+        layout {
+            sequence: 170
+            region: @edit-workshop-links
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        serverSideCondition {
+            type: rowsReturned
+            sqlQuery:
+                ```sql
+                select email from workshop_person_role 
+                where workshop_id is null 
+                and lower(email) = lower(:APP_USER) 
+                and livelabs_publisher_flg = 1 
+                
+                ```
+        }
+        help {
+            inlineHelpText: Green Button Only
+            helpText: Access workshop environment through OCI Secure Desktop
+        }
+    )
+
+    pageItem P35_SEPARATOR (
+        type: displayImage
+        label {
+            label: <br><strong>EVENT CODE INFORMATION</strong>
+            alignment: left
+        }
+        settings {
+            basedOn: url
+        }
+        layout {
+            sequence: 10
+            region: @request-an-event
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        source {
+            type: staticValue
+            staticValue: #APP_FILES#wms-line.png
+        }
+    )
+
+    pageItem P35_SEPARATOR_1 (
+        type: displayImage
+        label {
+            label: <br><strong>OVERRIDE WORKSHOP INFORMATION</strong>
+            alignment: left
+        }
+        settings {
+            basedOn: url
+        }
+        layout {
+            sequence: 330
+            region: @request-an-event
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        source {
+            type: staticValue
+            staticValue: #APP_FILES#wms-line.png
+        }
+    )
+
+    pageItem P35_SEPARATOR_1_1 (
+        type: displayImage
+        label {
+            label: <br><strong>Remarks to the LiveLabs Team</strong>
+            alignment: left
+        }
+        settings {
+            basedOn: url
+        }
+        layout {
+            sequence: 430
+            region: @request-an-event
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        source {
+            type: staticValue
+            staticValue: #APP_FILES#wms-line.png
+        }
+    )
+
+    pageItem P35_SEPARATOR_2 (
+        type: displayImage
+        label {
+            label: <br><strong>EVENT PAGE DETAILS</strong>
+            alignment: left
+        }
+        settings {
+            basedOn: url
+        }
+        layout {
+            sequence: 170
+            region: @request-an-event
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        source {
+            type: staticValue
+            staticValue: #APP_FILES#wms-line.png
+        }
+    )
+
+    pageItem P35_SUBTITLE (
+        type: displayOnly
+        label {
+            label: <strong>This section contains fields relevant to the Event you are creating. </strong>
+            alignment: left
+        }
+        settings {
+            sendOnPageSubmit: false
+        }
+        layout {
+            sequence: 30
+            region: @request-an-event
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    pageItem P35_SUBTITLE_1 (
+        type: displayOnly
+        label {
+            label: <strong>This section contains fields that allow you to override certain aspects of the existing workshop.<br><br>After selecting your workshop, click the Populate Workshop Fields button to seed the fields with the workshop's data.</strong>
+            alignment: left
+        }
+        settings {
+            sendOnPageSubmit: false
+        }
+        layout {
+            sequence: 340
+            region: @request-an-event
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    pageItem P35_SUBTITLE_2 (
+        type: displayOnly
+        label {
+            label: <strong>This section contains fields that will customize how your Event Page looks and functions.</strong>
+            alignment: left
+        }
+        settings {
+            sendOnPageSubmit: false
+        }
+        layout {
+            sequence: 180
+            region: @request-an-event
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    pageItem P35_TENANCY_ID (
+        type: popupLov
+        label {
+            label: Tenancy
+            alignment: left
+        }
+        settings {
+            fetchOnSearch: true
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery: select tenancy_name || ' (' || id || ')', id from ll_tenancies
+            displayExtraValues: false
+            nullDisplayValue: "                                                       "
+        }
+        layout {
+            sequence: 320
+            region: @request-an-event
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        source {
+            formRegion: @request-an-event
+            column: TENANCY_ID
+            dataType: number
+        }
+        help {
+            inlineHelpText: DO NOT set this value unless you have discussed with LiveLabs team. LiveLabs Sandbox determines the tenancy.
+            helpText:
+                ```html
+                DO NOT set this value unless you need to run this event on a very specific tenancy. <br><br>
+                Selecting a tenancy can break the workshop if the tenancy does not have the correct resources in place. Please use this field with caution and only when you are certain you need it. 
+                ```
+        }
+        comments {
+            comments:
+                ```
+                -- server side condition
+                select email from workshop_person_event_admin
+                    where lower(email) = lower(:APP_USER)
+                    and active_flg = 1
+                UNION
+                select user_name_lc
+                    from APEX_APPL_ACL_USERS
+                    where APPLICATION_ID = :APP_ID 
+                    and role_names = 'Administrator'
+                    and lower(user_name_lc) = lower(:APP_USER)
+                ```
+        }
+    )
+
+    pageItem P35_TITLE (
+        type: textField
+        label {
+            label: Event Title
+            alignment: left
+        }
+        layout {
+            sequence: 190
+            region: @request-an-event
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            valueRequired: true
+            maxLength: 200
+        }
+        source {
+            formRegion: @request-an-event
+            column: TITLE
+            dataType: varchar2
+        }
+    )
+
+    pageItem P35_UPDATED_FLG (
+        type: hidden
+        layout {
+            sequence: 480
+            region: @request-an-event
+            slot: regionBody
+        }
+        source {
+            formRegion: @request-an-event
+            column: UPDATED_FLG
+            dataType: number
+        }
+    )
+
+    pageItem P35_USERS_CONCURRENT (
+        type: numberField
+        label {
+            label: Concurrent Users
+            alignment: left
+        }
+        settings {
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 310
+            region: @request-an-event
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        source {
+            formRegion: @request-an-event
+            column: USERS_CONCURRENT
+            dataType: number
+        }
+        help {
+            inlineHelpText: LiveLabs Sandbox Only
+            helpText: How many users should be able to use this event code <b>at the same time</b>?
+        }
+    )
+
+    pageItem P35_USERS_MAXIMUM (
+        type: numberField
+        label {
+            label: Max Users
+            alignment: left
+        }
+        settings {
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 300
+            region: @request-an-event
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        source {
+            formRegion: @request-an-event
+            column: USERS_MAXIMUM
+            dataType: number
+        }
+        help {
+            inlineHelpText: LiveLabs Sandbox Only
+            helpText: How many users should be allowed to use this event code?
+        }
+    )
+
+    pageItem P35_VALID_FROM (
+        type: datePicker
+        label {
+            label: Start Date
+            alignment: left
+        }
+        layout {
+            sequence: 270
+            region: @request-an-event
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required-above
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            formRegion: @request-an-event
+            column: VALID_FROM
+            dataType: date
+        }
+    )
+
+    pageItem P35_VALID_TIMEZONE (
+        type: popupLov
+        label {
+            label: Timezone
+            alignment: left
+        }
+        settings {
+            fetchOnSearch: true
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select key_name, key_value
+                from wms_keys
+                where key_type='TIMEZONE'
+                and active_flg='Y'
+                order by key_order, key_name
+                ```
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 290
+            region: @request-an-event
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            column: 5
+        }
+        appearance {
+            template: @required-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            valueRequired: true
+            maxLength: 50
+        }
+        source {
+            formRegion: @request-an-event
+            column: VALID_TIMEZONE
+            dataType: varchar2
+        }
+    )
+
+    pageItem P35_VALID_TO (
+        type: datePicker
+        label {
+            label: End Date
+            alignment: left
+        }
+        layout {
+            sequence: 280
+            region: @request-an-event
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            column: 3
+        }
+        appearance {
+            template: @required-above
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            formRegion: @request-an-event
+            column: VALID_TO
+            dataType: date
+        }
+    )
+
+    pageItem P35_YOUTUBE_LINK (
+        type: textField
+        label {
+            label: Youtube Link
+            alignment: left
+        }
+        settings {
+            subtype: url
+        }
+        layout {
+            sequence: 250
+            region: @request-an-event
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        help {
+            helpText:
+                ```html
+                This is the embed URL from the Share dialog on YouTube - it's important the URL includes "embed"
+                <br><br>
+                URL format: https://www.youtube.com/embed/<b>video_code_goes_here<b>
+                <br><br>
+                For example: https://www.youtube.com/embed/Q78rFt76s
+                ```
+        }
+    )
+
+    button cancel (
+        buttonName: Cancel
+        label: Cancel
+        layout {
+            sequence: 10
+            region: @button-region
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 51
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button edit-workshop-links (
+        buttonName: Edit_Workshop_Links
+        label: Edit Workshop Links
+        layout {
+            sequence: 380
+            region: @request-an-event
+            slot: regionBody
+            startNewRow: false
+            columnSpan: 3
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--large
+                t-Button--gapTop
+            ]
+        }
+        behavior {
+            action: definedByDynamicAction
+            executeValidations: false
+        }
+    )
+
+    button populate-workshop-fields (
+        buttonName: Populate_Workshop_Fields
+        label: Populate Workshop Fields
+        layout {
+            sequence: 160
+            region: @request-an-event
+            slot: regionBody
+            startNewRow: false
+            column: 10
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--large
+                t-Button--gapTop
+            ]
+        }
+        behavior {
+            action: definedByDynamicAction
+            executeValidations: false
+        }
+    )
+
+    button qr-code (
+        buttonName: QR_Code
+        label: QR Code and Link
+        layout {
+            sequence: 100
+            region: @request-an-event
+            slot: regionBody
+            startNewRow: false
+            column: 11
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--large
+                t-Button--gapTop
+            ]
+        }
+        behavior {
+            action: definedByDynamicAction
+            executeValidations: false
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P35_EVENT_CODE
+        }
+    )
+
+    button request-event (
+        buttonName: Request_Event
+        label: Request Event
+        layout {
+            sequence: 30
+            region: @button-region
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: insert
+        }
+        serverSideCondition {
+            type: itemIsNull
+            item: P35_ID
+        }
+    )
+
+    button save-changes (
+        buttonName: Save_Changes
+        label: Save Changes
+        layout {
+            sequence: 20
+            region: @button-region
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            databaseAction: update
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P35_ID
+        }
+    )
+
+    dynamicAction fill-workshop-links-fields (
+        name: Fill Workshop Links Fields
+        execution {
+            sequence: 40
+        }
+        when {
+            event: ready
+        }
+        clientSideCondition {
+            type: itemIsNotNull
+            item: P35_ID
+        }
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    :P35_FREETIER_URL     := JSON_VALUE (:P35_ALT_URL, '$.FREETIER_URL');
+                    :P35_GREENBUTTON_URL     := JSON_VALUE (:P35_ALT_URL, '$.LIVELABS_URL'); 
+                    :P35_ALWAYSFREE_URL   := JSON_VALUE (:P35_ALT_URL, '$.ALWAYSFREE_URL');
+                    :P35_PAIDTIER_URL         := JSON_VALUE (:P35_ALT_URL, '$.PAID_URL'); 
+                    :P35_LIVESQL_URL        := JSON_VALUE(:P35_ALT_URL, '$.LIVESQL_URL');
+                    :P35_LIVESQL_FLG        := JSON_VALUE(:P35_EVENT_JSON, '$.LiveSQLEnabled');
+                    :P35_FREETIER_FLG     := JSON_VALUE (:P35_EVENT_JSON, '$.FreeTierEnabled');
+                    :P35_GREENBUTTON_FLG     := JSON_VALUE (:P35_EVENT_JSON, '$.LiveLabsGreenEnabled'); 
+                    :P35_ALWAYSFREE_FLG  := JSON_VALUE (:P35_EVENT_JSON, '$.AlwaysFreeEnabled');
+                    :P35_PAIDTIER_FLG       := JSON_VALUE (:P35_EVENT_JSON, '$.PaidTenancyEnabled'); 
+                    :P35_EVENT_TYPE         := JSON_VALUE (:P35_EVENT_JSON, '$.EventType');
+                    :P35_EVENT_DATE         := JSON_VALUE (:P35_EVENT_JSON, '$.EventDate');
+                    :P35_EVENT_LOCATION     := JSON_VALUE (:P35_EVENT_JSON, '$.EventLocation');
+                    :P35_EVENT_ORGANIZER    := JSON_VALUE (:P35_EVENT_JSON, '$.EventOrganizer');
+                    :P35_EVENT_ICON_URL     := JSON_VALUE (:P35_EVENT_JSON, '$.EventIconLink');
+                    :P35_YOUTUBE_LINK       := JSON_VALUE (:P35_EVENT_JSON, '$.YoutubeLink');
+                    :P35_MARKETING_CODE     := JSON_VALUE (:P35_EVENT_JSON, '$.EventTcValue');
+                    :P35_OCI_INSTRUCTIONS     := JSON_VALUE (:P35_EVENT_JSON, '$.DisplayOciInstructions');
+                    :P35_JSON_ENABLE_CONFIG := JSON_VALUE  (:P35_EVENT_CONFIG_JSON, '$.LabConfigRestrictions');
+                    :P35_DESKTOP_GUIDE := JSON_VALUE (:P35_ALT_URL, '$.DESKTOP_GUIDE_URL'); 
+                    :P35_DESKTOP_APP_1 := JSON_VALUE (:P35_ALT_URL, '$.DESKTOP_APP1_URL'); 
+                    :P35_DESKTOP_APP_2 := JSON_VALUE (:P35_ALT_URL, '$.DESKTOP_APP2_URL'); 
+                    :P35_SECURE_DESKTOPS_ENABLE := JSON_VALUE  (:P35_EVENT_CONFIG_JSON, '$.SecureDesktop');
+                    
+                    
+                    
+                    
+                    ```
+                itemsToSubmit: [
+                    P35_ALT_URL
+                    P35_EVENT_JSON
+                    P35_EVENT_CONFIG_JSON
+                ]
+                itemsToReturn: [
+                    P35_FREETIER_URL
+                    P35_FREETIER_FLG
+                    P35_ALWAYSFREE_FLG
+                    P35_ALWAYSFREE_URL
+                    P35_PAIDTIER_FLG
+                    P35_PAIDTIER_URL
+                    P35_GREENBUTTON_FLG
+                    P35_GREENBUTTON_URL
+                    P35_YOUTUBE_LINK
+                    P35_LIVESQL_FLG
+                    P35_LIVESQL_URL
+                    P35_JSON_ENABLE_CONFIG
+                    P35_DESKTOP_GUIDE
+                    P35_DESKTOP_APP_1
+                    P35_DESKTOP_APP_2
+                    P35_SECURE_DESKTOPS_ENABLE
+                ]
+                showProcessing: true
+            }
+            execution {
+                sequence: 10
+            }
+            clientSideCondition {
+                type: itemIsNotNull
+                item: P35_ID
+            }
+        )
+
+        action native-execute-plsql-code-2 (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    :P35_ALWAYSFREE_FLG := null;
+                    :P35_ALWAYSFREE_URL := null;
+                    :P35_FREETIER_FLG := null;
+                    :P35_FREETIER_URL := null;
+                    :P35_PAIDTIER_FLG := null;
+                    :P35_PAIDTIER_URL := null;
+                    :P35_GREENBUTTON_FLG := null;
+                    :P35_GREENBUTTON_URL := null;
+                    :P35_LIVESQL_FLG := null;
+                    :P35_LIVESQL_URL := null;
+                    :P35_ALT_URL := null;
+                    :P35_EVENT_JSON := null;
+                    :P35_EVENT_TYPE         := null;
+                    :P35_EVENT_DATE         := null;
+                    :P35_EVENT_LOCATION     := null;
+                    :P35_EVENT_ORGANIZER    := null;
+                    :P35_EVENT_ICON_URL     :=null;
+                    :P35_YOUTUBE_LINK       := null;
+                    :P35_MARKETING_CODE     := null;
+                    :P35_OCI_INSTRUCTIONS := null;
+                    :P35_JSON_ENABLE_CONFIG := null;
+                    :P35_DESKTOP_GUIDE := null;
+                    :P35_DESKTOP_APP_1 := null;
+                    :P35_DESKTOP_APP_2 := null;
+                    :P35_SECURE_DESKTOPS_ENABLE := null;
+                    ```
+                itemsToReturn: [
+                    P35_ALT_URL
+                    P35_EVENT_JSON
+                    P35_FREETIER_URL
+                    P35_FREETIER_FLG
+                    P35_ALWAYSFREE_FLG
+                    P35_ALWAYSFREE_URL
+                    P35_PAIDTIER_FLG
+                    P35_PAIDTIER_URL
+                    P35_GREENBUTTON_FLG
+                    P35_GREENBUTTON_URL
+                    P35_YOUTUBE_LINK
+                    P35_LIVESQL_FLG
+                    P35_LIVESQL_URL
+                    P35_JSON_ENABLE_CONFIG
+                    P35_DESKTOP_GUIDE
+                    P35_DESKTOP_APP_1
+                    P35_DESKTOP_APP_2
+                    P35_SECURE_DESKTOPS_ENABLE
+                ]
+                showProcessing: true
+            }
+            execution {
+                sequence: 10
+                fireWhenEventResultIs: false
+            }
+        )
+
+    )
+
+    dynamicAction hide-edit-workshop-links (
+        name: Hide Edit Workshop Links
+        execution {
+            sequence: 20
+        }
+        when {
+            event: ready
+        }
+
+        action native-hide (
+            action: hide
+            affectedElements {
+                selectionType: region
+                region: @edit-workshop-links
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    dynamicAction hide-qr (
+        name: Hide QR
+        execution {
+            sequence: 70
+        }
+        when {
+            event: ready
+        }
+
+        action native-hide (
+            action: hide
+            affectedElements {
+                selectionType: region
+                region: @qr-code
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    dynamicAction populate-workshop-fields-da (
+        name: Populate Workshop Fields DA
+        execution {
+            sequence: 30
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @populate-workshop-fields
+        }
+        clientSideCondition {
+            type: itemIsNotNull
+            item: P35_LIVELABS_ID
+        }
+
+        action native-alert (
+            action: alert
+            settings {
+                title: Select a Workshop
+                message: "Please select a workshop using the dropdown before attempting to populate workshop fields. "
+                style: danger
+            }
+            execution {
+                sequence: 10
+                fireWhenEventResultIs: false
+                fireOnInit: false
+            }
+            clientSideCondition {
+                type: itemIsNull
+                item: P35_LIVELABS_ID
+            }
+        )
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    declare
+                    
+                    cursor c_work is select 
+                                        ll.workshop_time,
+                                        w.short_desc,
+                                        w.long_desc, 
+                                        w.outline, 
+                                        w.prereqs, 
+                                        ll.alwaysfree_flg,
+                                        ll.alwaysfree_url,
+                                        ll.freetier_flg,
+                                        ll.freetier_url,
+                                        ll.paid_flg,
+                                        ll.paid_url,
+                                        ll.greenbutton_flg,
+                                        ll.greenbutton_url,
+                                        ll.livesql_flg,
+                                        ll.livesql_url
+                                    from workshop w, workshop_ll ll where ll.id = :P35_LIVELABS_ID and w.id = ll.workshop_id;
+                    
+                    begin
+                    
+                    for item in c_work loop
+                        :P35_ALT_TIME_HOURS := item.workshop_time;
+                        :P35_ALT_DESC_SHORT := item.short_desc;
+                        :P35_ALT_DESC_LONG := item.long_desc;
+                        :P35_ALT_DESC_OUTLINE := item.outline;
+                        :P35_ALT_DESC_PREREQ := item.prereqs;
+                        :P35_ALWAYSFREE_FLG := item.alwaysfree_flg;
+                        :P35_ALWAYSFREE_URL := item.alwaysfree_url;
+                        :P35_FREETIER_FLG := item.freetier_flg;
+                        :P35_FREETIER_URL := item.freetier_url;
+                        :P35_PAIDTIER_FLG := item.paid_flg;
+                        :P35_PAIDTIER_URL := item.paid_url;
+                        :P35_GREENBUTTON_FLG := item.greenbutton_flg;
+                        :P35_GREENBUTTON_URL := item.greenbutton_url;
+                        :P35_LIVESQL_FLG    := item.livesql_flg;
+                        :P35_LIVESQL_URL    := item.livesql_url;
+                    end loop;
+                    
+                    end;
+                    ```
+                itemsToSubmit: P35_LIVELABS_ID
+                itemsToReturn: [
+                    P35_ALWAYSFREE_FLG
+                    P35_ALWAYSFREE_URL
+                    P35_FREETIER_FLG
+                    P35_FREETIER_URL
+                    P35_PAIDTIER_FLG
+                    P35_PAIDTIER_URL
+                    P35_GREENBUTTON_FLG
+                    P35_GREENBUTTON_URL
+                    P35_ALT_TIME_HOURS
+                    P35_ALT_DESC_SHORT
+                    P35_ALT_DESC_LONG
+                    P35_ALT_DESC_OUTLINE
+                    P35_ALT_DESC_PREREQ
+                    P35_LIVESQL_FLG
+                    P35_LIVESQL_URL
+                ]
+                showProcessing: true
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+                stopExecutionOnError: false
+            }
+        )
+
+    )
+
+    dynamicAction set-workshop-status-to-submitting (
+        name: Set Workshop Status to Submitting
+        execution {
+            sequence: 50
+        }
+        when {
+            event: ready
+        }
+
+        action native-set-value (
+            action: setValue
+            settings {
+                value: Submitting
+            }
+            affectedElements {
+                selectionType: items
+                items: P35_EVENT_STATUS_SHOW
+            }
+            execution {
+                sequence: 10
+            }
+            clientSideCondition {
+                type: itemIsNull
+                item: P35_ID
+            }
+        )
+
+    )
+
+    dynamicAction show-edit-workshop-links (
+        name: Show Edit Workshop Links
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @edit-workshop-links
+        }
+
+        action native-open-region (
+            action: openRegion
+            affectedElements {
+                selectionType: region
+                region: @edit-workshop-links
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction show-qr (
+        name: Show QR
+        execution {
+            sequence: 60
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @qr-code
+        }
+
+        action native-open-region (
+            action: openRegion
+            affectedElements {
+                selectionType: region
+                region: @qr-code
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    validation green-button-checks-create (
+        name: Green Button Checks - Create
+        execution {
+            sequence: 60
+        }
+        validation {
+            plsqlExpression: :P35_USERS_MAXIMUM is not null and :P35_USERS_CONCURRENT is not null and :P35_ALT_TIME_AVAILABLE is not null
+        }
+        error {
+            errorMessage: Please provide an entry for Max Users, Concurrent Users, and Alternative Time Available if you are using a Green Button in this Event.
+        }
+        serverSideCondition {
+            whenButtonPressed: @request-event
+            type: expression
+            plsqlExpression: :P35_GREENBUTTON_FLG = 'Y'
+        }
+    )
+
+    validation green-button-checks-save (
+        name: Green Button Checks - Save
+        execution {
+            sequence: 50
+        }
+        validation {
+            plsqlExpression: :P35_USERS_MAXIMUM is not null and :P35_USERS_CONCURRENT is not null and :P35_ALT_TIME_AVAILABLE is not null
+        }
+        error {
+            errorMessage: Please provide an entry for Max Users, Concurrent Users, and Alternative Time Available if you are using a Green Button in this Event.
+        }
+        serverSideCondition {
+            whenButtonPressed: @save-changes
+            type: expression
+            plsqlExpression: :P35_GREENBUTTON_FLG = 'Y'
+        }
+    )
+
+    validation max-time-available (
+        name: max_time_available
+        execution {
+            sequence: 30
+        }
+        validation {
+            plsqlExpression: cast(:P35_ALT_TIME_AVAILABLE as number) <= 8
+        }
+        error {
+            errorMessage: Creating an Event Code with a time available over 8 hours is not permitted. Please set the field to 8 hours or less, and if necessary, include the reasoning behind an extended time in the <b>Remarks to the LiveLabs Team</b> section.
+            displayLocation: inlineInNotification
+        }
+        serverSideCondition {
+            type: noRowsReturned
+            sqlQuery: select email from workshop_person_role where workshop_id is null and lower(email) = lower(:APP_USER) and livelabs_publisher_flg = 1;
+        }
+    )
+
+    validation max-valid-to (
+        name: max_valid_to
+        execution {
+            sequence: 40
+        }
+        validation {
+            plsqlExpression: (to_date(:P35_VALID_TO, 'MM/DD/YYYY') - to_date(:P35_VALID_FROM, 'MM/DD/YYYY')) <= 30
+        }
+        error {
+            errorMessage: Creating an Event Code lasting more than 30 days is not permitted. Please set the start and end date to include a maximum of 30 days, and if necessary, include the reasoning behind an extended time in the <b>Remarks to the LiveLabs Team</b> section.
+            displayLocation: inlineInNotification
+            associatedItem: @P35_VALID_FROM
+        }
+        serverSideCondition {
+            type: noRowsReturned
+            sqlQuery: select email from workshop_person_role where workshop_id is null and lower(email) = lower(:APP_USER) and livelabs_publisher_flg = 1;
+        }
+    )
+
+    validation oracle-emails-only-creator (
+        name: Oracle Emails only - creator
+        execution {
+            sequence: 10
+        }
+        validation {
+            plsqlExpression: "REGEXP_LIKE(UPPER(TRIM(:P35_EMAIL_CREATOR)), '^[A-Z0-9._%+-]+@ORACLE\\.COM$')"
+        }
+        error {
+            errorMessage: You must only use Oracle Email Addresses.
+            associatedItem: @P35_EMAIL_CREATOR
+        }
+    )
+
+    validation oracle-emails-only-requestors (
+        name: Oracle Emails only - requestors
+        execution {
+            sequence: 20
+        }
+        validation {
+            type: functionBodyReturningBoolean
+            plsqlFunctionBody:
+                ```plsql
+                DECLARE
+                  v_invalid NUMBER := 0;
+                BEGIN
+                  SELECT COUNT(*)
+                  INTO v_invalid
+                  FROM (
+                    SELECT TRIM(REGEXP_SUBSTR(:P35_EMAIL_REQUESTOR, '[^,]+', 1, LEVEL)) AS email
+                    FROM dual
+                    CONNECT BY LEVEL <= REGEXP_COUNT(:P35_EMAIL_REQUESTOR, ',') + 1
+                  )
+                  WHERE NOT REGEXP_LIKE(UPPER(email), '^[A-Z0-9._%+-]+@ORACLE\.COM$');
+                
+                  IF v_invalid > 0 THEN
+                    RETURN FALSE;
+                  ELSE
+                    RETURN TRUE;
+                  END IF;
+                END;
+                ```
+        }
+        error {
+            errorMessage: You must only use Oracle Email Addresses.
+            associatedItem: @P35_EMAIL_REQUESTOR
+        }
+    )
+
+    process initialize-form-request-an-event (
+        name: Initialize form Request an Event
+        type: formInitialization
+        formRegion: @request-an-event
+        execution {
+            sequence: 10
+            point: beforeHeader
+        }
+        advanced {
+            executionMappingIdentifier: 34383805305266804541
+        }
+    )
+
+    process set-jsons-and-status (
+        name: Set JSONs and Status
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                begin
+                
+                :P35_ALT_URL := json_object ('FREETIER_URL'   value :P35_FREETIER_URL,
+                                                'LIVELABS_URL'   value :P35_GREENBUTTON_URL, 
+                                                'ALWAYSFREE_URL' value :P35_ALWAYSFREE_URL,
+                                                'PAID_URL'       value :P35_PAIDTIER_URL,
+                                                'LIVESQL_URL' value :P35_LIVESQL_URL,
+                                                'DESKTOP_GUIDE_URL' value :P35_DESKTOP_GUIDE,
+                                                'DESKTOP_APP1_URL' value :P35_DESKTOP_APP_1,
+                                                'DESKTOP_APP2_URL' value :P35_DESKTOP_APP_2
+                                                );
+                
+                                                
+                :P35_EVENT_JSON := json_object(
+                                             'DisplayOciInstructions' value :P35_OCI_INSTRUCTIONS     ,
+                                             'AlwaysFreeEnabled'      value :P35_ALWAYSFREE_FLG  ,
+                                             'FreeTierEnabled'        value :P35_FREETIER_FLG    ,
+                                             'PaidTenancyEnabled'     value :P35_PAIDTIER_FLG        ,
+                                             'LiveLabsGreenEnabled'   value :P35_GREENBUTTON_FLG    ,
+                                             'LiveSQLEnabled'         value :P35_LIVESQL_FLG    ,
+                                             'EventType'        value :P35_EVENT_TYPE,
+                                             'EventDate'        value :P35_EVENT_DATE,
+                                             'EventLocation'    value :P35_EVENT_LOCATION,
+                                             'EventOrganizer'   value :P35_EVENT_ORGANIZER,
+                                             'EventIconLink'    value :P35_EVENT_ICON_URL,
+                                             'YoutubeLink'      value :P35_YOUTUBE_LINK,
+                                             'EventTcValue'     value :P35_MARKETING_CODE,
+                                             'AdvertEnabled'    value 'N'
+                );
+                
+                :P35_EVENT_CONFIG_JSON := json_object(
+                'LabConfigRestrictions'  value :P35_JSON_ENABLE_CONFIG,
+                'SecureDesktop' value :P35_SECURE_DESKTOPS_ENABLE
+                );
+                
+                
+                :P35_EVENT_STATUS := nvl(:P35_EVENT_STATUS, 'Submitted');
+                end;
+                
+                
+                :P35_DESKTOP_GUIDE := JSON_VALUE (:P35_ALT_URL, '$.DESKTOP_GUIDE_URL'); 
+                :P35_DESKTOP_APP_1 := JSON_VALUE (:P35_ALT_URL, '$.DESKTOP_APP1_URL'); 
+                :P35_DESKTOP_APP_2 := JSON_VALUE (:P35_ALT_URL, '$.DESKTOP_APP2_URL'); 
+                :P35_SECURE_DESKTOPS_ENABLE := JSON_VALUE  (:P35_EVENT_CONFIG_JSON, '$.SecureDesktop');
+                ```
+        }
+        execution {
+            sequence: 10
+        }
+        advanced {
+            executionMappingIdentifier: 35141288107141794256
+        }
+    )
+
+    process set-updated-flag-create (
+        name: Set Updated Flag - Create
+        type: executeCode
+        source {
+            plsqlCode: update wms_events set updated_flg = 2 where id = :P35_ID;
+        }
+        execution {
+            sequence: 30
+        }
+        advanced {
+            executionMappingIdentifier: 35338189650193119458
+        }
+        serverSideCondition {
+            whenButtonPressed: @request-event
+        }
+    )
+
+    process set-updated-flag-save (
+        name: Set Updated Flag - Save
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                declare
+                v_hold number;
+                begin
+                select updated_flg into v_hold from wms_events where id = :P35_ID;
+                if v_hold != 2 then
+                    update wms_events set updated_flg = 1 where id = :P35_ID;
+                end if;
+                end;
+                ```
+        }
+        execution {
+            sequence: 40
+        }
+        advanced {
+            executionMappingIdentifier: 35338189720052119459
+        }
+        serverSideCondition {
+            whenButtonPressed: @save-changes
+        }
+    )
+
+    process submit-form (
+        name: Submit Form
+        type: formAutoRowProcessing
+        formRegion: @request-an-event
+        execution {
+            sequence: 20
+        }
+        advanced {
+            executionMappingIdentifier: 35141287993289794255
+        }
+    )
+
+)
+

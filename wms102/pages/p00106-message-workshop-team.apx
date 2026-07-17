@@ -1,0 +1,311 @@
+page 106 (
+    name: Message Workshop Team
+    alias: MESSAGE-WORKSHOP-TEAM
+    title: Message Workshop Team
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @modal-dialog
+        templateOptions: [
+            #DEFAULT#
+            t-Dialog--noPadding
+        ]
+    }
+    dialog {
+        width: 1200
+        height: 800
+        resizable: false
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region message-history (
+        name: Message History
+        type: plSqlDynamicContent
+        source {
+            plsqlCode:
+                ```plsql
+                DECLARE
+                l_body      CLOB;
+                l_body_html CLOB;     
+                
+                Cursor C_WS Is
+                    select '<i>On '||to_char(commentdate- (8/24),'DD-MON-YYYY HH:MI AM')||' PST'||' | '|| lower(EMAIL_CREATOR) ||' wrote:</i> </br></br>  '||THE_COMMENT||'' as comments from LL_COMMENTS 
+                    where WORKSHOP_ID=:P106_WORKSHOP_ID AND COMMENTTYPE='WORKSHOP'
+                    order by COMMENTDATE desc; 
+                BEGIN
+                 
+                
+                  l_body := 'To view the content of this messageuse an HTML enabled mail client.'||utl_tcp.crlf;
+                  l_body_html := ''; 
+                   For row_1 In C_WS Loop
+                           -- l_to_email := row_1.to_list;  
+                            l_body_html := l_body_html || ' '||row_1.comments|| ' </br><hr/> ' ||utl_tcp.crlf; 
+                   end loop;
+                
+                    
+                    Htp.p( l_body_html );
+                   
+                
+                END;
+                ```
+        }
+        layout {
+            sequence: 60
+            parentRegion: @message-the-team-message-history-2
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    region message-the-team-message-history (
+        name: Message the Team/Message History
+        type: staticContent
+        layout {
+            sequence: 10
+            parentRegion: @workshop-info
+            slot: tabs
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    region message-the-team-message-history-2 (
+        name: Message the Team/Message History
+        type: staticContent
+        layout {
+            sequence: 60
+            parentRegion: @message-the-team-message-history
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    region page_plug (
+        name: -
+        type: staticContent
+        layout {
+            sequence: 40
+            parentRegion: @message-the-team-message-history-2
+            slot: subRegions
+            columnSpan: 8
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    region workshop-contacts (
+        name: Workshop Contacts
+        type: plSqlDynamicContent
+        source {
+            plsqlCode:
+                ```plsql
+                DECLARE
+                l_body      CLOB;
+                l_body_html CLOB;     
+                
+                Cursor C_WS Is
+                
+                 Select WORKSHOP_OWNER_EMAIL, TECH_CONTACT_EMAIL, SUPPORT_CONTACT_EMAIL,
+                        OBSERVER_EMAIL, MANAGER_EMAIL
+                        from  workshop  WHERE  ID = :P106_WORKSHOP_ID; 
+                BEGIN 
+                  l_body_html := ''; 
+                   For row_1 In C_WS Loop 
+                            if  row_1.WORKSHOP_OWNER_EMAIL is not null then 
+                            l_body_html := l_body_html || ' Workshop Owner Email: <a href="https://people.oracle.com/apex/f?p=8000:PERSON:107668515643048:::RP,2:PERSON:'||row_1.WORKSHOP_OWNER_EMAIL||'" target="_new"><br/>'||row_1.WORKSHOP_OWNER_EMAIL||'</a>  <hr/>  ' ;
+                            end if;
+                            if  row_1.MANAGER_EMAIL is not null then 
+                            l_body_html := l_body_html || ' Manager: <a href="https://people.oracle.com/apex/f?p=8000:PERSON:107668515643048:::RP,2:PERSON:'||row_1.MANAGER_EMAIL||'" target="_new"><br/>'||row_1.MANAGER_EMAIL||'</a>  <hr/>  ' ;
+                            end if;
+                            if  row_1.TECH_CONTACT_EMAIL is not null then 
+                            l_body_html := l_body_html || ' Technical Contact: <a href="https://people.oracle.com/apex/f?p=8000:PERSON:107668515643048:::RP,2:PERSON:'||row_1.TECH_CONTACT_EMAIL||'" target="_new"><br/>'||row_1.TECH_CONTACT_EMAIL||'</a>  <hr/>  ' ;
+                            end if;
+                            if  row_1.SUPPORT_CONTACT_EMAIL is not null then 
+                            l_body_html := l_body_html || ' Support Contact: <a href="https://people.oracle.com/apex/f?p=8000:PERSON:107668515643048:::RP,2:PERSON:'||row_1.SUPPORT_CONTACT_EMAIL||'" target="_new"><br/>'||row_1.SUPPORT_CONTACT_EMAIL||'</a>  <hr/>  ' ;
+                            end if;
+                            if  row_1.OBSERVER_EMAIL is not null then    
+                              l_body_html := l_body_html || ' Observer: <a href="https://people.oracle.com/apex/f?p=8000:PERSON:107668515643048:::RP,2:PERSON:'||row_1.OBSERVER_EMAIL||'" target="_new"><br/>'||row_1.OBSERVER_EMAIL||'</a>  <hr/> ' ;
+                           end if;
+                   end loop; 
+                    
+                    Htp.p( l_body_html );
+                   
+                
+                END;
+                ```
+        }
+        layout {
+            sequence: 50
+            parentRegion: @message-the-team-message-history-2
+            slot: subRegions
+            startNewRow: false
+            columnSpan: 4
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    region workshop-info (
+        name: Workshop Info
+        type: staticContent
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @tabs-container
+            templateOptions: [
+                #DEFAULT#
+                t-TabsRegion-mod--simple
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    pageItem P106_COMMENT_1 (
+        type: richTextEditor
+        label {
+            label: <strong>Submit comments/questions/discuss with the workshop team below:</strong>
+            alignment: left
+        }
+        settings {
+            format: html
+            minHeight: 180
+        }
+        layout {
+            sequence: 20
+            region: @page_plug
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P106_WORKSHOP_ID (
+        type: hidden
+        layout {
+            sequence: 10
+            region: @message-the-team-message-history-2
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button sendcommentmail (
+        buttonName: SendCommentMail
+        label: Send
+        layout {
+            sequence: 20
+            region: @page_plug
+            slot: belowBox
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    dynamicAction sendhtmlcomment (
+        name: sendhtmlcomment
+        execution {
+            sequence: 20
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @sendcommentmail
+        }
+
+        action native-alert (
+            action: alert
+            settings {
+                message: Your message has been sent to the LiveLabs Workshop Contacts to the right.
+            }
+            execution {
+                sequence: 50
+                fireOnInit: false
+            }
+        )
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    BEGIN
+                        mail_utils_pkg.mail_comments_proc( :APP_USER , :P106_WORKSHOP_ID, :P106_COMMENT_1 );
+                    
+                        insert into ll_comments (email_creator, the_comment, workshop_id, commentdate, commenttype)
+                        values (lower(:APP_USER), :P106_COMMENT_1, :P106_WORKSHOP_ID, current_timestamp, 'WORKSHOP');
+                    END;
+                    ```
+                itemsToSubmit: P106_COMMENT_1
+            }
+            execution {
+                sequence: 30
+                fireOnInit: false
+            }
+        )
+
+        action native-show (
+            action: show
+            affectedElements {
+                selectionType: javaScriptExpression
+                javaScriptExpression: apex.item( "P106_COMMENT_1" ).setValue("")
+            }
+            execution {
+                sequence: 40
+            }
+        )
+
+    )
+
+)
+

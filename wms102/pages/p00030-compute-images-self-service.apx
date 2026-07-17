@@ -1,0 +1,870 @@
+page 30 (
+    name: Service Portal - Compute Images
+    alias: COMPUTE-IMAGES-SELF-SERVICE
+    title: Compute Images
+    appearance {
+        pageTemplate: @standard-custom
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    css {
+        inline:
+            ```css
+            .card-info-section {
+              margin-bottom: 16px;
+            }
+            
+            .info-row {
+              display: flex;
+              align-items: center;
+              gap: 8px;
+              color: #4B5563;
+              font-size: 14px;
+              margin-bottom: 12px;
+            }
+            
+            .info-row:last-child {
+              margin-bottom: 0;
+            }
+            
+            .info-icon {
+              font-size: 16px;
+              color: #9CA3AF;
+            }
+            
+            .text-muted {
+              color: #6B7280;
+            }
+            
+            .separator {
+              color: #9CA3AF;
+            }
+            
+            .card-action-button {
+              width: 100%;
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+              padding: 8px 12px;
+              background: transparent;
+              border: none;
+              border-radius: 6px;
+              cursor: pointer;
+              color: #4B5563;
+              font-size: 14px;
+              transition: all 0.2s;
+            }
+            
+            .card-action-button:hover {
+              background-color: #FEF2F2;
+              color: #C74634;
+            }
+            
+            .card-action-button .fa {
+              font-size: 12px;
+            }
+            
+            .a-CardView-actions {
+                display: flex;
+                justify-content: end;
+            }
+            
+            .a-CardView-button {
+                background-color: #e6e6e6;
+            }
+            ```
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region create-custom-image (
+        name: Create Custom Image
+        type: staticContent
+        layout {
+            sequence: 40
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--showIcon
+                t-Region--accent1
+                t-Region--scrollBody
+            ]
+            icon: "fa-number-1 "
+        }
+        headerAndFooter {
+            headerText: To create, configure, and export a <a href="https://docs.oracle.com/en-us/iaas/Content/Compute/Tasks/managingcustomimages.htm"> custom OCI image</a> for your Sandbox environment, complete the tasks in this <a href="https://brianna-ambler.github.io/common/sample-livelabs-templates/create-labs/labs/workshops/marketplace/index.html">workshop</a>.
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    region custom-images (
+        name: Custom Images
+        type: staticContent
+        source {
+            htmlCode: LiveLabs Self Service Portal
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @title-bar
+            templateOptions: [
+                t-BreadcrumbRegion--showBreadcrumb
+                t-BreadcrumbRegion--useRegionTitle
+                margin-bottom-lg
+            ]
+            renderComponents: belowContent
+        }
+    )
+
+    region getting-started (
+        name: Getting Started
+        title: Getting Started
+        type: staticContent
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: [
+                #DEFAULT#
+                margin-bottom-lg
+            ]
+        }
+    )
+
+    region instruction-cards (
+        name: Instruction Cards
+        type: cards
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery: select * from custom_image_cards where type = 'INSTRUCTIONS' order by id;
+        }
+        layout {
+            sequence: 20
+            parentRegion: @getting-started
+            slot: subRegions
+        }
+        appearance {
+            template: @blank-with-attributes-no-grid
+            templateOptions: #DEFAULT#
+        }
+        componentAppearance {
+            gridColumns: 3
+        }
+        title {
+            column: TITLE
+        }
+        body {
+            column: SUBTITLE
+        }
+        iconAndBadge {
+            iconSource: iconClassColumn
+            iconColumn: ICON_CLASS
+        }
+
+        action action (
+            type: fullCard
+            layout {
+                sequence: 10
+            }
+            behavior {
+                type: redirectUrl
+                targetUrl: &LINK.
+                linkAttributes: target = "_blank"
+            }
+        )
+
+    )
+
+    region listings (
+        name: Listings
+        type: cards
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select
+                    a.ID,
+                    a.LISTING_NAME,
+                    a.LISTING_OCID,
+                    a.APP_CATALOG_OCID,
+                    a.ADDED_BY,
+                    a.ADDED_ON,
+                    a.SUPPORT_CONTACTS,
+                    (select count(*) from omp_images where listing_id = a.id) VERSION_COUNT
+                from omp_listings a
+                where added_by = v('APP_USER')
+                or instr(support_contacts, v('APP_USER')) > 0;
+                ```
+        }
+        layout {
+            sequence: 30
+            parentRegion: @your-listings
+            slot: subRegions
+        }
+        appearance {
+            template: @blank-with-attributes-no-grid
+            templateOptions: #DEFAULT#
+        }
+        componentAppearance {
+            gridColumns: 4
+        }
+        title {
+            column: LISTING_NAME
+        }
+        subtitle {
+            column: LISTING_OCID
+        }
+        body {
+            advancedFormatting: true
+            htmlExpression:
+                ```html
+                <div class="card-info-section">
+                  <div class="info-row">
+                    <span class="fa fa-layers info-icon"></span>
+                    <span>&VERSION_COUNT. Images</span>
+                  </div>
+                
+                  <div class="info-row">
+                    <span class="fa fa-user info-icon"></span>
+                    <span>&ADDED_BY.</span>
+                  </div>
+                </div>
+                ```
+        }
+
+        action action (
+            label: Add Image
+            layout {
+                sequence: 10
+            }
+            behavior {
+                target: {
+                    page: 36
+                    items: {
+                        P36_LISTING_ID: &ID.
+                    }
+                }
+            }
+            appearance {
+                displayType: icon
+                icon: fa-plus-square-o
+            }
+        )
+
+        action action-2 (
+            type: fullCard
+            layout {
+                sequence: 20
+            }
+            behavior {
+                target: {
+                    page: 39
+                    items: {
+                        P39_ID: &ID.
+                    }
+                }
+            }
+        )
+
+    )
+
+    region previously-uploaded-images (
+        name: Previously Uploaded Images
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery: select * from wms_custom_images where created_by = v('APP_USER')
+        }
+        layout {
+            sequence: 20
+            parentRegion: @upload-custom-image-to-livelabs
+            slot: subRegions
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: [
+                #DEFAULT#
+                margin-top-md
+            ]
+        }
+        pagination {
+            type: rowRangesXToY
+        }
+        performance {
+            maxRowsToProcess: 1000000
+        }
+        advanced {
+            savedReportMappingIdentifier: 26401387323902685712
+        }
+
+        column CREATED_BY (
+            type: plainText
+            heading {
+                heading: Created By
+                alignment: center
+            }
+            layout {
+                sequence: 40
+                columnAlignment: center
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: D
+            }
+        )
+
+        column CREATED_ON (
+            type: plainText
+            heading {
+                heading: Created On
+                alignment: center
+            }
+            layout {
+                sequence: 50
+                columnAlignment: center
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: F
+            }
+        )
+
+        column ID (
+            type: plainText
+            heading {
+                heading: Id
+                alignment: center
+            }
+            layout {
+                sequence: 10
+                columnAlignment: center
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: A
+            }
+        )
+
+        column NAME (
+            type: plainText
+            heading {
+                heading: Name
+                alignment: center
+            }
+            layout {
+                sequence: 60
+                columnAlignment: center
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: G
+            }
+        )
+
+        column OBJECT_STORAGE_URI (
+            type: plainText
+            heading {
+                heading: Object Storage URI
+                alignment: center
+            }
+            layout {
+                sequence: 20
+                columnAlignment: center
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: B
+            }
+        )
+
+        column OCID (
+            type: plainText
+            heading {
+                heading: OCID
+                alignment: center
+            }
+            layout {
+                sequence: 70
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: H
+            }
+        )
+
+        column STATUS (
+            type: plainText
+            heading {
+                heading: Status
+                alignment: center
+            }
+            layout {
+                sequence: 30
+                columnAlignment: center
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: C
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+
+        savedReport 274099688 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn CREATED_ON (
+                sequence: 1
+            )
+
+            displayColumn NAME (
+                sequence: 2
+            )
+
+            displayColumn OBJECT_STORAGE_URI (
+                sequence: 5
+            )
+
+            displayColumn OCID (
+                sequence: 4
+            )
+
+            displayColumn STATUS (
+                sequence: 3
+            )
+
+            sort (
+                column: CREATED_ON
+                sort {
+                    direction: desc
+                    sequence: 1
+                }
+            )
+
+        )
+
+    )
+
+    region register-marketplace-listing-in-livelabs (
+        name: Register Marketplace Listing in LiveLabs
+        title: Register Marketplace Listing in LiveLabs
+        type: staticContent
+        layout {
+            sequence: 50
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--showIcon
+                t-Region--accent1
+                t-Region--scrollBody
+            ]
+            icon: "fa-number-3 "
+        }
+        headerAndFooter {
+            headerText: "To register your marketplace image with LiveLabs, either update one of your pre-existing entries or create a new one. All images listed below are those in which you are listed as an owner or a support contact. "
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    region upload-custom-image-to-livelabs (
+        name: Upload Custom Image to LiveLabs
+        title: Upload Custom Image to LiveLabs Tenancy
+        type: staticContent
+        layout {
+            sequence: 60
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--showIcon
+                t-Region--accent1
+                t-Region--scrollBody
+            ]
+            icon: "fa-number-2 "
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    region your-listings (
+        name: Your Listings
+        title: Your Listings
+        type: staticContent
+        layout {
+            sequence: 30
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--accent4
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    pageItem P30_IMAGE_NAME (
+        type: textField
+        label {
+            label: Image Name
+            alignment: left
+        }
+        layout {
+            sequence: 10
+            region: @upload-custom-image-to-livelabs
+            slot: regionBody
+            alignment: left
+            columnSpan: 4
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            valueRequired: true
+        }
+    )
+
+    pageItem P30_OBJECT_STORAGE_URI (
+        type: textField
+        label {
+            label: Object Storage URI
+            alignment: left
+        }
+        layout {
+            sequence: 20
+            region: @upload-custom-image-to-livelabs
+            slot: regionBody
+            alignment: left
+            columnSpan: 4
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            valueRequired: true
+        }
+    )
+
+    pageItem P30_UPLOAD_RESPONSE (
+        type: hidden
+        layout {
+            sequence: 40
+            region: @upload-custom-image-to-livelabs
+            slot: regionBody
+        }
+    )
+
+    pageItem P30_UPLOAD_STATUS_CODE (
+        type: hidden
+        layout {
+            sequence: 30
+            region: @upload-custom-image-to-livelabs
+            slot: regionBody
+        }
+    )
+
+    button refresh-image-statuses (
+        buttonName: Refresh-Image-Statuses
+        label: Refresh Statuses
+        layout {
+            sequence: 10
+            region: @previously-uploaded-images
+            slot: rightOfInteractiveReportSearchBar
+        }
+        appearance {
+            buttonTemplate: @text-with-icon
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--iconRight
+            ]
+            icon: fa-refresh
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button register-listing (
+        buttonName: register-listing
+        label: Register Listing
+        layout {
+            sequence: 10
+            region: @custom-images
+            slot: edit
+        }
+        appearance {
+            buttonTemplate: @text-with-icon
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--large
+                t-Button--iconRight
+            ]
+            icon: fa-plus-square
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 31
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button upload (
+        buttonName: Upload
+        label: Upload
+        layout {
+            sequence: 50
+            region: @upload-custom-image-to-livelabs
+            slot: regionBody
+            startNewRow: false
+        }
+        appearance {
+            buttonTemplate: @text-with-icon
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--large
+                t-Button--iconRight
+                t-Button--gapTop
+            ]
+            icon: fa-upload
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    dynamicAction new-image-dialog-closed (
+        name: New Image Dialog Closed
+        execution {
+            sequence: 30
+        }
+        when {
+            event: apexafterclosedialog
+            selectionType: region
+            region: @listings
+        }
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @listings
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction new-listing-dialog-closed (
+        name: New Listing Dialog Closed
+        execution {
+            sequence: 20
+        }
+        when {
+            event: apexafterclosedialog
+            selectionType: button
+            button: @register-listing
+        }
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @listings
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction on-click (
+        name: On Click
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @upload
+        }
+
+        action failed-upload-alert (
+            name: Failed Upload Alert
+            action: alert
+            settings {
+                message:
+                    ```html
+                    Your image upload failed. Please ensure you are using the new PAR Links containing dedicated endpoints, as shown below.
+                    
+                    <a href="#APP_FILES#par-dedicated-endpoints.png" data-lightbox="preview" data-title="Dedicated Endpoints">
+                      <img src="#APP_FILES#par-dedicated-endpoints.png" style="max-width:280px;width:100%;" alt="Preview">
+                    </a>
+                     
+                    ```
+                icon: fa-exclamation-circle
+            }
+            execution {
+                sequence: 30
+                fireOnInit: false
+            }
+            serverSideCondition {
+                type: item!=value
+                item: P30_UPLOAD_STATUS_CODE
+                value: 200
+            }
+        )
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    declare
+                        v_name varchar2(500);
+                        v_timestamp varchar2(100);
+                        v_ocid varchar2(4000);
+                        v_response clob;
+                    begin 
+                        -- Name the image.
+                        v_timestamp := TO_CHAR(SYSDATE, 'YYYY-MM-DD-HH24MISS');
+                        v_name := :P30_IMAGE_NAME || '-' || v_timestamp || '-livelabs';
+                    
+                        -- Upload the image.
+                        WMS_PKG_ORDS.import_image(p_tenancy_id => 11, -- c4u02
+                                                  p_compartment_ocid => 'ocid1.compartment.oc1..aaaaaaaatrs6ei34t2baps5yy6orica672bqrqy3wdnsp4yhb6gflo24hboa', 
+                                                  p_image_name => v_name,
+                                                  p_uri => :P30_OBJECT_STORAGE_URI,
+                                                  response => :P30_UPLOAD_RESPONSE);
+                        :P30_UPLOAD_STATUS_CODE := JSON_VALUE(:P30_UPLOAD_RESPONSE, '$.status_code');
+                    
+                        if :P30_UPLOAD_STATUS_CODE = '200' then
+                            SELECT JSON_VALUE(
+                               JSON_VALUE(:P30_UPLOAD_RESPONSE, '$.response' RETURNING CLOB),
+                               '$.id' RETURNING VARCHAR2(4000)
+                             )
+                            INTO v_ocid
+                            FROM dual;
+                    
+                            insert into wms_custom_images 
+                            columns (name, ocid, object_storage_uri, status, created_by, created_on) 
+                            values (v_name, v_ocid, :P30_OBJECT_STORAGE_URI, 'IMPORTING', v('APP_USER'), sysdate);
+                        end if;    
+                    end;
+                    ```
+                itemsToSubmit: [
+                    P30_OBJECT_STORAGE_URI
+                    P30_IMAGE_NAME
+                ]
+                itemsToReturn: [
+                    P30_UPLOAD_STATUS_CODE
+                    P30_UPLOAD_RESPONSE
+                ]
+                showProcessing: true
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+        action succesful-upload-alert (
+            name: Succesful Upload Alert
+            action: alert
+            settings {
+                title: Import Started
+                message: Your image is now being imported to a LiveLabs tenancy.
+                style: success
+                icon: fa-check-circle
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+            serverSideCondition {
+                type: item=value
+                item: P30_UPLOAD_STATUS_CODE
+                value: 200
+            }
+        )
+
+    )
+
+    validation deprecated-uri-format (
+        name: Deprecated URI Format?
+        execution {
+            sequence: 15
+        }
+        validation {
+            plsqlExpression: instr(:P30_OBJECT_STORAGE_URI, 'oraclecloud.com') = 0
+            alwaysExecute: true
+        }
+        error {
+            errorMessage: This URI format is deprecated, please refer to the instructions below on how to get the proper URI.
+            associatedItem: @P30_OBJECT_STORAGE_URI
+        }
+        serverSideCondition {
+            whenButtonPressed: @upload
+        }
+    )
+
+)
+

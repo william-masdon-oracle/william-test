@@ -1,0 +1,120 @@
+page 24 (
+    name: Share
+    alias: SHARE
+    title: Share
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @modal-dialog
+        templateOptions: [
+            #DEFAULT#
+            t-Dialog--noPadding
+        ]
+    }
+    dialog {
+        width: 1200
+        height: 800
+        resizable: false
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        authentication: public
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region breadcrumb (
+        name: Breadcrumb
+        type: breadcrumb
+        source {
+            breadcrumb: @breadcrumb
+        }
+        layout {
+            sequence: 10
+            slot: dialogHeader
+        }
+        appearance {
+            template: @title-bar
+            templateOptions: [
+                #DEFAULT#
+                t-BreadcrumbRegion--useBreadcrumbTitle
+            ]
+        }
+        componentAppearance {
+            breadcrumbTemplate: @breadcrumb
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    pageItem P24_LINKEDIN_POST (
+        type: displayOnly
+        label {
+            label: <strong>LinkedIn Post</strong>
+            alignment: left
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        source {
+            type: item
+            item: P320_LINKEDIN_POST
+            used: always
+        }
+        default {
+            type: item
+            item: P320_LINKEDIN_POST
+        }
+        help {
+            inlineHelpText: Copy the text above and post it to your LinkedIn. Include the #OracleLiveLabs hashtag.
+        }
+    )
+
+    pageItem P24_TWITTER_POST (
+        type: displayOnly
+        label {
+            label: <strong>Twitter Post</strong>
+            alignment: left
+        }
+        layout {
+            sequence: 20
+            slot: contentBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        source {
+            type: item
+            item: P320_TWITTER_POST
+            used: always
+        }
+        default {
+            type: item
+            item: P320_TWITTER_POST
+        }
+        help {
+            inlineHelpText: Copy the text above and post it to your Twitter. Include the #OracleLiveLabs hashtag or tag @oracle_livelabs account.
+        }
+    )
+
+    pageItem P24_WORKSHOP_ID (
+        type: hidden
+        layout {
+            sequence: 40
+            slot: contentBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+)
+

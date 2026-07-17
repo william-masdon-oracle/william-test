@@ -1,0 +1,676 @@
+page 3205 (
+    name: OSPA Publishing Information
+    alias: OSPA-PUBLISHING-INFORMATION
+    title: OSPA Publishing Information
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @modal-dialog
+        templateOptions: #DEFAULT#
+    }
+    dialog {
+        resizable: false
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+    advanced {
+        enableDuplicatePageSubmissions: false
+    }
+
+    region ospa-publishing-info (
+        name: OSPA Publishing Info
+        type: form
+        source {
+            location: localDatabase
+            tableName: WORKSHOP_OSPA
+        }
+        layout {
+            sequence: 40
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        readOnly {
+            type: item!=value
+            item: P3205_CAN_EDIT
+            value: TRUE
+        }
+        edit {
+            enabled: true
+            allowedOperations: [
+                add
+                update
+            ]
+        }
+    )
+
+    pageItem P3205_CAN_EDIT (
+        type: hidden
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+    )
+
+    pageItem P3205_GITLAB_URL (
+        type: textField
+        label {
+            label: Gitlab URL
+            alignment: left
+        }
+        settings {
+            subtype: url
+        }
+        layout {
+            sequence: 100
+            region: @ospa-publishing-info
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            maxLength: 1000
+        }
+        source {
+            formRegion: @ospa-publishing-info
+            column: GITLAB_URL
+            dataType: varchar2
+        }
+    )
+
+    pageItem P3205_ID (
+        type: hidden
+        layout {
+            sequence: 10
+            region: @ospa-publishing-info
+            slot: regionBody
+        }
+        source {
+            formRegion: @ospa-publishing-info
+            column: ID
+            dataType: number
+            primaryKey: true
+        }
+        security {
+            sessionStateProtection: checksumRequiredSessionLevel
+        }
+    )
+
+    pageItem P3205_ID_SHOW (
+        type: displayOnly
+        label {
+            label: OSPA ID
+            alignment: left
+        }
+        settings {
+            sendOnPageSubmit: false
+        }
+        layout {
+            sequence: 20
+            region: @ospa-publishing-info
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        security {
+            sessionStateProtection: checksumRequiredSessionLevel
+        }
+    )
+
+    pageItem P3205_LAB_TIME (
+        type: numberField
+        label {
+            label: Lab Time (in minutes)
+            alignment: left
+        }
+        settings {
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 90
+            region: @ospa-publishing-info
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        source {
+            formRegion: @ospa-publishing-info
+            column: LAB_TIME
+            dataType: number
+        }
+    )
+
+    pageItem P3205_PAGE_OPTIONS (
+        type: checkboxGroup
+        label {
+            label: Page Options
+            alignment: left
+        }
+        lov {
+            type: sharedComponent
+            lov: @page-options-ospa
+        }
+        layout {
+            sequence: 120
+            region: @ospa-publishing-info
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @ospa-publishing-info
+            column: PAGE_OPTIONS
+            dataType: varchar2
+        }
+    )
+
+    pageItem P3205_PRODUCTION_URL (
+        type: textField
+        label {
+            label: Production URL
+            alignment: left
+        }
+        settings {
+            subtype: url
+        }
+        layout {
+            sequence: 110
+            region: @ospa-publishing-info
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            maxLength: 1000
+        }
+        source {
+            formRegion: @ospa-publishing-info
+            column: PRODUCTION_URL
+            dataType: varchar2
+        }
+    )
+
+    pageItem P3205_PUBLISH_AUDIENCE (
+        type: selectList
+        label {
+            label: Lab Audience
+            alignment: left
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC(,):EmployeesEmployeesEmployees and PartnersEmployees and PartnersEmployees, Partners, and CustomersEmployees, Partners, and Customers
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 80
+            region: @ospa-publishing-info
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            formRegion: @ospa-publishing-info
+            column: PUBLISH_AUDIENCE
+            dataType: varchar2
+        }
+    )
+
+    pageItem P3205_PUBLISH_STATUS (
+        type: selectList
+        label {
+            label: Publish Status
+            alignment: left
+        }
+        lov {
+            type: sharedComponent
+            lov: @publish-status
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 60
+            region: @ospa-publishing-info
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            formRegion: @ospa-publishing-info
+            column: PUBLISH_STATUS
+            dataType: varchar2
+        }
+        default {
+            type: static
+            staticValue: Publish Requested
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P3205_ID
+        }
+        help {
+            helpText:
+                ```html
+                <strong>Publish Requested</strong> - Initial state. Also used to signify requested changes have been implemented<br>
+                <strong>Publish Approved</strong> - The workshop has been approved and will be moved to production within 24 hours (LiveLabs Only)<br>
+                <strong>Changes Requested</strong> - The Publishing team will be in contact to request changes to the workshop before publishing<br>
+                <strong>Published</strong> - The workshop has been published and is available as specified by the Publish Type
+                ```
+        }
+    )
+
+    pageItem P3205_PUBLISH_TYPE (
+        type: selectList
+        label {
+            label: Lab Visibility
+            alignment: left
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC:Public;Public,Unlisted;Unlisted,Private;Private
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 70
+            region: @ospa-publishing-info
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            formRegion: @ospa-publishing-info
+            column: PUBLISH_TYPE
+            dataType: varchar2
+        }
+        help {
+            helpText:
+                ```html
+                <strong>Public</strong> - Available to the public through search and links<br>
+                <strong>Event</strong> - Available only through events (LiveLabs only)<br>
+                <strong>Private</strong> - Available only through links<br>
+                <strong>Disabled</strong> - Unavailable to anyone except platform administrators
+                ```
+        }
+    )
+
+    pageItem P3205_TITLE_OVERRIDE (
+        type: textField
+        label {
+            label: Title Override
+            alignment: left
+        }
+        layout {
+            sequence: 50
+            region: @ospa-publishing-info
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            maxLength: 200
+        }
+        source {
+            formRegion: @ospa-publishing-info
+            column: TITLE_OVERRIDE
+            dataType: varchar2
+        }
+    )
+
+    pageItem P3205_VIEW_STATUS (
+        type: displayOnly
+        label {
+            label: Current Publish Status
+            alignment: left
+        }
+        settings {
+            sendOnPageSubmit: false
+        }
+        lov {
+            type: sharedComponent
+            lov: @publish-status
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 40
+            region: @ospa-publishing-info
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        default {
+            type: expression
+            plsqlExpression: case when :P3205_PUBLISH_STATUS is null then 'Publish Requested' else :P3205_PUBLISH_STATUS end
+        }
+    )
+
+    pageItem P3205_WORKSHOP_ID (
+        type: displayOnly
+        label {
+            label: WSM ID
+            alignment: left
+        }
+        layout {
+            sequence: 30
+            region: @ospa-publishing-info
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @ospa-publishing-info
+            column: WORKSHOP_ID
+            dataType: number
+        }
+    )
+
+    button cancel (
+        buttonName: Cancel
+        label: Cancel
+        layout {
+            sequence: 10
+            region: @ospa-publishing-info
+            slot: close
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button create (
+        buttonName: Create
+        label: Create
+        layout {
+            sequence: 40
+            region: @ospa-publishing-info
+            slot: create
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: insert
+        }
+        serverSideCondition {
+            type: expression
+            plsqlExpression: (:P3205_CAN_EDIT = 'TRUE' and :P3205_ID is null)
+        }
+    )
+
+    button save (
+        buttonName: Save
+        label: Save
+        layout {
+            sequence: 30
+            region: @ospa-publishing-info
+            slot: create
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: update
+        }
+        serverSideCondition {
+            type: expression
+            plsqlExpression: (:P3205_CAN_EDIT = 'TRUE' and :P3205_ID is not null)
+        }
+    )
+
+    dynamicAction cancel-dialog-ll (
+        name: Cancel Dialog LL
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @cancel
+        }
+
+        action native-dialog-cancel (
+            action: cancelDialog
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction set-id-show (
+        name: set ID SHOW
+        execution {
+            sequence: 20
+        }
+        when {
+            event: ready
+        }
+
+        action native-set-value (
+            action: setValue
+            settings {
+                value: To be assigned
+            }
+            affectedElements {
+                selectionType: items
+                items: P3205_ID_SHOW
+            }
+            execution {
+                sequence: 10
+            }
+            clientSideCondition {
+                type: itemIsNull
+                item: P3205_ID
+            }
+        )
+
+        action native-set-value-2 (
+            action: setValue
+            settings {
+                value: &P3205_ID.
+            }
+            affectedElements {
+                selectionType: items
+                items: P3205_ID_SHOW
+            }
+            execution {
+                sequence: 20
+            }
+            clientSideCondition {
+                type: itemIsNotNull
+                item: P3205_ID
+            }
+        )
+
+    )
+
+    process initialize-form-publish-information (
+        name: Initialize form Publish Information
+        type: formInitialization
+        formRegion: @ospa-publishing-info
+        execution {
+            sequence: 10
+            point: beforeHeader
+        }
+        advanced {
+            executionMappingIdentifier: 51747754457351229271
+        }
+    )
+
+    process process-form-ospa-publishing-info (
+        name: Process form OSPA Publishing Info
+        type: formAutoRowProcessing
+        formRegion: @ospa-publishing-info
+        execution {
+            sequence: 10
+        }
+        advanced {
+            executionMappingIdentifier: 51747754867241229272
+        }
+    )
+
+    process set-can-edit (
+        name: Set CAN_EDIT
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                declare
+                v_hold varchar2(4000);
+                begin
+                if :P3205_WORKSHOP_ID is not null then
+                    -- publishers 
+                    begin
+                    select email into v_hold
+                    from workshop_person_role
+                    where upper(:APP_USER) = upper(email)
+                    and workshop_id is  null
+                    and active_flg = 1;
+                    exception when no_data_found then v_hold := null; end;
+                    if v_hold is not null then :P3205_CAN_EDIT := 'TRUE';return; end if;
+                    v_hold := null;
+                
+                    -- workshop team 
+                    -- begin
+                    -- select b.email into v_hold
+                    -- from workshop a, workshop_person_role b, workshop_role c
+                    -- where a.id = :P320_ID
+                    -- and a.id = b.workshop_id
+                    -- and b.role_id = c.id
+                    -- and  c.name in ('Workshop Team')
+                    -- and upper(:APP_USER) = upper(b.email)
+                    -- and b.active_flg = 1;
+                    -- exception when no_data_found then v_hold := null; end;
+                    -- if v_hold is not null then :P320_CAN_EDIT := 'TRUE'; return; end if;
+                    -- v_hold := null;
+                
+                    -- workshop team
+                    begin
+                    select title into v_hold
+                    from workshop a
+                    where (
+                        upper(workshop_owner_email) = upper(:APP_USER)
+                        or upper(tech_contact_email) = upper(:APP_USER)
+                        or upper(support_contact_email) = upper(:APP_USER)
+                        or upper(manager_email) = upper(:APP_USER)
+                        or upper(observer_email) = upper(:APP_USER)
+                        or upper(ospa_observer_email) = upper(:APP_USER)
+                    ) and id = :P3205_WORKSHOP_ID;
+                    exception when no_data_found then v_hold := null; end;
+                    if v_hold is not null then :P3205_CAN_EDIT := 'TRUE'; return; end if;
+                    v_hold := null;
+                
+                    -- stakeholder
+                    begin
+                    select b.email into v_hold
+                    from workshop a, workshop_person_stakeholder b
+                    where a.id = :P3205_workshop_ID
+                    and a.stakeholder_id = b.stakeholder_id
+                    and upper(:APP_USER) = upper(b.email)
+                    and b.active_flg = 1;
+                    exception when no_data_found then v_hold := null; end;
+                    if v_hold is not null then :P3205_CAN_EDIT := 'TRUE'; return; end if;
+                
+                    -- not authorized
+                    :P3205_CAN_EDIT := 'FALSE';
+                else 
+                    :P3205_CAN_EDIT := 'NULL';
+                end if;
+                end;
+                ```
+        }
+        execution {
+            sequence: 20
+            point: beforeHeader
+        }
+        advanced {
+            executionMappingIdentifier: 51747755686809229288
+        }
+    )
+
+    branch (
+        name: redirect to view workshop
+        execution {
+            sequence: 10
+        }
+        behavior {
+            target: {
+                page: 320
+                items: {
+                    P320_ID: &P3205_WORKSHOP_ID.
+                }
+            }
+        }
+    )
+
+)
+

@@ -1,0 +1,227 @@
+page 16 (
+    name: Welcome to LiveLabs (big cards)
+    alias: WELCOME-TO-LIVELABS-BIG-CARDS
+    title: Welcome to LiveLabs (big cards)
+    appearance {
+        pageTemplate: @standard-custom
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region current-workshops (
+        name: Current workshops
+        type: classicReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select
+                  "NAME" CARD_TITLE,
+                  "DESCRIPTION" CARD_TEXT,
+                  'Workshop Duration: '||"TIME_IN_HOURS"||' hours' CARD_SUBTEXT,
+                  apex_string.get_initials("NAME") CARD_INITIALS,
+                  null CARD_LINK,
+                  null CARD_MODIFIERS,
+                  null CARD_COLOR,
+                  'fa-flask' CARD_ICON
+                from  "WORKSHOPS"
+                where ACTIVE_FLG=1;
+                ```
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @blank-with-attributes-no-grid
+            templateOptions: #DEFAULT#
+            icon: fa-flask
+        }
+        reportLayout {
+            numberOfRows: 50
+        }
+        componentAppearance {
+            template: @cards
+            templateOptions: [
+                #DEFAULT#
+                u-colors
+                t-Cards--basic
+                t-Cards--displayInitials
+                t-Cards--3cols
+                t-Cards--animColorFill
+                t-Report--hideNoPagination
+            ]
+        }
+        pagination {
+            type: nextAndPreviousLinks
+        }
+        performance {
+            maxRowsToProcess: 500
+        }
+        messages {
+            whenNoDataFound: no data found
+        }
+
+        column CARD_COLOR (
+            reportColumnQueryId: 7
+            derivedColumn: N
+            heading {
+                heading: CARD_COLOR
+                alignment: center
+            }
+            layout {
+                sequence: 7
+            }
+            sorting {
+                sortable: false
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column CARD_ICON (
+            reportColumnQueryId: 8
+            derivedColumn: N
+            heading {
+                heading: Card Icon
+                alignment: center
+            }
+            layout {
+                sequence: 8
+            }
+        )
+
+        column CARD_INITIALS (
+            reportColumnQueryId: 4
+            derivedColumn: N
+            heading {
+                heading: CARD_INITIALS
+                alignment: center
+            }
+            layout {
+                sequence: 4
+            }
+            sorting {
+                sortable: false
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column CARD_LINK (
+            reportColumnQueryId: 5
+            derivedColumn: N
+            heading {
+                heading: CARD_LINK
+                alignment: center
+            }
+            layout {
+                sequence: 5
+            }
+            sorting {
+                sortable: false
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column CARD_MODIFIERS (
+            reportColumnQueryId: 6
+            derivedColumn: N
+            heading {
+                heading: CARD_MODIFIERS
+                alignment: center
+            }
+            layout {
+                sequence: 6
+            }
+            sorting {
+                sortable: false
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column CARD_SUBTEXT (
+            reportColumnQueryId: 3
+            derivedColumn: N
+            heading {
+                heading: CARD_SUBTEXT
+                alignment: end
+            }
+            layout {
+                sequence: 3
+                columnAlignment: end
+            }
+            appearance {
+                formatMask: 999G999G999G999G999G999G999G999G999G990
+            }
+        )
+
+        column CARD_TEXT (
+            reportColumnQueryId: 2
+            derivedColumn: N
+            heading {
+                heading: CARD_TEXT
+            }
+            layout {
+                sequence: 2
+            }
+        )
+
+        column CARD_TITLE (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            heading {
+                heading: CARD_TITLE
+            }
+            layout {
+                sequence: 1
+            }
+        )
+
+    )
+
+    region span-style-font-size-1-8em-font-weight-700-welcome-to-livelabs-span (
+        name: <span style="font-size: 1.8em; font-weight: 700">Welcome to LiveLabs</span>
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <table><tr><td width="120px">
+                <img src="#WORKSPACE_IMAGES#ssworkshop_icon_big.png" width="100px">
+                </td><td>
+                <p>All the LiveLabs workshops are run using the Database PM Cloud Tenancy. Currently active workshops are listed below.</p>
+                <p><strong>Note:</strong> Once you submit your registration for a workshop you will be sent instructions to access the lab. Your environment will be available for the amount of time indicated on your registration. For additional time, please request it on our Slack channel  <a hef="https://app.slack.com/client/T6TKLDJDC/CTUPZQ5HA">#livelabs-help</a> </p>
+                </td></tr></table>
+                ```
+        }
+        layout {
+            sequence: 10
+            slot: beforeContentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+)
+

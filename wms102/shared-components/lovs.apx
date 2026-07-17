@@ -1,0 +1,3922 @@
+lov access-roles (
+    name: ACCESS_ROLES
+    source {
+        type: sqlQuery
+        sqlQuery:
+            ```sql
+            select role_name d, role_id r
+            from APEX_APPL_ACL_ROLES where application_id = :APP_ID 
+            order by 1
+            ```
+    }
+    columnMapping {
+        return: R
+        display: D
+    }
+)
+
+lov active-livelab-titles-ids (
+    name: ACTIVE LIVELAB TITLES & IDS
+    source {
+        type: sqlQuery
+        sqlQuery:
+            ```sql
+            select (nvl(title_override, (select title from workshop where id = workshop_id and rownum = 1)) || ' ('||id||')') d, id r
+            from workshop_ll;
+            ```
+    }
+    columnMapping {
+        return: R
+        display: D
+        defaultSort: D
+    }
+)
+
+lov asset-types (
+    name: ASSET_TYPES
+    source {
+        tableName: WMS_ASSET_TYPES
+    }
+    columnMapping {
+        return: ID
+        display: NAME
+        defaultSort: NAME
+    }
+)
+
+lov assets (
+    name: YOUR_ASSETS
+    source {
+        type: sqlQuery
+        sqlQuery:
+            ```sql
+            select id, name from WMS_ASSETS 
+            where created_by = v('APP_USER')
+            or (instr(',' || upper(editor_emails) || ',', ',' || v('APP_USER') || ',') > 0)
+            or apex_authorization.is_authorized('Administration Rights');
+            ```
+    }
+    columnMapping {
+        return: ID
+        display: NAME
+    }
+
+    column ID (
+        heading {
+            heading: ID
+        }
+        layout {
+            sequence: 10
+        }
+        source {
+            dataType: number
+        }
+    )
+
+    column NAME (
+        heading {
+            heading: Name
+        }
+        layout {
+            sequence: 20
+        }
+        source {
+            dataType: varchar2
+        }
+    )
+
+)
+
+lov assets-2 (
+    name: ASSETS
+    source {
+        type: sqlQuery
+        sqlQuery:
+            ```sql
+            select id r, 
+            name d,
+            created_by,
+            (select name from wms_asset_types where id = type_id) type
+            from wms_assets
+            ```
+    }
+    columnMapping {
+        return: R
+        display: D
+        defaultSort: D
+    }
+
+    column CREATED_BY (
+        heading {
+            heading: Created By
+        }
+        layout {
+            sequence: 30
+        }
+        source {
+            dataType: varchar2
+        }
+    )
+
+    column D (
+        heading {
+            heading: Name
+        }
+        layout {
+            sequence: 20
+        }
+        source {
+            dataType: varchar2
+        }
+    )
+
+    column R (
+        show: false
+        layout {
+            sequence: 10
+        }
+        source {
+            dataType: number
+        }
+        advanced {
+            searchable: false
+        }
+    )
+
+    column TYPE (
+        heading {
+            heading: Type
+        }
+        layout {
+            sequence: 40
+        }
+        source {
+            dataType: varchar2
+        }
+    )
+
+)
+
+lov count-of-people (
+    name: COUNT OF PEOPLE
+    source {
+        location: staticValues
+    }
+
+    entry lov_data (
+        sequence: 1
+        display: 1
+        return: 1
+    )
+
+    entry lov_data-10 (
+        sequence: 10
+        display: 10
+        return: 10
+    )
+
+    entry lov_data-11 (
+        sequence: 11
+        display: 11
+        return: 11
+    )
+
+    entry lov_data-12 (
+        sequence: 12
+        display: 12
+        return: 12
+    )
+
+    entry lov_data-13 (
+        sequence: 13
+        display: 13
+        return: 13
+    )
+
+    entry lov_data-14 (
+        sequence: 14
+        display: 14
+        return: 14
+    )
+
+    entry lov_data-15 (
+        sequence: 15
+        display: 15
+        return: 15
+    )
+
+    entry lov_data-16 (
+        sequence: 16
+        display: 16
+        return: 16
+    )
+
+    entry lov_data-17 (
+        sequence: 17
+        display: 17
+        return: 17
+    )
+
+    entry lov_data-18 (
+        sequence: 18
+        display: 18
+        return: 18
+    )
+
+    entry lov_data-19 (
+        sequence: 19
+        display: 19
+        return: 19
+    )
+
+    entry lov_data-2 (
+        sequence: 2
+        display: 2
+        return: 2
+    )
+
+    entry lov_data-20 (
+        sequence: 20
+        display: 20
+        return: 20
+    )
+
+    entry lov_data-21 (
+        sequence: 21
+        display: I need more than 20
+        return: 99
+    )
+
+    entry lov_data-3 (
+        sequence: 3
+        display: 3
+        return: 3
+    )
+
+    entry lov_data-4 (
+        sequence: 4
+        display: 4
+        return: 4
+    )
+
+    entry lov_data-5 (
+        sequence: 5
+        display: 5
+        return: 5
+    )
+
+    entry lov_data-6 (
+        sequence: 6
+        display: 6
+        return: 6
+    )
+
+    entry lov_data-7 (
+        sequence: 7
+        display: 7
+        return: 7
+    )
+
+    entry lov_data-8 (
+        sequence: 8
+        display: 8
+        return: 8
+    )
+
+    entry lov_data-9 (
+        sequence: 9
+        display: 9
+        return: 9
+    )
+
+)
+
+lov database-versions (
+    name: DATABASE_VERSIONS
+    source {
+        location: staticValues
+    }
+
+    entry 19c (
+        sequence: 4
+        display: 19c
+        return: 19c
+    )
+
+    entry 23ai (
+        sequence: 3
+        display: 23ai
+        return: 23ai
+    )
+
+    entry 26ai (
+        sequence: 2
+        display: 26ai
+        return: 26ai
+    )
+
+)
+
+lov email-username-format (
+    name: EMAIL_USERNAME_FORMAT
+    source {
+        location: staticValues
+    }
+
+    entry email (
+        sequence: 1
+        display: Email Addresses
+        return: EMAIL
+    )
+
+)
+
+lov event-status (
+    name: EVENT_STATUS
+    source {
+        location: staticValues
+    }
+
+    entry approved (
+        sequence: 4
+        display: Approved
+        return: Approved
+    )
+
+    entry cancelled (
+        sequence: 5
+        display: Cancelled
+        return: Cancelled
+    )
+
+    entry closed (
+        sequence: 16
+        display: Closed
+        return: Closed
+    )
+
+    entry in-review (
+        sequence: 2
+        display: In Review
+        return: In Review
+    )
+
+    entry more-info-needed (
+        sequence: 3
+        display: More Info Needed
+        return: More Info Needed
+    )
+
+    entry on-hold (
+        sequence: 6
+        display: On Hold
+        return: On Hold
+    )
+
+    entry ready (
+        sequence: 7
+        display: Ready
+        return: Ready
+    )
+
+    entry submitted (
+        sequence: 1
+        display: Submitted
+        return: Submitted
+    )
+
+)
+
+lov event-tag-lov (
+    name: EVENT_TAG_LOV
+    source {
+        type: sqlQuery
+        sqlQuery:
+            ```sql
+            select item, category_id 
+            from workshop_categories 
+            where category = 'Event' 
+            order by item;
+            ```
+    }
+    columnMapping {
+        return: CATEGORY_ID
+        display: ITEM
+    }
+)
+
+lov faq-category (
+    name: FAQ_CATEGORY
+    source {
+        location: staticValues
+    }
+
+    entry development (
+        sequence: 3
+        display: Development
+        return: Development
+    )
+
+    entry event-codes (
+        sequence: 6
+        display: Event Codes
+        return: Event Codes
+    )
+
+    entry general (
+        sequence: 2
+        display: General
+        return: General
+    )
+
+    entry github (
+        sequence: 4
+        display: Github
+        return: Github
+    )
+
+    entry livelabs-production (
+        sequence: 1
+        display: LiveLabs Production
+        return: LiveLabs Production
+    )
+
+    entry workshops (
+        sequence: 5
+        display: Workshops
+        return: Workshops
+    )
+
+)
+
+lov faq-question (
+    name: FAQ_QUESTION
+    source {
+        location: staticValues
+    }
+
+    entry after-my-pull-request-is-merged-how-long-does-it-take-for-the-changes-to-be-reflected-in-production (
+        sequence: 45
+        display: After my pull request is merged, how long does it take for the changes to be reflected in production?
+        return: After my pull request is merged, how long does it take for the changes to be reflected in production?
+    )
+
+    entry can-i-customize-a-markdown-for-tenancy-and-sandbox-versions-of-workshops-how-to-use-conditional-formatting (
+        sequence: 113
+        display: Can I customize a Markdown for tenancy and sandbox versions of workshops? How to use conditional formatting?
+        return: Can I customize a Markdown for tenancy and sandbox versions of workshops? How to use conditional formatting?
+    )
+
+    entry customers-cannot-use-certain-services-with-free-tier-how-can-they-run-the-workshop (
+        sequence: 74
+        display: Customers cannot use certain services with Free Tier. How can they run the workshop?
+        return: Customers cannot use certain services with Free Tier. How can they run the workshop?
+    )
+
+    entry do-i-need-to-be-on-a-vpn-to-access-the-workshop-management-system-wms (
+        sequence: 46
+        display: Do I need to be on a VPN to access the Workshop Management System (WMS)?
+        return: Do I need to be on a VPN to access the Workshop Management System (WMS)?
+    )
+
+    entry do-i-need-to-be-on-vpn-to-access-livelabs-url (
+        sequence: 14
+        display: Do I need to be on VPN to access LiveLabs URL?
+        return: Do I need to be on VPN to access LiveLabs URL?
+    )
+
+    entry do-you-create-a-green-button-for-the-workshops-that-require-a-federated-user (
+        sequence: 58
+        display: Do you create a green button for the workshops that require a Federated user?
+        return: Do you create a green button for the workshops that require a Federated user?
+    )
+
+    entry do-you-support-saas-paas-for-saas-workshops (
+        sequence: 57
+        display: Do you support SAAS/PAAS for SAAS workshops?
+        return: Do you support SAAS/PAAS for SAAS workshops?
+    )
+
+    entry for-my-pull-request-i-made-changes-requested-do-i-need-to-create-a-new-pr (
+        sequence: 123
+        display: For my pull request, I made changes requested. Do I need to create a new PR?
+        return: For my pull request, I made changes requested. Do I need to create a new PR?
+    )
+
+    entry github-desktop-is-stuck (
+        sequence: 96
+        display: "GitHub Desktop is stuck. "
+        return: "GitHub Desktop is stuck. "
+    )
+
+    entry how-can-i-access-previous-office-hours-recordings (
+        sequence: 95
+        display: How can I access previous office hours recordings?
+        return: How can I access previous office hours recordings?
+    )
+
+    entry how-can-i-receive-reports-on-an-event-code (
+        sequence: 80
+        display: How can I receive reports on an event code?
+        return: How can I receive reports on an event code?
+    )
+
+    entry how-do-i-extend-the-livelabs-tenancy-workshop-execution-time (
+        sequence: 28
+        display: How do I extend the LiveLabs tenancy workshop execution time?
+        return: How do I extend the LiveLabs tenancy workshop execution time?
+    )
+
+    entry how-do-i-fork-and-clone-a-repo-and-start-with-a-new-workshop-authoring (
+        sequence: 39
+        display: How do I fork and clone a repo and start with a new workshop authoring?
+        return: How do I fork and clone a repo and start with a new workshop authoring?
+    )
+
+    entry how-do-i-resolve-github-conflicts (
+        sequence: 34
+        display: How do I resolve GitHub conflicts?
+        return: How do I resolve GitHub conflicts?
+    )
+
+    entry how-i-get-help (
+        sequence: 72
+        display: How I get help?
+        return: How I get help?
+    )
+
+    entry how-long-am-i-expected-wait-for-council-to-approve-my-workshop (
+        sequence: 19
+        display: How long am I expected wait for council to approve my workshop?
+        return: How long am I expected wait for council to approve my workshop?
+    )
+
+    entry how-to-add-a-tag (
+        sequence: 119
+        display: How to add a tag?
+        return: How to add a tag?
+    )
+
+    entry how-to-add-someone-as-a-stakeholder-or-council-member (
+        sequence: 121
+        display: How to add someone as a stakeholder or council member?
+        return: How to add someone as a stakeholder or council member?
+    )
+
+    entry how-to-attend-emea-office-hours (
+        sequence: 82
+        display: How to attend EMEA office hours?
+        return: How to attend EMEA office hours?
+    )
+
+    entry how-to-attend-japac-office-hours (
+        sequence: 108
+        display: How to attend JAPAC office hours?
+        return: How to attend JAPAC office hours?
+    )
+
+    entry how-to-attend-na-office-hours (
+        sequence: 109
+        display: How to attend NA office hours?
+        return: How to attend NA office hours?
+    )
+
+    entry how-to-attend-office-hours (
+        sequence: 40
+        display: How to attend office hours?
+        return: How to attend office hours?
+    )
+
+    entry how-to-be-added-as-a-owner-or-workshop-team-member-for-an-existing-workshop (
+        sequence: 99
+        display: How to be added as a owner or workshop team member for an existing workshop?
+        return: How to be added as a owner or workshop team member for an existing workshop?
+    )
+
+    entry how-to-clone-my-forked-repository (
+        sequence: 69
+        display: How to clone my forked repository?
+        return: How to clone my forked repository?
+    )
+
+    entry how-to-commit-my-changes (
+        sequence: 83
+        display: How to commit my changes?
+        return: How to commit my changes?
+    )
+
+    entry how-to-create-a-pull-request (
+        sequence: 11
+        display: How to create a pull request?
+        return: How to create a pull request?
+    )
+
+    entry how-to-create-and-set-up-my-github-account (
+        sequence: 33
+        display: How to create and set up my GitHub account
+        return: How to create and set up my GitHub account
+    )
+
+    entry how-to-customize-the-title-for-a-table (
+        sequence: 81
+        display: How to customize the title for a table?
+        return: How to customize the title for a table?
+    )
+
+    entry how-to-discard-local-changes-temporarily (
+        sequence: 102
+        display: How to discard local changes temporarily?
+        return: How to discard local changes temporarily?
+    )
+
+    entry how-to-do-self-qa (
+        sequence: 65
+        display: How to do self QA?
+        return: How to do self QA?
+    )
+
+    entry how-to-download-the-list-of-all-the-workshops-in-production (
+        sequence: 48
+        display: How to download the list of all the workshops in production?
+        return: How to download the list of all the workshops in production?
+    )
+
+    entry how-to-edit-my-workshop (
+        sequence: 17
+        display: How to edit my workshop?
+        return: How to edit my workshop?
+    )
+
+    entry how-to-embed-a-video-to-my-workshop (
+        sequence: 114
+        display: How to embed a video to my workshop?
+        return: How to embed a video to my workshop?
+    )
+
+    entry how-to-find-common-labs (
+        sequence: 53
+        display: How to find common labs?
+        return: How to find common labs?
+    )
+
+    entry how-to-find-who-my-stakeholders-or-council-members-are (
+        sequence: 77
+        display: How to find who my stakeholders or council members are?
+        return: How to find who my stakeholders or council members are?
+    )
+
+    entry how-to-fix-formatting-issue (
+        sequence: 79
+        display: How to fix formatting issue?
+        return: How to fix formatting issue?
+    )
+
+    entry how-to-fork-a-github-repository-in-oracle-livelabs (
+        sequence: 112
+        display: How to fork a GitHub repository in oracle-livelabs?
+        return: How to fork a GitHub repository in oracle-livelabs?
+    )
+
+    entry how-to-get-or-install-the-latest-version-of-git (
+        sequence: 54
+        display: How to get or install the latest version of Git?
+        return: How to get or install the latest version of Git?
+    )
+
+    entry how-to-install-github-desktop-how-to-use-github-commands-what-is-the-easiest-way-to-work-with-git (
+        sequence: 55
+        display: How to install GitHub Desktop? How to use GitHub commands? What is the easiest way to work with Git?
+        return: How to install GitHub Desktop? How to use GitHub commands? What is the easiest way to work with Git?
+    )
+
+    entry how-to-look-for-a-specific-workshop-to-run (
+        sequence: 56
+        display: How to look for a specific workshop to run?
+        return: How to look for a specific workshop to run?
+    )
+
+    entry how-to-merge-latest-content-from-the-oracle-livelabs-main-branch (
+        sequence: 105
+        display: How to merge latest content from the oracle-livelabs main branch?
+        return: How to merge latest content from the oracle-livelabs main branch?
+    )
+
+    entry how-to-refresh-merge-my-repos (
+        sequence: 59
+        display: How to refresh (merge) my repos?
+        return: How to refresh (merge) my repos?
+    )
+
+    entry how-to-register-for-a-workshop (
+        sequence: 41
+        display: How to register for a workshop?
+        return: How to register for a workshop?
+    )
+
+    entry how-to-request-an-event-code-in-wms (
+        sequence: 63
+        display: How to request an event code in WMS?
+        return: How to request an event code in WMS?
+    )
+
+    entry how-to-request-for-a-green-button (
+        sequence: 47
+        display: How to request for a green button?
+        return: How to request for a green button?
+    )
+
+    entry how-to-set-up-github (
+        sequence: 24
+        display: How to set up GitHub?
+        return: How to set up GitHub?
+    )
+
+    entry how-to-share-a-livelabs-workshop-s-link (
+        sequence: 16
+        display: How to share a LiveLabs workshop's link?
+        return: How to share a LiveLabs workshop's link?
+    )
+
+    entry how-to-share-my-workshop-in-development-with-others-to-review-how-to-test-my-workshop-content (
+        sequence: 106
+        display: How to share my workshop in development with others to review? How to test my workshop content?
+        return: How to share my workshop in development with others to review? How to test my workshop content?
+    )
+
+    entry how-to-solve-merge-conflicts (
+        sequence: 120
+        display: How to solve merge conflicts?
+        return: How to solve merge conflicts?
+    )
+
+    entry how-to-submit-a-new-workshop-request (
+        sequence: 8
+        display: How to submit a new workshop request?
+        return: How to submit a new workshop request?
+    )
+
+    entry how-to-submit-videos-for-the-workshops-to-one-of-the-oracle-s-official-youtube-channels (
+        sequence: 60
+        display: How to submit videos for the workshops to one of the Oracle’s official Youtube channels?
+        return: How to submit videos for the workshops to one of the Oracle’s official Youtube channels?
+    )
+
+    entry how-to-update-information-on-my-workshop-s-livelabs-landing-page (
+        sequence: 98
+        display: How to update information on my workshop's LiveLabs landing page?
+        return: How to update information on my workshop's LiveLabs landing page?
+    )
+
+    entry how-to-update-the-status-of-my-workshop (
+        sequence: 18
+        display: How to update the status of my workshop?
+        return: How to update the status of my workshop?
+    )
+
+    entry how-to-use-the-lint-checker (
+        sequence: 71
+        display: How to use the Lint Checker?
+        return: How to use the Lint Checker?
+    )
+
+    entry how-to-use-the-wms-dashboard (
+        sequence: 21
+        display: How to use the WMS Dashboard?
+        return: How to use the WMS Dashboard?
+    )
+
+    entry how-to-view-do-we-get-the-report-of-who-is-running-the-workshops (
+        sequence: 43
+        display: How to view/Do we get the report of who is running the workshops?
+        return: How to view/Do we get the report of who is running the workshops?
+    )
+
+    entry i-am-new-how-to-get-started (
+        sequence: 38
+        display: I am new. How to get started?
+        return: I am new. How to get started?
+    )
+
+    entry i-cannot-open-an-external-link-using-live-server-the-link-works-fine-after-i-refresh-it (
+        sequence: 103
+        display: I cannot open an external link using Live Server. The link works fine after I refresh it.
+        return: I cannot open an external link using Live Server. The link works fine after I refresh it.
+    )
+
+    entry i-finished-workshop-development-what-is-next (
+        sequence: 36
+        display: I finished workshop development. What is next?
+        return: I finished workshop development. What is next?
+    )
+
+    entry i-have-a-question-about-a-workshop-i-cannot-proceed-with-a-workshop-how-can-i-reach-out-for-help (
+        sequence: 116
+        display: I have a question about a workshop. I cannot proceed with a workshop. How can I reach out for help?
+        return: I have a question about a workshop. I cannot proceed with a workshop. How can I reach out for help?
+    )
+
+    entry i-need-customers-to-download-a-zip-file-or-other-binary-file-where-should-i-put-it (
+        sequence: 44
+        display: I need customers to download a zip file (or other binary file). Where should I put it?
+        return: I need customers to download a zip file (or other binary file). Where should I put it?
+    )
+
+    entry i-need-help-with-developing-markdown-files-and-working-with-the-folder-structure (
+        sequence: 9
+        display: I need help with developing Markdown files and working with the folder structure.
+        return: I need help with developing Markdown files and working with the folder structure.
+    )
+
+    entry i-want-to-present-a-workshop-to-customers-how-can-i-find-some-presentation-materials-of-the-workshop (
+        sequence: 50
+        display: I want to present a workshop to customers. How can I find some presentation materials of the workshop?
+        return: I want to present a workshop to customers. How can I find some presentation materials of the workshop?
+    )
+
+    entry i-want-to-update-my-workshop-which-is-already-in-production-what-should-i-do (
+        sequence: 26
+        display: I want to update my workshop which is already in production. What should I do?
+        return: I want to update my workshop which is already in production. What should I do?
+    )
+
+    entry images-are-not-showing-up-when-i-am-using-live-server (
+        sequence: 76
+        display: Images are not showing up when I am using Live Server.
+        return: Images are not showing up when I am using Live Server.
+    )
+
+    entry is-livelabs-just-for-certain-regions-certain-groups (
+        sequence: 31
+        display: Is LiveLabs just for certain regions? Certain groups?
+        return: Is LiveLabs just for certain regions? Certain groups?
+    )
+
+    entry is-there-a-slack-channel-for-me-to-ask-help (
+        sequence: 86
+        display: Is there a Slack channel for me to ask help?
+        return: Is there a Slack channel for me to ask help?
+    )
+
+    entry is-there-any-information-that-i-should-blur-out (
+        sequence: 107
+        display: Is there any information that I should blur out?
+        return: Is there any information that I should blur out?
+    )
+
+    entry is-workshop-content-cloud-only (
+        sequence: 2
+        display: Is workshop content cloud only?
+        return: Is workshop content cloud only?
+    )
+
+    entry my-workshop-is-complete-how-can-i-publish-it-to-livelabs (
+        sequence: 37
+        display: My workshop is complete. How can I publish it to LiveLabs?
+        return: My workshop is complete. How can I publish it to LiveLabs?
+    )
+
+    entry there-are-some-images-i-will-reuse-across-different-labs-what-is-the-best-practice (
+        sequence: 89
+        display: There are some images I will reuse across different labs. What is the best practice?
+        return: There are some images I will reuse across different labs. What is the best practice?
+    )
+
+    entry what-are-labs-and-workshops (
+        sequence: 23
+        display: What are labs and workshops?
+        return: What are labs and workshops?
+    )
+
+    entry what-are-naming-standards-or-conventions-for-images (
+        sequence: 122
+        display: What are naming standards or conventions for images?
+        return: What are naming standards or conventions for images?
+    )
+
+    entry what-are-some-helpful-resources-and-extensions-for-visual-studio-code (
+        sequence: 25
+        display: What are some helpful resources and extensions for Visual Studio Code?
+        return: What are some helpful resources and extensions for Visual Studio Code?
+    )
+
+    entry what-binary-files-are-not-allowed-in-github (
+        sequence: 6
+        display: What binary files are not allowed in Github?
+        return: What binary files are not allowed in Github?
+    )
+
+    entry what-do-different-statuses-in-wms-mean (
+        sequence: 51
+        display: What do different statuses in WMS mean?
+        return: What do different statuses in WMS mean?
+    )
+
+    entry what-do-i-do-if-i-have-a-feedback-for-a-workshop (
+        sequence: 1
+        display: What do I do if I have a feedback for a workshop?
+        return: What do I do if I have a feedback for a workshop?
+    )
+
+    entry what-do-you-need-to-run-the-workshop (
+        sequence: 15
+        display: What do you need to run the workshop?
+        return: What do you need to run the workshop?
+    )
+
+    entry what-is-a-green-button (
+        sequence: 110
+        display: What is a green button?
+        return: What is a green button?
+    )
+
+    entry what-is-an-event-code (
+        sequence: 10
+        display: What is an event code?
+        return: What is an event code?
+    )
+
+    entry what-is-live-server-how-to-install-live-server-how-can-i-visualize-my-workshop-content-while-developing-it-locally (
+        sequence: 68
+        display: What is Live Server? How to install Live Server? How can I visualize my workshop content while developing it locally?
+        return: What is Live Server? How to install Live Server? How can I visualize my workshop content while developing it locally?
+    )
+
+    entry what-is-livelabs (
+        sequence: 64
+        display: What is LiveLabs?
+        return: What is LiveLabs?
+    )
+
+    entry what-is-livelabs-admin-email (
+        sequence: 115
+        display: What is LiveLabs admin email?
+        return: What is LiveLabs admin email?
+    )
+
+    entry what-is-livelabs-sandbox (
+        sequence: 111
+        display: What is LiveLabs Sandbox?
+        return: What is LiveLabs Sandbox?
+    )
+
+    entry what-is-livelabs-sprints-how-to-create-sprints (
+        sequence: 85
+        display: What is LiveLabs Sprints? How to create Sprints?
+        return: What is LiveLabs Sprints? How to create Sprints?
+    )
+
+    entry what-is-production-id (
+        sequence: 75
+        display: What is production ID?
+        return: What is production ID?
+    )
+
+    entry what-is-the-desktop-folder (
+        sequence: 92
+        display: "What is the desktop folder? "
+        return: "What is the desktop folder? "
+    )
+
+    entry what-is-the-eta-to-approve-and-merge-the-open-pull-request-by-livelabs-admins (
+        sequence: 3
+        display: What is the ETA to approve and merge the open pull request by LiveLabs admins?
+        return: What is the ETA to approve and merge the open pull request by LiveLabs admins?
+    )
+
+    entry what-is-the-folder-structure-of-workshops (
+        sequence: 84
+        display: What is the folder structure of workshops?
+        return: What is the folder structure of workshops?
+    )
+
+    entry what-is-the-go-to-market-social-tab-in-wms-how-to-promote-my-workshop-to-more-audience (
+        sequence: 32
+        display: What is the "Go to Market - Social" tab in WMS? How to promote my workshop to more audience?
+        return: What is the "Go to Market - Social" tab in WMS? How to promote my workshop to more audience?
+    )
+
+    entry what-is-the-sandbox-a-k-a-livelabs-folder (
+        sequence: 104
+        display: "What is the sandbox (a.k.a livelabs) folder? "
+        return: "What is the sandbox (a.k.a livelabs) folder? "
+    )
+
+    entry what-is-the-sla-for-approving-my-workshop-after-i-submit-it (
+        sequence: 118
+        display: What is the SLA for approving my workshop after I submit it?
+        return: What is the SLA for approving my workshop after I submit it?
+    )
+
+    entry what-is-the-sla-for-green-button (
+        sequence: 117
+        display: What is the SLA for green button?
+        return: What is the SLA for green button?
+    )
+
+    entry what-is-the-sla-for-publishing-a-workshop (
+        sequence: 78
+        display: What is the SLA for publishing a workshop?
+        return: What is the SLA for publishing a workshop?
+    )
+
+    entry what-is-the-sla-for-stakeholders-to-verify-qa (
+        sequence: 73
+        display: What is the SLA for stakeholders to verify QA?
+        return: What is the SLA for stakeholders to verify QA?
+    )
+
+    entry what-is-the-tenancy-a-k-a-freetier-folder (
+        sequence: 93
+        display: "What is the tenancy (a.k.a freetier) folder? "
+        return: "What is the tenancy (a.k.a freetier) folder? "
+    )
+
+    entry what-is-the-workflow-for-developing-a-workshop (
+        sequence: 13
+        display: What is the workflow for developing a workshop?
+        return: What is the workflow for developing a workshop?
+    )
+
+    entry what-is-wms-id-how-can-i-find-wms-id (
+        sequence: 88
+        display: What is WMS ID? How can I find WMS ID?
+        return: What is WMS ID? How can I find WMS ID?
+    )
+
+    entry what-link-should-i-share-with-others-to-review-my-workshop-in-development (
+        sequence: 70
+        display: What link should I share with others to review my workshop in development?
+        return: What link should I share with others to review my workshop in development?
+    )
+
+    entry what-should-i-do-when-my-workshop-has-a-status-of-x (
+        sequence: 97
+        display: What should I do when my workshop has a status of X?
+        return: What should I do when my workshop has a status of X?
+    )
+
+    entry what-text-editor-should-i-use-how-to-install-visual-studio-code-vscode (
+        sequence: 67
+        display: What text editor should I use? How to install Visual Studio Code (VSCode)?
+        return: What text editor should I use? How to install Visual Studio Code (VSCode)?
+    )
+
+    entry what-to-do-if-i-am-looking-for-a-certification-training (
+        sequence: 42
+        display: What to do if I am looking for a Certification/Training?
+        return: What to do if I am looking for a Certification/Training?
+    )
+
+    entry what-to-do-if-i-have-similar-content-in-wms-and-want-to-add-more-content-to-the-existing-workshop (
+        sequence: 30
+        display: What to do if I have similar content in WMS and want to add more content to the existing workshop?
+        return: What to do if I have similar content in WMS and want to add more content to the existing workshop?
+    )
+
+    entry what-to-do-if-my-github-local-and-staging-environment-are-corrupted-and-need-to-delete-it-and-then-rebuilt-it (
+        sequence: 62
+        display: What to do if my github local and staging environment are corrupted and need to delete it and then rebuilt it?
+        return: What to do if my github local and staging environment are corrupted and need to delete it and then rebuilt it?
+    )
+
+    entry when-i-create-event-code-i-cannot-find-my-workshop (
+        sequence: 100
+        display: When I create event code, I cannot find my workshop.
+        return: When I create event code, I cannot find my workshop.
+    )
+
+    entry when-will-changes-to-event-codes-be-reflected-in-production-livelabs (
+        sequence: 91
+        display: When will changes to event codes be reflected in production (LiveLabs)?
+        return: When will changes to event codes be reflected in production (LiveLabs)?
+    )
+
+    entry where-can-i-find-a-sample-workshop-or-sample-template (
+        sequence: 94
+        display: Where can I find a sample workshop or sample template?
+        return: Where can I find a sample workshop or sample template?
+    )
+
+    entry where-can-i-find-helpful-resources-or-a-step-by-step-guide-to-create-a-livelabs-workshop (
+        sequence: 12
+        display: Where can I find helpful resources or a Step by Step guide to create a LiveLabs workshop?
+        return: Where can I find helpful resources or a Step by Step guide to create a LiveLabs workshop?
+    )
+
+    entry where-can-i-locate-the-self-qa-checklist (
+        sequence: 61
+        display: Where can I locate the Self QA Checklist?
+        return: Where can I locate the Self QA Checklist?
+    )
+
+    entry where-can-i-publish-workshops (
+        sequence: 66
+        display: Where can I publish workshops?
+        return: Where can I publish workshops?
+    )
+
+    entry where-is-livelabs (
+        sequence: 22
+        display: Where is LiveLabs?
+        return: Where is LiveLabs?
+    )
+
+    entry which-repository-should-i-put-my-workshop (
+        sequence: 101
+        display: Which repository should I put my workshop?
+        return: Which repository should I put my workshop?
+    )
+
+    entry who-are-council-stakeholders-different-roles-in-workshop-team-members-what-are-their-responsibilities (
+        sequence: 20
+        display: Who are council, stakeholders, different roles in workshop team members? What are their responsibilities?
+        return: Who are council, stakeholders, different roles in workshop team members? What are their responsibilities?
+    )
+
+    entry who-can-create-event-codes (
+        sequence: 52
+        display: Who can create event codes?
+        return: Who can create event codes?
+    )
+
+    entry who-can-run-the-workshop (
+        sequence: 35
+        display: Who can run the workshop?
+        return: Who can run the workshop?
+    )
+
+    entry who-can-submit-a-workshop (
+        sequence: 7
+        display: Who can submit a workshop?
+        return: Who can submit a workshop?
+    )
+
+    entry who-help-customers-with-production-issues (
+        sequence: 87
+        display: Who help customers with production issues?
+        return: Who help customers with production issues?
+    )
+
+    entry who-is-responsible-for-approving-pull-requests-in-the-github-repositories-of-oracle-livelabs-github-project (
+        sequence: 5
+        display: Who is responsible for approving pull requests in the GitHub repositories of Oracle LiveLabs GitHub project?
+        return: Who is responsible for approving pull requests in the GitHub repositories of Oracle LiveLabs GitHub project?
+    )
+
+    entry whom-to-reach-if-i-face-errors-running-through-the-workshop (
+        sequence: 29
+        display: Whom to reach if I face errors running through the workshop?
+        return: Whom to reach if I face errors running through the workshop?
+    )
+
+    entry why-can-t-i-update-a-workshop-assigned-to-me (
+        sequence: 49
+        display: Why can't I update a workshop assigned to me?
+        return: Why can't I update a workshop assigned to me?
+    )
+
+    entry why-is-my-workshop-not-published (
+        sequence: 90
+        display: Why is my workshop not published?
+        return: Why is my workshop not published?
+    )
+
+    entry workshop-information-is-wrong-it-does-not-reflect-the-changes-i-make-how-can-i-fix-that (
+        sequence: 27
+        display: Workshop information is wrong. It does not reflect the changes I make. How can I fix that?
+        return: Workshop information is wrong. It does not reflect the changes I make. How can I fix that?
+    )
+
+)
+
+lov faq-rank (
+    name: FAQ_RANK
+    source {
+        location: staticValues
+    }
+
+    entry lov_data (
+        sequence: 1
+        display: 1
+        return: 1
+    )
+
+    entry lov_data-2 (
+        sequence: 2
+        display: 2
+        return: 2
+    )
+
+    entry lov_data-3 (
+        sequence: 3
+        display: 3
+        return: 3
+    )
+
+)
+
+lov feedback-rating (
+    name: FEEDBACK_RATING
+    source {
+        location: staticValues
+    }
+
+    entry lov_data (
+        sequence: 1
+        display: Positive
+        return: 3
+        globalization {
+            template: <span title="#DISPLAY_VALUE#" aria-label="#DISPLAY_VALUE#"><span class="fa fa-smile-o fa-2x feedback-positive" aria-hidden="true" ></span></span>
+        }
+    )
+
+    entry lov_data-2 (
+        sequence: 2
+        display: Neutral
+        return: 2
+        globalization {
+            template: <span title="#DISPLAY_VALUE#" aria-label="#DISPLAY_VALUE#"><span class="fa fa-emoji-neutral fa-2x feedback-neutral" aria-hidden="true" ></span></span>
+        }
+    )
+
+    entry lov_data-3 (
+        sequence: 3
+        display: Negative
+        return: 1
+        globalization {
+            template: <span title="#DISPLAY_VALUE#" aria-label="#DISPLAY_VALUE#"><span class="fa fa-frown-o fa-2x feedback-negative" aria-hidden="true" ></span></span>
+        }
+    )
+
+)
+
+lov feedback-status (
+    name: FEEDBACK_STATUS
+    source {
+        location: staticValues
+    }
+
+    entry lov_data (
+        sequence: 1
+        display: No Action
+        return: 0
+    )
+
+    entry lov_data-2 (
+        sequence: 2
+        display: Acknowledged
+        return: 1
+    )
+
+    entry lov_data-3 (
+        sequence: 3
+        display: Open
+        return: 3
+    )
+
+    entry lov_data-4 (
+        sequence: 4
+        display: Closed
+        return: 4
+    )
+
+)
+
+lov fix-type (
+    name: FIX_TYPE
+    source {
+        location: staticValues
+    }
+
+    entry apex-code (
+        sequence: 1
+        display: APEX Code
+        return: APEX Code
+    )
+
+    entry apex-page (
+        sequence: 2
+        display: APEX Page
+        return: APEX Page
+    )
+
+    entry confluence-page (
+        sequence: 12
+        display: Confluence Page
+        return: Confluence Page
+    )
+
+    entry db-pm-workshop (
+        sequence: 15
+        display: DB PM Workshop
+        return: DB PM Workshop
+    )
+
+    entry documentation (
+        sequence: 13
+        display: Documentation
+        return: Documentation
+    )
+
+    entry external (
+        sequence: 5
+        display: External
+        return: External
+    )
+
+    entry from-livelabs-v1-3-system (
+        sequence: 6
+        display: From LiveLabs v1.3 system
+        return: From LiveLabs v1.3 system
+    )
+
+    entry generic-workshops (
+        sequence: 16
+        display: Generic Workshops
+        return: Generic Workshops
+    )
+
+    entry green-button-on (
+        sequence: 9
+        display: Green Button ON
+        return: Green Button ON
+    )
+
+    entry green-button-wip (
+        sequence: 10
+        display: Green Button WIP
+        return: Green Button WIP
+    )
+
+    entry green-button-wip-2 (
+        sequence: 11
+        display: Green Button OFF
+        return: Green Button WIP
+    )
+
+    entry livelabs-support (
+        sequence: 18
+        display: LiveLabs Support
+        return: LiveLabs Support
+    )
+
+    entry lwms-application (
+        sequence: 3
+        display: LWMS Application
+        return: LWMS Application
+    )
+
+    entry manual-copy-and-paste (
+        sequence: 7
+        display: Manual copy-and-paste
+        return: Manual copy-and-paste
+    )
+
+    entry non-db-pm-workshop (
+        sequence: 14
+        display: Non DB PM Workshop
+        return: Non DB PM Workshop
+    )
+
+    entry pl-sql-code (
+        sequence: 4
+        display: PL/SQL code
+        return: PL/SQL code
+    )
+
+    entry self-qa-verification (
+        sequence: 17
+        display: Self QA Verification
+        return: Self QA Verification
+    )
+
+    entry sql-code (
+        sequence: 8
+        display: SQL code
+        return: SQL code
+    )
+
+)
+
+lov focus-tag-lov (
+    name: FOCUS_TAG_LOV
+    source {
+        type: sqlQuery
+        sqlQuery:
+            ```sql
+            select item, category_id 
+            from workshop_categories 
+            where category = 'Focus' 
+            order by item;
+            ```
+    }
+    columnMapping {
+        return: CATEGORY_ID
+        display: ITEM
+    }
+)
+
+lov green-btn-status (
+    name: GREEN_BTN_STATUS
+    source {
+        location: staticValues
+    }
+
+    entry cancelled (
+        sequence: 16
+        display: Cancelled
+        return: Cancelled
+    )
+
+    entry complete (
+        sequence: 11
+        display: Complete
+        return: Complete
+    )
+
+    entry create-livelabs-workshop (
+        sequence: 4
+        display: Create LiveLabs Workshop
+        return: Create LiveLabs Workshop
+    )
+
+    entry deploy-to-production (
+        sequence: 9
+        display: Deploy to Production
+        return: Deploy to Production
+    )
+
+    entry issue (
+        sequence: 14
+        display: Issue
+        return: Issue
+    )
+
+    entry local-development (
+        sequence: 3
+        display: Local Development
+        return: Local Development
+    )
+
+    entry on-hold (
+        sequence: 15
+        display: On Hold
+        return: On Hold
+    )
+
+    entry qa-on-livelabs-stage (
+        sequence: 6
+        display: QA on LiveLabs Stage
+        return: QA on LiveLabs Stage
+    )
+
+    entry qa-on-production (
+        sequence: 10
+        display: QA on Production
+        return: QA on Production
+    )
+
+    entry quarterly-qa (
+        sequence: 12
+        display: Quarterly QA
+        return: Quarterly QA
+    )
+
+    entry quarterly-qa-complete (
+        sequence: 13
+        display: Quarterly QA Complete
+        return: Quarterly QA Complete
+    )
+
+    entry requirements-received (
+        sequence: 1
+        display: Requirements Received
+        return: Requirements Received
+    )
+
+    entry stress-test-on-stage (
+        sequence: 8
+        display: Stress Test on Stage
+        return: Stress Test on Stage
+    )
+
+    entry test-on-livelabs-dev (
+        sequence: 5
+        display: Test on LiveLabs Dev
+        return: Test on LiveLabs Dev
+    )
+
+    entry validate-requirements (
+        sequence: 2
+        display: Validate Requirements
+        return: Validate Requirements
+    )
+
+    entry workshop-team-test-on-stage (
+        sequence: 7
+        display: Workshop Team Test on Stage
+        return: Workshop Team Test on Stage
+    )
+
+)
+
+lov hosted-buckets (
+    name: HOSTED_BUCKETS
+    source {
+        location: restSource
+        restSource: @list-hosted-buckets-c4u02
+    }
+    columnMapping {
+        return: NAME
+        display: NAME
+        defaultSort: NAME
+    }
+)
+
+lov hours (
+    name: HOURS
+    source {
+        location: staticValues
+    }
+
+    entry lov_data (
+        sequence: 1
+        display: 1
+        return: 1
+    )
+
+    entry lov_data-2 (
+        sequence: 2
+        display: 2
+        return: 2
+    )
+
+    entry lov_data-3 (
+        sequence: 3
+        display: 3
+        return: 3
+    )
+
+    entry lov_data-4 (
+        sequence: 4
+        display: 4
+        return: 4
+    )
+
+    entry lov_data-5 (
+        sequence: 5
+        display: 5
+        return: 5
+    )
+
+    entry lov_data-6 (
+        sequence: 6
+        display: 6
+        return: 6
+    )
+
+    entry lov_data-7 (
+        sequence: 7
+        display: 7
+        return: 7
+    )
+
+    entry lov_data-8 (
+        sequence: 8
+        display: 8
+        return: 8
+    )
+
+)
+
+lov images (
+    name: IMAGES
+    source {
+        type: sqlQuery
+        sqlQuery:
+            ```sql
+            select 
+                id r, 
+                (select listing_name from omp_listings a where a.id = listing_id) || ' - v' || version  d,
+                (select listing_name from omp_listings a where a.id = listing_id) listing_name,
+                version
+            from omp_images
+            ```
+    }
+    columnMapping {
+        return: R
+        display: D
+    }
+
+    column D (
+        show: false
+        heading {
+            heading: D
+        }
+        layout {
+            sequence: 20
+        }
+        source {
+            dataType: varchar2
+        }
+        advanced {
+            searchable: false
+        }
+    )
+
+    column LISTING_NAME (
+        heading {
+            heading: Listing Name
+        }
+        layout {
+            sequence: 10
+        }
+        source {
+            dataType: varchar2
+        }
+    )
+
+    column R (
+        show: false
+        layout {
+            sequence: 10
+        }
+        source {
+            dataType: number
+        }
+    )
+
+    column VERSION (
+        heading {
+            heading: Version
+        }
+        layout {
+            sequence: 20
+        }
+        source {
+            dataType: varchar2
+        }
+    )
+
+)
+
+lov lab-audience-ospa (
+    name: LAB_AUDIENCE_OSPA
+    source {
+        location: staticValues
+    }
+
+    entry employees (
+        sequence: 1
+        display: Employees
+        return: Employees
+    )
+
+    entry employees-and-partners (
+        sequence: 2
+        display: Employees and Partners
+        return: Employees and Partners
+    )
+
+    entry employees-partners-and-customers (
+        sequence: 3
+        display: Employees, Partners, and Customers
+        return: Employees, Partners, and Customers
+    )
+
+)
+
+lov language-tag-lov (
+    name: LANGUAGE_TAG_LOV
+    source {
+        type: sqlQuery
+        sqlQuery:
+            ```sql
+            select subcategory, category_id
+            from workshop_categories 
+            where category = 'Language'
+            order by category_id; 
+            ```
+    }
+    columnMapping {
+        return: CATEGORY_ID
+        display: SUBCATEGORY
+    }
+)
+
+lov level-tag-lov (
+    name: LEVEL_TAG_LOV
+    source {
+        type: sqlQuery
+        sqlQuery:
+            ```sql
+            select subcategory, category_id
+            from workshop_categories
+            where category = 'Level'
+            order by category_id;   
+            ```
+    }
+    columnMapping {
+        return: CATEGORY_ID
+        display: SUBCATEGORY
+    }
+)
+
+lov listings (
+    name: LISTINGS
+    source {
+        type: sqlQuery
+        sqlQuery: select nvl(listing_name, 'ID #' || id) d, id r from omp_listings;
+    }
+    columnMapping {
+        return: R
+        display: D
+        defaultSort: D
+    }
+)
+
+lov live-stack-images (
+    name: LIVE_STACK_IMAGES
+    source {
+        type: sqlQuery
+        sqlQuery:
+            ```sql
+            select 
+                id r, 
+                (select listing_name from omp_listings a where a.id = listing_id) || ' - v' || version  d,
+                (select listing_name from omp_listings a where a.id = listing_id) listing_name,
+                version
+            from omp_images
+            where live_stack_flg = 'Y'
+            ```
+    }
+    columnMapping {
+        return: R
+        display: D
+    }
+
+    column D (
+        show: false
+        heading {
+            heading: D
+        }
+        layout {
+            sequence: 20
+        }
+        source {
+            dataType: varchar2
+        }
+        advanced {
+            searchable: false
+        }
+    )
+
+    column LISTING_NAME (
+        heading {
+            heading: Listing Name
+        }
+        layout {
+            sequence: 10
+        }
+        source {
+            dataType: varchar2
+        }
+    )
+
+    column R (
+        show: false
+        layout {
+            sequence: 10
+        }
+        source {
+            dataType: number
+        }
+    )
+
+    column VERSION (
+        heading {
+            heading: Version
+        }
+        layout {
+            sequence: 20
+        }
+        source {
+            dataType: varchar2
+        }
+    )
+
+)
+
+lov livelab-titles-ids (
+    name: LIVELAB TITLES & IDS
+    source {
+        type: sqlQuery
+        sqlQuery:
+            ```sql
+            select (nvl(title_override, (select title from workshop where id = workshop_id and rownum = 1)) || ' ('||id||')') d, id r
+            from workshop_ll;
+            ```
+    }
+    columnMapping {
+        return: R
+        display: D
+        defaultSort: D
+    }
+)
+
+lov livelab-types (
+    name: LIVELAB_TYPES
+    source {
+        tableName: WMS_LL_TYPES
+    }
+    columnMapping {
+        return: ID
+        display: NAME
+        defaultSort: NAME
+    }
+)
+
+lov livelabs-with-types (
+    name: PUBLISHED_LIVELABS_WITH_TYPES
+    source {
+        type: sqlQuery
+        sqlQuery:
+            ```sql
+            select 
+                nvl(title_override, (select title from workshop where id = workshop_id and rownum = 1)) title,
+                (select name from wms_ll_types where id = type_id) ll_type,
+                id 
+            from workshop_ll
+            where publish_status in ('Published', 'Publish Approved')
+            and publish_type != 'Disabled';
+            ```
+    }
+    columnMapping {
+        return: ID
+        display: TITLE
+    }
+
+    column ID (
+        heading {
+            heading: ID
+        }
+        layout {
+            sequence: 10
+        }
+        source {
+            dataType: number
+        }
+    )
+
+    column LL_TYPE (
+        heading {
+            heading: Type
+        }
+        layout {
+            sequence: 30
+        }
+        source {
+            dataType: varchar2
+        }
+    )
+
+    column TITLE (
+        heading {
+            heading: Title
+        }
+        layout {
+            sequence: 20
+        }
+        source {
+            dataType: varchar2
+        }
+    )
+
+)
+
+lov livestack-item-types (
+    name: LIVESTACK_ITEM_TYPES
+    source {
+        tableName: LIVESTACK_ITEM_TYPES
+    }
+    columnMapping {
+        return: ID
+        display: NAME
+        defaultSort: NAME
+    }
+)
+
+lov livestack-launch-methods (
+    name: LIVESTACK_LAUNCH_METHODS
+    source {
+        location: staticValues
+    }
+
+    entry sandbox (
+        sequence: 2
+        display: Sandbox Reservation Page
+        return: SANDBOX
+        serverSideCondition {
+            type: expression
+            plsqlExpression: :P59_ROS_OVERRIDE = 'Y'
+        }
+    )
+
+    entry tenancy (
+        sequence: 3
+        display: Run on Your Tenancy Instructions
+        return: TENANCY
+    )
+
+    entry workshop (
+        sequence: 1
+        display: LiveLab Landing Page
+        return: WORKSHOP
+    )
+
+)
+
+lov livestack-publish-statuses (
+    name: LIVESTACK_PUBLISH_STATUSES
+    source {
+        location: staticValues
+    }
+
+    entry changes-requested (
+        sequence: 3
+        display: Changes Requested
+        return: Changes Requested
+        serverSideCondition {
+            type: rowsReturned
+            sqlQuery: select * from workshop_person_council where upper(email) = v('APP_USER') and council_id = (select id from workshop_council where name = 'LiveStack');
+        }
+    )
+
+    entry delete-requested (
+        sequence: 4
+        display: Delete Requested
+        return: Delete Requested
+        serverSideCondition {
+            type: itemIsNotNull
+            item: :P57_ID
+        }
+    )
+
+    entry denied (
+        sequence: 5
+        display: Denied
+        return: Denied
+        serverSideCondition {
+            type: rowsReturned
+            sqlQuery: select * from workshop_person_council where upper(email) = v('APP_USER') and council_id = (select id from workshop_council where name = 'LiveStack');
+        }
+    )
+
+    entry publish-requested (
+        sequence: 1
+        display: Publish Requested
+        return: Publish Requested
+        serverSideCondition {
+            type: noRowsReturned
+            sqlQuery: select * from workshop_person_council where upper(email) = v('APP_USER') and council_id = (select id from workshop_council where name = 'LiveStack');
+        }
+    )
+
+    entry published (
+        sequence: 2
+        display: Published
+        return: Published
+        serverSideCondition {
+            type: rowsReturned
+            sqlQuery: select * from workshop_person_council where upper(email) = v('APP_USER') and council_id = (select id from workshop_council where name = 'LiveStack');
+        }
+    )
+
+)
+
+lov livestack-publish-types (
+    name: LIVESTACK_PUBLISH_TYPES
+    source {
+        location: staticValues
+    }
+
+    entry disabled (
+        sequence: 4
+        display: Disabled
+        return: N
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P57_ID
+        }
+    )
+
+    entry private (
+        sequence: 2
+        display: Private
+        return: P
+    )
+
+    entry public (
+        sequence: 1
+        display: Public
+        return: Y
+    )
+
+    entry unlisted (
+        sequence: 3
+        display: Unlisted
+        return: U
+    )
+
+)
+
+lov livestack-request-statuses (
+    name: LIVESTACK REQUEST STATUSES
+    source {
+        location: staticValues
+    }
+
+    entry approved (
+        sequence: 2
+        display: Approved
+        return: Approved
+    )
+
+    entry pending-requestor-action (
+        sequence: 4
+        display: Pending Requestor Action
+        return: Pending Requestor Action
+    )
+
+    entry pending-review (
+        sequence: 1
+        display: Pending Review
+        return: Pending Review
+    )
+
+    entry rejected (
+        sequence: 3
+        display: Rejected
+        return: Rejected
+    )
+
+)
+
+lov onoff (
+    name: ONOFF
+    source {
+        location: staticValues
+    }
+
+    entry lov_data (
+        sequence: 1
+        display: Off
+        return: 0
+    )
+
+    entry lov_data-2 (
+        sequence: 2
+        display: On
+        return: 1
+    )
+
+)
+
+lov p5001-report-row-per-page (
+    name: P5001_REPORT ROW PER PAGE
+    source {
+        location: staticValues
+    }
+
+    entry lov_data (
+        sequence: 10
+        display: 10
+        return: 10
+    )
+
+    entry lov_data-10 (
+        sequence: 100
+        display: 5000
+        return: 5000
+    )
+
+    entry lov_data-2 (
+        sequence: 20
+        display: 15
+        return: 15
+    )
+
+    entry lov_data-3 (
+        sequence: 30
+        display: 20
+        return: 20
+    )
+
+    entry lov_data-4 (
+        sequence: 40
+        display: 30
+        return: 30
+    )
+
+    entry lov_data-5 (
+        sequence: 50
+        display: 50
+        return: 50
+    )
+
+    entry lov_data-6 (
+        sequence: 60
+        display: 100
+        return: 100
+    )
+
+    entry lov_data-7 (
+        sequence: 70
+        display: 200
+        return: 200
+    )
+
+    entry lov_data-8 (
+        sequence: 80
+        display: 500
+        return: 500
+    )
+
+    entry lov_data-9 (
+        sequence: 90
+        display: 1000
+        return: 1000
+    )
+
+)
+
+lov page-options-ospa (
+    name: PAGE_OPTIONS_OSPA
+    source {
+        location: staticValues
+    }
+
+    entry cred (
+        sequence: 1
+        display: Show credentials tab
+        return: cred
+    )
+
+    entry deploy (
+        sequence: 2
+        display: Show deployments tab
+        return: deploy
+    )
+
+    entry resource (
+        sequence: 3
+        display: Show resources tab
+        return: resource
+    )
+
+)
+
+lov product-tag-lov (
+    name: PRODUCT_TAG_LOV
+    source {
+        type: sqlQuery
+        sqlQuery:
+            ```sql
+            select item, category_id 
+            from workshop_categories 
+            where category = 'Product' 
+            order by item;
+            ```
+    }
+    columnMapping {
+        return: CATEGORY_ID
+        display: ITEM
+    }
+)
+
+lov publish-status (
+    name: PUBLISH STATUS
+    source {
+        location: staticValues
+    }
+
+    entry changes-requested (
+        sequence: 2
+        display: Changes Requested
+        return: Changes Requested
+    )
+
+    entry delete-requested (
+        sequence: 5
+        display: Delete Requested
+        return: Delete Requested
+    )
+
+    entry publish-approved (
+        sequence: 3
+        display: Publish Approved
+        return: Publish Approved
+    )
+
+    entry publish-requested (
+        sequence: 1
+        display: Publish Requested
+        return: Publish Requested
+    )
+
+    entry published (
+        sequence: 4
+        display: Published
+        return: Published
+    )
+
+)
+
+lov publish-type (
+    name: PUBLISH TYPE
+    source {
+        location: staticValues
+    }
+
+    entry disabled (
+        sequence: 4
+        display: Disabled
+        return: Disabled
+    )
+
+    entry event (
+        sequence: 2
+        display: Event
+        return: Event
+    )
+
+    entry private (
+        sequence: 3
+        display: Private
+        return: Private
+    )
+
+    entry public (
+        sequence: 1
+        display: Public
+        return: Public
+    )
+
+)
+
+lov publish-type-ospa (
+    name: PUBLISH_TYPE_OSPA
+    source {
+        location: staticValues
+    }
+
+    entry private (
+        sequence: 2
+        display: Private
+        return: Private
+    )
+
+    entry public (
+        sequence: 1
+        display: Public
+        return: Public
+    )
+
+    entry unlisted (
+        sequence: 3
+        display: Unlisted
+        return: Unlisted
+    )
+
+)
+
+lov qa-resource (
+    name: QA_RESOURCE
+    source {
+        location: staticValues
+    }
+
+    entry anoosha-pilli-oracle-com (
+        sequence: 997
+        display: Anoosha Pilli - Do not assign
+        return: anoosha.pilli@oracle.com
+    )
+
+    entry arabella-y (
+        sequence: 994
+        display: Arabella Yao - Do not assign
+        return: Arabella Y.
+    )
+
+    entry david-start-oracle-com (
+        sequence: 998
+        display: David Start - Do not assign
+        return: david.start@oracle.com
+    )
+
+    entry dylanmcleod009-gmail-com (
+        sequence: 9
+        display: Dylan McCleod
+        return: dylanmcleod009@gmail.com
+    )
+
+    entry isa-k (
+        sequence: 992
+        display: Isa Kesinger - Do not assign
+        return: Isa K.
+    )
+
+    entry jaden-m (
+        sequence: 997
+        display: Jaden McElvey - Do not assign
+        return: Jaden M.
+    )
+
+    entry jeffmalcolmjr-gmail-com (
+        sequence: 8
+        display: Jeffrey Malcolm
+        return: jeffmalcolmjr@gmail.com
+    )
+
+    entry kay-malcolm-oracle-com (
+        sequence: 2
+        display: Kay Malcom
+        return: kay.malcolm@oracle.com
+    )
+
+    entry kv01182-georgiasouthern-edu (
+        sequence: 11
+        display: Kamryn Vinson
+        return: kv01182@georgiasouthern.edu
+    )
+
+    entry robbie-ruppel (
+        sequence: 999
+        display: Robbie Ruppel - Do not assign
+        return: Robbie Ruppel
+    )
+
+    entry smith-am-personal-gmail-com (
+        sequence: 10
+        display: Ayden Smith
+        return: smith.am.personal@gmail.com
+    )
+
+    entry tammy-bednar-oracle-com (
+        sequence: 13
+        display: Tammy Bednar
+        return: tammy.bednar@oracle.com
+    )
+
+    entry tom-mcginn-oracle-com (
+        sequence: 1
+        display: Tom McGinn
+        return: tom.mcginn@oracle.com
+    )
+
+)
+
+lov qa-status (
+    name: QA_STATUS
+    source {
+        location: staticValues
+    }
+
+    entry free-tier-qa-complete (
+        sequence: 17
+        display: Free Tier QA Complete
+        return: Free Tier QA Complete
+    )
+
+    entry qa-complete (
+        sequence: 20
+        display: QA Complete
+        return: QA Complete
+    )
+
+    entry qa-livelabs-assigned (
+        sequence: 10
+        display: QA LiveLabs Assigned
+        return: QA LiveLabs Assigned
+    )
+
+    entry qa-livelabs-feedback-sent (
+        sequence: 16
+        display: QA LiveLabs Feedback Sent
+        return: QA LiveLabs Feedback Sent
+    )
+
+    entry qa-livelabs-in-progress (
+        sequence: 12
+        display: QA LiveLabs In Progress
+        return: QA LiveLabs In Progress
+    )
+
+    entry qa-livelabs-on-hold (
+        sequence: 14
+        display: QA LiveLabs On Hold
+        return: QA LiveLabs On Hold
+    )
+
+    entry qa1-assigned (
+        sequence: 1
+        display: QA1 Assigned
+        return: QA1 Assigned
+    )
+
+    entry qa1-complete (
+        sequence: 5
+        display: QA1 Complete
+        return: QA1 Complete
+    )
+
+    entry qa1-feedback-sent (
+        sequence: 4
+        display: QA1 Feedback sent
+        return: QA1 Feedback sent
+    )
+
+    entry qa1-in-progress (
+        sequence: 2
+        display: QA1 in Progress
+        return: QA1 in Progress
+    )
+
+    entry qa1-issue (
+        sequence: 3
+        display: QA1 Issue
+        return: QA1 Issue
+    )
+
+    entry qa2-assigned (
+        sequence: 7
+        display: QA2 Assigned
+        return: QA2 Assigned
+    )
+
+    entry qa2-complete (
+        sequence: 15
+        display: QA2 Complete
+        return: QA2 Complete
+    )
+
+    entry qa2-feedback-sent (
+        sequence: 13
+        display: QA2 Feedback sent
+        return: QA2 Feedback sent
+    )
+
+    entry qa2-in-progress (
+        sequence: 9
+        display: QA2 in Progress
+        return: QA2 in Progress
+    )
+
+    entry qa2-issue (
+        sequence: 11
+        display: QA2 Issue
+        return: QA2 Issue
+    )
+
+)
+
+lov role-tag-lov (
+    name: ROLE_TAG_LOV
+    source {
+        type: sqlQuery
+        sqlQuery:
+            ```sql
+            select subcategory, category_id
+            from workshop_categories 
+            where category = 'Role'
+            order by category_id; 
+            ```
+    }
+    columnMapping {
+        return: CATEGORY_ID
+        display: SUBCATEGORY
+    }
+)
+
+lov salesplay-tag-lov (
+    name: SALESPLAY_TAG_LOV
+    source {
+        type: sqlQuery
+        sqlQuery:
+            ```sql
+            select subcategory, category_id 
+            from workshop_categories 
+            where category = 'Sales Play' 
+            order by subcategory;
+            ```
+    }
+    columnMapping {
+        return: CATEGORY_ID
+        display: SUBCATEGORY
+    }
+)
+
+lov series-tag-lov (
+    name: SERIES_TAG_LOV
+    source {
+        type: sqlQuery
+        sqlQuery:
+            ```sql
+            select subcategory, category_id
+            from workshop_categories
+            where category = 'Workshop Series'
+            order by category_id; 
+            ```
+    }
+    columnMapping {
+        return: CATEGORY_ID
+        display: SUBCATEGORY
+    }
+)
+
+lov timeframe-4-weeks (
+    name: TIMEFRAME (4 WEEKS)
+    source {
+        type: sqlQuery
+        sqlQuery:
+            ```sql
+            select disp,
+                  val as seconds
+             from table( apex_util.get_timeframe_lov_data )
+            order by insert_order
+            ```
+    }
+    columnMapping {
+        return: SECONDS
+        display: DISP
+    }
+)
+
+lov to-do-owner (
+    name: TO_DO_OWNER
+    source {
+        location: staticValues
+    }
+
+    entry anoosha-pilli-oracle-com (
+        sequence: 5
+        display: Anoosha
+        return: anoosha.pilli@oracle.com
+    )
+
+    entry ashwin-a-agarwal-oracle-com (
+        sequence: 9
+        display: Ashwin
+        return: ashwin.a.agarwal@oracle.com
+    )
+
+    entry jon-russell-oracle-com (
+        sequence: 1
+        display: Jon
+        return: jon.russell@oracle.com
+    )
+
+    entry kamryn-vinson-oracle-com (
+        sequence: 4
+        display: Kamryn
+        return: kamryn.vinson@oracle.com
+    )
+
+    entry kay-malcolm-oracle-com (
+        sequence: 7
+        display: Kay
+        return: kay.malcolm@oracle.com
+    )
+
+    entry madhusudhan-rao-oracle-com (
+        sequence: 2
+        display: Madhu
+        return: madhusudhan.rao@oracle.com
+    )
+
+    entry rene-fontcha-oracle-com (
+        sequence: 8
+        display: Rene
+        return: rene.fontcha@oracle.com
+    )
+
+    entry robert-pastijn-oracle-com (
+        sequence: 3
+        display: Robert
+        return: robert.pastijn@oracle.com
+    )
+
+    entry tbd (
+        sequence: 10
+        display: TBD
+        return: TBD
+    )
+
+    entry tom-mcginn-oracle-com (
+        sequence: 6
+        display: Tom
+        return: tom.mcginn@oracle.com
+    )
+
+)
+
+lov to-do-status (
+    name: TO_DO_STATUS
+    source {
+        location: staticValues
+    }
+
+    entry closed (
+        sequence: 50
+        display: Closed
+        return: Closed
+    )
+
+    entry delayed (
+        sequence: 70
+        display: Delayed
+        return: Delayed
+    )
+
+    entry jira (
+        sequence: 1
+        display: MOVED TO JIRA
+        return: Jira
+    )
+
+    entry lwms-closed (
+        sequence: 120
+        display: LWMS: Closed
+        return: LWMS: Closed
+    )
+
+    entry lwms-new (
+        sequence: 110
+        display: LWMS: New
+        return: LWMS: New
+    )
+
+    entry new (
+        sequence: 10
+        display: New
+        return: New
+    )
+
+    entry on-hold (
+        sequence: 60
+        display: On Hold
+        return: On Hold
+    )
+
+    entry open (
+        sequence: 30
+        display: Open (Discussed)
+        return: Open
+    )
+
+    entry ready-for-deployment (
+        sequence: 40
+        display: Ready for Deployment
+        return: Ready for Deployment
+    )
+
+    entry review (
+        sequence: 35
+        display: Review
+        return: Review
+    )
+
+    entry terraform-completed (
+        sequence: 101
+        display: Terraform: Completed
+        return: Terraform: Completed
+    )
+
+    entry terraform-deployed (
+        sequence: 100
+        display: Terraform: Deployed
+        return: Terraform: Deployed
+    )
+
+    entry terraform-in-progress (
+        sequence: 90
+        display: Terraform: In progress
+        return: Terraform: In progress
+    )
+
+    entry terraform-new (
+        sequence: 80
+        display: Terraform: New
+        return: Terraform: New
+    )
+
+    entry working (
+        sequence: 20
+        display: Working (In Progress)
+        return: Working
+    )
+
+)
+
+lov user-images (
+    name: USER_IMAGES
+    source {
+        type: sqlQuery
+        sqlQuery:
+            ```sql
+            select 
+                id r, 
+                (select listing_name from omp_listings a where a.id = listing_id) || ' - v' || version  d,
+                (select listing_name from omp_listings a where a.id = listing_id) listing_name,
+                version
+            from omp_images
+            where listing_id in (select id from omp_listings where added_by = v('APP_USER') or instr(SUPPORT_CONTACTS, v('APP_USER')) > 0)
+            ```
+    }
+    columnMapping {
+        return: R
+        display: D
+    }
+
+    column D (
+        show: false
+        heading {
+            heading: D
+        }
+        layout {
+            sequence: 20
+        }
+        source {
+            dataType: varchar2
+        }
+        advanced {
+            searchable: false
+        }
+    )
+
+    column LISTING_NAME (
+        heading {
+            heading: Listing Name
+        }
+        layout {
+            sequence: 10
+        }
+        source {
+            dataType: varchar2
+        }
+    )
+
+    column R (
+        show: false
+        layout {
+            sequence: 10
+        }
+        source {
+            dataType: number
+        }
+    )
+
+    column VERSION (
+        heading {
+            heading: Version
+        }
+        layout {
+            sequence: 20
+        }
+        source {
+            dataType: varchar2
+        }
+    )
+
+)
+
+lov view-as-report-chart (
+    name: VIEW_AS_REPORT_CHART
+    source {
+        location: staticValues
+    }
+
+    entry chart (
+        sequence: 2
+        display: Add Chart Page
+        return: CHART
+        globalization {
+            template: <span class="fa fa-pie-chart" aria-hidden="true"></span><span class="u-VisuallyHidden">#DISPLAY_VALUE#</span>
+        }
+    )
+
+    entry report (
+        sequence: 1
+        display: Add Report Page
+        return: REPORT
+        globalization {
+            template: <span class="fa fa-table" aria-hidden="true"></span><span class="u-VisuallyHidden">#DISPLAY_VALUE#</span>
+        }
+    )
+
+)
+
+lov wms-images-name (
+    name: WMS_IMAGES.NAME
+    source {
+        tableName: WMS_IMAGES
+    }
+    columnMapping {
+        return: ID
+        display: NAME
+        defaultSort: NAME
+    }
+)
+
+lov wms-stakeholders (
+    name: WMS_STAKEHOLDERS
+    source {
+        type: sqlQuery
+        sqlQuery:
+            ```sql
+            select stakeholder_group_name as d
+                 , stakeholder_group_email as r
+              from wms_stakeholders
+             order by display_order;
+            ```
+    }
+    columnMapping {
+        return: R
+        display: D
+    }
+)
+
+lov workshop-council (
+    name: WORKSHOP_COUNCIL
+    source {
+        location: staticValues
+    }
+
+    entry abhinav-sri-oracle-com (
+        sequence: 11
+        display: Developers - Converged
+        return: abhinav.sri@oracle.com
+    )
+
+    entry chris-iwicki-oracle-com (
+        sequence: 24
+        display: HPC
+        return: chris.iwicki@oracle.com
+    )
+
+    entry denis-gray-oracle-com (
+        sequence: 18
+        display: GoldenGate
+        return: denis.gray@oracle.com
+    )
+
+    entry emmanuel-leroy-oracle-com (
+        sequence: 17
+        display: Weblogic
+        return: emmanuel.leroy@oracle.com
+    )
+
+    entry glen-hawkins-oracle-com (
+        sequence: 7
+        display: Database - MAA (RAC/DG)
+        return: glen.hawkins@oracle.com
+    )
+
+    entry jayant-sharma-oracle-com (
+        sequence: 8
+        display: Database - Spatial and Graph
+        return: jayant.sharma@oracle.com
+    )
+
+    entry john-peach-oracle-com (
+        sequence: 5
+        display: Data Science
+        return: john.peach@oracle.com
+    )
+
+    entry kay-malcolm-oracle-com (
+        sequence: 6
+        display: Database
+        return: kay.malcolm@oracle.com
+    )
+
+    entry kevin-deihl-oracle-com (
+        sequence: 10
+        display: DBCS & ExaCS
+        return: kevin.deihl@oracle.com
+    )
+
+    entry kevin-lazarz (
+        sequence: 35
+        display: OIC - Integration
+        return: kevin.lazarz
+    )
+
+    entry kris-bhanushali-oracle-com (
+        sequence: 3
+        display: Autonomous Database - Dedicated
+        return: kris.bhanushali@oracle.com
+    )
+
+    entry loic-lefevre-oracle-com (
+        sequence: 12
+        display: Developers - Database Solutions
+        return: loic.lefevre@oracle.com
+    )
+
+    entry mark-hornick-oracle-com (
+        sequence: 14
+        display: Machine Learning
+        return: mark.hornick@oracle.com
+    )
+
+    entry martin-gubar-oracle-com (
+        sequence: 4
+        display: Big Data
+        return: martin.gubar@oracle.com
+    )
+
+    entry michelle-a-malcher-oracle-com (
+        sequence: 25
+        display: LiveLabs Super User
+        return: michelle.a.malcher@oracle.com
+    )
+
+    entry nilay-panchal-oracle-com (
+        sequence: 2
+        display: Autonomous Database - Shared
+        return: nilay.panchal@oracle.com
+    )
+
+    entry orlando-gentil-oracle-com (
+        sequence: 16
+        display: OCI
+        return: orlando.gentil@oracle.com
+    )
+
+    entry rene-fontcha-oracle-com (
+        sequence: 11
+        display: Developers - On Premises
+        return: rene.fontcha@oracle.com
+    )
+
+    entry roger-ford-oracle-com (
+        sequence: 15
+        display: JSON/XML
+        return: roger.ford@oracle.com
+    )
+
+    entry russ-lowenthal-oracle-com (
+        sequence: 9
+        display: Database Security
+        return: russ.lowenthal@oracle.com
+    )
+
+    entry salim-hlayel-oracle-com (
+        sequence: 2
+        display: APEX
+        return: salim.hlayel@oracle.com
+    )
+
+    entry santiago-bastida-oracle-com (
+        sequence: 13
+        display: EBS
+        return: santiago.bastida@oracle.com
+    )
+
+    entry shiva-oleti-oracle-com (
+        sequence: 1
+        display: Analytics
+        return: shiva.oleti@oracle.com
+    )
+
+    entry steven-lemme-oracle-com (
+        sequence: 45
+        display: OCI O&M
+        return: steven.lemme@oracle.com
+    )
+
+)
+
+lov workshop-council-id (
+    name: WORKSHOP_COUNCIL_ID
+    source {
+        tableName: WORKSHOP_COUNCIL
+    }
+    columnMapping {
+        return: ID
+        display: NAME
+        defaultSort: NAME
+    }
+)
+
+lov workshop-creator-group (
+    name: WORKSHOP_CREATOR_GROUP
+    source {
+        location: staticValues
+    }
+
+    entry analytics-product-management (
+        sequence: 9
+        display: Analytics Product Management
+        return: Analytics Product Management
+    )
+
+    entry ateam (
+        sequence: 34
+        display: ATeam
+        return: ATeam
+    )
+
+    entry consulting (
+        sequence: 12
+        display: Consulting
+        return: Consulting
+    )
+
+    entry db-product-management (
+        sequence: 7
+        display: DB Product Management
+        return: DB Product Management
+    )
+
+    entry db-product-management-pts (
+        sequence: 12
+        display: DB Product Management - PTS
+        return: DB Product Management - PTS
+    )
+
+    entry demo-services (
+        sequence: 11
+        display: Demo Services
+        return: Demo Services
+    )
+
+    entry developer-adoption (
+        sequence: 6
+        display: Developer Adoption
+        return: Developer Adoption
+    )
+
+    entry docs-team (
+        sequence: 24
+        display: DOCS (User Assistance) Team
+        return: Docs Team
+    )
+
+    entry em-product-management (
+        sequence: 9
+        display: EM Product Management
+        return: EM Product Management
+    )
+
+    entry emea-account-cloud-engineers (
+        sequence: 3
+        display: EMEA Account Cloud Engineers
+        return: EMEA Account Cloud Engineers
+    )
+
+    entry emea-domain-specialists (
+        sequence: 3
+        display: EMEA Domain Specialists
+        return: EMEA Domain Specialists
+    )
+
+    entry emea-sales (
+        sequence: 4
+        display: EMEA Sales
+        return: EMEA Sales
+    )
+
+    entry emea-tse (
+        sequence: 3
+        display: EMEA TSE
+        return: EMEA TSE
+    )
+
+    entry japac-se (
+        sequence: 5
+        display: JAPAC Sales
+        return: JAPAC SE
+    )
+
+    entry lad-se (
+        sequence: 6
+        display: LAD Sales
+        return: LAD SE
+    )
+
+    entry marketing (
+        sequence: 11
+        display: Marketing
+        return: Marketing
+    )
+
+    entry na-cloud-se (
+        sequence: 2
+        display: NA Cloud Sales
+        return: NA Cloud SE
+    )
+
+    entry na-license-se (
+        sequence: 1
+        display: NA License Sales
+        return: NA License SE
+    )
+
+    entry oci-data-science-product-management (
+        sequence: 8
+        display: OCI - Data Science Product Management
+        return: OCI - Data Science Product Management
+    )
+
+    entry oci-observability-and-management (
+        sequence: 9
+        display: OCI Observability and Management
+        return: OCI Observability and Management
+    )
+
+    entry oci-product-management (
+        sequence: 8
+        display: OCI Product Management
+        return: OCI Product Management
+    )
+
+    entry oracle-partner (
+        sequence: 12
+        display: Oracle Partner
+        return: Oracle Partner
+    )
+
+    entry oracle-solution-center (
+        sequence: 6
+        display: Oracle Solution Center (OSC)
+        return: Oracle Solution Center
+    )
+
+    entry ospa (
+        sequence: 13
+        display: OSPA
+        return: OSPA
+    )
+
+    entry other (
+        sequence: 35
+        display: Other (My Team is not Listed)
+        return: Other
+    )
+
+    entry other-product-management (
+        sequence: 10
+        display: Other Product Management
+        return: Other Product Management
+    )
+
+    entry support (
+        sequence: 11
+        display: Support
+        return: Support
+    )
+
+)
+
+lov workshop-list (
+    name: WORKSHOP_LIST
+    source {
+        type: sqlQuery
+        sqlQuery: select rowid, id, name from workshops
+    }
+    columnMapping {
+        return: ROWID
+        display: NAME
+        defaultSort: NAME
+    }
+)
+
+lov workshop-list-return-id (
+    name: WORKSHOP_LIST_RETURN_ID
+    source {
+        type: sqlQuery
+        sqlQuery: select rowid, id, name||' - WMS ID# '||id nameid from workshops
+    }
+    columnMapping {
+        return: ID
+        display: NAMEID
+        defaultSort: NAMEID
+    }
+)
+
+lov workshop-ohc-status (
+    name: WORKSHOP_OHC_STATUS
+    source {
+        location: staticValues
+    }
+
+    entry ohc-conversion (
+        sequence: 2
+        display: OHC Conversion
+        return: OHC Conversion
+    )
+
+    entry ohc-issue (
+        sequence: 10
+        display: OHC Issue
+        return: OHC Issue
+    )
+
+    entry ohc-production (
+        sequence: 6
+        display: OHC Production
+        return: OHC Production
+    )
+
+    entry ohc-source-verification (
+        sequence: 1
+        display: OHC Source Verification
+        return: OHC Source Verification
+    )
+
+    entry ohc-tutorial-in-development (
+        sequence: 3
+        display: OHC Tutorial In Development
+        return: OHC Tutorial In Development
+    )
+
+    entry ohc-validation (
+        sequence: 4
+        display: OHC Validation
+        return: OHC Validation
+    )
+
+    entry ohc-validation-complete (
+        sequence: 5
+        display: OHC Validation Complete
+        return: OHC Validation Complete
+    )
+
+    entry remove-from-ohc (
+        sequence: 12
+        display: Remove from OHC
+        return: Remove from OHC
+    )
+
+    entry request-try-it-button (
+        sequence: 7
+        display: Request Try It Button
+        return: Request Try It Button
+    )
+
+    entry try-it-button-complete (
+        sequence: 9
+        display: Try It Button Complete
+        return: Try It Button Complete
+    )
+
+    entry try-it-button-in-progress (
+        sequence: 8
+        display: Try It Button In Progress
+        return: Try It Button In Progress
+    )
+
+)
+
+lov workshop-stakeholder-id (
+    name: WORKSHOP_STAKEHOLDER_ID
+    source {
+        tableName: WORKSHOP_STAKEHOLDER
+    }
+    columnMapping {
+        return: ID
+        display: NAME
+        defaultSort: NAME
+    }
+)
+
+lov workshop-status (
+    name: WORKSHOP_STATUS
+    source {
+        location: staticValues
+    }
+
+    entry add-to-livelabs (
+        sequence: 9
+        display: Add to LiveLabs
+        return: Add to LiveLabs
+    )
+
+    entry approved (
+        sequence: 3
+        display: Approved
+        return: Approved
+    )
+
+    entry cancelled (
+        sequence: 17
+        display: Cancelled
+        return: Cancelled
+    )
+
+    entry green-button-complete (
+        sequence: 12
+        display: Green Button Complete
+        return: Green Button Complete
+    )
+
+    entry green-button-in-progress (
+        sequence: 12
+        display: Green Button in Progress
+        return: Green Button in Progress
+    )
+
+    entry issue (
+        sequence: 16
+        display: Issue
+        return: Issue
+    )
+
+    entry more-info-needed (
+        sequence: 2
+        display: More Info Needed
+        return: More Info Needed
+    )
+
+    entry moving-to-github (
+        sequence: 5
+        display: Moving to GitHub
+        return: Moving to GitHub
+    )
+
+    entry on-hold (
+        sequence: 16
+        display: On Hold
+        return: On Hold
+    )
+
+    entry production (
+        sequence: 14
+        display: Production
+        return: Production
+    )
+
+    entry production-free-tier (
+        sequence: 10
+        display: Production - FREETIER
+        return: Production - Free Tier
+    )
+
+    entry production-hidden-event (
+        sequence: 10
+        display: Production - HIDDEN
+        return: Production - Hidden Event
+    )
+
+    entry production-livelabs (
+        sequence: 13
+        display: Production - LIVELABS
+        return: Production - LiveLabs
+    )
+
+    entry production-paid (
+        sequence: 10
+        display: Production - PAID
+        return: Production - Paid
+    )
+
+    entry qa-verification-complete (
+        sequence: 8
+        display: QA Verification Complete
+        return: QA Verification Complete
+    )
+
+    entry quarterly-qa (
+        sequence: 15
+        display: Quarterly QA
+        return: Quarterly QA
+    )
+
+    entry quarterly-qa-complete (
+        sequence: 15
+        display: Quarterly QA Complete
+        return: Quarterly QA Complete
+    )
+
+    entry quarterly-qa-verification-complete (
+        sequence: 15
+        display: Quarterly QA Verification Complete
+        return: Quarterly QA Verification Complete
+    )
+
+    entry removed-from-livelabs-app (
+        sequence: 21
+        display: Removed from LiveLabs App
+        return: Removed from LiveLabs App
+    )
+
+    entry request-green-button (
+        sequence: 11
+        display: Request Green Button
+        return: Request Green Button
+    )
+
+    entry self-qa (
+        sequence: 6
+        display: Self QA
+        return: Self QA
+    )
+
+    entry self-qa-complete (
+        sequence: 7
+        display: Self QA Complete
+        return: Self QA Complete
+    )
+
+    entry submitted (
+        sequence: 1
+        display: Submitted
+        return: Submitted
+    )
+
+    entry under-council-review (
+        sequence: 2
+        display: Under Council Review
+        return: Under Council Review
+    )
+
+    entry workshop-in-development (
+        sequence: 4
+        display: Workshop In Development
+        return: Workshop In Development
+    )
+
+)
+
+lov workshop-status-approve (
+    name: WORKSHOP_STATUS_APPROVE
+    source {
+        location: staticValues
+    }
+
+    entry approved (
+        sequence: 1
+        display: Approved
+        return: Approved
+    )
+
+    entry more-info-needed (
+        sequence: 2
+        display: More Info Needed
+        return: More Info Needed
+    )
+
+)
+
+lov workshop-status-conditional (
+    name: WORKSHOP_STATUS_CONDITIONAL
+    source {
+        location: staticValues
+    }
+
+    entry add-to-livelabs (
+        sequence: 9
+        display: Add to LiveLabs
+        return: Add to LiveLabs
+    )
+
+    entry approved (
+        sequence: 3
+        display: Approved
+        return: Approved
+    )
+
+    entry cancelled (
+        sequence: 17
+        display: Cancelled
+        return: Cancelled
+    )
+
+    entry green-button-complete (
+        sequence: 12
+        display: Green Button Complete
+        return: Green Button Complete
+    )
+
+    entry green-button-in-progress (
+        sequence: 12
+        display: Green Button in Progress
+        return: Green Button in Progress
+    )
+
+    entry issue (
+        sequence: 15
+        display: Issue
+        return: Issue
+    )
+
+    entry livelabs-complete (
+        sequence: 13
+        display: Production - LIVELABS
+        return: LiveLabs Complete
+    )
+
+    entry more-info-needed (
+        sequence: 2
+        display: More Info Needed
+        return: More Info Needed
+    )
+
+    entry moving-to-github (
+        sequence: 5
+        display: Moving to GitHub
+        return: Moving to GitHub
+    )
+
+    entry on-hold (
+        sequence: 16
+        display: On Hold
+        return: On Hold
+    )
+
+    entry production (
+        sequence: 14
+        display: Complete
+        return: Production
+    )
+
+    entry production-free-tier (
+        sequence: 10
+        display: Production - FREETIER
+        return: Production - Free Tier
+    )
+
+    entry production-hidden-event (
+        sequence: 10
+        display: Production - HIDDEN
+        return: Production - Hidden Event
+    )
+
+    entry production-paid (
+        sequence: 10
+        display: Production - PAID
+        return: Production - Paid
+    )
+
+    entry qa-verification-complete (
+        sequence: 8
+        display: QA Verification Complete
+        return: QA Verification Complete
+    )
+
+    entry quarterly-qa (
+        sequence: 18
+        display: Quarterly QA
+        return: Quarterly QA
+    )
+
+    entry quarterly-qa-complete (
+        sequence: 19
+        display: Quarterly QA Complete
+        return: Quarterly QA Complete
+    )
+
+    entry removed-from-livelabs-app (
+        sequence: 20
+        display: Removed from LiveLabs App
+        return: Removed from LiveLabs App
+    )
+
+    entry request-green-button (
+        sequence: 11
+        display: Request Green Button
+        return: Request Green Button
+    )
+
+    entry self-qa (
+        sequence: 6
+        display: Self QA
+        return: Self QA
+    )
+
+    entry self-qa-complete (
+        sequence: 7
+        display: Self QA Complete
+        return: Self QA Complete
+    )
+
+    entry submitted (
+        sequence: 1
+        display: Submitted
+        return: Submitted
+    )
+
+    entry under-council-review (
+        sequence: 2
+        display: Under Council Review
+        return: Under Council Review
+    )
+
+    entry workshop-in-development (
+        sequence: 4
+        display: Workshop In Development
+        return: Workshop In Development
+    )
+
+)
+
+lov workshop-status-non-admin (
+    name: WORKSHOP_STATUS_NON-ADMIN
+    source {
+        location: staticValues
+    }
+
+    entry cancelled (
+        sequence: 16
+        display: Cancelled
+        return: Cancelled
+    )
+
+    entry issue (
+        sequence: 13
+        display: Issue
+        return: Issue
+    )
+
+    entry moving-to-github (
+        sequence: 5
+        display: Moving to GitHub
+        return: Moving to GitHub
+    )
+
+    entry on-hold (
+        sequence: 14
+        display: On Hold
+        return: On Hold
+    )
+
+    entry please-delete (
+        sequence: 25
+        display: Please Delete
+        return: Please Delete
+    )
+
+    entry quarterly-qa (
+        sequence: 9
+        display: Quarterly QA
+        return: Quarterly QA
+    )
+
+    entry quarterly-qa-complete (
+        sequence: 10
+        display: Quarterly QA Complete
+        return: Quarterly QA Complete
+    )
+
+    entry request-green-button (
+        sequence: 8
+        display: Request Green Button
+        return: Request Green Button
+    )
+
+    entry self-qa (
+        sequence: 6
+        display: Self QA
+        return: Self QA
+    )
+
+    entry self-qa-complete (
+        sequence: 7
+        display: Self QA Complete
+        return: Self QA Complete
+    )
+
+    entry workshop-in-development (
+        sequence: 4
+        display: Workshop In Development
+        return: Workshop In Development
+    )
+
+)
+
+lov workshop-status-stakeholder (
+    name: WORKSHOP_STATUS_STAKEHOLDER
+    source {
+        location: staticValues
+    }
+
+    entry add-to-livelabs (
+        sequence: 12
+        display: Add to LiveLabs
+        return: Add to LiveLabs
+    )
+
+    entry approved (
+        sequence: 4
+        display: Approved
+        return: Approved
+    )
+
+    entry cancelled (
+        sequence: 19
+        display: Cancelled
+        return: Cancelled
+    )
+
+    entry issue (
+        sequence: 17
+        display: Issue
+        return: Issue
+    )
+
+    entry more-info-needed (
+        sequence: 3
+        display: More Info Needed
+        return: More Info Needed
+    )
+
+    entry moving-to-github (
+        sequence: 6
+        display: Moving to GitHub
+        return: Moving to GitHub
+    )
+
+    entry on-hold (
+        sequence: 18
+        display: On Hold
+        return: On Hold
+    )
+
+    entry qa-verification-complete (
+        sequence: 10
+        display: QA Verification Complete
+        return: QA Verification Complete
+    )
+
+    entry quarterly-qa (
+        sequence: 14
+        display: Quarterly QA
+        return: Quarterly QA
+    )
+
+    entry quarterly-qa-complete (
+        sequence: 15
+        display: Quarterly QA Complete
+        return: Quarterly QA Complete
+    )
+
+    entry quarterly-qa-verification-complete (
+        sequence: 16
+        display: Quarterly QA Verification Complete
+        return: Quarterly QA Verification Complete
+    )
+
+    entry removed-from-livelabs-app (
+        sequence: 21
+        display: Removed from LiveLabs App
+        return: Removed from LiveLabs App
+    )
+
+    entry request-green-button (
+        sequence: 13
+        display: Request Green Button
+        return: Request Green Button
+    )
+
+    entry self-qa (
+        sequence: 7
+        display: Self QA
+        return: Self QA
+    )
+
+    entry self-qa-complete (
+        sequence: 8
+        display: Self QA Complete
+        return: Self QA Complete
+    )
+
+    entry submitted (
+        sequence: 1
+        display: Submitted
+        return: Submitted
+    )
+
+    entry under-council-review (
+        sequence: 2
+        display: Under Council Review
+        return: Under Council Review
+    )
+
+    entry workshop-in-development (
+        sequence: 5
+        display: Workshop In Development
+        return: Workshop In Development
+    )
+
+)
+
+lov workshop-status-test (
+    name: WORKSHOP_STATUS_TEST
+    source {
+        location: staticValues
+    }
+
+    entry approved (
+        sequence: 3
+        display: Approved
+        return: Approved
+    )
+
+    entry completed (
+        sequence: 7
+        display: Completed
+        return: Completed
+    )
+
+    entry delete-requested (
+        sequence: 10
+        display: Delete Requested
+        return: Delete Requested
+    )
+
+    entry in-development (
+        sequence: 4
+        display: In Development
+        return: In Development
+    )
+
+    entry more-info-needed (
+        sequence: 2
+        display: More Info Needed
+        return: More Info Needed
+    )
+
+    entry quarterly-qa (
+        sequence: 8
+        display: Quarterly QA
+        return: Quarterly QA
+    )
+
+    entry quarterly-qa-complete (
+        sequence: 9
+        display: Quarterly QA Complete
+        return: Quarterly QA Complete
+    )
+
+    entry self-qa (
+        sequence: 5
+        display: Self QA
+        return: Self QA
+    )
+
+    entry self-qa-complete (
+        sequence: 6
+        display: Self QA Complete
+        return: Self QA Complete
+    )
+
+    entry submitted (
+        sequence: 1
+        display: Submitted
+        return: Submitted
+    )
+
+)
+
+lov yesno (
+    name: YESNO
+    source {
+        location: staticValues
+    }
+
+    entry lov_data (
+        sequence: 1
+        display: Yes
+        return: 0
+    )
+
+    entry lov_data-2 (
+        sequence: 2
+        display: No
+        return: 1
+    )
+
+)
+
+lov yn-lov (
+    name: YN_LOV
+    source {
+        location: staticValues
+    }
+
+    entry n (
+        sequence: 2
+        display: N
+        return: N
+    )
+
+    entry y (
+        sequence: 1
+        display: Y
+        return: Y
+    )
+
+)
+

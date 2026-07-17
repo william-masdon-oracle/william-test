@@ -1,0 +1,846 @@
+page 8000 (
+    name: OSPA/OHC Publish Edit
+    alias: OSPA-OHC-PUBLISH-EDIT
+    title: OSPA/OHC Publish Edit
+    pageGroup: @administration
+    appearance {
+        pageTemplate: @standard-custom
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region ohc (
+        name: OHC
+        type: staticContent
+        source {
+            htmlCode: <h1>OHC Publishing</h1>
+        }
+        layout {
+            sequence: 30
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        serverSideCondition {
+            type: rowsReturned
+            sqlQuery: select * from workshop_person_role where upper(:APP_USER) = upper(email) and ohc_publisher_flg = 1;
+        }
+    )
+
+    region ohc-publish-edit (
+        name: OHC Publish Edit
+        type: interactiveGrid
+        source {
+            location: localDatabase
+            tableName: WORKSHOP_OHC
+        }
+        layout {
+            sequence: 40
+            slot: contentBody
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        serverSideCondition {
+            type: rowsReturned
+            sqlQuery: select * from workshop_person_role where upper(:APP_USER) = upper(email) and ohc_publisher_flg = 1;
+        }
+        edit {
+            enabled: true
+            allowedOperations: [
+                add
+                update
+                delete
+            ]
+        }
+        pagination {
+            type: page
+        }
+        toolbar {
+            controls: [
+                searchCol
+                searchField
+                actionsMenu
+                resetButton
+                saveButton
+            ]
+        }
+        download {
+            formats: [
+                csv
+                html
+                excel
+                pdf
+            ]
+        }
+        advanced {
+            savedReportMappingIdentifier: 10083434921920821223
+        }
+
+        savedReport 102461827 (
+            visibility: primary
+            view {
+                default: grid
+            }
+            singleRowView {
+                displayedColumns: true
+            }
+
+            displayColumn (
+                column: @APEX$ROW_ACTION
+                layout {
+                    sequence: 0
+                }
+            )
+
+            displayColumn (
+                column: @ID
+                layout {
+                    width: 67.5
+                    sequence: 2
+                }
+            )
+
+            displayColumn (
+                column: @WORKSHOP_ID
+                layout {
+                    width: 480.094
+                    sequence: 3
+                }
+            )
+
+            displayColumn (
+                column: @PUBLISH_STATUS
+                layout {
+                    width: 139.094
+                    sequence: 4
+                }
+            )
+
+            displayColumn (
+                column: @PUBLISH_TYPE
+                layout {
+                    width: 95.0938
+                    sequence: 5
+                }
+            )
+
+            displayColumn (
+                column: @PRODUCTION_URL
+                layout {
+                    width: 351.062
+                    sequence: 6
+                }
+            )
+
+            displayColumn (
+                column: @TRANSLATE_FLG
+                layout {
+                    width: 77.1719
+                    sequence: 7
+                }
+            )
+
+        )
+
+        column APEX$ROW_ACTION (
+            type: actionsMenu
+            layout {
+                sequence: 20
+            }
+        )
+
+        column APEX$ROW_SELECTOR (
+            type: rowSelector
+            layout {
+                sequence: 10
+            }
+        )
+
+        column ID (
+            type: numberField
+            heading {
+                heading: OHC ID
+                alignment: end
+            }
+            settings {
+                numberAlignment: end
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 30
+                columnAlignment: end
+            }
+            validation {
+                valueRequired: true
+            }
+            source {
+                databaseColumn: ID
+                dataType: number
+                primaryKey: true
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column PRODUCTION_URL (
+            type: textField
+            heading {
+                heading: Production URL
+            }
+            layout {
+                sequence: 70
+            }
+            validation {
+                maxLength: 1000
+            }
+            source {
+                databaseColumn: PRODUCTION_URL
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column PUBLISH_STATUS (
+            type: selectList
+            heading {
+                heading: Publish Status
+            }
+            lov {
+                type: sharedComponent
+                lov: @publish-status
+                displayExtraValues: false
+                displayNullValue: false
+            }
+            layout {
+                sequence: 50
+            }
+            source {
+                databaseColumn: PUBLISH_STATUS
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: useLov
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column PUBLISH_TYPE (
+            type: selectList
+            heading {
+                heading: Publish Type
+            }
+            lov {
+                type: sharedComponent
+                lov: @publish-type
+                displayExtraValues: false
+            }
+            layout {
+                sequence: 60
+            }
+            source {
+                databaseColumn: PUBLISH_TYPE
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: useLov
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column TRANSLATE_FLG (
+            type: switch
+            heading {
+                heading: Translate
+            }
+            settings {
+                useDefaults: false
+                onValue: Y
+                onLabel: Yes
+                offValue: N
+                offLabel: No
+            }
+            layout {
+                sequence: 80
+            }
+            source {
+                databaseColumn: TRANSLATE_FLG
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column WORKSHOP_ID (
+            type: popupLov
+            heading {
+                heading: Workshop
+            }
+            lov {
+                type: sqlQuery
+                sqlQuery: select title || ' (WMS ID: ' || id || ')', id from workshop;
+                displayExtraValues: false
+                displayNullValue: false
+            }
+            layout {
+                sequence: 40
+            }
+            validation {
+                valueRequired: true
+            }
+            source {
+                databaseColumn: WORKSHOP_ID
+                dataType: number
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: useLov
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: OHC Publish Edit
+        }
+    )
+
+    region ospa (
+        name: OSPA
+        type: staticContent
+        source {
+            htmlCode: <h1>OSPA Publishing</h1>
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        serverSideCondition {
+            type: rowsReturned
+            sqlQuery: select * from workshop_person_role where upper(:APP_USER) = upper(email) and luna_publisher_flg = 1;
+        }
+    )
+
+    region ospa-publish-edit (
+        name: OSPA Publish Edit
+        type: interactiveGrid
+        source {
+            location: localDatabase
+            tableName: WORKSHOP_OSPA
+        }
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        serverSideCondition {
+            type: rowsReturned
+            sqlQuery: select * from workshop_person_role where upper(:APP_USER) = upper(email) and luna_publisher_flg = 1;
+        }
+        edit {
+            enabled: true
+            allowedOperations: [
+                add
+                update
+                delete
+            ]
+        }
+        pagination {
+            type: page
+        }
+        toolbar {
+            controls: [
+                searchCol
+                searchField
+                actionsMenu
+                resetButton
+                saveButton
+            ]
+        }
+        download {
+            formats: [
+                csv
+                html
+                excel
+                pdf
+            ]
+        }
+        advanced {
+            savedReportMappingIdentifier: 10083433620979821210
+        }
+
+        savedReport 102461820 (
+            visibility: primary
+            view {
+                default: grid
+            }
+            singleRowView {
+                displayedColumns: true
+            }
+
+            displayColumn (
+                column: @APEX$ROW_ACTION
+                layout {
+                    sequence: 0
+                }
+            )
+
+            displayColumn (
+                column: @ID
+                layout {
+                    width: 58.25
+                    sequence: 2
+                }
+            )
+
+            displayColumn (
+                column: @WORKSHOP_ID
+                layout {
+                    width: 342.672
+                    sequence: 3
+                }
+            )
+
+            displayColumn (
+                column: @PUBLISH_STATUS
+                layout {
+                    width: 118.672
+                    sequence: 4
+                }
+            )
+
+            displayColumn (
+                column: @PUBLISH_TYPE
+                layout {
+                    width: 90.672
+                    sequence: 5
+                }
+            )
+
+            displayColumn (
+                column: @PRODUCTION_URL
+                layout {
+                    width: 169.312
+                    sequence: 7
+                }
+            )
+
+            displayColumn (
+                column: @PUBLISH_AUDIENCE
+                layout {
+                    width: 128.672
+                    sequence: 6
+                }
+            )
+
+            displayColumn (
+                column: @LAB_TIME
+                layout {
+                    width: 76.6406
+                    sequence: 9
+                }
+            )
+
+            displayColumn (
+                column: @PAGE_OPTIONS
+                layout {
+                    width: 118.797
+                    sequence: 10
+                }
+            )
+
+            displayColumn (
+                column: @GITLAB_URL
+                layout {
+                    width: 152.344
+                    sequence: 8
+                }
+            )
+
+        )
+
+        column APEX$ROW_ACTION (
+            type: actionsMenu
+            layout {
+                sequence: 20
+            }
+        )
+
+        column APEX$ROW_SELECTOR (
+            type: rowSelector
+            layout {
+                sequence: 10
+            }
+        )
+
+        column GITLAB_URL (
+            type: textField
+            heading {
+                heading: Gitlab URL
+            }
+            layout {
+                sequence: 90
+            }
+            validation {
+                maxLength: 1000
+            }
+            source {
+                databaseColumn: GITLAB_URL
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column ID (
+            type: numberField
+            heading {
+                heading: OSPA ID
+                alignment: end
+            }
+            settings {
+                numberAlignment: end
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 30
+                columnAlignment: end
+            }
+            validation {
+                valueRequired: true
+            }
+            source {
+                databaseColumn: ID
+                dataType: number
+                primaryKey: true
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column LAB_TIME (
+            type: numberField
+            heading {
+                heading: Lab Time
+                alignment: end
+            }
+            settings {
+                numberAlignment: end
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 100
+                columnAlignment: end
+            }
+            source {
+                databaseColumn: LAB_TIME
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column PAGE_OPTIONS (
+            type: checkboxGroup
+            heading {
+                heading: Page Options
+            }
+            lov {
+                type: sharedComponent
+                lov: @page-options-ospa
+            }
+            layout {
+                sequence: 110
+            }
+            source {
+                databaseColumn: PAGE_OPTIONS
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: useLov
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column PRODUCTION_URL (
+            type: textField
+            heading {
+                heading: Production URL
+            }
+            layout {
+                sequence: 70
+            }
+            validation {
+                maxLength: 1000
+            }
+            source {
+                databaseColumn: PRODUCTION_URL
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column PUBLISH_AUDIENCE (
+            type: selectList
+            heading {
+                heading: Publish Audience
+            }
+            lov {
+                type: sharedComponent
+                lov: @lab-audience-ospa
+                displayExtraValues: false
+            }
+            layout {
+                sequence: 80
+            }
+            source {
+                databaseColumn: PUBLISH_AUDIENCE
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: useLov
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column PUBLISH_STATUS (
+            type: selectList
+            heading {
+                heading: Publish Status
+            }
+            lov {
+                type: sharedComponent
+                lov: @publish-status
+                displayExtraValues: false
+                displayNullValue: false
+            }
+            layout {
+                sequence: 50
+            }
+            source {
+                databaseColumn: PUBLISH_STATUS
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: useLov
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column PUBLISH_TYPE (
+            type: selectList
+            heading {
+                heading: Publish Type
+            }
+            lov {
+                type: sharedComponent
+                lov: @publish-type-ospa
+                displayExtraValues: false
+            }
+            layout {
+                sequence: 60
+            }
+            source {
+                databaseColumn: PUBLISH_TYPE
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: useLov
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column WORKSHOP_ID (
+            type: popupLov
+            heading {
+                heading: Workshop
+            }
+            lov {
+                type: sqlQuery
+                sqlQuery: select title || ' (WMS ID: ' || id || ')', id from workshop;
+                displayExtraValues: false
+                displayNullValue: false
+            }
+            layout {
+                sequence: 40
+            }
+            validation {
+                valueRequired: true
+            }
+            source {
+                databaseColumn: WORKSHOP_ID
+                dataType: number
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: useLov
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: OSPA Publish Edit
+        }
+    )
+
+    process ohc-publish-edit-save-interactive-grid-data (
+        name: OHC Publish Edit - Save Interactive Grid Data
+        type: interactiveGridAutoRowProcessing
+        editableRegion: @ohc-publish-edit
+        execution {
+            sequence: 20
+        }
+        advanced {
+            executionMappingIdentifier: 42502103820194130341
+        }
+    )
+
+    process ospa-publish-edit-save-interactive-grid-data (
+        name: OSPA Publish Edit - Save Interactive Grid Data
+        type: interactiveGridAutoRowProcessing
+        editableRegion: @ospa-publish-edit
+        execution {
+            sequence: 10
+        }
+        advanced {
+            executionMappingIdentifier: 42502101381906130317
+        }
+    )
+
+)
+

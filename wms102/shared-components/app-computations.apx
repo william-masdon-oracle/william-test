@@ -1,0 +1,24 @@
+appComputation wms-access (
+    itemName: WMS_ACCESS
+    execution {
+        sequence: 10
+        point: beforeHeader
+    }
+    computation {
+        type: sqlQuerySingleValue
+        sqlQuery:
+            ```sql
+            select substr(coalesce( (
+                                   select listagg (role_name, ':') within group (order by role_name)
+                                     from ( select distinct role_name
+                                              from wms_user_roles
+                                             where user_name = lower(:APP_USER) )
+                                         ) ,''),1,4000) ROLE_LIST
+             from dual  ;
+            ```
+    }
+    error {
+        errorMessage: Unable to create WMS_ACCESS global variable assingment.
+    }
+)
+

@@ -1,0 +1,2104 @@
+page 81 (
+    name: Print Workshop V2
+    alias: PRINT-WORKSHOP-V2
+    title: Print Workshop V2
+    appearance {
+        pageTemplate: @standard-custom
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region new (
+        name: New
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: contentBody
+            startNewRow: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region new-2 (
+        name: New
+        type: form
+        source {
+            location: localDatabase
+            tableName: WORKSHOPS
+            whereClause: ID=3300
+            pageItemsToSubmit: P81_WSID
+        }
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    pageItem P81_ABSTRACT (
+        type: textarea
+        label {
+            label: Abstract
+            alignment: left
+        }
+        layout {
+            sequence: 650
+            region: @new-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+            height: 5
+        }
+        validation {
+            maxLength: 4000
+        }
+        source {
+            formRegion: @new-2
+            column: ABSTRACT
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P81_ACTIVE_FLG (
+        type: numberField
+        label {
+            label: Active Flg
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 40
+            region: @new-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            formRegion: @new-2
+            column: ACTIVE_FLG
+            dataType: number
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P81_ALWAYSFREE_URL (
+        type: textarea
+        label {
+            label: Alwaysfree Url
+            alignment: left
+        }
+        layout {
+            sequence: 170
+            region: @new-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+            height: 5
+        }
+        validation {
+            maxLength: 600
+        }
+        source {
+            formRegion: @new-2
+            column: ALWAYSFREE_URL
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P81_ALWAYS_FREE_FLG (
+        type: numberField
+        label {
+            label: Always Free Flg
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 600
+            region: @new-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        source {
+            formRegion: @new-2
+            column: ALWAYS_FREE_FLG
+            dataType: number
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P81_ALWAYS_FREE_ID (
+        type: numberField
+        label {
+            label: Always Free Id
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 470
+            region: @new-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        source {
+            formRegion: @new-2
+            column: ALWAYS_FREE_ID
+            dataType: number
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P81_APPROVED_FLG (
+        type: numberField
+        label {
+            label: Approved Flg
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 250
+            region: @new-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        source {
+            formRegion: @new-2
+            column: APPROVED_FLG
+            dataType: number
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P81_APP_LISTING_OCID (
+        type: textarea
+        label {
+            label: App Listing Ocid
+            alignment: left
+        }
+        layout {
+            sequence: 140
+            region: @new-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+            height: 5
+        }
+        validation {
+            maxLength: 300
+        }
+        source {
+            formRegion: @new-2
+            column: APP_LISTING_OCID
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P81_AUTHOR_NAME (
+        type: textarea
+        label {
+            label: Author Name
+            alignment: left
+        }
+        layout {
+            sequence: 120
+            region: @new-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+            height: 5
+        }
+        validation {
+            maxLength: 350
+        }
+        source {
+            formRegion: @new-2
+            column: AUTHOR_NAME
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P81_COMPLETION_DATE (
+        type: datePickerJquery
+        label {
+            label: Completion Date
+            alignment: left
+        }
+        layout {
+            sequence: 330
+            region: @new-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        source {
+            formRegion: @new-2
+            column: COMPLETION_DATE
+            dataType: date
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P81_COUNCIL_OBSERVER_CONTACT (
+        type: textarea
+        label {
+            label: Workshop Council Approver
+            alignment: left
+        }
+        layout {
+            sequence: 640
+            region: @new-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+            height: 5
+        }
+        validation {
+            maxLength: 100
+        }
+        source {
+            formRegion: @new-2
+            column: COUNCIL_OBSERVER_CONTACT
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P81_DEPLOYMENT_TAG (
+        type: textField
+        label {
+            label: Deployment Tag
+            alignment: left
+        }
+        layout {
+            sequence: 280
+            region: @new-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            maxLength: 80
+        }
+        source {
+            formRegion: @new-2
+            column: DEPLOYMENT_TAG
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P81_DESCRIPTION (
+        type: textarea
+        label {
+            label: Description
+            alignment: left
+        }
+        layout {
+            sequence: 20
+            region: @new-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+            height: 5
+        }
+        validation {
+            maxLength: 4000
+        }
+        source {
+            formRegion: @new-2
+            column: DESCRIPTION
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P81_EMAIL_FROM_ADDRESS (
+        type: textarea
+        label {
+            label: Workshop Owner Email
+            alignment: left
+        }
+        layout {
+            sequence: 130
+            region: @new-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+            height: 5
+        }
+        validation {
+            maxLength: 100
+        }
+        source {
+            formRegion: @new-2
+            column: EMAIL_FROM_ADDRESS
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P81_FOCUS_TAG (
+        type: textField
+        label {
+            label: Focus Tag
+            alignment: left
+        }
+        layout {
+            sequence: 310
+            region: @new-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            maxLength: 80
+        }
+        source {
+            formRegion: @new-2
+            column: FOCUS_TAG
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P81_FREETIER_ID (
+        type: numberField
+        label {
+            label: Freetier Id
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 520
+            region: @new-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        source {
+            formRegion: @new-2
+            column: FREETIER_ID
+            dataType: number
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P81_FREETIER_URL (
+        type: textarea
+        label {
+            label: Freetier Url
+            alignment: left
+        }
+        layout {
+            sequence: 440
+            region: @new-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+            height: 5
+        }
+        validation {
+            maxLength: 1000
+        }
+        source {
+            formRegion: @new-2
+            column: FREETIER_URL
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P81_FREE_TIER_FLG (
+        type: numberField
+        label {
+            label: Free Tier Flg
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 610
+            region: @new-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        source {
+            formRegion: @new-2
+            column: FREE_TIER_FLG
+            dataType: number
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P81_GENERAL_NOTES (
+        type: textarea
+        label {
+            label: General Notes
+            alignment: left
+        }
+        layout {
+            sequence: 410
+            region: @new-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+            height: 5
+        }
+        validation {
+            maxLength: 4000
+        }
+        source {
+            formRegion: @new-2
+            column: GENERAL_NOTES
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P81_GITHUB_ADDRESS (
+        type: textarea
+        label {
+            label: Github Address
+            alignment: left
+        }
+        layout {
+            sequence: 30
+            region: @new-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+            height: 5
+        }
+        validation {
+            maxLength: 4000
+        }
+        source {
+            formRegion: @new-2
+            column: GITHUB_ADDRESS
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P81_GITHUB_LL_URL (
+        type: textarea
+        label {
+            label: Github Ll Url
+            alignment: left
+        }
+        layout {
+            sequence: 550
+            region: @new-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+            height: 5
+        }
+        validation {
+            maxLength: 300
+        }
+        source {
+            formRegion: @new-2
+            column: GITHUB_LL_URL
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P81_ID (
+        type: numberField
+        label {
+            label: Id
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 220
+            region: @new-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            formRegion: @new-2
+            column: ID
+            dataType: number
+            primaryKey: true
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P81_KEY3 (
+        type: textarea
+        label {
+            label: Key3
+            alignment: left
+        }
+        layout {
+            sequence: 150
+            region: @new-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+            height: 5
+        }
+        validation {
+            maxLength: 400
+        }
+        source {
+            formRegion: @new-2
+            column: KEY3
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P81_KEY_ORACLE_CONTACT_1 (
+        type: textarea
+        label {
+            label: Key Oracle Contact 1
+            alignment: left
+        }
+        layout {
+            sequence: 420
+            region: @new-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+            height: 5
+        }
+        validation {
+            maxLength: 100
+        }
+        source {
+            formRegion: @new-2
+            column: KEY_ORACLE_CONTACT_1
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P81_KEY_ORACLE_CONTACT_2 (
+        type: textarea
+        label {
+            label: Key Oracle Contact 2
+            alignment: left
+        }
+        layout {
+            sequence: 430
+            region: @new-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+            height: 5
+        }
+        validation {
+            maxLength: 100
+        }
+        source {
+            formRegion: @new-2
+            column: KEY_ORACLE_CONTACT_2
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P81_LAST_UPDT_DTM (
+        type: datePickerJquery
+        label {
+            label: Last Updt Dtm
+            alignment: left
+        }
+        layout {
+            sequence: 50
+            region: @new-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        source {
+            formRegion: @new-2
+            column: LAST_UPDT_DTM
+            dataType: timestamp
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P81_LEVEL_TAG (
+        type: textField
+        label {
+            label: Level Tag
+            alignment: left
+        }
+        layout {
+            sequence: 270
+            region: @new-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            maxLength: 80
+        }
+        source {
+            formRegion: @new-2
+            column: LEVEL_TAG
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P81_LIVELABS_HOMEPAGE_URL (
+        type: textarea
+        label {
+            label: Livelabs Homepage Url
+            alignment: left
+        }
+        layout {
+            sequence: 110
+            region: @new-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+            height: 5
+        }
+        validation {
+            maxLength: 4000
+        }
+        source {
+            formRegion: @new-2
+            column: LIVELABS_HOMEPAGE_URL
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P81_LIVELABS_ID (
+        type: numberField
+        label {
+            label: Livelabs Id
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 530
+            region: @new-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        source {
+            formRegion: @new-2
+            column: LIVELABS_ID
+            dataType: number
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P81_LIVELABS_TIER_FLG (
+        type: numberField
+        label {
+            label: Livelabs Tier Flg
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 630
+            region: @new-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        source {
+            formRegion: @new-2
+            column: LIVELABS_TIER_FLG
+            dataType: number
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P81_LIVELABS_WORKSHOP_URL (
+        type: textarea
+        label {
+            label: Livelabs Workshop Url
+            alignment: left
+        }
+        layout {
+            sequence: 540
+            region: @new-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+            height: 5
+        }
+        validation {
+            maxLength: 300
+        }
+        source {
+            formRegion: @new-2
+            column: LIVELABS_WORKSHOP_URL
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P81_MANAGER_CONTACT (
+        type: textarea
+        label {
+            label: Manager Contact
+            alignment: left
+        }
+        layout {
+            sequence: 80
+            region: @new-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+            height: 5
+        }
+        validation {
+            maxLength: 4000
+        }
+        source {
+            formRegion: @new-2
+            column: MANAGER_CONTACT
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P81_MODERNIZER_RESOURCE (
+        type: textarea
+        label {
+            label: Maintained By
+            alignment: left
+        }
+        layout {
+            sequence: 360
+            region: @new-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+            height: 5
+        }
+        validation {
+            maxLength: 4000
+        }
+        source {
+            formRegion: @new-2
+            column: MODERNIZER_RESOURCE
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P81_MULTI_WORKSHOP_FLG (
+        type: numberField
+        label {
+            label: Multi Workshop Flg
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 230
+            region: @new-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        source {
+            formRegion: @new-2
+            column: MULTI_WORKSHOP_FLG
+            dataType: number
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P81_NAME (
+        type: textarea
+        label {
+            label: Name
+            alignment: left
+        }
+        layout {
+            sequence: 10
+            region: @new-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+            height: 5
+        }
+        validation {
+            maxLength: 100
+        }
+        source {
+            formRegion: @new-2
+            column: NAME
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P81_OBJECTIVES (
+        type: textarea
+        label {
+            label: Objectives
+            alignment: left
+        }
+        layout {
+            sequence: 260
+            region: @new-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+            height: 5
+        }
+        validation {
+            maxLength: 4000
+        }
+        source {
+            formRegion: @new-2
+            column: OBJECTIVES
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P81_OTHER_CONTACT (
+        type: textarea
+        label {
+            label: Other Contact
+            alignment: left
+        }
+        layout {
+            sequence: 510
+            region: @new-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+            height: 5
+        }
+        validation {
+            maxLength: 100
+        }
+        source {
+            formRegion: @new-2
+            column: OTHER_CONTACT
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P81_OUTCOME (
+        type: textarea
+        label {
+            label: Outcome
+            alignment: left
+        }
+        layout {
+            sequence: 570
+            region: @new-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+            height: 5
+        }
+        validation {
+            maxLength: 4000
+        }
+        source {
+            formRegion: @new-2
+            column: OUTCOME
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P81_PAID_ID (
+        type: numberField
+        label {
+            label: Paid Id
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 480
+            region: @new-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        source {
+            formRegion: @new-2
+            column: PAID_ID
+            dataType: number
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P81_PAID_TIER_FLG (
+        type: numberField
+        label {
+            label: Paid Tier Flg
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 620
+            region: @new-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        source {
+            formRegion: @new-2
+            column: PAID_TIER_FLG
+            dataType: number
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P81_PAID_URL (
+        type: textarea
+        label {
+            label: Paid Url
+            alignment: left
+        }
+        layout {
+            sequence: 180
+            region: @new-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+            height: 5
+        }
+        validation {
+            maxLength: 200
+        }
+        source {
+            formRegion: @new-2
+            column: PAID_URL
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P81_PRODUCT_TAG (
+        type: textField
+        label {
+            label: Product Tag
+            alignment: left
+        }
+        layout {
+            sequence: 300
+            region: @new-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            maxLength: 80
+        }
+        source {
+            formRegion: @new-2
+            column: PRODUCT_TAG
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P81_PROD_ID (
+        type: textarea
+        label {
+            label: Prod Id
+            alignment: left
+        }
+        layout {
+            sequence: 70
+            region: @new-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+            height: 5
+        }
+        validation {
+            maxLength: 400
+        }
+        source {
+            formRegion: @new-2
+            column: PROD_ID
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P81_QA1_RESOURCE (
+        type: textarea
+        label {
+            label: Qa1 Resource
+            alignment: left
+        }
+        layout {
+            sequence: 380
+            region: @new-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+            height: 5
+        }
+        validation {
+            maxLength: 100
+        }
+        source {
+            formRegion: @new-2
+            column: QA1_RESOURCE
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P81_QA2_RESOURCE (
+        type: textarea
+        label {
+            label: Qa2 Resource
+            alignment: left
+        }
+        layout {
+            sequence: 390
+            region: @new-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+            height: 5
+        }
+        validation {
+            maxLength: 100
+        }
+        source {
+            formRegion: @new-2
+            column: QA2_RESOURCE
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P81_QA_NOTES (
+        type: textarea
+        label {
+            label: Qa Notes
+            alignment: left
+        }
+        layout {
+            sequence: 400
+            region: @new-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+            height: 5
+        }
+        validation {
+            maxLength: 4000
+        }
+        source {
+            formRegion: @new-2
+            column: QA_NOTES
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P81_QA_STATUS (
+        type: textarea
+        label {
+            label: Qa Status
+            alignment: left
+        }
+        layout {
+            sequence: 370
+            region: @new-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+            height: 5
+        }
+        validation {
+            maxLength: 1000
+        }
+        source {
+            formRegion: @new-2
+            column: QA_STATUS
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P81_ROLE_TAG (
+        type: textField
+        label {
+            label: Role Tag
+            alignment: left
+        }
+        layout {
+            sequence: 290
+            region: @new-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            maxLength: 80
+        }
+        source {
+            formRegion: @new-2
+            column: ROLE_TAG
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P81_SALESPLAY_TAG (
+        type: textField
+        label {
+            label: Salesplay Tag
+            alignment: left
+        }
+        layout {
+            sequence: 320
+            region: @new-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            maxLength: 80
+        }
+        source {
+            formRegion: @new-2
+            column: SALESPLAY_TAG
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P81_SAMPLE_EMAIL (
+        type: textarea
+        label {
+            label: Sample Email
+            alignment: left
+        }
+        layout {
+            sequence: 190
+            region: @new-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+            height: 5
+        }
+        validation {
+            maxLength: 32767
+        }
+        source {
+            formRegion: @new-2
+            column: SAMPLE_EMAIL
+            dataType: clob
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P81_SHORT_DESCRIPTION (
+        type: textarea
+        label {
+            label: Short Description
+            alignment: left
+        }
+        layout {
+            sequence: 90
+            region: @new-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+            height: 5
+        }
+        validation {
+            maxLength: 400
+        }
+        source {
+            formRegion: @new-2
+            column: SHORT_DESCRIPTION
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P81_SINGLE_WORKSHOP_FLG (
+        type: numberField
+        label {
+            label: Single Workshop Flg
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 240
+            region: @new-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        source {
+            formRegion: @new-2
+            column: SINGLE_WORKSHOP_FLG
+            dataType: number
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P81_SOURCE_LINKS (
+        type: textarea
+        label {
+            label: Source Links
+            alignment: left
+        }
+        layout {
+            sequence: 340
+            region: @new-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+            height: 5
+        }
+        validation {
+            maxLength: 1000
+        }
+        source {
+            formRegion: @new-2
+            column: SOURCE_LINKS
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P81_SOURCE_LINK_2 (
+        type: textarea
+        label {
+            label: Source Link 2
+            alignment: left
+        }
+        layout {
+            sequence: 450
+            region: @new-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+            height: 5
+        }
+        validation {
+            maxLength: 4000
+        }
+        source {
+            formRegion: @new-2
+            column: SOURCE_LINK_2
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P81_SUPPORT_CONTACT (
+        type: textarea
+        label {
+            label: Support Contact
+            alignment: left
+        }
+        layout {
+            sequence: 100
+            region: @new-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+            height: 5
+        }
+        validation {
+            maxLength: 4000
+        }
+        source {
+            formRegion: @new-2
+            column: SUPPORT_CONTACT
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P81_SUPPORT_URL (
+        type: textarea
+        label {
+            label: Stakeholder
+            alignment: left
+        }
+        layout {
+            sequence: 580
+            region: @new-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+            height: 5
+        }
+        validation {
+            maxLength: 4000
+        }
+        source {
+            formRegion: @new-2
+            column: SUPPORT_URL
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P81_SUPPORT_URL_2 (
+        type: textarea
+        label {
+            label: Support Url 2
+            alignment: left
+        }
+        layout {
+            sequence: 590
+            region: @new-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+            height: 5
+        }
+        validation {
+            maxLength: 4000
+        }
+        source {
+            formRegion: @new-2
+            column: SUPPORT_URL_2
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P81_TIME_IN_HOURS (
+        type: numberField
+        label {
+            label: Time In Hours
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 60
+            region: @new-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        source {
+            formRegion: @new-2
+            column: TIME_IN_HOURS
+            dataType: number
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P81_UPDATED_BY (
+        type: textarea
+        label {
+            label: Updated By
+            alignment: left
+        }
+        layout {
+            sequence: 460
+            region: @new-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+            height: 5
+        }
+        validation {
+            maxLength: 100
+        }
+        source {
+            formRegion: @new-2
+            column: UPDATED_BY
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P81_VALUE3 (
+        type: textarea
+        label {
+            label: Value3
+            alignment: left
+        }
+        layout {
+            sequence: 160
+            region: @new-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+            height: 5
+        }
+        validation {
+            maxLength: 4000
+        }
+        source {
+            formRegion: @new-2
+            column: VALUE3
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P81_WORKSHOP_AUDIT_TRAIL (
+        type: textarea
+        label {
+            label: Workshop Audit Trail
+            alignment: left
+        }
+        layout {
+            sequence: 560
+            region: @new-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+            height: 5
+        }
+        validation {
+            maxLength: 4000
+        }
+        source {
+            formRegion: @new-2
+            column: WORKSHOP_AUDIT_TRAIL
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P81_WORKSHOP_CODE (
+        type: numberField
+        label {
+            label: Workshop Code
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 500
+            region: @new-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        source {
+            formRegion: @new-2
+            column: WORKSHOP_CODE
+            dataType: number
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P81_WORKSHOP_CREATOR_GROUP (
+        type: textarea
+        label {
+            label: Workshop Creator Group
+            alignment: left
+        }
+        layout {
+            sequence: 490
+            region: @new-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+            height: 5
+        }
+        validation {
+            maxLength: 100
+        }
+        source {
+            formRegion: @new-2
+            column: WORKSHOP_CREATOR_GROUP
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P81_WORKSHOP_STATUS (
+        type: textarea
+        label {
+            label: Workshop Status
+            alignment: left
+        }
+        layout {
+            sequence: 350
+            region: @new-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+            height: 5
+        }
+        validation {
+            maxLength: 100
+        }
+        source {
+            formRegion: @new-2
+            column: WORKSHOP_STATUS
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P81_WORKSHOP_TIME (
+        type: numberField
+        label {
+            label: Workshop Time
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 200
+            region: @new-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        source {
+            formRegion: @new-2
+            column: WORKSHOP_TIME
+            dataType: number
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P81_WORKSHOP_TIME_UNIT (
+        type: textField
+        label {
+            label: Workshop Time Unit
+            alignment: left
+        }
+        layout {
+            sequence: 210
+            region: @new-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            maxLength: 10
+        }
+        source {
+            formRegion: @new-2
+            column: WORKSHOP_TIME_UNIT
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P81_WSID (
+        type: textField
+        label {
+            label: Wsid
+            alignment: left
+        }
+        layout {
+            sequence: 10
+            region: @new
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    process initialize-form-print-workshop-v (
+        name: Initialize form Print Workshop V2
+        type: formInitialization
+        formRegion: @new-2
+        execution {
+            sequence: 10
+            point: beforeHeader
+        }
+        advanced {
+            executionMappingIdentifier: 56926005519379126177
+        }
+    )
+
+)
+

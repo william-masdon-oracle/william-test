@@ -1,0 +1,970 @@
+page 5 (
+    name: All LiveLabs Workshop Report
+    alias: ALL-LIVELABS-WORKSHOP-REPORT
+    title: All LiveLabs Workshop Report
+    appearance {
+        pageTemplate: @standard-custom
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region all-workshops-report (
+        name: All Workshops Report
+        type: interactiveReport
+        source {
+            location: localDatabase
+            tableName: WORKSHOPS
+        }
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        pagination {
+            type: rowRangesXToY
+        }
+        performance {
+            maxRowsToProcess: 1000000
+        }
+        advanced {
+            savedReportMappingIdentifier: 61965672093971623671
+        }
+
+        column ACTIVE_FLG (
+            type: plainText
+            heading {
+                heading: Production Flg
+                alignment: center
+            }
+            layout {
+                sequence: 40
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: D
+            }
+        )
+
+        column ALWAYSFREE_URL (
+            type: plainText
+            heading {
+                heading: Alwaysfree Link
+                alignment: center
+            }
+            layout {
+                sequence: 300
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: O
+            }
+        )
+
+        column APPROVED_FLG (
+            type: plainText
+            heading {
+                heading: Approved Flg
+                alignment: center
+            }
+            layout {
+                sequence: 340
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: W
+            }
+        )
+
+        column APP_LISTING_OCID (
+            type: plainText
+            heading {
+                heading: Marketplace App Listing Ocid
+                alignment: center
+            }
+            layout {
+                sequence: 270
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: N
+            }
+        )
+
+        column DEPLOYMENT_TAG (
+            type: plainText
+            heading {
+                heading: Deployment Tag
+                alignment: center
+            }
+            layout {
+                sequence: 360
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: Z
+            }
+        )
+
+        column DESCRIPTION (
+            type: plainText
+            heading {
+                heading: Description
+                alignment: center
+            }
+            layout {
+                sequence: 170
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: B
+            }
+        )
+
+        column FOCUS_TAG (
+            type: plainText
+            heading {
+                heading: Focus Tag
+                alignment: center
+            }
+            layout {
+                sequence: 390
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AC
+            }
+        )
+
+        column FREETIER_URL (
+            type: plainText
+            heading {
+                heading: Freetier Link
+                alignment: center
+            }
+            layout {
+                sequence: 280
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AP
+            }
+        )
+
+        column GENERAL_NOTES (
+            type: plainText
+            heading {
+                heading: General Notes
+                alignment: center
+            }
+            layout {
+                sequence: 200
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AM
+            }
+        )
+
+        column GITHUB_ADDRESS (
+            type: plainText
+            heading {
+                heading: LiveLabs Link
+                alignment: center
+            }
+            layout {
+                sequence: 290
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: C
+            }
+        )
+
+        column ID (
+            type: plainText
+            heading {
+                heading: Workshop ID
+                alignment: center
+            }
+            layout {
+                sequence: 10
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: T
+            }
+        )
+
+        column KEY_ORACLE_CONTACT_1 (
+            type: plainText
+            heading {
+                heading: Key Oracle Contact 1
+                alignment: center
+            }
+            layout {
+                sequence: 80
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AN
+            }
+        )
+
+        column KEY_ORACLE_CONTACT_2 (
+            type: plainText
+            heading {
+                heading: Key Oracle Contact 2
+                alignment: center
+            }
+            layout {
+                sequence: 90
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AO
+            }
+        )
+
+        column LAST_UPDT_DTM (
+            type: plainText
+            heading {
+                heading: Last Updt Dtm
+                alignment: center
+            }
+            layout {
+                sequence: 210
+                columnAlignment: center
+            }
+            appearance {
+                formatMask: SINCE
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: E
+            }
+        )
+
+        column LEVEL_TAG (
+            type: plainText
+            heading {
+                heading: Level Tag
+                alignment: center
+            }
+            layout {
+                sequence: 350
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: Y
+            }
+        )
+
+        column MANAGER_CONTACT (
+            type: plainText
+            heading {
+                heading: Manager Contact
+                alignment: center
+            }
+            layout {
+                sequence: 120
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: H
+            }
+        )
+
+        column MODERNIZER_RESOURCE (
+            type: plainText
+            heading {
+                heading: Maintained By
+                alignment: center
+            }
+            layout {
+                sequence: 110
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AH
+            }
+        )
+
+        column NAME (
+            type: plainText
+            heading {
+                heading: Name
+                alignment: center
+            }
+            layout {
+                sequence: 30
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: A
+            }
+        )
+
+        column OBJECTIVES (
+            type: plainText
+            heading {
+                heading: Objectives
+                alignment: center
+            }
+            layout {
+                sequence: 180
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: X
+            }
+        )
+
+        column PAID_URL (
+            type: plainText
+            heading {
+                heading: Paid Link
+                alignment: center
+            }
+            layout {
+                sequence: 310
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: P
+            }
+        )
+
+        column PRODUCT_TAG (
+            type: plainText
+            heading {
+                heading: Product Tag
+                alignment: center
+            }
+            layout {
+                sequence: 380
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AB
+            }
+        )
+
+        column PROD_ID (
+            type: plainText
+            heading {
+                heading: Production ID
+                alignment: center
+            }
+            layout {
+                sequence: 20
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: G
+            }
+        )
+
+        column QA_NOTES (
+            type: plainText
+            heading {
+                heading: Qa Notes
+                alignment: center
+            }
+            layout {
+                sequence: 190
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AL
+            }
+        )
+
+        column ROLE_TAG (
+            type: plainText
+            heading {
+                heading: Role Tag
+                alignment: center
+            }
+            layout {
+                sequence: 370
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AA
+            }
+        )
+
+        column SALESPLAY_TAG (
+            type: plainText
+            heading {
+                heading: Salesplay Tag
+                alignment: center
+            }
+            layout {
+                sequence: 400
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AD
+            }
+        )
+
+        column SHORT_DESCRIPTION (
+            type: plainText
+            heading {
+                heading: Short Description
+                alignment: center
+            }
+            layout {
+                sequence: 160
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: I
+            }
+        )
+
+        column SOURCE_LINKS (
+            type: plainText
+            heading {
+                heading: Source Links
+                alignment: center
+            }
+            layout {
+                sequence: 420
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AF
+            }
+        )
+
+        column SOURCE_LINK_2 (
+            type: plainText
+            heading {
+                heading: Source Link 2
+                alignment: center
+            }
+            layout {
+                sequence: 430
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AQ
+            }
+        )
+
+        column SUPPORT_CONTACT (
+            type: plainText
+            heading {
+                heading: Support Contact
+                alignment: center
+            }
+            layout {
+                sequence: 100
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: J
+            }
+        )
+
+        column TIME_IN_HOURS (
+            type: plainText
+            heading {
+                heading: Time In Hours
+                alignment: center
+            }
+            layout {
+                sequence: 230
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: F
+            }
+        )
+
+        column UPDATED_BY (
+            type: plainText
+            heading {
+                heading: Updated By
+                alignment: center
+            }
+            layout {
+                sequence: 220
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AR
+            }
+        )
+
+        column WORKSHOP_CREATOR_GROUP (
+            type: plainText
+            heading {
+                heading: Workshop Creator Group
+                alignment: center
+            }
+            layout {
+                sequence: 150
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AU
+            }
+        )
+
+        column WORKSHOP_STATUS (
+            type: plainText
+            heading {
+                heading: Workshop Status
+                alignment: center
+            }
+            layout {
+                sequence: 50
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AG
+            }
+        )
+
+        column WORKSHOP_TIME (
+            type: plainText
+            heading {
+                heading: Workshop Time
+                alignment: center
+            }
+            layout {
+                sequence: 320
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: R
+            }
+        )
+
+        column WORKSHOP_TIME_UNIT (
+            type: plainText
+            heading {
+                heading: Workshop Time Unit
+                alignment: center
+            }
+            layout {
+                sequence: 330
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: S
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: All Workshops Report
+        }
+
+        savedReport 118041852 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn ACTIVE_FLG (
+                sequence: 5
+            )
+
+            displayColumn ALWAYSFREE_URL (
+                sequence: 14
+            )
+
+            displayColumn APPROVED_FLG (
+                sequence: 18
+            )
+
+            displayColumn APP_LISTING_OCID (
+                sequence: 12
+            )
+
+            displayColumn DEPLOYMENT_TAG (
+                sequence: 21
+            )
+
+            displayColumn DESCRIPTION (
+                sequence: 4
+            )
+
+            displayColumn FOCUS_TAG (
+                sequence: 24
+            )
+
+            displayColumn FREETIER_URL (
+                sequence: 32
+            )
+
+            displayColumn GENERAL_NOTES (
+                sequence: 29
+            )
+
+            displayColumn GITHUB_ADDRESS (
+                sequence: 13
+            )
+
+            displayColumn ID (
+                sequence: 1
+            )
+
+            displayColumn KEY_ORACLE_CONTACT_1 (
+                sequence: 30
+            )
+
+            displayColumn KEY_ORACLE_CONTACT_2 (
+                sequence: 31
+            )
+
+            displayColumn LAST_UPDT_DTM (
+                sequence: 7
+            )
+
+            displayColumn LEVEL_TAG (
+                sequence: 20
+            )
+
+            displayColumn MANAGER_CONTACT (
+                sequence: 9
+            )
+
+            displayColumn MODERNIZER_RESOURCE (
+                sequence: 27
+            )
+
+            displayColumn NAME (
+                sequence: 3
+            )
+
+            displayColumn OBJECTIVES (
+                sequence: 19
+            )
+
+            displayColumn PAID_URL (
+                sequence: 15
+            )
+
+            displayColumn PRODUCT_TAG (
+                sequence: 23
+            )
+
+            displayColumn PROD_ID (
+                sequence: 2
+            )
+
+            displayColumn QA_NOTES (
+                sequence: 28
+            )
+
+            displayColumn ROLE_TAG (
+                sequence: 22
+            )
+
+            displayColumn SALESPLAY_TAG (
+                sequence: 25
+            )
+
+            displayColumn SHORT_DESCRIPTION (
+                sequence: 10
+            )
+
+            displayColumn SOURCE_LINKS (
+                sequence: 26
+            )
+
+            displayColumn SOURCE_LINK_2 (
+                sequence: 33
+            )
+
+            displayColumn SUPPORT_CONTACT (
+                sequence: 11
+            )
+
+            displayColumn TIME_IN_HOURS (
+                sequence: 8
+            )
+
+            displayColumn UPDATED_BY (
+                sequence: 34
+            )
+
+            displayColumn WORKSHOP_CREATOR_GROUP (
+                sequence: 35
+            )
+
+            displayColumn WORKSHOP_STATUS (
+                sequence: 6
+            )
+
+            displayColumn WORKSHOP_TIME (
+                sequence: 16
+            )
+
+            displayColumn WORKSHOP_TIME_UNIT (
+                sequence: 17
+            )
+
+        )
+
+        savedReport 118047036 (
+            visibility: alternativeDefault
+            name: Workshop Detail Report - DB Prod Mgmt
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn ACTIVE_FLG (
+                sequence: 5
+            )
+
+            displayColumn ALWAYSFREE_URL (
+                sequence: 13
+            )
+
+            displayColumn APPROVED_FLG (
+                sequence: 16
+            )
+
+            displayColumn DESCRIPTION (
+                sequence: 4
+            )
+
+            displayColumn FREETIER_URL (
+                sequence: 23
+            )
+
+            displayColumn GENERAL_NOTES (
+                sequence: 20
+            )
+
+            displayColumn GITHUB_ADDRESS (
+                sequence: 12
+            )
+
+            displayColumn ID (
+                sequence: 1
+            )
+
+            displayColumn KEY_ORACLE_CONTACT_1 (
+                sequence: 21
+            )
+
+            displayColumn KEY_ORACLE_CONTACT_2 (
+                sequence: 22
+            )
+
+            displayColumn LAST_UPDT_DTM (
+                sequence: 7
+            )
+
+            displayColumn MANAGER_CONTACT (
+                sequence: 9
+            )
+
+            displayColumn MODERNIZER_RESOURCE (
+                sequence: 19
+            )
+
+            displayColumn NAME (
+                sequence: 3
+            )
+
+            displayColumn OBJECTIVES (
+                sequence: 17
+            )
+
+            displayColumn PAID_URL (
+                sequence: 27
+            )
+
+            displayColumn PROD_ID (
+                sequence: 2
+            )
+
+            displayColumn SHORT_DESCRIPTION (
+                sequence: 10
+            )
+
+            displayColumn SOURCE_LINKS (
+                sequence: 18
+            )
+
+            displayColumn SOURCE_LINK_2 (
+                sequence: 24
+            )
+
+            displayColumn SUPPORT_CONTACT (
+                sequence: 11
+            )
+
+            displayColumn TIME_IN_HOURS (
+                sequence: 8
+            )
+
+            displayColumn UPDATED_BY (
+                sequence: 25
+            )
+
+            displayColumn WORKSHOP_CREATOR_GROUP (
+                sequence: 26
+            )
+
+            displayColumn WORKSHOP_STATUS (
+                sequence: 6
+            )
+
+            displayColumn WORKSHOP_TIME (
+                sequence: 14
+            )
+
+            displayColumn WORKSHOP_TIME_UNIT (
+                sequence: 15
+            )
+
+            filter ir-condition (
+                column: WORKSHOP_CREATOR_GROUP
+                value: DB Product Management
+            )
+
+            highlight ir-condition-2 (
+                condition {
+                    column: ACTIVE_FLG
+                    value: 1
+                }
+                colors {
+                    background: #D0F1CC
+                }
+                execution {
+                    sequence: 10
+                }
+            )
+
+        )
+
+    )
+
+    region span-style-font-size-1-8em-font-weight-700-all-workshops-report-span (
+        name: <span style="font-size: 1.8em; font-weight: 700">All Workshops Report</span>
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <table><tr><td width="120px">
+                <img src="https://objectstorage.us-ashburn-1.oraclecloud.com/p/dkB65XncFQkLQj34oFI1dY4k_OB_pwG4J3J5xxWuJAc0StOvBhfRtOmJrjI-0S9I/n/c4u04/b/logos/o/william_wms_biglogo.png" width="100px">
+                </td><td>
+                <p>All workshops available in the LiveLabs system are listed below.  To sort, filter, highlight, save as excel, etc click on the <b> Actions </b> button.   You can customize the report to your liking and save it for your next session.<br><br></p></td></tr></table> 
+                ```
+        }
+        layout {
+            sequence: 10
+            slot: beforeContentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+)
+

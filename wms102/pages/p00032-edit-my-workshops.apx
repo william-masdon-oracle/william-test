@@ -1,0 +1,885 @@
+page 32 (
+    name: Edit My Workshops
+    alias: EDIT-MY-WORKSHOPS
+    title: Edit My Workshops
+    appearance {
+        pageTemplate: @standard-custom
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region edit-my-workshops (
+        name: Edit My Workshops
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <table><tr><td width="120px">
+                <img src="#APP_FILES#wms_logo.png" width="150px" style="padding: 0px 20px 0px 0px">
+                </td><td>
+                <p><u>HOW TO USE THIS PAGE</u><br>These are the workshops that you have access to update based on your role in the WMS.  Click WMS ID to edit.<br><br><strong>Note: If you are on the Workshop Team, you may edit your workshop during any status, but you will not be able to change the workshop's status if the workshop is waiting on the Council, Stakeholder, or Publisher.</strong>  <br>Also, if your workshop has been published in LiveLabs, changes to the workshop in WMS will automatically update in LiveLabs. Make sure your changes are correct if your workshop is in production in LiveLabs.</p></td></tr></table>
+                ```
+        }
+        layout {
+            sequence: 10
+            slot: beforeContentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--scrollBody
+                t-Form--slimPadding
+                margin-top-none
+                margin-bottom-none
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region edit-my-workshops-2 (
+        name: Edit My Workshops
+        type: interactiveGrid
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select ID,
+                       TITLE,
+                       WORKSHOP_STATUS,
+                       LAST_UPDATE_TIME,
+                       LAST_UPDATE_PERSON,
+                       SHORT_DESC,
+                       LONG_DESC,
+                       COMPLETION_DATE,
+                       STAKEHOLDER_ID,
+                       COUNCIL_ID,
+                       WORKSHOP_OWNER_EMAIL,
+                       TECH_CONTACT_EMAIL,
+                       SUPPORT_CONTACT_EMAIL,
+                       OBSERVER_EMAIL,
+                       MANAGER_EMAIL,
+                       ABSTRACT,
+                       OUTLINE,
+                       PREREQS,
+                       NOTES,
+                       PROD_GITHUB_URL,
+                       DEV_GITHUB_URL,
+                       BLOG_POST,
+                       LINKEDIN_POST,
+                       TWITTER_POST,
+                       BLOG_URL,
+                       UPDATED_FLG,
+                       WORKSHOP_OWNER_GROUP
+                  from WORKSHOP
+                 where --Publishers
+                upper(:APP_USER) in (select upper(email) from workshop_person_role where workshop_id is null and active_flg=1)
+                --Workshop Team
+                or 
+                (upper(workshop_owner_email)=:APP_USER or upper(tech_contact_email)=:APP_USER 
+                or upper(support_contact_email)=:APP_USER or upper(observer_email)=:APP_USER
+                or upper(manager_email)=:APP_USER or upper(ospa_observer_email) = upper(:APP_USER))
+                /*stakeholder role*/
+                or stakeholder_id in (select stakeholder_id from workshop_person_stakeholder where upper(email)=:APP_USER and active_flg=1)
+                /*council role*/
+                or council_id in (select council_id from workshop_person_council where upper(email)=:APP_USER and active_flg=1)
+                
+                
+                ```
+        }
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        edit {
+            enabled: true
+        }
+        toolbar {
+            controls: [
+                searchCol
+                searchField
+                actionsMenu
+                resetButton
+                saveButton
+            ]
+        }
+        download {
+            formats: [
+                csv
+                html
+                pdf
+            ]
+        }
+        advanced {
+            savedReportMappingIdentifier: 47820040930037810158
+        }
+
+        savedReport 97582017 (
+            visibility: primary
+            name: Primary Report
+            view {
+                default: grid
+            }
+            singleRowView {
+                displayedColumns: true
+            }
+
+            displayColumn (
+                column: @TITLE
+                layout {
+                    width: 361
+                    sequence: 3
+                }
+            )
+
+            displayColumn (
+                column: @WORKSHOP_OWNER_EMAIL
+                layout {
+                    width: 180
+                    sequence: 8
+                }
+            )
+
+            displayColumn (
+                column: @LAST_UPDATE_TIME
+                layout {
+                    show: false
+                    sequence: 8
+                }
+            )
+
+            displayColumn (
+                column: @ABSTRACT
+                layout {
+                    show: false
+                    sequence: 9
+                }
+            )
+
+            displayColumn (
+                column: @LAST_UPDATE_PERSON
+                layout {
+                    show: false
+                    sequence: 10
+                }
+            )
+
+            displayColumn (
+                column: @PREREQS
+                layout {
+                    show: false
+                    sequence: 11
+                }
+            )
+
+            displayColumn (
+                column: @SHORT_DESC
+                layout {
+                    show: false
+                    sequence: 12
+                }
+            )
+
+            displayColumn (
+                column: @LONG_DESC
+                layout {
+                    show: false
+                    sequence: 13
+                }
+            )
+
+            displayColumn (
+                column: @OBSERVER_EMAIL
+                layout {
+                    show: false
+                    sequence: 14
+                }
+            )
+
+            displayColumn (
+                column: @OUTLINE
+                layout {
+                    show: false
+                    sequence: 15
+                }
+            )
+
+            displayColumn (
+                column: @NOTES
+                layout {
+                    show: false
+                    sequence: 16
+                }
+            )
+
+            displayColumn (
+                column: @PROD_GITHUB_URL
+                layout {
+                    show: false
+                    sequence: 17
+                }
+            )
+
+            displayColumn (
+                column: @DEV_GITHUB_URL
+                layout {
+                    show: false
+                    sequence: 18
+                }
+            )
+
+            displayColumn (
+                column: @BLOG_POST
+                layout {
+                    show: false
+                    sequence: 19
+                }
+            )
+
+            displayColumn (
+                column: @LINKEDIN_POST
+                layout {
+                    show: false
+                    sequence: 20
+                }
+            )
+
+            displayColumn (
+                column: @TWITTER_POST
+                layout {
+                    show: false
+                    sequence: 21
+                }
+            )
+
+            displayColumn (
+                column: @BLOG_URL
+                layout {
+                    show: false
+                    sequence: 22
+                }
+            )
+
+            displayColumn (
+                column: @UPDATED_FLG
+                layout {
+                    show: false
+                    sequence: 23
+                }
+            )
+
+            displayColumn (
+                column: @WORKSHOP_OWNER_GROUP
+                layout {
+                    show: false
+                    sequence: 24
+                }
+            )
+
+            displayColumn (
+                column: @TECH_CONTACT_EMAIL
+                layout {
+                    show: false
+                    sequence: 25
+                }
+            )
+
+            displayColumn (
+                column: @SUPPORT_CONTACT_EMAIL
+                layout {
+                    show: false
+                    sequence: 26
+                }
+            )
+
+            displayColumn (
+                column: @MANAGER_EMAIL
+                layout {
+                    show: false
+                    sequence: 27
+                }
+            )
+
+            displayColumn (
+                column: @APEX$ROW_ACTION
+                layout {
+                    frozen: true
+                    width: 52
+                    sequence: 0
+                }
+            )
+
+            displayColumn (
+                column: @ID
+                layout {
+                    width: 66
+                    sequence: 2
+                }
+            )
+
+            displayColumn (
+                column: @COMPLETION_DATE
+                layout {
+                    show: false
+                    width: 108
+                    sequence: 6
+                }
+            )
+
+            displayColumn (
+                column: @WORKSHOP_STATUS
+                layout {
+                    width: 143
+                    sequence: 4
+                }
+            )
+
+            displayColumn (
+                column: @STAKEHOLDER_ID
+                layout {
+                    width: 209
+                    sequence: 5
+                }
+            )
+
+            displayColumn (
+                column: @COUNCIL_ID
+                layout {
+                    width: 138
+                    sequence: 7
+                }
+            )
+
+        )
+
+        column ABSTRACT (
+            type: hidden
+            layout {
+                sequence: 110
+            }
+            source {
+                databaseColumn: ABSTRACT
+                dataType: varchar2
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column APEX$ROW_ACTION (
+            type: actionsMenu
+            layout {
+                sequence: 20
+            }
+        )
+
+        column APEX$ROW_SELECTOR (
+            type: rowSelector
+            layout {
+                sequence: 10
+            }
+        )
+
+        column BLOG_POST (
+            type: hidden
+            layout {
+                sequence: 220
+            }
+            source {
+                databaseColumn: BLOG_POST
+                dataType: clob
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column BLOG_URL (
+            type: hidden
+            layout {
+                sequence: 250
+            }
+            source {
+                databaseColumn: BLOG_URL
+                dataType: varchar2
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column COMPLETION_DATE (
+            type: datePickerJquery
+            heading {
+                heading: Completion Date
+                alignment: center
+            }
+            layout {
+                sequence: 90
+                columnAlignment: center
+            }
+            source {
+                databaseColumn: COMPLETION_DATE
+                dataType: date
+            }
+        )
+
+        column COUNCIL_ID (
+            type: selectList
+            heading {
+                heading: Council
+            }
+            lov {
+                type: sqlQuery
+                sqlQuery: select name,id from workshop_council where active_flg=1
+            }
+            layout {
+                sequence: 80
+            }
+            source {
+                databaseColumn: COUNCIL_ID
+                dataType: number
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: useLov
+            }
+        )
+
+        column DEV_GITHUB_URL (
+            type: hidden
+            layout {
+                sequence: 210
+            }
+            source {
+                databaseColumn: DEV_GITHUB_URL
+                dataType: varchar2
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column ID (
+            type: link
+            heading {
+                heading: WMS ID
+                alignment: end
+            }
+            layout {
+                sequence: 30
+                columnAlignment: end
+            }
+            link {
+                target: {
+                    page: 320
+                    items: {
+                        P320_ID: &ID.
+                    }
+                }
+                linkText: &ID.
+            }
+            source {
+                databaseColumn: ID
+                dataType: number
+                primaryKey: true
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column LAST_UPDATE_PERSON (
+            type: textarea
+            heading {
+                heading: Last Update Person
+            }
+            layout {
+                sequence: 110
+            }
+            validation {
+                maxLength: 100
+            }
+            source {
+                databaseColumn: LAST_UPDATE_PERSON
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column LAST_UPDATE_TIME (
+            type: datePicker
+            heading {
+                heading: Last Update Time
+                alignment: center
+            }
+            layout {
+                sequence: 100
+                columnAlignment: center
+            }
+            source {
+                databaseColumn: LAST_UPDATE_TIME
+                dataType: timestamp
+            }
+        )
+
+        column LINKEDIN_POST (
+            type: hidden
+            layout {
+                sequence: 230
+            }
+            source {
+                databaseColumn: LINKEDIN_POST
+                dataType: varchar2
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column LONG_DESC (
+            type: hidden
+            layout {
+                sequence: 160
+            }
+            source {
+                databaseColumn: LONG_DESC
+                dataType: varchar2
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column MANAGER_EMAIL (
+            type: hidden
+            layout {
+                sequence: 310
+            }
+            source {
+                databaseColumn: MANAGER_EMAIL
+                dataType: varchar2
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column NOTES (
+            type: hidden
+            layout {
+                sequence: 190
+            }
+            source {
+                databaseColumn: NOTES
+                dataType: varchar2
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column OBSERVER_EMAIL (
+            type: hidden
+            layout {
+                sequence: 170
+            }
+            source {
+                databaseColumn: OBSERVER_EMAIL
+                dataType: varchar2
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column OUTLINE (
+            type: hidden
+            layout {
+                sequence: 180
+            }
+            source {
+                databaseColumn: OUTLINE
+                dataType: varchar2
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column PREREQS (
+            type: hidden
+            layout {
+                sequence: 120
+            }
+            source {
+                databaseColumn: PREREQS
+                dataType: varchar2
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column PROD_GITHUB_URL (
+            type: hidden
+            layout {
+                sequence: 200
+            }
+            source {
+                databaseColumn: PROD_GITHUB_URL
+                dataType: varchar2
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column SHORT_DESC (
+            type: hidden
+            layout {
+                sequence: 150
+            }
+            source {
+                databaseColumn: SHORT_DESC
+                dataType: varchar2
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column STAKEHOLDER_ID (
+            type: selectList
+            heading {
+                heading: Stakeholder
+            }
+            lov {
+                type: sqlQuery
+                sqlQuery: select name||' - '||email,id from workshop_stakeholder where active_flg=1
+            }
+            layout {
+                sequence: 70
+            }
+            source {
+                databaseColumn: STAKEHOLDER_ID
+                dataType: number
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: useLov
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column SUPPORT_CONTACT_EMAIL (
+            type: hidden
+            layout {
+                sequence: 300
+            }
+            source {
+                databaseColumn: SUPPORT_CONTACT_EMAIL
+                dataType: varchar2
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column TECH_CONTACT_EMAIL (
+            type: hidden
+            layout {
+                sequence: 290
+            }
+            source {
+                databaseColumn: TECH_CONTACT_EMAIL
+                dataType: varchar2
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column TITLE (
+            type: textarea
+            heading {
+                heading: Title
+            }
+            layout {
+                sequence: 40
+            }
+            validation {
+                maxLength: 200
+            }
+            source {
+                databaseColumn: TITLE
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column TWITTER_POST (
+            type: hidden
+            layout {
+                sequence: 240
+            }
+            source {
+                databaseColumn: TWITTER_POST
+                dataType: varchar2
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column UPDATED_FLG (
+            type: hidden
+            layout {
+                sequence: 260
+            }
+            source {
+                databaseColumn: UPDATED_FLG
+                dataType: number
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column WORKSHOP_OWNER_EMAIL (
+            type: textarea
+            heading {
+                heading: Workshop Owner Email
+            }
+            layout {
+                sequence: 60
+            }
+            validation {
+                maxLength: 100
+            }
+            source {
+                databaseColumn: WORKSHOP_OWNER_EMAIL
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+        )
+
+        column WORKSHOP_OWNER_GROUP (
+            type: hidden
+            layout {
+                sequence: 270
+            }
+            source {
+                databaseColumn: WORKSHOP_OWNER_GROUP
+                dataType: varchar2
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column WORKSHOP_STATUS (
+            type: displayOnly
+            heading {
+                heading: Status
+            }
+            lov {
+                type: sharedComponent
+                lov: @workshop-status-non-admin
+            }
+            layout {
+                sequence: 50
+            }
+            source {
+                databaseColumn: WORKSHOP_STATUS
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: useLov
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: Manage All Workshops
+        }
+    )
+
+    process manage-all-workshops-save-interactive-grid-data (
+        name: Manage All Workshops - Save Interactive Grid Data
+        type: interactiveGridAutoRowProcessing
+        editableRegion: @edit-my-workshops-2
+        execution {
+            sequence: 10
+        }
+        advanced {
+            executionMappingIdentifier: 52373494623539097259
+        }
+    )
+
+)
+

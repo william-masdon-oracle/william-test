@@ -1,0 +1,264 @@
+page 9 (
+    name: Tag Report - Non Admin
+    alias: TAG-REPORT-NON-ADMIN
+    title: Tag Report - Non Admin
+    appearance {
+        pageTemplate: @standard-custom
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        authorizationScheme: @contribution-rights
+        formAutoComplete: false
+    }
+
+    region tags (
+        name: Tags
+        type: interactiveReport
+        source {
+            location: localDatabase
+            tableName: WORKSHOP_CATEGORIES_VALUES_VW
+            includeRowidColumn: true
+        }
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        link {
+            linkColumn: customTarget
+            target: {
+                page: 320
+                items: {
+                    P320_ROWID: #ROWID#
+                }
+            }
+            linkIcon: <span aria-label="Edit"><span class="fa fa-edit" aria-hidden="true" title="Edit"></span></span>
+        }
+        pagination {
+            type: rowRangesXToY
+        }
+        performance {
+            maxRowsToProcess: 1000000
+        }
+        advanced {
+            savedReportMappingIdentifier: 12257452779842045405
+        }
+
+        column DEPLOYMENT_TAG (
+            type: plainText
+            heading {
+                heading: Deployment Tag
+                alignment: center
+            }
+            layout {
+                sequence: 60
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: F
+            }
+        )
+
+        column FOCUS_TAG (
+            type: plainText
+            heading {
+                heading: Focus Tag
+                alignment: center
+            }
+            layout {
+                sequence: 80
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: H
+            }
+        )
+
+        column ID (
+            type: plainText
+            heading {
+                heading: Id
+                alignment: center
+            }
+            layout {
+                sequence: 20
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: B
+            }
+        )
+
+        column LEVEL_TAG (
+            type: plainText
+            heading {
+                heading: Level Tag
+                alignment: center
+            }
+            layout {
+                sequence: 50
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: E
+            }
+        )
+
+        column NAME (
+            type: plainText
+            heading {
+                heading: Name
+                alignment: center
+            }
+            layout {
+                sequence: 30
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: C
+            }
+        )
+
+        column PRODUCT_TAG (
+            type: plainText
+            heading {
+                heading: Product Tag
+                alignment: center
+            }
+            layout {
+                sequence: 40
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: D
+            }
+        )
+
+        column ROLE_TAG (
+            type: plainText
+            heading {
+                heading: Role Tag
+                alignment: center
+            }
+            layout {
+                sequence: 70
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: G
+            }
+        )
+
+        column ROWID (
+            type: hidden
+            heading {
+                heading: Rowid
+            }
+            layout {
+                sequence: 10
+            }
+            source {
+                dataType: OTHER
+            }
+            advanced {
+                endUserAlias: A
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column SALESPLAY_TAG (
+            type: plainText
+            heading {
+                heading: Salesplay Tag
+                alignment: center
+            }
+            layout {
+                sequence: 90
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: I
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: Tags
+        }
+
+        savedReport 66389360 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn DEPLOYMENT_TAG (
+                sequence: 6
+            )
+
+            displayColumn FOCUS_TAG (
+                sequence: 8
+            )
+
+            displayColumn ID (
+                sequence: 2
+            )
+
+            displayColumn LEVEL_TAG (
+                sequence: 5
+            )
+
+            displayColumn NAME (
+                sequence: 3
+            )
+
+            displayColumn PRODUCT_TAG (
+                sequence: 4
+            )
+
+            displayColumn ROLE_TAG (
+                sequence: 7
+            )
+
+            displayColumn ROWID (
+                sequence: 1
+            )
+
+            displayColumn SALESPLAY_TAG (
+                sequence: 9
+            )
+
+        )
+
+    )
+
+)
+

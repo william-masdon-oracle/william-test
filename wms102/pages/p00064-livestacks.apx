@@ -1,0 +1,405 @@
+page 64 (
+    name: LiveStacks
+    alias: LIVESTACKS
+    title: LiveStacks
+    appearance {
+        pageTemplate: @standard-custom
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region livestacks (
+        name: LiveStacks
+        type: interactiveReport
+        source {
+            location: localDatabase
+            tableName: WMS_LIVESTACKS
+        }
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        link {
+            linkColumn: customTarget
+            target: {
+                page: 57
+                items: {
+                    P57_ID: #ID#
+                }
+                clearCache: 57
+            }
+        }
+        pagination {
+            type: rowRangesXToY
+        }
+        advanced {
+            savedReportMappingIdentifier: 5160750294501526941
+        }
+
+        column ACTIVE_FLG (
+            type: plainText
+            heading {
+                heading: Active Flg
+                alignment: center
+            }
+            layout {
+                sequence: 30
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: C
+            }
+        )
+
+        column CREATED_BY (
+            type: plainText
+            heading {
+                heading: Created By
+                alignment: center
+            }
+            layout {
+                sequence: 130
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: M
+            }
+        )
+
+        column CREATED_DATE (
+            type: plainText
+            heading {
+                heading: Created Date
+                alignment: center
+            }
+            layout {
+                sequence: 110
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: K
+            }
+        )
+
+        column DESC_LONG (
+            type: plainText
+            heading {
+                heading: Desc Long
+                alignment: center
+            }
+            layout {
+                sequence: 50
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: E
+            }
+        )
+
+        column DESC_SHORT (
+            type: plainText
+            heading {
+                heading: Desc Short
+                alignment: center
+            }
+            layout {
+                sequence: 40
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: D
+            }
+        )
+
+        column FEATURED_FLG (
+            type: plainText
+            heading {
+                heading: Featured Flag
+                alignment: center
+            }
+            layout {
+                sequence: 140
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: N
+            }
+        )
+
+        column ID (
+            type: plainText
+            heading {
+                heading: ID
+                alignment: center
+            }
+            layout {
+                sequence: 10
+                columnAlignment: end
+            }
+            source {
+                primaryKey: true
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: A
+            }
+        )
+
+        column LENGTH_OVERRIDE (
+            type: plainText
+            heading {
+                heading: Length Override
+                alignment: center
+            }
+            layout {
+                sequence: 90
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: I
+            }
+        )
+
+        column LIVESTACK_TYPE (
+            type: plainText
+            heading {
+                heading: Livestack Type
+                alignment: center
+            }
+            layout {
+                sequence: 100
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: J
+            }
+        )
+
+        column NAME (
+            type: plainText
+            heading {
+                heading: Name
+                alignment: center
+            }
+            layout {
+                sequence: 20
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: B
+            }
+        )
+
+        column OUTLINE (
+            type: plainText
+            heading {
+                heading: Outline
+                alignment: center
+            }
+            layout {
+                sequence: 60
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: F
+            }
+        )
+
+        column PREREQS (
+            type: plainText
+            heading {
+                heading: Prereqs
+                alignment: center
+            }
+            layout {
+                sequence: 70
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: G
+            }
+        )
+
+        column PUBLISH_STATUS (
+            type: plainText
+            heading {
+                heading: Publish Status
+                alignment: center
+            }
+            layout {
+                sequence: 120
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: L
+            }
+        )
+
+        column STATUS_JUSTIFICATION (
+            type: plainText
+            heading {
+                heading: Status Justification
+                alignment: center
+            }
+            layout {
+                sequence: 150
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: O
+            }
+        )
+
+        column UPDATED_BY (
+            type: plainText
+            heading {
+                heading: Updated By
+                alignment: center
+            }
+            layout {
+                sequence: 170
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: Q
+            }
+        )
+
+        column UPDATED_ON (
+            type: plainText
+            heading {
+                heading: Updated On
+                alignment: center
+            }
+            layout {
+                sequence: 160
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: P
+            }
+        )
+
+        column VIDEO_LINK (
+            type: plainText
+            heading {
+                heading: Video Link
+                alignment: center
+            }
+            layout {
+                sequence: 80
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: H
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+
+        savedReport primary (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn CREATED_BY (
+                sequence: 8
+            )
+
+            displayColumn CREATED_DATE (
+                sequence: 6
+            )
+
+            displayColumn FEATURED_FLG (
+                sequence: 9
+            )
+
+            displayColumn ID (
+                sequence: 1
+            )
+
+            displayColumn LENGTH_OVERRIDE (
+                sequence: 4
+            )
+
+            displayColumn LIVESTACK_TYPE (
+                sequence: 5
+            )
+
+            displayColumn NAME (
+                sequence: 2
+            )
+
+            displayColumn PUBLISH_STATUS (
+                sequence: 7
+            )
+
+            displayColumn STATUS_JUSTIFICATION (
+                sequence: 10
+            )
+
+            displayColumn UPDATED_BY (
+                sequence: 12
+            )
+
+            displayColumn UPDATED_ON (
+                sequence: 11
+            )
+
+            displayColumn VIDEO_LINK (
+                sequence: 3
+            )
+
+        )
+
+    )
+
+)
+

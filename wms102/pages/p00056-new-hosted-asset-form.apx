@@ -1,0 +1,1195 @@
+page 56 (
+    name: New Hosted Asset Form
+    alias: NEW-HOSTED-ASSET-FORM
+    title: Asset Details
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @modal-dialog
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+        warnOnUnsavedChanges: false
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region buttons (
+        name: Buttons
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: dialogFooter
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    region new-hosted-file-form (
+        name: Host an Asset
+        type: form
+        source {
+            location: localDatabase
+            tableName: WMS_ASSETS
+        }
+        layout {
+            sequence: 40
+            slot: contentBody
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+        edit {
+            enabled: true
+            allowedOperations: [
+                add
+                update
+                delete
+            ]
+        }
+    )
+
+    pageItem P56_ACTIVE_FLG (
+        type: selectList
+        label {
+            label: Visibility
+            alignment: left
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC:Active;Y,Inactive;N
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 60
+            region: @new-hosted-file-form
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @required-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+            height: 1
+        }
+        source {
+            formRegion: @new-hosted-file-form
+            column: ACTIVE_FLG
+            dataType: varchar2
+        }
+        default {
+            type: static
+            staticValue: Y
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P56_ID
+        }
+    )
+
+    pageItem P56_ASSET_NAME (
+        type: textField
+        label {
+            label: Asset Name
+            alignment: left
+        }
+        layout {
+            sequence: 40
+            region: @new-hosted-file-form
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+            width: 30
+        }
+        validation {
+            maxLength: 1024
+        }
+        source {
+            formRegion: @new-hosted-file-form
+            column: NAME
+            dataType: varchar2
+        }
+    )
+
+    pageItem P56_CREATED_BY (
+        type: displayOnly
+        label {
+            label: Created By
+            alignment: left
+        }
+        layout {
+            sequence: 100
+            region: @new-hosted-file-form
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @new-hosted-file-form
+            column: CREATED_BY
+            dataType: varchar2
+        }
+        default {
+            type: expression
+            plsqlExpression: v('APP_USER')
+        }
+    )
+
+    pageItem P56_CREATED_ON (
+        type: displayOnly
+        label {
+            label: Created On
+            alignment: left
+        }
+        layout {
+            sequence: 110
+            region: @new-hosted-file-form
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @new-hosted-file-form
+            column: CREATED_ON
+            dataType: timestampWithLocalTimeZone
+        }
+        default {
+            type: expression
+            plsqlExpression: systimestamp
+        }
+    )
+
+    pageItem P56_DESCRIPTION (
+        type: textarea
+        label {
+            label: Description
+            alignment: left
+        }
+        layout {
+            sequence: 70
+            region: @new-hosted-file-form
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+            width: 30
+            height: 5
+        }
+        validation {
+            maxLength: 4000
+        }
+        source {
+            formRegion: @new-hosted-file-form
+            column: DESCRIPTION
+            dataType: varchar2
+        }
+    )
+
+    pageItem P56_EDITOR_EMAILS (
+        type: textField
+        label {
+            label: Additional Editors (comma-separated emails)
+            alignment: left
+        }
+        layout {
+            sequence: 90
+            region: @new-hosted-file-form
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+                margin-top-md
+            ]
+            width: 30
+        }
+        source {
+            formRegion: @new-hosted-file-form
+            column: EDITOR_EMAILS
+            dataType: varchar2
+        }
+    )
+
+    pageItem P56_FILE (
+        type: fileUpload
+        label {
+            label: File Upload
+            alignment: left
+        }
+        storage {
+            type: appTempFiles
+        }
+        layout {
+            sequence: 30
+            region: @new-hosted-file-form
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+            width: 30
+        }
+    )
+
+    pageItem P56_ID (
+        type: displayOnly
+        label {
+            label: ID
+            alignment: left
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @new-hosted-file-form
+            column: ID
+            dataType: number
+            queryOnly: true
+            primaryKey: true
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P56_ID
+        }
+        security {
+            sessionStateProtection: checksumRequiredSessionLevel
+        }
+    )
+
+    pageItem P56_LINK (
+        type: textField
+        label {
+            label: Link
+            alignment: left
+        }
+        layout {
+            sequence: 20
+            region: @new-hosted-file-form
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+            width: 30
+        }
+        validation {
+            maxLength: 4000
+        }
+        advanced {
+            customAttributes: target="_blank"
+        }
+        source {
+            formRegion: @new-hosted-file-form
+            column: LINK
+            dataType: varchar2
+        }
+        readOnly {
+            type: item=value
+            item: P56_UPLOAD_TYPE
+            value: File
+        }
+    )
+
+    pageItem P56_TYPE_ID (
+        type: selectList
+        label {
+            label: "Asset Type "
+            alignment: left
+        }
+        lov {
+            type: sharedComponent
+            lov: @asset-types
+        }
+        layout {
+            sequence: 50
+            region: @new-hosted-file-form
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+            height: 1
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            formRegion: @new-hosted-file-form
+            column: TYPE_ID
+            dataType: number
+        }
+    )
+
+    pageItem P56_UPDATED_BY (
+        type: displayOnly
+        label {
+            label: Updated By
+            alignment: left
+        }
+        layout {
+            sequence: 120
+            region: @new-hosted-file-form
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @new-hosted-file-form
+            column: UPDATED_BY
+            dataType: varchar2
+        }
+        default {
+            type: expression
+            plsqlExpression: v('APP_USER')
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P56_ID
+        }
+    )
+
+    pageItem P56_UPDATED_ON (
+        type: displayOnly
+        label {
+            label: Updated On
+            alignment: left
+        }
+        layout {
+            sequence: 130
+            region: @new-hosted-file-form
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @new-hosted-file-form
+            column: UPDATED_ON
+            dataType: timestamp
+        }
+        default {
+            type: expression
+            plsqlExpression: systimestamp
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P56_ID
+        }
+    )
+
+    pageItem P56_UPLOAD_TYPE (
+        type: radioGroup
+        label {
+            label: Upload Type
+            alignment: left
+        }
+        settings {
+            noOfCols: 2
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC:Upload a File;File,Upload a Link;Link
+            displayNullValue: false
+        }
+        layout {
+            sequence: 30
+            slot: contentBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: [
+                #DEFAULT#
+                margin-bottom-md
+            ]
+        }
+        source {
+            formRegion: @new-hosted-file-form
+            column: UPLOAD_TYPE
+            dataType: varchar2
+        }
+        readOnly {
+            type: itemIsNotNull
+            item: P56_ID
+        }
+    )
+
+    button delete (
+        buttonName: DELETE
+        label: Delete
+        layout {
+            sequence: 30
+            region: @buttons
+            slot: delete
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+            icon: fa-trash
+        }
+        behavior {
+            executeValidations: false
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: delete
+            requiresConfirmation: true
+        }
+        confirmation {
+            message: &APP_TEXT$DELETE_MSG!RAW.
+            style: danger
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P56_ID
+        }
+    )
+
+    button save (
+        buttonName: UPDATE
+        label: Update
+        layout {
+            sequence: 10
+            region: @buttons
+            slot: change
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+            icon: fa-check-square
+        }
+        behavior {
+            action: definedByDynamicAction
+            databaseAction: update
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P56_ID
+        }
+    )
+
+    button upload (
+        buttonName: CREATE
+        label: Create
+        layout {
+            sequence: 20
+            region: @buttons
+            slot: create
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--stretch
+            ]
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: insert
+        }
+        serverSideCondition {
+            type: itemIsNull
+            item: P56_ID
+        }
+    )
+
+    dynamicAction on-change (
+        name: On Change
+        execution {
+            sequence: 30
+        }
+        when {
+            selectionType: items
+            items: P56_UPLOAD_TYPE
+        }
+        clientSideCondition {
+            type: item=value
+            item: P56_UPLOAD_TYPE
+            value: File
+        }
+
+        action hide-file (
+            name: Hide File
+            action: hide
+            affectedElements {
+                selectionType: items
+                items: P56_FILE
+            }
+            execution {
+                sequence: 40
+                fireWhenEventResultIs: false
+            }
+            clientSideCondition {
+                type: item=value
+                item: P56_UPLOAD_TYPE
+                value: Link
+            }
+        )
+
+        action native-close-region (
+            name: Hide Form
+            action: hide
+            affectedElements {
+                selectionType: region
+                region: @new-hosted-file-form
+            }
+            execution {
+                sequence: 10
+                fireWhenEventResultIs: false
+            }
+            clientSideCondition {
+                type: itemIsNull
+                item: P56_UPLOAD_TYPE
+            }
+        )
+
+        action native-hide (
+            name: Hide Link
+            action: hide
+            affectedElements {
+                selectionType: items
+                items: P56_LINK
+            }
+            execution {
+                sequence: 20
+            }
+            clientSideCondition {
+                type: item=value
+                item: P56_UPLOAD_TYPE
+                value: File
+            }
+            serverSideCondition {
+                type: itemIsNull
+                item: P56_ID
+            }
+        )
+
+        action show-file (
+            name: Show File
+            action: show
+            affectedElements {
+                selectionType: items
+                items: P56_FILE
+            }
+            execution {
+                sequence: 50
+            }
+            clientSideCondition {
+                type: item=value
+                item: P56_UPLOAD_TYPE
+                value: File
+            }
+        )
+
+        action show-form (
+            name: Show Form
+            action: show
+            affectedElements {
+                selectionType: region
+                region: @new-hosted-file-form
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+        action show-form_1 (
+            name: Show Form
+            action: show
+            affectedElements {
+                selectionType: region
+                region: @new-hosted-file-form
+            }
+            execution {
+                sequence: 20
+                fireWhenEventResultIs: false
+            }
+            clientSideCondition {
+                type: itemIsNotNull
+                item: P56_UPLOAD_TYPE
+            }
+        )
+
+        action show-link (
+            name: Show Link
+            action: show
+            affectedElements {
+                selectionType: items
+                items: P56_LINK
+            }
+            execution {
+                sequence: 30
+                fireWhenEventResultIs: false
+            }
+            clientSideCondition {
+                type: item=value
+                item: P56_UPLOAD_TYPE
+                value: Link
+            }
+        )
+
+    )
+
+    dynamicAction on-change_1 (
+        name: On Change
+        execution {
+            sequence: 50
+        }
+        when {
+            selectionType: items
+            items: P56_FILE
+        }
+        serverSideCondition {
+            type: itemIsNull
+            item: P56_ID
+        }
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    apex.item("P56_ASSET_NAME").setValue(apex.item("P56_FILE").getValue());
+                    
+                    ```
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction on-click (
+        name: On Click
+        execution {
+            sequence: 40
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @save
+        }
+
+        action file-overwrite-confirmation (
+            name: File Overwrite Confirmation
+            action: confirm
+            settings {
+                title: Confirm File Overwrite
+                message: You are about to overwrite the asset stored at the current PAR link.To create a <u>new</u> PAR link, press No > Add an Asset.
+                style: warning
+                icon: fa-warning
+                confirmLabel: Yes
+                cancelLabel: No
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+            clientSideCondition {
+                type: itemIsNotNull
+                item: P56_FILE
+            }
+        )
+
+        action native-submit-page (
+            action: submitPage
+            settings {
+                requestButtonName: UPDATE
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction on-switch (
+        name: On Switch
+        execution {
+            sequence: 40
+        }
+        when {
+            selectionType: items
+            items: P56_FILE_OVERWRITE_FLG
+        }
+
+        action native-show (
+            action: show
+            affectedElements {
+                selectionType: items
+                items: P56_FILE
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    validation absolute-url (
+        name: Absolute URL?
+        execution {
+            sequence: 70
+        }
+        validation {
+            language: sql
+            sqlExpression: REGEXP_LIKE(:P56_LINK, '^https?://')
+            alwaysExecute: true
+        }
+        error {
+            errorMessage: URL must be absolute (containing http:// or https://).
+            associatedItem: @P56_LINK
+        }
+        serverSideCondition {
+            type: item=value
+            item: P56_UPLOAD_TYPE
+            value: Link
+        }
+    )
+
+    validation new (
+        name: New
+        execution {
+            sequence: 80
+        }
+        validation {
+            plsqlExpression: :P56_File is not null or (:P56_File is null and :P56_ID is not null)
+        }
+        error {
+            errorMessage: File upload required.
+            associatedItem: @P56_FILE
+        }
+        serverSideCondition {
+            type: item=value
+            item: P56_UPLOAD_TYPE
+            value: File
+        }
+    )
+
+    validation p56-created-on-must-be-timestamp (
+        name: P56_CREATED_ON must be timestamp
+        execution {
+            sequence: 60
+        }
+        validation {
+            type: itemIsAValidTimestamp
+            item: P56_CREATED_ON
+        }
+        error {
+            errorMessage: #LABEL# must be a valid timestamp.
+            associatedItem: @P56_CREATED_ON
+        }
+    )
+
+    process close-dialog (
+        name: Close Dialog
+        type: closeDialog
+        execution {
+            sequence: 130
+        }
+        advanced {
+            executionMappingIdentifier: 42140061801556542335
+        }
+    )
+
+    process initialize-form-new-hosted-file-form (
+        name: Initialize form New Hosted File Form
+        type: formInitialization
+        formRegion: @new-hosted-file-form
+        execution {
+            sequence: 10
+            point: beforeHeader
+        }
+        advanced {
+            executionMappingIdentifier: 42140061028113542334
+        }
+    )
+
+    process log-update-details (
+        name: Log Update Details
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                begin
+                    :P56_UPDATED_ON:= systimestamp;
+                    :P56_UPDATED_BY := v('APP_USER');
+                end;
+                ```
+        }
+        execution {
+            sequence: 50
+        }
+        advanced {
+            executionMappingIdentifier: 2640889043137385942
+        }
+        serverSideCondition {
+            whenButtonPressed: @save
+        }
+    )
+
+    process overwrite-file (
+        name: File Upload - Update
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                declare
+                    l_request_url     varchar2(32767);
+                    l_base_url        varchar2(4000) := 'https://objectstorage.us-ashburn-1.oraclecloud.com/n/c4u02/b/hosted-files/o/';
+                    l_object_name     varchar2(4000);
+                    l_response        clob;
+                    l_exists_response clob;
+                
+                    upload_failed_exception exception;
+                begin
+                    /*
+                      Extract object name from the PAR link.
+                
+                      Example:
+                      https://objectstorage.../o/myfile.png?...
+                                                ^ extracted
+                    */
+                    l_object_name :=
+                        regexp_substr(
+                            :P56_LINK,
+                            '/o/([^?]+)',
+                            1,
+                            1,
+                            null,
+                            1
+                        );
+                
+                    l_request_url := l_base_url || l_object_name;
+                
+                    for file in (
+                        select *
+                        from apex_application_temp_files
+                        where name = :P56_FILE
+                    ) loop
+                
+                        apex_web_service.g_request_headers.delete;
+                
+                        apex_web_service.g_request_headers(1).name  := 'Content-Type';
+                        apex_web_service.g_request_headers(1).value := file.mime_type;
+                
+                        l_response := apex_web_service.make_rest_request(
+                            p_url                  => l_request_url,
+                            p_http_method          => 'PUT',
+                            p_body_blob            => file.blob_content,
+                            p_credential_static_id => 'OCI_API_KEY_C4U02'
+                        );
+                
+                        if apex_web_service.g_status_code not in (200, 201, 204) then
+                            apex_debug.message('PUT url=%s', l_request_url);
+                
+                            apex_debug.message(
+                                'status=%s reason=%s',
+                                apex_web_service.g_status_code,
+                                apex_web_service.g_reason_phrase
+                            );
+                
+                            raise_application_error(
+                                -20003,
+                                'Upload failed. HTTP status=' || apex_web_service.g_status_code
+                            );
+                        end if;
+                
+                    end loop;
+                end;
+                ```
+        }
+        execution {
+            sequence: 120
+        }
+        successMessage {
+            successMessage:
+                ```
+                File overwritten!
+                
+                ```
+        }
+        error {
+            errorMessage: OVERWRITE ERROR!
+        }
+        advanced {
+            executionMappingIdentifier: 2640886669535385918
+        }
+        serverSideCondition {
+            whenButtonPressed: @save
+            type: itemIsNotNull
+            item: P56_FILE
+        }
+    )
+
+    process process-form-new-hosted-file-form (
+        name: Row Processing
+        type: formAutoRowProcessing
+        formRegion: @new-hosted-file-form
+        execution {
+            sequence: 70
+        }
+        successMessage {
+            successMessage:
+                ```
+                
+                
+                ```
+        }
+        advanced {
+            executionMappingIdentifier: 42140061406609542334
+        }
+    )
+
+    process sync-asset-create (
+        name: Sync Asset - Create
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                begin
+                    wms_pkg_ords.createAsset(:P56_ID);
+                end;
+                ```
+        }
+        execution {
+            sequence: 80
+        }
+        successMessage {
+            successMessage: Asset Created.
+        }
+        advanced {
+            executionMappingIdentifier: 3453370879626974724
+        }
+        serverSideCondition {
+            whenButtonPressed: @upload
+        }
+    )
+
+    process sync-asset-delete (
+        name: Sync Asset - Delete
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                begin
+                    wms_pkg_ords.deleteAsset(:P56_ID);
+                end;
+                ```
+        }
+        execution {
+            sequence: 60
+        }
+        successMessage {
+            successMessage: Asset deleted.
+        }
+        advanced {
+            executionMappingIdentifier: 3453371067246974726
+        }
+        serverSideCondition {
+            whenButtonPressed: @delete
+        }
+    )
+
+    process sync-asset-update (
+        name: Sync Asset - Update
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                begin
+                    wms_pkg_ords.updateAsset(:P56_ID);
+                end;
+                ```
+        }
+        execution {
+            sequence: 90
+        }
+        successMessage {
+            successMessage: Asset updated.
+        }
+        advanced {
+            executionMappingIdentifier: 3453370974585974725
+        }
+        serverSideCondition {
+            whenButtonPressed: @save
+        }
+    )
+
+    process update-link (
+        name: Update Link
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                declare
+                    v_encoded_filename varchar2(500);
+                begin
+                
+                    select utl_url.escape(filename) into v_encoded_filename
+                    from apex_application_temp_files
+                    where name = :P56_FILE;
+                   
+                    select (select value from wms_system_parameters where name = 'HOSTED_FILES_BUCKET_PAR') || v_encoded_filename
+                    into :P56_LINK;
+                end;
+                ```
+        }
+        execution {
+            sequence: 20
+        }
+        advanced {
+            executionMappingIdentifier: 2285857595901146637
+        }
+        serverSideCondition {
+            whenButtonPressed: @upload
+            type: item=value
+            item: P56_UPLOAD_TYPE
+            value: File
+        }
+    )
+
+    process upload-file (
+        name: File Upload - New
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                declare
+                  l_request_url    varchar2(32767);
+                  l_base_url       varchar2(4000) := 'https://objectstorage.us-ashburn-1.oraclecloud.com/n/c4u02/b/hosted-files';
+                  l_response       clob;
+                  l_exists_response clob;
+                
+                  upload_failed_exception exception;
+                begin
+                  for file in (
+                    select *
+                    from apex_application_temp_files
+                    where name = :P56_FILE
+                  ) loop
+                    l_request_url := l_base_url
+                                     || '/o/'
+                                     || utl_url.escape(file.filename);
+                
+                    -- Check whether the object already exists
+                    apex_web_service.g_request_headers.delete;
+                    l_exists_response := apex_web_service.make_rest_request(
+                      p_url                   => l_request_url,
+                      p_http_method           => 'HEAD',
+                      p_credential_static_id  => 'OCI_API_KEY_C4U02'
+                    );
+                
+                    if apex_web_service.g_status_code = 200 then
+                      raise_application_error(
+                        -20001,
+                        'A file named "' || file.filename || '" already exists in our bucket. If you own that asset, you can edit its settings and overwrite it.'
+                      );
+                    elsif apex_web_service.g_status_code not in (404, 200) then
+                      raise_application_error(
+                        -20002,
+                        'Could not verify whether the file exists. HTTP status: ' || apex_web_service.g_status_code
+                      );
+                    end if;
+                
+                    -- Upload the file
+                    apex_web_service.g_request_headers.delete;
+                    apex_web_service.g_request_headers(1).name := 'Content-Type';
+                    apex_web_service.g_request_headers(1).value := file.mime_type;
+                
+                    l_response := apex_web_service.make_rest_request(
+                      p_url                  => l_request_url,
+                      p_http_method          => 'PUT',
+                      p_body_blob            => file.blob_content,
+                      p_credential_static_id => 'OCI_API_KEY_C4U02'
+                    );
+                
+                    if apex_web_service.g_status_code not in (200, 201, 204) then
+                      apex_debug.message('PUT url=%s', l_request_url);
+                      apex_debug.message('status=%s reason=%s',
+                                   apex_web_service.g_status_code,
+                                   apex_web_service.g_reason_phrase);
+                      raise_application_error(-20003, 'Upload failed. HTTP status=' || apex_web_service.g_status_code);
+                    end if;
+                  end loop;
+                end;
+                ```
+        }
+        execution {
+            sequence: 110
+        }
+        advanced {
+            executionMappingIdentifier: 2285855839571146620
+        }
+        serverSideCondition {
+            whenButtonPressed: @upload
+            type: expression
+            language: sql
+            sqlExpression: ":P56_UPLOAD_TYPE = 'File' and :P56_FILE is not null "
+        }
+    )
+
+)
+

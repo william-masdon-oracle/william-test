@@ -1,0 +1,532 @@
+page 126 (
+    name: Edit My Workshop Status
+    alias: EDIT-MY-WORKSHOP-STATUS
+    title: Edit My Workshop Status
+    appearance {
+        pageTemplate: @standard-custom
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        authorizationScheme: @administration-rights
+        formAutoComplete: false
+    }
+
+    region edit-my-workshop-status (
+        name: Edit My Workshop Status
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <table><tr><td width="120px">
+                <img src="#WORKSPACE_IMAGES#ssworkshop_icon_big.png" width="100px">
+                </td><td>
+                <p>To edit your status click the workshop status to show the drop down. </p></td></tr></table>
+                ```
+        }
+        layout {
+            sequence: 10
+            slot: beforeContentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region edit-my-workshop-status-2 (
+        name: Edit My Workshop Status
+        type: interactiveGrid
+        source {
+            location: localDatabase
+            tableName: WORKSHOPS
+            includeRowidColumn: true
+            whereClause:
+                ```sql
+                workshop_status in ('Approved','Workshop In Development','On Hold','Issue','Moving to GitHub','Self QA')
+                and active_flg=0 
+                and (upper(email_from_address)=:APP_USER or upper(manager_contact)=:APP_USER or upper(modernizer_resource)=:APP_USER )
+                ```
+        }
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        edit {
+            enabled: true
+            allowedOperations: [
+                add
+                update
+                delete
+            ]
+        }
+        toolbar {
+            controls: [
+                searchCol
+                searchField
+                actionsMenu
+                resetButton
+                saveButton
+            ]
+        }
+        download {
+            formats: [
+                csv
+                html
+                pdf
+            ]
+        }
+        advanced {
+            savedReportMappingIdentifier: 18067880154075984937
+        }
+
+        savedReport 10335269 (
+            visibility: primary
+            view {
+                default: grid
+            }
+            singleRowView {
+                displayedColumns: true
+            }
+
+            displayColumn (
+                column: @APEX$ROW_ACTION
+                layout {
+                    frozen: true
+                    sequence: 0
+                }
+            )
+
+            displayColumn (
+                column: @ROWID
+                layout {
+                    sequence: 1
+                }
+            )
+
+            displayColumn (
+                column: @NAME
+                layout {
+                    sequence: 3
+                }
+            )
+
+            displayColumn (
+                column: @DESCRIPTION
+                layout {
+                    sequence: 4
+                }
+            )
+
+            displayColumn (
+                column: @EMAIL_FROM_ADDRESS
+                layout {
+                    show: false
+                    sequence: 10
+                }
+            )
+
+            displayColumn (
+                column: @ID
+                layout {
+                    sequence: 2
+                }
+            )
+
+            displayColumn (
+                column: @WORKSHOP_STATUS
+                layout {
+                    sequence: 7
+                }
+            )
+
+        )
+
+        savedReport 10335271 (
+            visibility: alternative
+            name: Workshop Details (Basic) & Contacts
+            view {
+                default: grid
+            }
+            singleRowView {
+                displayedColumns: true
+            }
+            security {
+                authorizationScheme: @administration-rights
+            }
+
+            displayColumn (
+                column: @APEX$ROW_ACTION
+                layout {
+                    frozen: true
+                    sequence: 0
+                }
+            )
+
+            displayColumn (
+                column: @ROWID
+                layout {
+                    sequence: 1
+                }
+            )
+
+            displayColumn (
+                column: @NAME
+                layout {
+                    sequence: 4
+                }
+            )
+
+            displayColumn (
+                column: @DESCRIPTION
+                layout {
+                    show: false
+                    sequence: 9
+                }
+            )
+
+            displayColumn (
+                column: @EMAIL_FROM_ADDRESS
+                layout {
+                    show: false
+                    sequence: 13
+                }
+            )
+
+            displayColumn (
+                column: @ID
+                layout {
+                    sequence: 2
+                }
+            )
+
+            displayColumn (
+                column: @WORKSHOP_STATUS
+                layout {
+                    sequence: 7
+                }
+            )
+
+        )
+
+        savedReport 10335272 (
+            visibility: alternative
+            name: Workshop Details (Basic) & Contacts - PROD
+            view {
+                default: grid
+            }
+            singleRowView {
+                displayedColumns: true
+            }
+            security {
+                authorizationScheme: @administration-rights
+            }
+
+            displayColumn (
+                column: @APEX$ROW_ACTION
+                layout {
+                    frozen: true
+                    sequence: 0
+                }
+            )
+
+            displayColumn (
+                column: @ROWID
+                layout {
+                    sequence: 1
+                }
+            )
+
+            displayColumn (
+                column: @NAME
+                layout {
+                    width: 340
+                    sequence: 3
+                }
+            )
+
+            displayColumn (
+                column: @DESCRIPTION
+                layout {
+                    show: false
+                    sequence: 9
+                }
+            )
+
+            displayColumn (
+                column: @EMAIL_FROM_ADDRESS
+                layout {
+                    sequence: 13
+                }
+            )
+
+            displayColumn (
+                column: @ID
+                layout {
+                    sequence: 2
+                }
+            )
+
+            displayColumn (
+                column: @WORKSHOP_STATUS
+                layout {
+                    sequence: 7
+                }
+            )
+
+        )
+
+        savedReport 10335273 (
+            visibility: alternative
+            name: Workshop Details (Basic) & Contacts - NON PROD
+            view {
+                default: grid
+            }
+            singleRowView {
+                displayedColumns: true
+            }
+            security {
+                authorizationScheme: @administration-rights
+            }
+
+            displayColumn (
+                column: @APEX$ROW_ACTION
+                layout {
+                    frozen: true
+                    sequence: 0
+                }
+            )
+
+            displayColumn (
+                column: @ROWID
+                layout {
+                    sequence: 1
+                }
+            )
+
+            displayColumn (
+                column: @NAME
+                layout {
+                    sequence: 4
+                }
+            )
+
+            displayColumn (
+                column: @DESCRIPTION
+                layout {
+                    show: false
+                    sequence: 9
+                }
+            )
+
+            displayColumn (
+                column: @EMAIL_FROM_ADDRESS
+                layout {
+                    show: false
+                    sequence: 13
+                }
+            )
+
+            displayColumn (
+                column: @ID
+                layout {
+                    sequence: 2
+                }
+            )
+
+            displayColumn (
+                column: @WORKSHOP_STATUS
+                layout {
+                    sequence: 7
+                }
+            )
+
+        )
+
+        column APEX$ROW_ACTION (
+            type: actionsMenu
+            layout {
+                sequence: 20
+            }
+        )
+
+        column APEX$ROW_SELECTOR (
+            type: rowSelector
+            settings {
+                enableMultiSelect: false
+                hideControl: true
+            }
+            layout {
+                sequence: 10
+            }
+        )
+
+        column DESCRIPTION (
+            type: displayOnly
+            heading {
+                heading: Description
+            }
+            layout {
+                sequence: 70
+            }
+            source {
+                databaseColumn: DESCRIPTION
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column EMAIL_FROM_ADDRESS (
+            type: displayOnly
+            heading {
+                heading: Workshop Owner Email
+            }
+            layout {
+                sequence: 80
+            }
+            source {
+                databaseColumn: EMAIL_FROM_ADDRESS
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column ID (
+            type: displayOnly
+            heading {
+                heading: Id
+            }
+            layout {
+                sequence: 40
+            }
+            source {
+                databaseColumn: ID
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column NAME (
+            type: displayOnly
+            heading {
+                heading: Name
+            }
+            layout {
+                sequence: 60
+            }
+            source {
+                databaseColumn: NAME
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+        )
+
+        column ROWID (
+            type: hidden
+            layout {
+                sequence: 30
+            }
+            source {
+                databaseColumn: ROWID
+                dataType: rowid
+                primaryKey: true
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column WORKSHOP_STATUS (
+            type: selectList
+            heading {
+                heading: Workshop Status
+            }
+            lov {
+                type: sharedComponent
+                lov: @workshop-status
+            }
+            layout {
+                sequence: 200
+            }
+            source {
+                databaseColumn: WORKSHOP_STATUS
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: useLov
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: Manage All Workshops
+        }
+    )
+
+    process manage-all-workshops-save-interactive-grid-data (
+        name: Manage All Workshops - Save Interactive Grid Data
+        type: interactiveGridAutoRowProcessing
+        editableRegion: @edit-my-workshop-status-2
+        execution {
+            sequence: 10
+        }
+        advanced {
+            executionMappingIdentifier: 67099020370239089407
+        }
+    )
+
+)
+

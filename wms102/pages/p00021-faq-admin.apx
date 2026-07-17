@@ -1,0 +1,312 @@
+page 21 (
+    name: FAQ Admin
+    alias: FAQ-ADMIN
+    title: FAQ Admin
+    pageGroup: @administration
+    appearance {
+        pageTemplate: @standard-custom
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region faq (
+        name: FAQ
+        type: interactiveGrid
+        source {
+            location: localDatabase
+            tableName: FAQ_REPORT
+        }
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        edit {
+            enabled: true
+            allowedOperations: [
+                add
+                update
+                delete
+            ]
+        }
+        toolbar {
+            controls: [
+                searchCol
+                searchField
+                actionsMenu
+                resetButton
+                saveButton
+            ]
+        }
+        download {
+            formats: [
+                csv
+                html
+                pdf
+                excel
+            ]
+        }
+        advanced {
+            savedReportMappingIdentifier: 50241546433377857315
+        }
+
+        savedReport 231756624 (
+            visibility: primary
+            view {
+                default: grid
+            }
+            singleRowView {
+                displayedColumns: true
+            }
+
+            displayColumn (
+                column: @APEX$ROW_ACTION
+                layout {
+                    sequence: 0
+                }
+            )
+
+            displayColumn (
+                column: @FAQ_ID
+                layout {
+                    sequence: 1
+                }
+            )
+
+            displayColumn (
+                column: @QUESTION_DESCRIPTION
+                layout {
+                    sequence: 2
+                }
+            )
+
+            displayColumn (
+                column: @QUESTION_ANSWER
+                layout {
+                    sequence: 3
+                }
+            )
+
+            displayColumn (
+                column: @QUESTION_LINK
+                layout {
+                    sequence: 4
+                }
+            )
+
+            displayColumn (
+                column: @CATEGORY
+                layout {
+                    sequence: 5
+                }
+            )
+
+            displayColumn (
+                column: @RANK
+                layout {
+                    sequence: 6
+                }
+            )
+
+        )
+
+        column APEX$ROW_ACTION (
+            type: actionsMenu
+            layout {
+                sequence: 20
+            }
+        )
+
+        column APEX$ROW_SELECTOR (
+            type: rowSelector
+            layout {
+                sequence: 10
+            }
+        )
+
+        column CATEGORY (
+            type: textField
+            heading {
+                heading: Category
+            }
+            layout {
+                sequence: 80
+            }
+            source {
+                databaseColumn: CATEGORY
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: useLov
+            }
+        )
+
+        column FAQ_ID (
+            type: hidden
+            layout {
+                sequence: 30
+            }
+            source {
+                databaseColumn: FAQ_ID
+                dataType: number
+                queryOnly: true
+                primaryKey: true
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column QUESTION_ANSWER (
+            type: textField
+            heading {
+                heading: Answer
+            }
+            layout {
+                sequence: 50
+            }
+            source {
+                databaseColumn: QUESTION_ANSWER
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column QUESTION_DESCRIPTION (
+            type: textFieldWithAutocomplete
+            heading {
+                heading: Question
+            }
+            settings {
+                fetchOnType: false
+            }
+            lov {
+                type: sharedComponent
+                lov: @faq-question
+            }
+            layout {
+                sequence: 40
+            }
+            validation {
+                maxLength: 500
+            }
+            source {
+                databaseColumn: QUESTION_DESCRIPTION
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: useLov
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column QUESTION_LINK (
+            type: textField
+            heading {
+                heading: Answer Link
+            }
+            layout {
+                sequence: 60
+            }
+            link {
+                target: {
+                    type: url
+                    url: &QUESTION_LINK.
+                }
+                linkText: &QUESTION_LINK.
+                linkAttributes: target="_blank"
+            }
+            source {
+                databaseColumn: QUESTION_LINK
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column RANK (
+            type: numberField
+            heading {
+                heading: Rank
+            }
+            settings {
+                numberAlignment: end
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 90
+                columnAlignment: end
+            }
+            source {
+                databaseColumn: RANK
+                dataType: number
+            }
+            columnFilter {
+                lovType: sharedComponent
+                namedLov: @faq-rank
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: FAQ
+        }
+    )
+
+    process faq-save-interactive-grid-data (
+        name: FAQ - Save Interactive Grid Data
+        type: interactiveGridAutoRowProcessing
+        editableRegion: @faq
+        execution {
+            sequence: 10
+        }
+        advanced {
+            executionMappingIdentifier: 27065889027294489417
+        }
+    )
+
+)
+

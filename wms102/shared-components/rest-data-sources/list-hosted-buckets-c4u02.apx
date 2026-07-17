@@ -1,0 +1,165 @@
+restDataSource list-hosted-buckets-c4u02 (
+    name: list-hosted-buckets-c4u02
+    source {
+        type: oci
+        remoteServer: @objectstorage-us-ashburn-1-oraclecloud-com-n-c4u02
+        urlPathPrefix: /b/
+    }
+    authentication {
+        credentials: @OCI_API_KEY_C4U02
+    }
+
+    operation get (
+        label: GET
+        operation {
+            urlPattern: .
+            httpMethod: get
+            databaseOperation: fetchRows
+        }
+    )
+
+    parameter compartmentid (
+        name: compartmentId
+        parameter {
+            type: urlQueryString
+        }
+        value {
+            static: true
+            defaultValueType: staticValue
+            staticValue: ocid1.compartment.oc1..aaaaaaaamvklz4xtjz4qickvtz2stzvrrocrsvg5upboh4oc7ullek6xursa
+        }
+    )
+
+    dataProfile {
+        name: list-hosted-buckets-c4u02
+    }
+
+    dataProfileColumn bucketscope (
+        columnName: BUCKETSCOPE
+        source {
+            sequence: 5
+            dataType: varchar2
+        }
+        parsing {
+            pathExpression: bucketScope
+        }
+        advanced {
+            sourceDataType: string
+        }
+    )
+
+    dataProfileColumn compartmentid (
+        columnName: COMPARTMENTID
+        source {
+            sequence: 9
+            dataType: varchar2
+        }
+        parsing {
+            pathExpression: compartmentId
+        }
+        advanced {
+            sourceDataType: string
+        }
+    )
+
+    dataProfileColumn createdby (
+        columnName: CREATEDBY
+        source {
+            sequence: 3
+            dataType: varchar2
+        }
+        parsing {
+            pathExpression: createdBy
+        }
+        advanced {
+            sourceDataType: string
+        }
+    )
+
+    dataProfileColumn definedtags (
+        columnName: DEFINEDTAGS
+        source {
+            sequence: 6
+            dataType: varchar2
+        }
+        parsing {
+            pathExpression: definedTags
+        }
+        advanced {
+            sourceDataType: null
+        }
+    )
+
+    dataProfileColumn etag (
+        columnName: ETAG
+        source {
+            sequence: 1
+            dataType: varchar2
+        }
+        parsing {
+            pathExpression: etag
+        }
+        advanced {
+            sourceDataType: string
+        }
+    )
+
+    dataProfileColumn freeformtags (
+        columnName: FREEFORMTAGS
+        source {
+            sequence: 8
+            dataType: varchar2
+        }
+        parsing {
+            pathExpression: freeformTags
+        }
+        advanced {
+            sourceDataType: null
+        }
+    )
+
+    dataProfileColumn name (
+        columnName: NAME
+        source {
+            sequence: 2
+            dataType: varchar2
+        }
+        parsing {
+            pathExpression: name
+        }
+        advanced {
+            sourceDataType: string
+        }
+    )
+
+    dataProfileColumn namespace (
+        columnName: NAMESPACE
+        source {
+            sequence: 4
+            dataType: varchar2
+        }
+        parsing {
+            pathExpression: namespace
+        }
+        advanced {
+            sourceDataType: string
+        }
+    )
+
+    dataProfileColumn timecreated (
+        columnName: TIMECREATED
+        source {
+            sequence: 7
+            dataType: timestampWithTimeZone
+        }
+        parsing {
+            pathExpression: timeCreated
+            formatMask: YYYY"-"MM"-"DD"T"HH24":"MI:SS.FF9TZR
+        }
+        advanced {
+            sourceDataType: string
+        }
+    )
+
+)
+

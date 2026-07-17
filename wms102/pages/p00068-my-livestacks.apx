@@ -1,0 +1,269 @@
+page 68 (
+    name: My LiveStacks
+    alias: MY-LIVESTACKS
+    title: My LiveStacks
+    appearance {
+        pageTemplate: @standard-custom
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region my-livestacks (
+        name: My LiveStacks
+        type: classicReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                SELECT id,
+                       updated_on,
+                       created_date,
+                       name as title,
+                       (select (case when (select count(*) from wms_livestack_entries where livestack_id = id) = 1 then '1 Entry' 
+                           else (select count(*) || ' Entries' from wms_livestack_entries where livestack_id = id) 
+                       end) || ' · Last updated '
+                        || to_char(coalesce(updated_on, created_date), 'MM/DD/YYYY') from dual) as description,
+                       NULL AS selection,
+                       NULL AS misc,
+                       NULL AS icon_html,
+                       NULL AS item_classes,
+                       NULL AS actions,
+                       NULL AS icon_class
+                from wms_livestacks 
+                where created_by = v('APP_USER')
+                ```
+        }
+        orderBy {
+            type: staticValue
+            orderByClause: GREATEST(created_date, NVL(updated_on, DATE '1900-01-01') ) DESC
+        }
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--hideHeader
+                t-Region--scrollBody
+                margin-top-md
+            ]
+        }
+        componentAppearance {
+            template: @content-row
+            templateOptions: #DEFAULT#
+        }
+        pagination {
+            type: rowRangesXToYNoPagination
+        }
+        messages {
+            whenNoDataFound: No data found.
+        }
+
+        column ACTIONS (
+            reportColumnQueryId: 10
+            derivedColumn: N
+            type: link
+            heading {
+                heading: Actions
+            }
+            layout {
+                sequence: 61
+            }
+            link {
+                target: {
+                    page: 57
+                    items: {
+                        P57_ID: #ID#
+                    }
+                    clearCache: 57
+                }
+                linkText: <span role="img" aria-label="Edit" class="fa fa-edit" title="Edit"></span>
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column CREATED_DATE (
+            reportColumnQueryId: 3
+            derivedColumn: N
+            heading {
+                heading: Created Date
+            }
+            layout {
+                sequence: 101
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column DESCRIPTION (
+            reportColumnQueryId: 5
+            derivedColumn: N
+            heading {
+                heading: Description
+            }
+            layout {
+                sequence: 111
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column ICON_CLASS (
+            reportColumnQueryId: 11
+            derivedColumn: N
+            heading {
+                heading: Icon Class
+            }
+            layout {
+                sequence: 71
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column ICON_HTML (
+            reportColumnQueryId: 8
+            derivedColumn: N
+            heading {
+                heading: Icon Html
+            }
+            layout {
+                sequence: 41
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column ID (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            heading {
+                heading: Id
+                alignment: end
+            }
+            layout {
+                sequence: 1
+                columnAlignment: end
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column ITEM_CLASSES (
+            reportColumnQueryId: 9
+            derivedColumn: N
+            heading {
+                heading: Item Classes
+            }
+            layout {
+                sequence: 51
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column MISC (
+            reportColumnQueryId: 7
+            derivedColumn: N
+            heading {
+                heading: Misc
+            }
+            layout {
+                sequence: 31
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column SELECTION (
+            reportColumnQueryId: 6
+            derivedColumn: N
+            heading {
+                heading: Selection
+            }
+            layout {
+                sequence: 81
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column TITLE (
+            reportColumnQueryId: 4
+            derivedColumn: N
+            type: link
+            heading {
+                heading: Title
+            }
+            layout {
+                sequence: 11
+            }
+            link {
+                target: {
+                    page: 57
+                    items: {
+                        P57_ID: #ID#
+                    }
+                }
+                linkText: #TITLE#
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column UPDATED_ON (
+            reportColumnQueryId: 2
+            derivedColumn: N
+            heading {
+                heading: Updated On
+            }
+            layout {
+                sequence: 91
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+    )
+
+    region title (
+        name: Title
+        title: My LiveStacks
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @title-bar
+            templateOptions: [
+                #DEFAULT#
+                t-BreadcrumbRegion--useRegionTitle
+            ]
+        }
+    )
+
+)
+

@@ -1,0 +1,718 @@
+page 49 (
+    name: Request an Event Code Copy
+    alias: REQUEST-AN-EVENT-CODE-COPY
+    title: Request an Event Code Copy
+    appearance {
+        pageTemplate: @standard-custom
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        authorizationScheme: @administration-rights
+        formAutoComplete: false
+    }
+
+    region event-details (
+        name: Event Details
+        type: list
+        source {
+            list: @event-wizard
+        }
+        layout {
+            sequence: 20
+            slot: contentBody
+            startNewRow: false
+        }
+        appearance {
+            template: @wizard-container
+            templateOptions: [
+                #DEFAULT#
+                t-Wizard--hideStepsXSmall
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        componentAppearance {
+            listTemplate: @wizard-progress
+            templateOptions: [
+                #DEFAULT#
+                t-WizardSteps--displayLabels
+            ]
+        }
+    )
+
+    region event-details-2 (
+        name: Event Details
+        type: staticContent
+        layout {
+            sequence: 10
+            parentRegion: @event-details
+            slot: wizardSubRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    region welcome-to-the-event-code-request-page (
+        name: Welcome to the Event Code Request Page
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <table><tr><td width="120px">
+                <img src="#WORKSPACE_IMAGES#ssworkshop_icon_big.png" width="100px">
+                </td><td>
+                <p>LiveLabs main target is to support PMs and Sales People to ensure they try out Oracle's products so that they can make the decision to develop on it, consume it and purchase it.  To create a private workshop that isn't available to the public, design your workshop page here.  The Workshop pages in the image below are completely customizable and will only be available to those you give your 16 digit event code too.</p>
+                </td></tr></table>
+                ```
+        }
+        layout {
+            sequence: 10
+            parentRegion: @event-details
+            slot: wizardSubRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    pageItem P49_EMAIL_CREATOR (
+        type: textField
+        label {
+            label: <strong>Your Email</strong>
+            alignment: left
+        }
+        layout {
+            sequence: 40
+            region: @event-details-2
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @required-above
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            valueRequired: true
+            maxLength: 40
+        }
+        default {
+            type: sqlQuerySingleValue
+            sqlQuerySingleValue: select lower(:APP_USER) from dual;
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P49_EMAIL_REQUESTOR (
+        type: textField
+        label {
+            label: <strong>2nd Contact</strong>
+            alignment: left
+        }
+        settings {
+            subtype: email
+        }
+        layout {
+            sequence: 100
+            region: @event-details-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            maxLength: 40
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P49_EMAIL_REQUESTOR_2 (
+        type: textField
+        label {
+            label: <strong>3rd Event Contact</strong>
+            alignment: left
+        }
+        settings {
+            subtype: email
+        }
+        layout {
+            sequence: 110
+            region: @event-details-2
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            maxLength: 40
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: EMAIL_REQUESTOR_2
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P49_INTRO (
+        type: displayOnly
+        label {
+            label: <strong>Main Information</strong><br>To request an event code and custom LiveLabs workshop page, enter the information below. </strong><br>
+            alignment: left
+        }
+        settings {
+            showLineBreaks: false
+            sendOnPageSubmit: false
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery: select 'Welcome' from dual;
+        }
+        layout {
+            sequence: 10
+            region: @event-details-2
+            slot: regionBody
+            alignment: left
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P49_INTRO_1 (
+        type: displayOnly
+        label {
+            label: <br><strong>Contact Information</strong><br>Enter additional contacts for your event below.
+            alignment: left
+        }
+        settings {
+            showLineBreaks: false
+            sendOnPageSubmit: false
+        }
+        layout {
+            sequence: 90
+            region: @event-details-2
+            slot: regionBody
+            alignment: left
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P49_INTRO_2 (
+        type: displayOnly
+        label {
+            label: <strong><span style="float: right; width: 13%; text-align: right;">PAGE 1</span></strong>
+            alignment: left
+        }
+        settings {
+            showLineBreaks: false
+            sendOnPageSubmit: false
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery: select 'Welcome' from dual;
+        }
+        layout {
+            sequence: 20
+            region: @event-details-2
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P49_SEQID (
+        type: hidden
+        layout {
+            sequence: 120
+            region: @event-details-2
+            slot: regionBody
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery: select WORKSHOPS_SEQ.nextval from dual;
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P49_TITLE (
+        type: textField
+        label {
+            label: <strong>What will your Event Title be on your LiveLabs Workshop Page?</strong>
+            alignment: left
+        }
+        layout {
+            sequence: 30
+            region: @event-details-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required-above
+            templateOptions: #DEFAULT#
+            width: 60
+        }
+        validation {
+            valueRequired: true
+            maxLength: 70
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P49_VALID_FROM (
+        type: datePickerJquery
+        label {
+            label: <strong>When will it start?</strong>
+            alignment: left
+        }
+        layout {
+            sequence: 60
+            region: @event-details-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery: select sysdate+7 from dual;
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P49_VALID_TIMEZONE (
+        type: selectList
+        label {
+            label: <strong>Event Timezone</strong>
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery: select KEY_VALUE_LONG||' '||KEY_VALUE, KEY_VALUE from keys where key_type='TZ' order by key_id
+        }
+        layout {
+            sequence: 80
+            region: @event-details-2
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        default {
+            type: static
+            staticValue: Pacific Standard Time (PST) -8:00
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P49_VALID_TO (
+        type: datePickerJquery
+        label {
+            label: <strong>When will it end?</strong>
+            alignment: left
+        }
+        layout {
+            sequence: 70
+            region: @event-details-2
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery: select sysdate+14 from dual;
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P49_WORKSHOP_ID (
+        type: selectList
+        label {
+            label: <strong> Choose a Workshop</strong>
+            alignment: left
+        }
+        settings {
+            pageActionOnSelection: submitPage
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery: select  name||'  (Prod ID: '||prod_id||'/Workshop ID: '||id||')' as d, id as v from WORKSHOPS where active_flg=1 order by name;
+        }
+        layout {
+            sequence: 50
+            region: @event-details-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required-above
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        validation {
+            valueRequired: true
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button create-event (
+        buttonName: Create_Event_1
+        label: Next
+        layout {
+            sequence: 10
+            region: @event-details-2
+            slot: belowBox
+        }
+        appearance {
+            buttonTemplate: @text-with-icon
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--large
+                t-Button--iconRight
+            ]
+            icon: fa-angle-double-right
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 36
+                items: {
+                    P36_WORKSHOP_ID: &P49_WORKSHOP_ID.
+                    P36_SEQID: &P49_SEQID.
+                }
+                clearCache: 36
+                action: clearRegions
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    button next (
+        buttonName: Next
+        label: Next
+        layout {
+            sequence: 30
+            region: @event-details-2
+            slot: belowBox
+        }
+        appearance {
+            buttonTemplate: @text-with-icon
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--large
+                t-Button--iconRight
+            ]
+            icon: fa-angle-double-right
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 36
+                items: {
+                    P36_SEQID: &P49_SEQID.
+                    P36_WORKSHOP_ID: &P49_WORKSHOP_ID.
+                }
+                clearCache: 36
+                action: clearRegions
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button save-event (
+        buttonName: Save_Event
+        label: Save Event
+        layout {
+            sequence: 20
+            region: @event-details-2
+            slot: belowBox
+        }
+        appearance {
+            buttonTemplate: @text-with-icon
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--large
+                t-Button--iconRight
+            ]
+            icon: fa-clipboard-check-alt
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P49_WORKSHOP_ID
+        }
+    )
+
+    dynamicAction createvoucher (
+        name: createvoucher
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @create-event
+        }
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    begin
+                      INSERT INTO   LL_VOUCHERS
+                       (  
+                           ID, WORKSHOP_ID,  EMAIL_REQUESTOR, EMAIL_CREATOR,   REASON,   VALID_FROM, VALID_TO,  VALID_TIMEZONE , EMAIL_REQUESTOR_2
+                       )
+                       VALUES
+                       (
+                          :P49_SEQID, :P49_WORKSHOP_ID,  :P49_EMAIL_REQUESTOR, :P49_EMAIL_CREATOR,  :P49_TITLE,    :P49_VALID_FROM, :P49_VALID_TO, :P49_VALID_TIMEZONE, :P49_EMAIL_REQUESTOR_2 
+                           
+                       ); 
+                       
+                      -- :P49_SEQID := WORKSHOPS_SEQ.currval;
+                       
+                    end;
+                    ```
+                itemsToSubmit: [
+                    P49_SEQID
+                    P49_WORKSHOP_ID
+                    P49_EMAIL_CREATOR
+                    P49_EMAIL_REQUESTOR
+                    P49_EMAIL_REQUESTOR_2
+                    P49_TITLE
+                    P49_VALID_FROM
+                    P49_VALID_TO
+                    P49_VALID_TIMEZONE
+                ]
+                itemsToReturn: P49_SEQID
+                showProcessing: true
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+        action native-show (
+            action: show
+            affectedElements {
+                selectionType: button
+                button: @next
+            }
+            execution {
+                sequence: 20
+            }
+        )
+
+    )
+
+    dynamicAction ff (
+        name: ff
+        execution {
+            sequence: 30
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @save-event
+        }
+
+        action native-confirm (
+            action: confirm
+            settings {
+                message: Saved , click next
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    begin
+                      INSERT INTO   LL_VOUCHERS
+                       (  
+                           ID, WORKSHOP_ID,  EMAIL_REQUESTOR, EMAIL_CREATOR,   REASON,   VALID_FROM, VALID_TO,  VALID_TIMEZONE , EMAIL_REQUESTOR_2
+                       )
+                       VALUES
+                       (
+                          :P49_SEQID, :P49_WORKSHOP_ID,  :P49_EMAIL_REQUESTOR, :P49_EMAIL_CREATOR,  :P49_TITLE,    :P49_VALID_FROM, :P49_VALID_TO, :P49_VALID_TIMEZONE, :P49_EMAIL_REQUESTOR_2 
+                           
+                       ); 
+                       
+                      -- :P49_SEQID := WORKSHOPS_SEQ.currval;
+                     -- :P49_VALIDDATA := 'Valid';
+                       
+                    end;
+                    ```
+                itemsToSubmit: [
+                    P49_SEQID
+                    P49_WORKSHOP_ID
+                    P49_EMAIL_CREATOR
+                    P49_EMAIL_REQUESTOR
+                    P49_EMAIL_REQUESTOR_2
+                    P49_TITLE
+                    P49_VALID_FROM
+                    P49_VALID_TO
+                    P49_VALID_TIMEZONE
+                ]
+                itemsToReturn: P49_SEQID
+                showProcessing: true
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+        action native-show (
+            action: show
+            affectedElements {
+                selectionType: button
+                button: @next
+            }
+            execution {
+                sequence: 30
+            }
+        )
+
+    )
+
+    dynamicAction hidenext (
+        name: hidenext
+        execution {
+            sequence: 40
+        }
+        when {
+            event: ready
+        }
+
+        action native-hide (
+            action: hide
+            affectedElements {
+                selectionType: button
+                button: @next
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    dynamicAction new (
+        name: New
+        execution {
+            sequence: 20
+        }
+        when {
+            selectionType: items
+            items: P49_TITLE
+        }
+
+        action native-submit-page (
+            action: submitPage
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    validation creatorvalidation (
+        name: creatorvalidation
+        execution {
+            sequence: 30
+        }
+        validation {
+            type: itemMatchesRegexp
+            item: P49_EMAIL_CREATOR
+            regexp: @oracle.com
+            alwaysExecute: true
+        }
+        error {
+            errorMessage: Please enter a valid oracle email
+            associatedItem: @P49_EMAIL_CREATOR
+        }
+        serverSideCondition {
+            whenButtonPressed: @create-event
+        }
+    )
+
+)
+

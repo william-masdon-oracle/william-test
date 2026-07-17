@@ -1,0 +1,521 @@
+page 114 (
+    name: Edit Workshop Council
+    alias: EDIT-WORKSHOP-COUNCIL
+    title: Edit Workshop Council
+    appearance {
+        pageTemplate: @standard-custom
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        authorizationScheme: @administration-rights
+        formAutoComplete: false
+    }
+
+    region edit-council-members (
+        name: Edit Council Members
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <table><tr><td width="120px">
+                <img src="#APP_FILES#ssw_icon.png" width="100px">
+                </td><td>
+                <p>Council members perform approvals of all workshops.   They are normally Product Managers, Product Marketing or Development.  To add new council categories contact Tom McGinn, Anoosha Pilli or Kay Malcolm.</p></td></tr></table>
+                ```
+        }
+        layout {
+            sequence: 10
+            slot: beforeContentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        security {
+            authorizationScheme: @administration-rights
+        }
+    )
+
+    region edit-council-members-2 (
+        name: Edit Council Members
+        type: interactiveGrid
+        source {
+            location: localDatabase
+            tableName: WORKSHOP_PERSON_COUNCIL
+        }
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        security {
+            authorizationScheme: @administration-rights
+        }
+        edit {
+            enabled: true
+            allowedOperations: [
+                add
+                update
+                delete
+            ]
+        }
+        messages {
+            whenNoDataFound: No data found
+        }
+        toolbar {
+            controls: [
+                searchCol
+                searchField
+                actionsMenu
+                resetButton
+                saveButton
+            ]
+        }
+        download {
+            formats: [
+                csv
+                html
+                pdf
+            ]
+        }
+        advanced {
+            savedReportMappingIdentifier: 11660896527759143245
+        }
+
+        savedReport 10950057 (
+            visibility: primary
+            view {
+                default: grid
+            }
+            singleRowView {
+                displayedColumns: true
+            }
+
+            displayColumn (
+                column: @DESC
+                layout {
+                    sequence: 49
+                }
+            )
+
+            displayColumn (
+                column: @COUNCIL_ID
+                layout {
+                    sequence: 42
+                }
+            )
+
+            displayColumn (
+                column: @EMAIL
+                layout {
+                    sequence: 43
+                }
+            )
+
+            displayColumn (
+                column: @CREATE_DTM
+                layout {
+                    sequence: 45
+                }
+            )
+
+            displayColumn (
+                column: @CREATE_BY
+                layout {
+                    sequence: 46
+                }
+            )
+
+            displayColumn (
+                column: @UPDATE_DTM
+                layout {
+                    sequence: 47
+                }
+            )
+
+            displayColumn (
+                column: @UPDATE_BY
+                layout {
+                    sequence: 48
+                }
+            )
+
+            displayColumn (
+                column: @APEX$ROW_ACTION
+                layout {
+                    frozen: true
+                    sequence: 0
+                }
+            )
+
+            displayColumn (
+                column: @ACTIVE_FLG
+                layout {
+                    sequence: 5
+                }
+            )
+
+            displayColumn (
+                column: @ID
+                layout {
+                    sequence: 2
+                }
+            )
+
+        )
+
+        savedReport 61865469 (
+            visibility: alternative
+            name: Primary Report
+            view {
+                default: grid
+            }
+            singleRowView {
+                displayedColumns: true
+            }
+            security {
+                authorizationScheme: mustNotBePublicUser
+            }
+
+            displayColumn (
+                column: @COUNCIL_ID
+                layout {
+                    sequence: 3
+                }
+            )
+
+            displayColumn (
+                column: @EMAIL
+                layout {
+                    sequence: 4
+                }
+            )
+
+            displayColumn (
+                column: @CREATE_DTM
+                layout {
+                    show: false
+                    sequence: 6
+                }
+            )
+
+            displayColumn (
+                column: @CREATE_BY
+                layout {
+                    show: false
+                    sequence: 7
+                }
+            )
+
+            displayColumn (
+                column: @UPDATE_DTM
+                layout {
+                    sequence: 8
+                }
+            )
+
+            displayColumn (
+                column: @UPDATE_BY
+                layout {
+                    sequence: 9
+                }
+            )
+
+            displayColumn (
+                column: @APEX$ROW_ACTION
+                layout {
+                    frozen: true
+                    width: 70
+                    sequence: 0
+                }
+            )
+
+            displayColumn (
+                column: @ACTIVE_FLG
+                layout {
+                    sequence: 5
+                }
+            )
+
+            displayColumn (
+                column: @ID
+                layout {
+                    width: 82
+                    sequence: 2
+                }
+            )
+
+        )
+
+        column ACTIVE_FLG (
+            type: numberField
+            heading {
+                heading: Active Flg
+                alignment: end
+            }
+            settings {
+                numberAlignment: end
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 70
+                columnAlignment: end
+            }
+            source {
+                databaseColumn: ACTIVE_FLG
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column APEX$ROW_ACTION (
+            type: actionsMenu
+            layout {
+                sequence: 20
+            }
+        )
+
+        column APEX$ROW_SELECTOR (
+            type: rowSelector
+            layout {
+                sequence: 10
+            }
+        )
+
+        column COUNCIL_ID (
+            type: selectList
+            heading {
+                heading: Council Name
+            }
+            lov {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select name,id from workshop_council where active_flg=1
+                    order by name
+                    ```
+            }
+            layout {
+                sequence: 60
+            }
+            validation {
+                valueRequired: true
+            }
+            source {
+                databaseColumn: COUNCIL_ID
+                dataType: number
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: useLov
+            }
+        )
+
+        column CREATE_BY (
+            type: displayOnly
+            heading {
+                heading: Create By
+            }
+            layout {
+                sequence: 100
+            }
+            source {
+                databaseColumn: CREATE_BY
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column CREATE_DTM (
+            type: displayOnly
+            heading {
+                heading: Create Dtm
+            }
+            layout {
+                sequence: 90
+            }
+            source {
+                databaseColumn: CREATE_DTM
+                dataType: date
+            }
+        )
+
+        column DESC (
+            type: textarea
+            heading {
+                heading: Desc
+            }
+            layout {
+                sequence: 130
+            }
+            validation {
+                maxLength: 1000
+            }
+            source {
+                databaseColumn: DESC
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column EMAIL (
+            type: textarea
+            heading {
+                heading: Council Member
+            }
+            layout {
+                sequence: 50
+            }
+            validation {
+                valueRequired: true
+                maxLength: 100
+            }
+            source {
+                databaseColumn: EMAIL
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+            security {
+                authorizationScheme: @administration-rights
+            }
+        )
+
+        column ID (
+            type: displayOnly
+            heading {
+                heading: ID
+            }
+            layout {
+                sequence: 40
+            }
+            source {
+                databaseColumn: ID
+                dataType: number
+                primaryKey: true
+            }
+            default {
+                duplicateCopiesExistingValue: false
+            }
+            columnFilter {
+                lovType: none
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column UPDATE_BY (
+            type: displayOnly
+            heading {
+                heading: Update By
+            }
+            layout {
+                sequence: 120
+            }
+            source {
+                databaseColumn: UPDATE_BY
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column UPDATE_DTM (
+            type: displayOnly
+            heading {
+                heading: Update Dtm
+            }
+            layout {
+                sequence: 110
+            }
+            source {
+                databaseColumn: UPDATE_DTM
+                dataType: date
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: Manage All Workshops
+        }
+    )
+
+    process manage-all-workshops-save-interactive-grid-data (
+        name: Manage All Workshops - Save Interactive Grid Data
+        type: interactiveGridAutoRowProcessing
+        editableRegion: @edit-council-members-2
+        execution {
+            sequence: 10
+        }
+        advanced {
+            executionMappingIdentifier: 60691939271719247811
+        }
+    )
+
+)
+

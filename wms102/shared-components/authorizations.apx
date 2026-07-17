@@ -1,0 +1,248 @@
+authorization administration-rights (
+    name: Administration Rights
+    type: isInRoleOrGroup
+    settings {
+        names: Administrator
+    }
+    error {
+        errorMessage: Insufficient privileges, user is not an Administrator
+    }
+)
+
+authorization contribution-rights (
+    name: Contribution Rights
+    type: isInRoleOrGroup
+    settings {
+        names: [
+            Administrator
+            Contributor
+        ]
+    }
+    error {
+        errorMessage: Insufficient privileges, user is not a Contributor
+    }
+)
+
+authorization reader-rights (
+    name: Reader Rights
+    type: plSqlFunctionBody
+    settings {
+        plsqlFunctionBody:
+            ```plsql
+            if nvl(apex_app_setting.get_value(
+               p_name => 'ACCESS_CONTROL_SCOPE'),'x') = 'ALL_USERS' then
+                -- allow user not in the ACL to access the application
+                return true;
+            else
+                -- require user to have at least one role
+                return apex_acl.has_user_any_roles (
+                    p_application_id => :APP_ID, 
+                    p_user_name      => :APP_USER);
+            end if;
+            ```
+    }
+    error {
+        errorMessage: You are not authorized to view this application, either because you have not been granted access, or your account has been locked. Please contact the application administrator.
+    }
+    advanced {
+        evaluationType: perSession
+    }
+)
+
+authorization wms-administrator (
+    name: WMS Administrator
+    type: existsSqlQuery
+    settings {
+        sqlQuery:
+            ```sql
+            select USER_NAME
+              from wms_user_roles
+             where upper(USER_NAME) = :APP_USER
+               and upper(role_name) = 'ADMINISTRATOR' ;
+            ```
+    }
+    error {
+        errorMessage: This page is for LiveLabs Administrators.  If you are seeing this message in error, please contact the LiveLabs Support Team.
+    }
+    advanced {
+        evaluationType: perSession
+    }
+)
+
+authorization wms-developer (
+    name: WMS Developer
+    type: existsSqlQuery
+    settings {
+        sqlQuery:
+            ```sql
+            select USER_NAME
+              from wms_user_roles
+             where upper(USER_NAME) = :APP_USER
+               and upper(role_name) = 'DEVELOPER' ;
+            ```
+    }
+    error {
+        errorMessage: This page is for LiveLabs Developers.  If you are seeing this message in error, please contact the LiveLabs Support Team.
+    }
+)
+
+authorization wms-event-code-ambassador (
+    name: WMS Event Code Ambassador
+    type: existsSqlQuery
+    settings {
+        sqlQuery:
+            ```sql
+            select USER_NAME
+              from wms_user_roles
+             where USER_NAME = :APP_USER
+               and upper(role_name) = 'EVENT_CODE_AMBASSADOR' ;
+            ```
+    }
+    error {
+        errorMessage: This page is for LiveLabs Event Code Ambassadors.  If you are seeing this message in error, please contact the LiveLabs Support Team.
+    }
+    advanced {
+        evaluationType: perSession
+    }
+)
+
+authorization wms-observer (
+    name: WMS Observer
+    type: existsSqlQuery
+    settings {
+        sqlQuery:
+            ```sql
+            select USER_NAME
+              from wms_user_roles
+             where USER_NAME = :APP_USER
+               and upper(role_name) = 'OBSERVER' ;
+            ```
+    }
+    error {
+        errorMessage: This page is for LiveLabs Observers.  If you are seeing this message in error, please contact the LiveLabs Support Team.
+    }
+    advanced {
+        evaluationType: perSession
+    }
+)
+
+authorization wms-qa (
+    name: WMS QA
+    type: existsSqlQuery
+    settings {
+        sqlQuery:
+            ```sql
+            select USER_NAME
+              from wms_user_roles
+             where USER_NAME = :APP_USER
+               and upper(role_name) = 'QA' ;
+            ```
+    }
+    error {
+        errorMessage: This page is for LiveLabs QA.  If you are seeing this message in error, please contact the LiveLabs Support Team.
+    }
+    advanced {
+        evaluationType: perSession
+    }
+)
+
+authorization wms-stakeholder (
+    name: WMS Stakeholder
+    type: existsSqlQuery
+    settings {
+        sqlQuery:
+            ```sql
+            select USER_NAME
+              from wms_user_roles
+             where USER_NAME = :APP_USER
+               and upper(role_name) = 'STAKEHOLDER' ;
+            ```
+    }
+    error {
+        errorMessage: This page is for LiveLabs Stakeholders.  If you are seeing this message in error, please contact the LiveLabs Support Team.
+    }
+    advanced {
+        evaluationType: perSession
+    }
+)
+
+authorization wms-terraform-specialist (
+    name: WMS Terraform Specialist
+    type: existsSqlQuery
+    settings {
+        sqlQuery:
+            ```sql
+            select USER_NAME
+              from wms_user_roles
+             where USER_NAME = :APP_USER
+               and upper(role_name) = 'TERRAFORM_SPECIALIST' ;
+            ```
+    }
+    error {
+        errorMessage: This page is for LiveLabs Terraform Support.  If you are seeing this message in error, please contact the LiveLabs Support Team.
+    }
+    advanced {
+        evaluationType: perSession
+    }
+)
+
+authorization wms-workshop-author (
+    name: WMS Workshop Author
+    type: existsSqlQuery
+    settings {
+        sqlQuery:
+            ```sql
+            select USER_NAME
+              from wms_user_roles
+             where USER_NAME = :APP_USER
+               and upper(role_name) = 'WORKSHOP_AUTHOR' ;
+            ```
+    }
+    error {
+        errorMessage: This page is for LiveLabs Workshop Authors.  If you are seeing this message in error, please contact the LiveLabs Support Team.
+    }
+    advanced {
+        evaluationType: perSession
+    }
+)
+
+authorization wms-workshop-content-owner (
+    name: WMS Workshop Content Owner
+    type: existsSqlQuery
+    settings {
+        sqlQuery:
+            ```sql
+            select USER_NAME
+              from wms_user_roles
+             where USER_NAME = :APP_USER
+               and upper(role_name) = 'WORKSHOP_CONTENT_OWNER' ;
+            ```
+    }
+    error {
+        errorMessage: This page is for LiveLabs Workshop Content Owners.  If you are seeing this message in error, please contact the LiveLabs Support Team.
+    }
+    advanced {
+        evaluationType: perSession
+    }
+)
+
+authorization wms-workshop-council (
+    name: WMS Workshop Council
+    type: existsSqlQuery
+    settings {
+        sqlQuery:
+            ```sql
+            select USER_NAME
+              from wms_user_roles
+             where USER_NAME = :APP_USER
+               and upper(role_name) = 'WORKSHOP_COUNCIL' ;
+            ```
+    }
+    error {
+        errorMessage: This page is for LiveLabs Workshop Council.  If you are seeing this message in error, please contact the LiveLabs Support Team.
+    }
+    advanced {
+        evaluationType: perSession
+    }
+)
+

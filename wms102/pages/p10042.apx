@@ -1,0 +1,176 @@
+page 10042 (
+    name: Feedback Settings
+    title: Feedback Settings
+    pageGroup: @administration
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @modal-dialog
+    }
+    dialog {
+        resizable: false
+    }
+    security {
+        authorizationScheme: @administration-rights
+        formAutoComplete: false
+    }
+    help {
+        helpText: <p><strong>Enable Attachments</strong> - If yes, users will be able to upload an attachment in support of their feedback.</p>
+    }
+    config {
+        buildOption: @feature-feedback
+    }
+
+    region buttons-region (
+        name: Buttons Region
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: dialogFooter
+        }
+        appearance {
+            template: @buttons-container
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    region form-items-region (
+        name: Form Items Region
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    pageItem P10042_FEEDBACK_ATTACHMENTS_YN (
+        type: switch
+        label {
+            label: Enable Attachments
+            alignment: left
+        }
+        layout {
+            sequence: 10
+            region: @form-items-region
+            slot: regionBody
+            alignment: left
+            labelColumnSpan: 3
+        }
+        appearance {
+            template: @optional
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            type: expression
+            plsqlExpression: apex_app_setting.get_value( p_name  => 'FEEDBACK_ATTACHMENTS_YN' )
+        }
+        default {
+            type: static
+            staticValue: N
+        }
+        security {
+            encryptSessionState: false
+            restrictedChars: webSafe
+        }
+    )
+
+    button cancel (
+        buttonName: CANCEL
+        label: Cancel
+        layout {
+            sequence: 20
+            region: @buttons-region
+            slot: edit
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button save (
+        buttonName: SAVE
+        label: Apply Changes
+        layout {
+            sequence: 10
+            region: @buttons-region
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--gapLeft
+            ]
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    dynamicAction cancel-dialog (
+        name: Cancel Dialog
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @cancel
+        }
+
+        action native-dialog-cancel (
+            action: cancelDialog
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    process close-dialog (
+        name: Close Dialog
+        type: closeDialog
+        settings {
+            showSuccessMessages: false
+        }
+        execution {
+            sequence: 20
+        }
+        advanced {
+            executionMappingIdentifier: 62750637085909370004
+        }
+    )
+
+    process save-setting (
+        name: Save Setting
+        type: executeCode
+        source {
+            plsqlCode: apex_app_setting.set_value( p_name => 'FEEDBACK_ATTACHMENTS_YN', p_value => :P10042_FEEDBACK_ATTACHMENTS_YN );
+        }
+        execution {
+            sequence: 10
+        }
+        successMessage {
+            successMessage: Feedback settings updated.
+        }
+        advanced {
+            executionMappingIdentifier: 62750636634613370004
+        }
+        serverSideCondition {
+            whenButtonPressed: @save
+        }
+    )
+
+)
+

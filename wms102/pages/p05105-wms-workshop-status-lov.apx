@@ -1,0 +1,517 @@
+page 5105 (
+    name: WMS - Workshop Status LOV
+    alias: WMS-WORKSHOP-STATUS-LOV
+    title: WMS - Workshop Status LOV
+    appearance {
+        pageTemplate: @standard-custom
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region wms-workshop-status-lov (
+        name: WMS - Workshop Status LOV
+        type: interactiveGrid
+        source {
+            location: localDatabase
+            tableName: WMS_LOVS
+            includeRowidColumn: true
+            whereClause: LOV_NAME = 'WORKSHOP_STATUS'
+        }
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        edit {
+            enabled: true
+            allowedOperations: [
+                add
+                update
+                delete
+            ]
+        }
+        toolbar {
+            controls: [
+                searchCol
+                searchField
+                actionsMenu
+                resetButton
+                saveButton
+            ]
+        }
+        download {
+            formats: [
+                csv
+                html
+                pdf
+                excel
+            ]
+        }
+        advanced {
+            savedReportMappingIdentifier: 834048183423281103
+        }
+
+        savedReport 8340486 (
+            visibility: primary
+            view {
+                default: grid
+            }
+            singleRowView {
+                displayedColumns: true
+            }
+
+            displayColumn (
+                column: @APEX$ROW_ACTION
+                layout {
+                    sequence: 0
+                }
+            )
+
+            displayColumn (
+                column: @ROWID
+                layout {
+                    sequence: 1
+                }
+            )
+
+            displayColumn (
+                column: @ID
+                layout {
+                    sequence: 2
+                }
+            )
+
+            displayColumn (
+                column: @LOV_NAME
+                layout {
+                    sequence: 3
+                }
+            )
+
+            displayColumn (
+                column: @DISPLAY_VALUE
+                layout {
+                    sequence: 4
+                }
+            )
+
+            displayColumn (
+                column: @RETURN_VALUE
+                layout {
+                    sequence: 5
+                }
+            )
+
+            displayColumn (
+                column: @RETURN_NUMBER
+                layout {
+                    sequence: 6
+                }
+            )
+
+            displayColumn (
+                column: @IN_ADMIN_LOV_YN
+                layout {
+                    sequence: 7
+                }
+            )
+
+            displayColumn (
+                column: @IN_COUNCIL_LOV_YN
+                layout {
+                    sequence: 8
+                }
+            )
+
+            displayColumn (
+                column: @IN_STAKEHOLDER_LOV_YN
+                layout {
+                    sequence: 9
+                }
+            )
+
+            displayColumn (
+                column: @IN_AUTHOR_LOV_YN
+                layout {
+                    sequence: 10
+                }
+            )
+
+            displayColumn (
+                column: @DISPLAY_ORDER
+                layout {
+                    sequence: 11
+                }
+            )
+
+        )
+
+        column APEX$ROW_ACTION (
+            type: actionsMenu
+            layout {
+                sequence: 20
+            }
+        )
+
+        column APEX$ROW_SELECTOR (
+            type: rowSelector
+            layout {
+                sequence: 10
+            }
+        )
+
+        column DISPLAY_ORDER (
+            type: numberField
+            heading {
+                heading: Display Order
+                alignment: center
+            }
+            settings {
+                numberAlignment: end
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 130
+                columnAlignment: center
+                stretch: never
+            }
+            validation {
+                maxLength: 12
+            }
+            source {
+                databaseColumn: DISPLAY_ORDER
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column DISPLAY_VALUE (
+            type: textField
+            heading {
+                heading: Display Value
+            }
+            layout {
+                sequence: 60
+            }
+            validation {
+                valueRequired: true
+                maxLength: 300
+            }
+            source {
+                databaseColumn: DISPLAY_VALUE
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column ID (
+            type: hidden
+            layout {
+                sequence: 40
+            }
+            source {
+                databaseColumn: ID
+                dataType: number
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column IN_ADMIN_LOV_YN (
+            type: selectList
+            heading {
+                heading: In Admin LOV Y/N
+                alignment: center
+            }
+            lov {
+                type: sharedComponent
+                lov: @yn-lov
+                displayExtraValues: false
+                displayNullValue: false
+            }
+            layout {
+                sequence: 90
+                columnAlignment: center
+            }
+            validation {
+                valueRequired: true
+            }
+            source {
+                databaseColumn: IN_ADMIN_LOV_YN
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: useLov
+            }
+        )
+
+        column IN_AUTHOR_LOV_YN (
+            type: selectList
+            heading {
+                heading: In Author LOV Y/N
+                alignment: center
+            }
+            lov {
+                type: sharedComponent
+                lov: @yn-lov
+                displayExtraValues: false
+                displayNullValue: false
+            }
+            layout {
+                sequence: 120
+                columnAlignment: center
+            }
+            validation {
+                valueRequired: true
+            }
+            source {
+                databaseColumn: IN_AUTHOR_LOV_YN
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: useLov
+            }
+        )
+
+        column IN_COUNCIL_LOV_YN (
+            type: selectList
+            heading {
+                heading: In Council LOV Y/N
+                alignment: center
+            }
+            lov {
+                type: sharedComponent
+                lov: @yn-lov
+                displayExtraValues: false
+                displayNullValue: false
+            }
+            layout {
+                sequence: 100
+                columnAlignment: center
+            }
+            validation {
+                valueRequired: true
+            }
+            source {
+                databaseColumn: IN_COUNCIL_LOV_YN
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: useLov
+            }
+        )
+
+        column IN_STAKEHOLDER_LOV_YN (
+            type: selectList
+            heading {
+                heading: In Stakeholder LOV Y/N
+                alignment: center
+            }
+            lov {
+                type: sharedComponent
+                lov: @yn-lov
+                displayExtraValues: false
+                displayNullValue: false
+            }
+            layout {
+                sequence: 110
+                columnAlignment: center
+            }
+            validation {
+                valueRequired: true
+            }
+            source {
+                databaseColumn: IN_STAKEHOLDER_LOV_YN
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: useLov
+            }
+        )
+
+        column LOV_NAME (
+            type: displayOnly
+            heading {
+                heading: LOV Name
+            }
+            layout {
+                sequence: 50
+            }
+            source {
+                databaseColumn: LOV_NAME
+                dataType: varchar2
+            }
+            default {
+                type: static
+                staticValue: WORKSHOP_STATUS
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column RETURN_NUMBER (
+            type: hidden
+            layout {
+                sequence: 80
+            }
+            source {
+                databaseColumn: RETURN_NUMBER
+                dataType: number
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column RETURN_VALUE (
+            type: textField
+            heading {
+                heading: Return Value
+            }
+            layout {
+                sequence: 70
+            }
+            validation {
+                maxLength: 300
+            }
+            source {
+                databaseColumn: RETURN_VALUE
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column ROWID (
+            type: hidden
+            layout {
+                sequence: 30
+            }
+            source {
+                databaseColumn: ROWID
+                dataType: rowid
+                primaryKey: true
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: WMS - Workshop Status LOV
+        }
+    )
+
+    region workshop-status-management-header (
+        name: Workshop Status Management - Header
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <u><strong>Workshop Status Management</strong></u><br>
+                Utilize the Y/N flags to identify what value will appear in the Workshop Status in LWMS for the specified role (Administrator, Workshop Council, Stakeholder, Author).<br>
+                The Display order is order the values appear in the select list.
+                ```
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--hideHeader
+                t-Region--noBorder
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    process wms-workshop-status-lov-save-interactive-grid-data (
+        name: WMS - Workshop Status LOV - Save Interactive Grid Data
+        type: interactiveGridAutoRowProcessing
+        editableRegion: @wms-workshop-status-lov
+        execution {
+            sequence: 10
+        }
+        advanced {
+            executionMappingIdentifier: 55385683304253222007
+        }
+    )
+
+)
+

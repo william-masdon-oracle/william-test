@@ -1,0 +1,557 @@
+page 10005 (
+    name: LiveLabs - Feature Planning
+    alias: LIVELABS-FEATURE-PLANNING
+    title: LiveLabs - Feature Planning
+    appearance {
+        pageTemplate: @standard-custom
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region livelabs-feature-planning (
+        name: LiveLabs Feature Planning
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @title-bar
+            templateOptions: [
+                #DEFAULT#
+                t-BreadcrumbRegion--compactTitle
+                t-BreadcrumbRegion--useRegionTitle
+                t-Form--noPadding
+                margin-top-none
+                margin-bottom-none
+                margin-left-none
+                margin-right-none
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region report (
+        name: Report 1
+        type: interactiveReport
+        source {
+            location: localDatabase
+            tableName: LL_FEATURE_PLANNING
+        }
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        link {
+            linkColumn: customTarget
+            target: {
+                page: 10006
+                items: {
+                    P10006_ID: \#ID#\
+                }
+                action: resetPagination
+            }
+            linkIcon: <span aria-label="Edit"><span class="fa fa-edit" aria-hidden="true" title="Edit"></span></span>
+        }
+        pagination {
+            type: rowRangesXToY
+        }
+        messages {
+            whenNoDataFound: No data found.
+            whenMoreDataFound: The maximum row count for this report is #MAX_ROW_COUNT# rows.  Please apply a filter to reduce the number of records in your query.
+        }
+        actionsMenu {
+            subscription: false
+        }
+        advanced {
+            savedReportMappingIdentifier: 9798226114986157304
+        }
+
+        column APEX_USER (
+            type: plainText
+            heading {
+                heading: Apex User
+            }
+            layout {
+                sequence: 2
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: B
+            }
+        )
+
+        column ENTRY_DATE (
+            type: plainText
+            heading {
+                heading: Entry Date
+                alignment: center
+            }
+            layout {
+                sequence: 13
+                columnAlignment: center
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: M
+            }
+        )
+
+        column FEEDBACK (
+            type: plainText
+            heading {
+                heading: Feedback
+            }
+            layout {
+                sequence: 4
+            }
+            source {
+                dataType: CLOB
+            }
+            columnFilter {
+                type: none
+            }
+            advanced {
+                endUserAlias: D
+            }
+            enableUsersTo {
+                sort: false
+                controlBreak: false
+                aggregate: false
+                compute: false
+                chart: false
+                groupBy: false
+                pivot: false
+            }
+        )
+
+        column FEEDBACK_BY (
+            type: plainText
+            heading {
+                heading: Feedback By
+            }
+            layout {
+                sequence: 15
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: O
+            }
+        )
+
+        column FIX_BY_VERSION (
+            type: plainText
+            heading {
+                heading: Fix By Version
+            }
+            layout {
+                sequence: 8
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: H
+            }
+        )
+
+        column FIX_TYPE (
+            type: plainText
+            heading {
+                heading: Fix Type
+            }
+            layout {
+                sequence: 10
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: J
+            }
+        )
+
+        column ID (
+            type: plainText
+            heading {
+                heading: Id
+                alignment: end
+            }
+            layout {
+                sequence: 1
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: A
+            }
+        )
+
+        column LAST_UPDATE (
+            type: plainText
+            heading {
+                heading: Last Update
+                alignment: center
+            }
+            layout {
+                sequence: 14
+                columnAlignment: center
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: N
+            }
+        )
+
+        column OWNED_BY (
+            type: plainText
+            heading {
+                heading: Owned By
+            }
+            layout {
+                sequence: 11
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: K
+            }
+        )
+
+        column PRIORITY (
+            type: plainText
+            heading {
+                heading: Priority
+                alignment: end
+            }
+            layout {
+                sequence: 7
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: G
+            }
+        )
+
+        column REMARKS (
+            type: plainText
+            heading {
+                heading: Remarks
+            }
+            layout {
+                sequence: 12
+            }
+            source {
+                dataType: CLOB
+            }
+            columnFilter {
+                type: none
+            }
+            advanced {
+                endUserAlias: L
+            }
+            enableUsersTo {
+                sort: false
+                controlBreak: false
+                aggregate: false
+                compute: false
+                chart: false
+                groupBy: false
+                pivot: false
+            }
+        )
+
+        column REQUIREMENT_STATUS (
+            type: plainText
+            heading {
+                heading: Requirement Status
+            }
+            layout {
+                sequence: 5
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: E
+            }
+        )
+
+        column SECURITY_ISSUE (
+            type: plainText
+            heading {
+                heading: Security Issue
+            }
+            layout {
+                sequence: 9
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: I
+            }
+        )
+
+        column SORTORDER (
+            type: plainText
+            heading {
+                heading: Sortorder
+                alignment: end
+            }
+            layout {
+                sequence: 16
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: P
+            }
+        )
+
+        column STATUS (
+            type: plainText
+            heading {
+                heading: Status
+            }
+            layout {
+                sequence: 6
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: F
+            }
+        )
+
+        column TITLE (
+            type: plainText
+            heading {
+                heading: Title
+            }
+            layout {
+                sequence: 3
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: C
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: Report 1
+        }
+
+        savedReport 97986433 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 100000
+            }
+
+            displayColumn FIX_BY_VERSION (
+                sequence: 6
+            )
+
+            displayColumn FIX_TYPE (
+                sequence: 8
+            )
+
+            displayColumn ID (
+                sequence: 1
+            )
+
+            displayColumn OWNED_BY (
+                sequence: 9
+            )
+
+            displayColumn PRIORITY (
+                sequence: 5
+            )
+
+            displayColumn REQUIREMENT_STATUS (
+                sequence: 3
+            )
+
+            displayColumn SECURITY_ISSUE (
+                sequence: 7
+            )
+
+            displayColumn SORTORDER (
+                sequence: 10
+            )
+
+            displayColumn STATUS (
+                sequence: 4
+            )
+
+            displayColumn TITLE (
+                sequence: 2
+            )
+
+            sort (
+                column: FIX_BY_VERSION
+                sort {
+                    sequence: 1
+                }
+            )
+
+            sort (
+                column: PRIORITY
+                sort {
+                    sequence: 2
+                }
+            )
+
+            sort (
+                column: ID
+                sort {
+                    direction: desc
+                    sequence: 3
+                }
+            )
+
+            filter ir-condition (
+                column: STATUS
+                operator: !=
+                value: Closed
+            )
+
+            highlight ir-condition-2 (
+                name: P1
+                condition {
+                    column: PRIORITY
+                    value: 1
+                }
+                highlight {
+                    type: cell
+                }
+                colors {
+                    background: #FFF5CE
+                }
+                execution {
+                    sequence: 10
+                }
+            )
+
+            highlight ir-condition-3 (
+                name: Sec
+                condition {
+                    column: SECURITY_ISSUE
+                    value: Y
+                }
+                highlight {
+                    type: cell
+                }
+                colors {
+                    background: #FFD6D2
+                }
+                execution {
+                    sequence: 10
+                }
+            )
+
+            highlight ir-condition-4 (
+                name: fade closed items
+                condition {
+                    column: STATUS
+                    value: Closed
+                }
+                colors {
+                    text: #ABABAB
+                }
+                execution {
+                    sequence: 10
+                }
+            )
+
+        )
+
+    )
+
+    button create (
+        buttonName: CREATE
+        label: Create
+        layout {
+            sequence: 30
+            region: @report
+            slot: rightOfInteractiveReportSearchBar
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 10006
+                clearCache: 10006
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button edit-mode (
+        buttonName: Edit_Mode
+        label: Edit Mode
+        layout {
+            sequence: 40
+            region: @report
+            slot: aboveBox
+        }
+        appearance {
+            buttonTemplate: @text-with-icon
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--large
+                t-Button--iconRight
+            ]
+            icon: fa-clipboard-edit
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 69
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+)
+

@@ -1,0 +1,2016 @@
+page 900 (
+    name: ORDS Log
+    alias: ORDS-LOG
+    title: ORDS Log
+    pageGroup: @administration
+    appearance {
+        pageTemplate: @standard-custom
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    css {
+        inline:
+            ```css
+            /* Turn the top row into a right-aligned toolbar */
+            #ords-toolbar .container > .row {
+              display: flex;
+              justify-content: flex-end;
+              align-items: center;
+              gap: 2px;                   /* normal spacing between controls */
+              flex-wrap: wrap;            /* keep it tidy on smaller widths */
+            }
+            
+            /* Normalize spacing for item and buttons inside the toolbar */
+            #ords-toolbar .t-Form-fieldContainer,
+            #ords-toolbar .t-Button {
+              margin: 0;
+            }
+            
+            /* Group 1: add a little extra gap after the Run button */
+            #ords-toolbar .is-group1-end {
+              margin-right: 16px;         /* extra space before "Run Daily Job" */
+            }
+            
+            /* (Optional) keep the select a comfortable width */
+            #ords-toolbar select {
+              min-width: 240px;
+              max-width: 380px;
+            }
+            .sync-object-dropdown {
+                padding-right: 0px;
+            }
+            .run-button {
+                padding-left: 1px;
+                padding-right: 12px;
+                width: auto !important;
+                min-width: unset !important;
+            }
+            ```
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region events (
+        name: Events
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select *
+                                        from wms_events 
+                                        where event_status in ('Event Published', 'Event Approved')
+                                        and updated_flg > 0
+                ```
+        }
+        layout {
+            sequence: 10
+            parentRegion: @events-2
+            slot: subRegions
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        pagination {
+            type: rowRangesXToY
+        }
+        performance {
+            maxRowsToProcess: 1000000
+        }
+        advanced {
+            savedReportMappingIdentifier: 14526627936777916933
+        }
+
+        column ACTIVE_FLG (
+            type: plainText
+            heading {
+                heading: Active Flg
+                alignment: center
+            }
+            layout {
+                sequence: 140
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: N
+            }
+        )
+
+        column ALT_DESC_LONG (
+            type: plainText
+            heading {
+                heading: Alt Desc Long
+                alignment: center
+            }
+            layout {
+                sequence: 100
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: J
+            }
+        )
+
+        column ALT_DESC_OUTLINE (
+            type: plainText
+            heading {
+                heading: Alt Desc Outline
+                alignment: center
+            }
+            layout {
+                sequence: 120
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: L
+            }
+        )
+
+        column ALT_DESC_PREREQ (
+            type: plainText
+            heading {
+                heading: Alt Desc Prereq
+                alignment: center
+            }
+            layout {
+                sequence: 130
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: M
+            }
+        )
+
+        column ALT_DESC_SHORT (
+            type: plainText
+            heading {
+                heading: Alt Desc Short
+                alignment: center
+            }
+            layout {
+                sequence: 110
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: K
+            }
+        )
+
+        column ALT_TIME_AVAILABLE (
+            type: plainText
+            heading {
+                heading: Alt Time Available
+                alignment: center
+            }
+            layout {
+                sequence: 210
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: U
+            }
+        )
+
+        column ALT_TIME_HOURS (
+            type: plainText
+            heading {
+                heading: Alt Time Hours
+                alignment: center
+            }
+            layout {
+                sequence: 200
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: T
+            }
+        )
+
+        column ALT_URL (
+            type: plainText
+            heading {
+                heading: Alt Url
+                alignment: center
+            }
+            layout {
+                sequence: 170
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: Q
+            }
+        )
+
+        column DISPLAY_TAGS (
+            type: plainText
+            heading {
+                heading: Display Tags
+                alignment: center
+            }
+            layout {
+                sequence: 220
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: V
+            }
+        )
+
+        column EMAIL_CREATOR (
+            type: plainText
+            heading {
+                heading: Email Creator
+                alignment: center
+            }
+            layout {
+                sequence: 40
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: D
+            }
+        )
+
+        column EMAIL_REQUESTOR (
+            type: plainText
+            heading {
+                heading: Email Requestor
+                alignment: center
+            }
+            layout {
+                sequence: 50
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: E
+            }
+        )
+
+        column EVENT_CODE (
+            type: plainText
+            heading {
+                heading: Event Code
+                alignment: center
+            }
+            layout {
+                sequence: 30
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: C
+            }
+        )
+
+        column EVENT_JSON (
+            type: plainText
+            heading {
+                heading: Event Json
+                alignment: center
+            }
+            layout {
+                sequence: 230
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: W
+            }
+        )
+
+        column EVENT_STATUS (
+            type: plainText
+            heading {
+                heading: Event Status
+                alignment: center
+            }
+            layout {
+                sequence: 240
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: X
+            }
+        )
+
+        column ID (
+            type: plainText
+            heading {
+                heading: Id
+                alignment: center
+            }
+            layout {
+                sequence: 10
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: A
+            }
+        )
+
+        column LIVELABS_ID (
+            type: plainText
+            heading {
+                heading: Livelabs Id
+                alignment: center
+            }
+            layout {
+                sequence: 90
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: I
+            }
+        )
+
+        column REMARKS (
+            type: plainText
+            heading {
+                heading: Remarks
+                alignment: center
+            }
+            layout {
+                sequence: 150
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: O
+            }
+        )
+
+        column TENANCY_ID (
+            type: plainText
+            heading {
+                heading: Tenancy Id
+                alignment: center
+            }
+            layout {
+                sequence: 180
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: R
+            }
+        )
+
+        column TITLE (
+            type: plainText
+            heading {
+                heading: Title
+                alignment: center
+            }
+            layout {
+                sequence: 20
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: B
+            }
+        )
+
+        column UPDATED_FLG (
+            type: plainText
+            heading {
+                heading: Updated Flg
+                alignment: center
+            }
+            layout {
+                sequence: 250
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: Y
+            }
+        )
+
+        column USERS_CONCURRENT (
+            type: plainText
+            heading {
+                heading: Users Concurrent
+                alignment: center
+            }
+            layout {
+                sequence: 190
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: S
+            }
+        )
+
+        column USERS_MAXIMUM (
+            type: plainText
+            heading {
+                heading: Users Maximum
+                alignment: center
+            }
+            layout {
+                sequence: 80
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: H
+            }
+        )
+
+        column VALID_FROM (
+            type: plainText
+            heading {
+                heading: Valid From
+                alignment: center
+            }
+            layout {
+                sequence: 60
+                columnAlignment: center
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: F
+            }
+        )
+
+        column VALID_TIMEZONE (
+            type: plainText
+            heading {
+                heading: Valid Timezone
+                alignment: center
+            }
+            layout {
+                sequence: 160
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: P
+            }
+        )
+
+        column VALID_TO (
+            type: plainText
+            heading {
+                heading: Valid To
+                alignment: center
+            }
+            layout {
+                sequence: 70
+                columnAlignment: center
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: G
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: Event Codes to be Synced
+        }
+
+        savedReport 145275710 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn EMAIL_CREATOR (
+                sequence: 4
+            )
+
+            displayColumn EVENT_STATUS (
+                sequence: 5
+            )
+
+            displayColumn ID (
+                sequence: 1
+            )
+
+            displayColumn LIVELABS_ID (
+                sequence: 2
+            )
+
+            displayColumn TITLE (
+                sequence: 3
+            )
+
+            displayColumn UPDATED_FLG (
+                sequence: 6
+            )
+
+        )
+
+    )
+
+    region events-2 (
+        name: Events
+        type: staticContent
+        layout {
+            sequence: 40
+            parentRegion: @sync-queue
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--accent1
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    region green-buttons (
+        name: Green Buttons
+        type: staticContent
+        layout {
+            sequence: 60
+            parentRegion: @sync-queue
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--accent1
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    region green-buttons-2 (
+        name: Green Buttons
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select *
+                                        from green_button_lite
+                                        where updated_flg > 0
+                ```
+        }
+        layout {
+            sequence: 10
+            parentRegion: @green-buttons
+            slot: subRegions
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        pagination {
+            type: rowRangesXToY
+        }
+        performance {
+            maxRowsToProcess: 1000000
+        }
+        advanced {
+            savedReportMappingIdentifier: 21494233639902651206
+        }
+
+        column ADW (
+            type: hidden
+            heading {
+                heading: Adw
+            }
+            layout {
+                sequence: 310
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: E
+            }
+        )
+
+        column ADW_OCPU (
+            type: hidden
+            heading {
+                heading: Adw Ocpu
+            }
+            layout {
+                sequence: 320
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: F
+            }
+        )
+
+        column ADW_TB (
+            type: hidden
+            heading {
+                heading: Adw Tb
+            }
+            layout {
+                sequence: 330
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: G
+            }
+        )
+
+        column AJD (
+            type: hidden
+            heading {
+                heading: Ajd
+            }
+            layout {
+                sequence: 370
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: K
+            }
+        )
+
+        column AJD_OCPU (
+            type: hidden
+            heading {
+                heading: Ajd Ocpu
+            }
+            layout {
+                sequence: 380
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: L
+            }
+        )
+
+        column AJD_TB (
+            type: hidden
+            heading {
+                heading: Ajd Tb
+            }
+            layout {
+                sequence: 390
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: M
+            }
+        )
+
+        column ATP (
+            type: hidden
+            heading {
+                heading: Atp
+            }
+            layout {
+                sequence: 340
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: H
+            }
+        )
+
+        column ATP_OCPU (
+            type: hidden
+            heading {
+                heading: Atp Ocpu
+            }
+            layout {
+                sequence: 350
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: I
+            }
+        )
+
+        column ATP_TB (
+            type: hidden
+            heading {
+                heading: Atp Tb
+            }
+            layout {
+                sequence: 360
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: J
+            }
+        )
+
+        column COMP_INST (
+            type: hidden
+            heading {
+                heading: Comp Inst
+            }
+            layout {
+                sequence: 400
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: N
+            }
+        )
+
+        column COMP_INST_OCPU (
+            type: hidden
+            heading {
+                heading: Comp Inst Ocpu
+            }
+            layout {
+                sequence: 410
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: O
+            }
+        )
+
+        column GBL_ID (
+            type: hidden
+            heading {
+                heading: ID
+            }
+            layout {
+                sequence: 260
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: B
+            }
+        )
+
+        column LL_ID (
+            type: plainText
+            heading {
+                heading: LiveLabs ID
+                alignment: end
+            }
+            layout {
+                sequence: 280
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: C
+            }
+        )
+
+        column OCS (
+            type: hidden
+            heading {
+                heading: Ocs
+            }
+            layout {
+                sequence: 430
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: Q
+            }
+        )
+
+        column UPDATED_FLG (
+            type: plainText
+            heading {
+                heading: Updated Flg
+                alignment: center
+            }
+            layout {
+                sequence: 290
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: A
+            }
+        )
+
+        column VCN (
+            type: hidden
+            heading {
+                heading: Vcn
+            }
+            layout {
+                sequence: 420
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: P
+            }
+        )
+
+        column WMS_ID (
+            type: link
+            heading {
+                heading: WMS ID
+                alignment: end
+            }
+            layout {
+                sequence: 270
+                columnAlignment: end
+            }
+            link {
+                target: {
+                    page: 320
+                    items: {
+                        P320_ID: #WMS_ID#
+                    }
+                }
+                linkText: #WMS_ID#
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: D
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: Green Buttons to be Synced
+        }
+
+        savedReport 214944893 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn LL_ID (
+                sequence: 2
+            )
+
+            displayColumn UPDATED_FLG (
+                sequence: 3
+            )
+
+            displayColumn WMS_ID (
+                sequence: 1
+            )
+
+        )
+
+    )
+
+    region header (
+        name: Header
+        title: Sync Queue
+        type: staticContent
+        layout {
+            sequence: 20
+            parentRegion: @sync-queue
+            slot: subRegions
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+            renderComponents: belowContent
+        }
+        advanced {
+            htmlDomId: ords-toolbar
+        }
+    )
+
+    region ords-log (
+        name: ORDS Log
+        title: ORDS Log
+        type: staticContent
+        layout {
+            sequence: 20
+            parentRegion: @tabs
+            slot: tabs
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--accent1
+                t-Region--scrollBody
+                margin-top-sm
+            ]
+        }
+    )
+
+    region ords-log-2 (
+        name: ORDS Log
+        title: ORDS Log
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select ID,
+                       WORKSHOP_ID,
+                       substr(ERROR_MESSAGE,0,1000),
+                       dbms_lob.substr(PAYLOAD,1000,1) PAYLOAD,
+                       PRIORITY,
+                       TIMESTAMP,
+                       LIVELABS_ID
+                  from ORDS_LOG
+                ```
+        }
+        layout {
+            sequence: 10
+            parentRegion: @ords-log
+            slot: subRegions
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        pagination {
+            type: rowRangesXToY
+        }
+        performance {
+            maxRowsToProcess: 1000000
+        }
+        advanced {
+            savedReportMappingIdentifier: 13315397881229834348
+        }
+
+        column ID (
+            type: plainText
+            heading {
+                heading: Id
+                alignment: center
+            }
+            layout {
+                sequence: 10
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: A
+            }
+        )
+
+        column LIVELABS_ID (
+            type: plainText
+            heading {
+                heading: Livelabs ID
+                alignment: center
+            }
+            layout {
+                sequence: 30
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: F
+            }
+        )
+
+        column PAYLOAD (
+            type: plainText
+            heading {
+                heading: Payload
+                alignment: center
+            }
+            layout {
+                sequence: 80
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: H
+            }
+        )
+
+        column PRIORITY (
+            type: plainText
+            heading {
+                heading: Priority
+                alignment: center
+            }
+            layout {
+                sequence: 50
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: D
+            }
+        )
+
+        column "SUBSTR(ERROR_MESSAGE,0,1000)" (
+            type: plainText
+            heading {
+                heading: Error Message
+                alignment: center
+            }
+            layout {
+                sequence: 70
+            }
+            source {
+                dataType: CLOB
+            }
+            columnFilter {
+                type: none
+            }
+            advanced {
+                endUserAlias: G
+            }
+            enableUsersTo {
+                sort: false
+                controlBreak: false
+                aggregate: false
+                compute: false
+                chart: false
+                groupBy: false
+                pivot: false
+            }
+        )
+
+        column TIMESTAMP (
+            type: plainText
+            heading {
+                heading: Timestamp
+                alignment: center
+            }
+            layout {
+                sequence: 60
+                columnAlignment: center
+            }
+            appearance {
+                formatMask: DD-MON-YYYY HH24:MI:SS
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: E
+            }
+        )
+
+        column WORKSHOP_ID (
+            type: plainText
+            heading {
+                heading: WMS ID
+                alignment: center
+            }
+            layout {
+                sequence: 20
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: B
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: ORDS Log
+        }
+
+        savedReport 145275697 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn ID (
+                sequence: 1
+            )
+
+            displayColumn LIVELABS_ID (
+                sequence: 3
+            )
+
+            displayColumn PAYLOAD (
+                sequence: 7
+            )
+
+            displayColumn PRIORITY (
+                sequence: 5
+            )
+
+            displayColumn "SUBSTR(ERROR_MESSAGE,0,1000)" (
+                sequence: 4
+            )
+
+            displayColumn TIMESTAMP (
+                sequence: 6
+            )
+
+            displayColumn WORKSHOP_ID (
+                sequence: 2
+            )
+
+            sort (
+                column: TIMESTAMP
+                sort {
+                    direction: desc
+                    sequence: 1
+                }
+            )
+
+        )
+
+    )
+
+    region sync-queue (
+        name: Sync Queue
+        title: Sync Queue
+        type: staticContent
+        layout {
+            sequence: 10
+            parentRegion: @tabs
+            slot: tabs
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    region tabs (
+        name: Tabs
+        type: regionDisplaySelector
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @tabs-container
+            templateOptions: [
+                #DEFAULT#
+                t-TabsRegion-mod--simple
+            ]
+        }
+    )
+
+    region title-bar (
+        name: Title Bar
+        title: Sync Queue
+        type: staticContent
+        layout {
+            sequence: 10
+            parentRegion: @sync-queue
+            slot: subRegions
+        }
+        appearance {
+            template: @title-bar
+            templateOptions: [
+                #DEFAULT#
+                t-BreadcrumbRegion--useRegionTitle
+                margin-bottom-none
+            ]
+        }
+    )
+
+    region workshops (
+        name: Workshops
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select
+                    ll.id ll_id,
+                    w.id workshop_id,
+                    nvl(ll.title_override, w.title) title,
+                    nvl(ll.desc_short_override, w.short_desc) desc_short,
+                    nvl(ll.desc_long_override, w.long_desc) desc_long,
+                    ll.workshop_time,
+                    case ll.publish_type
+                        when 'Public' then 'Y'
+                        when 'Private' then 'U'
+                        when 'Event' then 'E'
+                        when 'Disabled' then 'N'
+                    end as active_flg,
+                    nvl(ll.desc_outline_override, w.outline) desc_outline,
+                    nvl(ll.desc_prereq_override, w.prereqs) desc_prereqs,
+                    ll.youtube_link,
+                    w.updated_flg,
+                    ll.updated_flg ll_updated_flg,
+                    ll.updated_publish_flg,
+                    ll.publish_status
+                from workshop w
+                join workshop_ll ll on w.id = ll.workshop_id
+                where (
+                        w.updated_flg > 0
+                        or ll.updated_flg = 'Y'
+                        or ll.updated_publish_flg > 0
+                      )
+                  and w.workshop_status in ('Completed', 'Quarterly QA', 'Quarterly QA Complete')
+                  and ll.publish_status in ('Publish Approved', 'Published');
+                ```
+        }
+        layout {
+            sequence: 10
+            parentRegion: @workshops-2
+            slot: subRegions
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        pagination {
+            type: rowRangesXToY
+        }
+        performance {
+            maxRowsToProcess: 1000000
+        }
+        advanced {
+            savedReportMappingIdentifier: 14526625227855916906
+        }
+
+        column ACTIVE_FLG (
+            type: plainText
+            heading {
+                heading: Active Flg
+                alignment: center
+            }
+            layout {
+                sequence: 80
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: G
+            }
+        )
+
+        column DESC_LONG (
+            type: plainText
+            heading {
+                heading: Desc Long
+                alignment: center
+            }
+            layout {
+                sequence: 60
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: E
+            }
+        )
+
+        column DESC_OUTLINE (
+            type: plainText
+            heading {
+                heading: Desc Outline
+                alignment: center
+            }
+            layout {
+                sequence: 90
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: H
+            }
+        )
+
+        column DESC_PREREQS (
+            type: plainText
+            heading {
+                heading: Desc Prereqs
+                alignment: center
+            }
+            layout {
+                sequence: 100
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: I
+            }
+        )
+
+        column DESC_SHORT (
+            type: plainText
+            heading {
+                heading: Desc Short
+                alignment: center
+            }
+            layout {
+                sequence: 50
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: D
+            }
+        )
+
+        column LL_ID (
+            type: plainText
+            heading {
+                heading: LiveLabs ID
+                alignment: center
+            }
+            layout {
+                sequence: 20
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: A
+            }
+        )
+
+        column LL_UPDATED_FLG (
+            type: plainText
+            heading {
+                heading: Ll Updated Flg
+            }
+            layout {
+                sequence: 270
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: Z
+            }
+        )
+
+        column PUBLISH_STATUS (
+            type: plainText
+            heading {
+                heading: Publish Status
+            }
+            layout {
+                sequence: 280
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AA
+            }
+        )
+
+        column TITLE (
+            type: plainText
+            heading {
+                heading: Title
+                alignment: center
+            }
+            layout {
+                sequence: 40
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: C
+            }
+        )
+
+        column UPDATED_FLG (
+            type: plainText
+            heading {
+                heading: Updated Flg
+                alignment: center
+            }
+            layout {
+                sequence: 250
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: X
+            }
+        )
+
+        column UPDATED_PUBLISH_FLG (
+            type: plainText
+            heading {
+                heading: Updated Publish Flg
+                alignment: center
+            }
+            layout {
+                sequence: 260
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: Y
+            }
+        )
+
+        column WORKSHOP_ID (
+            type: link
+            heading {
+                heading: WMS ID
+                alignment: center
+            }
+            layout {
+                sequence: 10
+                columnAlignment: end
+            }
+            link {
+                target: {
+                    page: 320
+                    items: {
+                        P320_ID: #WORKSHOP_ID#
+                    }
+                }
+                linkText: #WORKSHOP_ID#
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: B
+            }
+        )
+
+        column WORKSHOP_TIME (
+            type: plainText
+            heading {
+                heading: Workshop Time
+                alignment: center
+            }
+            layout {
+                sequence: 70
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: F
+            }
+        )
+
+        column YOUTUBE_LINK (
+            type: plainText
+            heading {
+                heading: Youtube Link
+                alignment: center
+            }
+            layout {
+                sequence: 190
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: R
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: Workshop to be Synced
+        }
+
+        savedReport 145275703 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn ACTIVE_FLG (
+                sequence: 4
+            )
+
+            displayColumn LL_ID (
+                sequence: 2
+            )
+
+            displayColumn TITLE (
+                sequence: 3
+            )
+
+            displayColumn UPDATED_FLG (
+                sequence: 5
+            )
+
+            displayColumn UPDATED_PUBLISH_FLG (
+                sequence: 6
+            )
+
+            displayColumn WORKSHOP_ID (
+                sequence: 1
+            )
+
+        )
+
+    )
+
+    region workshops-2 (
+        name: Workshops
+        title: Workshops
+        type: staticContent
+        layout {
+            sequence: 30
+            parentRegion: @sync-queue
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--accent1
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    pageItem P900_SYNC_JOB (
+        type: popupLov
+        label {
+            alignment: left
+        }
+        settings {
+            fetchOnSearch: true
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC:Green Buttons;wms_pkg_ords.createGreenButton,Workshops;wms_pkg_ords.updateWorkshops,Event Codes;wms_pkg_ords.updateEventCodes,Tenancies;wms_pkg_ords.updateTenancies,Compute Images;wms_pkg_ords.pushImages
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 20
+            region: @header
+            slot: regionBody
+            alignment: left
+            columnSpan: 4
+            columnCssClasses: sync-object-dropdown
+        }
+        appearance {
+            template: @optional
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--xlarge
+            ]
+            width: 30
+            valuePlaceholder: Select an Object
+        }
+    )
+
+    button sync-all-objects (
+        buttonName: Sync-All-Objects
+        label: Sync All Objects
+        layout {
+            sequence: 40
+            region: @header
+            slot: regionBody
+            startNewRow: false
+            columnSpan: 1
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--large
+            ]
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button sync-object (
+        buttonName: Sync-Object
+        label: Sync
+        layout {
+            sequence: 30
+            region: @header
+            slot: regionBody
+            startNewRow: false
+            columnSpan: 1
+            columnCssClasses: run-button
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: [
+                #DEFAULT#
+                t-Button--large
+            ]
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+        advanced {
+            htmlDomId: run-button
+        }
+    )
+
+    button update-event-codes (
+        buttonName: update_event_codes
+        label: Update Event Codes
+        layout {
+            sequence: 40
+            region: @header
+            slot: top
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    button update-green-buttons (
+        buttonName: update_green_buttons
+        label: Update Green Buttons
+        layout {
+            sequence: 10
+            region: @header
+            slot: top
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    button update-images (
+        buttonName: update_images
+        label: Update Tenancies
+        layout {
+            sequence: 60
+            region: @header
+            slot: top
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    button update-tenancies (
+        buttonName: update_tenancies
+        label: Update Tenancies
+        layout {
+            sequence: 50
+            region: @header
+            slot: top
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    button update-workshops (
+        buttonName: update_workshops
+        label: Update Workshops
+        layout {
+            sequence: 20
+            region: @header
+            slot: top
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    dynamicAction on-click (
+        name: On Click
+        execution {
+            sequence: 60
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @sync-object
+        }
+
+        action native-alert (
+            action: alert
+            settings {
+                title: Success
+                message: All of the selected objects have been synced with LiveLabs.
+                style: success
+                icon: fa-check-circle
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    declare
+                        v_proc_name varchar2(500);
+                    begin
+                        v_proc_name := :P900_SYNC_JOB;
+                    
+                        execute immediate 'begin ' || v_proc_name || '; end;';
+                    end;
+                    ```
+                itemsToSubmit: P900_SYNC_JOB
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction run-daily-job (
+        name: run daily job
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @sync-all-objects
+        }
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    begin
+                    wms_pkg_scheduled.daily_job;
+                    end;
+                    ```
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction update-event-codes (
+        name: update event codes
+        execution {
+            sequence: 40
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @update-event-codes
+        }
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    begin
+                    wms_pkg_ords.updateEventCodes;
+                    end;
+                    ```
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction update-green-buttons (
+        name: update green buttons
+        execution {
+            sequence: 30
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @update-green-buttons
+        }
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    begin
+                    wms_pkg_ords.createGreenButton;
+                    end;
+                    ```
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction update-tenancies (
+        name: update tenancies
+        execution {
+            sequence: 50
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @update-tenancies
+        }
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    begin
+                    wms_pkg_ords.updateTenancies;
+                    end;
+                    ```
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction update-workshops (
+        name: update workshops
+        execution {
+            sequence: 20
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @update-workshops
+        }
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    begin
+                    wms_pkg_ords.updateWorkshops;
+                    end;
+                    ```
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+)
+

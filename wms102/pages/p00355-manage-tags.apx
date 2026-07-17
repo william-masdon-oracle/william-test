@@ -1,0 +1,2001 @@
+page 355 (
+    name: Manage Tags
+    alias: MANAGE-TAGS
+    title: Manage Tags
+    appearance {
+        pageTemplate: @standard-custom
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    javaScript {
+        functionAndGlobalVariableDeclaration: var htmldb_delete_message='"DELETE_CONFIRM_MSG"';
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region buttons-region (
+        name: Buttons Region
+        type: staticContent
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region email-management (
+        name: Email Management
+        type: staticContent
+        layout {
+            sequence: 50
+            parentRegion: @workshop-submission-tabs
+            slot: tabs
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                t-Region--hideHeader
+                t-Region--scrollBody
+            ]
+        }
+        security {
+            authorizationScheme: @administration-rights
+        }
+    )
+
+    region span-style-font-size-1-8em-font-weight-700-submit-edit-workshop-span (
+        name: <span style="font-size: 1.8em; font-weight: 700">Submit/Edit Workshop</span>
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <table><tr><td width="120px">
+                <img src="#WORKSPACE_IMAGES#ssworkshop_icon_big.png" width="100px">
+                </td><td>
+                <p>We would like to collect information about the workshop you are planning or preparing to move.  Once your workshop has progressed through our workflow, it will be added to the LiveLabs main page and available to run Single and/or Multi User workshops.<br><br>Please enter the required information initially.  Additional info can be added as you progress through rollout.</p>
+                </td></tr></table>
+                ```
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region tag-management (
+        name: Tag Management
+        type: staticContent
+        layout {
+            sequence: 20
+            parentRegion: @workshop-submission-tabs
+            slot: tabs
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                t-Region--hideHeader
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    region update-tag (
+        name: Update Tag
+        type: staticContent
+        layout {
+            sequence: 40
+            parentRegion: @workshop-submission-tabs
+            slot: tabs
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                t-Region--hideHeader
+                t-Region--scrollBody
+            ]
+        }
+        security {
+            authorizationScheme: @administration-rights
+        }
+    )
+
+    region workshop-details (
+        name: Workshop Details
+        type: form
+        source {
+            location: localDatabase
+            tableName: WORKSHOPS
+            includeRowidColumn: true
+        }
+        layout {
+            sequence: 10
+            parentRegion: @workshop-submission-tabs
+            slot: tabs
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--scrollBody
+            ]
+        }
+        edit {
+            enabled: true
+            allowedOperations: [
+                add
+                update
+                delete
+            ]
+        }
+    )
+
+    region workshop-management (
+        name: Workshop Management
+        type: staticContent
+        layout {
+            sequence: 30
+            parentRegion: @workshop-submission-tabs
+            slot: tabs
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                t-Region--hideHeader
+                t-Region--scrollBody
+            ]
+        }
+        security {
+            authorizationScheme: @administration-rights
+        }
+    )
+
+    region workshop-submission-tabs (
+        name: Workshop Submission Tabs
+        type: staticContent
+        layout {
+            sequence: 30
+            slot: contentBody
+        }
+        appearance {
+            template: @tabs-container
+            templateOptions: [
+                #DEFAULT#
+                t-TabsRegion-mod--simple
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    pageItem P355_ACTIVE_FLG (
+        type: switch
+        label {
+            label: Enable Workshop for Single User
+            alignment: left
+        }
+        settings {
+            useDefaults: false
+            onValue: 1
+            offValue: 0
+        }
+        layout {
+            sequence: 40
+            region: @update-tag
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @required-above
+            templateOptions: #DEFAULT#
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            formRegion: @workshop-details
+            column: ACTIVE_FLG
+            dataType: number
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            helpText: Do not toggle this until the workshop has been QA'd and ready to go live
+        }
+    )
+
+    pageItem P355_APPROVED_FLG (
+        type: selectList
+        label {
+            label: Tag Type
+            alignment: left
+        }
+        lov {
+            type: staticValues
+        }
+        layout {
+            sequence: 30
+            region: @update-tag
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            formRegion: @workshop-details
+            column: APPROVED_FLG
+            dataType: number
+        }
+        default {
+            type: static
+            staticValue: 0
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P355_AUTHOR_NAME (
+        type: richTextEditor
+        label {
+            label: <strong>Contributor Team</strong>
+            alignment: left
+        }
+        settings {
+            format: html
+            toolbarStyle: multiline
+            minHeight: 180
+            allowCustomHtml: true
+        }
+        layout {
+            sequence: 150
+            region: @workshop-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @required-above
+            templateOptions: #DEFAULT#
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            formRegion: @workshop-details
+            column: AUTHOR_NAME
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            helpText: Sincerely field for the Live Lab Email
+        }
+    )
+
+    pageItem P355_BLANK (
+        type: displayOnly
+        label {
+            alignment: left
+        }
+        settings {
+            showLineBreaks: false
+            sendOnPageSubmit: false
+        }
+        layout {
+            sequence: 120
+            region: @workshop-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            cssClasses: u-textLower
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P355_BLANK_EMAIL (
+        type: displayOnly
+        label {
+            alignment: left
+        }
+        settings {
+            showLineBreaks: false
+            sendOnPageSubmit: false
+        }
+        layout {
+            sequence: 20
+            region: @workshop-submission-tabs
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P355_DEPLOYMENT (
+        type: radioGroup
+        label {
+            label: <strong>Deployment</strong>
+            alignment: left
+        }
+        settings {
+            noOfCols: 3
+        }
+        lov {
+            type: sharedComponent
+            lov: @series-tag-lov
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 40
+            region: @tag-management
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 3
+        }
+        appearance {
+            template: @required-floating
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+                t-Form-fieldContainer--radioButtonGroup
+            ]
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            formRegion: @workshop-details
+            column: DEPLOYMENT_TAG
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P355_DESCRIPTION (
+        type: textarea
+        label {
+            label: <strong>Workshop Description</strong>
+            alignment: left
+        }
+        layout {
+            sequence: 130
+            region: @workshop-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required-above
+            templateOptions: #DEFAULT#
+            width: 80
+            height: 5
+        }
+        validation {
+            valueRequired: true
+            maxLength: 4000
+        }
+        source {
+            formRegion: @workshop-details
+            column: DESCRIPTION
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            helpText: Description for LiveLabs application
+        }
+    )
+
+    pageItem P355_EMAIL_FROM_ADDRESS (
+        type: textField
+        label {
+            label: <strong>Workshop Owner Email</strong>
+            alignment: left
+        }
+        settings {
+            subtype: email
+        }
+        layout {
+            sequence: 70
+            region: @workshop-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @required-above
+            templateOptions: #DEFAULT#
+            width: 60
+        }
+        validation {
+            valueRequired: true
+            maxLength: 100
+        }
+        advanced {
+            cssClasses: u-textLower
+        }
+        source {
+            formRegion: @workshop-details
+            column: EMAIL_FROM_ADDRESS
+            dataType: varchar2
+        }
+        default {
+            type: static
+            staticValue: &APP_USER.
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            inlineHelpText: "Email "
+            helpText: Owner of the workshop. Primary contact. This person will also be able to edit the workshop settings in LiveLabs.
+        }
+    )
+
+    pageItem P355_FOCUS_AREA (
+        type: checkboxGroup
+        label {
+            label: "<strong>Focus Area</strong> "
+            alignment: left
+        }
+        settings {
+            noOfCols: 2
+        }
+        lov {
+            type: sharedComponent
+            lov: @focus-tag-lov
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 80
+            region: @tag-management
+            slot: regionBody
+            alignment: left
+            columnSpan: 3
+        }
+        appearance {
+            template: @required-floating
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @workshop-details
+            column: FOCUS_TAG
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P355_FREETIER_ADDRESS_ (
+        type: textField
+        label {
+            label: <strong>Freetier Github Link</strong>
+            alignment: left
+        }
+        settings {
+            subtype: url
+        }
+        layout {
+            sequence: 200
+            region: @workshop-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            width: 80
+        }
+        validation {
+            maxLength: 1000
+        }
+        source {
+            formRegion: @workshop-details
+            column: FREETIER_URL
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            inlineHelpText: "This must be an externally available URL.  "
+            helpText: Github.io link for Freetier version of lab
+        }
+    )
+
+    pageItem P355_GENERAL_NOTES (
+        type: richTextEditor
+        label {
+            label: <strong>Notes</strong>
+            alignment: left
+        }
+        settings {
+            format: html
+            toolbarStyle: multiline
+            minHeight: 180
+            allowCustomHtml: true
+        }
+        layout {
+            sequence: 230
+            region: @workshop-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @workshop-details
+            column: GENERAL_NOTES
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            inlineHelpText: Any additional notes you would like to include about this workshop
+        }
+    )
+
+    pageItem P355_GITHUB_ADDRESS (
+        type: textField
+        label {
+            label: <strong>LiveLabs Github Link</strong>
+            alignment: left
+        }
+        settings {
+            subtype: url
+        }
+        layout {
+            sequence: 190
+            region: @workshop-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            width: 80
+        }
+        validation {
+            maxLength: 4000
+        }
+        source {
+            formRegion: @workshop-details
+            column: GITHUB_ADDRESS
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            inlineHelpText: "This must be an externally available URL.  "
+            helpText: Preferably referenced in the Learning Library.
+        }
+    )
+
+    pageItem P355_ID (
+        type: displayOnly
+        label {
+            label: <strong>ID:</strong>
+            alignment: left
+        }
+        settings {
+            showLineBreaks: false
+            sendOnPageSubmit: false
+        }
+        layout {
+            sequence: 80
+            region: @workshop-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @workshop-details
+            column: ID
+            dataType: number
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P355_ID_1 (
+        type: displayOnly
+        label {
+            label: <strong>ID:</strong>
+            alignment: left
+        }
+        settings {
+            showLineBreaks: false
+            sendOnPageSubmit: false
+        }
+        layout {
+            sequence: 50
+            region: @tag-management
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        source {
+            type: item
+            item: P355_ID
+        }
+        default {
+            type: static
+            staticValue: To be assigned
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P355_ID_3 (
+        type: displayOnly
+        label {
+            label: <strong>ID:</strong>
+            alignment: left
+        }
+        settings {
+            showLineBreaks: false
+            sendOnPageSubmit: false
+        }
+        layout {
+            sequence: 10
+            region: @email-management
+            slot: regionBody
+            alignment: left
+            column: 1
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        source {
+            type: item
+            item: P355_ID
+        }
+        default {
+            type: static
+            staticValue: To be assigned
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P355_ID_4 (
+        type: displayOnly
+        label {
+            label: <strong>ID:</strong>
+            alignment: left
+        }
+        settings {
+            showLineBreaks: false
+            sendOnPageSubmit: false
+        }
+        layout {
+            sequence: 60
+            region: @update-tag
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        source {
+            type: item
+            item: P355_ID
+        }
+        default {
+            type: static
+            staticValue: To be assigned
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P355_ID_4_1 (
+        type: displayOnly
+        label {
+            label: <strong>ID:</strong>
+            alignment: left
+        }
+        settings {
+            showLineBreaks: false
+            sendOnPageSubmit: false
+        }
+        layout {
+            sequence: 30
+            region: @workshop-management
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        source {
+            type: item
+            item: P355_ID
+        }
+        default {
+            type: static
+            staticValue: To be assigned
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P355_KEY1_1 (
+        type: textarea
+        label {
+            label: <strong>Email Key 1</strong>
+            alignment: left
+        }
+        layout {
+            sequence: 30
+            region: @email-management
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            width: 80
+            height: 2
+        }
+        validation {
+            maxLength: 400
+        }
+        source {
+            formRegion: @workshop-details
+            column: KEY1
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            inlineHelpText: Free text key field for the LiveLabs Email.  e.g. Region
+        }
+    )
+
+    pageItem P355_KEY2_1 (
+        type: textarea
+        label {
+            label: <strong>Email Key 2</strong>
+            alignment: left
+        }
+        layout {
+            sequence: 50
+            region: @email-management
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            width: 80
+            height: 2
+        }
+        validation {
+            maxLength: 400
+        }
+        source {
+            formRegion: @workshop-details
+            column: KEY2
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P355_KEY3_1 (
+        type: textarea
+        label {
+            label: <strong>Email Key 3</strong>
+            alignment: left
+        }
+        layout {
+            sequence: 70
+            region: @email-management
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            width: 80
+            height: 2
+        }
+        validation {
+            maxLength: 400
+        }
+        source {
+            formRegion: @workshop-details
+            column: KEY3
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P355_KEY_CONTACT_1 (
+        type: textField
+        label {
+            label: <strong>Technical Contact  1 </strong>
+            alignment: left
+        }
+        settings {
+            subtype: email
+        }
+        layout {
+            sequence: 90
+            region: @workshop-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            maxLength: 100
+        }
+        source {
+            formRegion: @workshop-details
+            column: KEY_ORACLE_CONTACT_1
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            inlineHelpText: Email address
+            helpText: Key Workshop Technical Contact. This person will also be able to edit the workshop settings in LiveLabs.
+        }
+    )
+
+    pageItem P355_KEY_CONTACT_2 (
+        type: textField
+        label {
+            label: <strong>Technical Contact 2</strong>
+            alignment: left
+        }
+        settings {
+            subtype: email
+        }
+        layout {
+            sequence: 100
+            region: @workshop-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            maxLength: 100
+        }
+        source {
+            formRegion: @workshop-details
+            column: KEY_ORACLE_CONTACT_2
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            inlineHelpText: Email address
+            helpText: Key Workshop Technical Contact. This person will also be able to edit the workshop settings in LiveLabs.
+        }
+    )
+
+    pageItem P355_LEVEL (
+        type: radioGroup
+        label {
+            label: <strong>Level</strong>
+            alignment: left
+        }
+        settings {
+            noOfCols: 3
+        }
+        lov {
+            type: sharedComponent
+            lov: @level-tag-lov
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 30
+            region: @tag-management
+            slot: regionBody
+            alignment: left
+            columnSpan: 3
+        }
+        appearance {
+            template: @required-floating
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+                t-Form-fieldContainer--radioButtonGroup
+            ]
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            formRegion: @workshop-details
+            column: LEVEL_TAG
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P355_MODERNIZER (
+        type: textField
+        label {
+            label: <strong>Maintained By</strong>
+            alignment: left
+        }
+        settings {
+            subtype: email
+        }
+        layout {
+            sequence: 110
+            region: @workshop-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 3
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        source {
+            formRegion: @workshop-details
+            column: MODERNIZER_RESOURCE
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            inlineHelpText: Email address
+            helpText: Enter the name or the assigned person who is doing the work of moving the content into Github and the Template. This person will also be able to edit the workshop settings in LiveLabs.
+        }
+    )
+
+    pageItem P355_MULTI_USER_FLG (
+        type: switch
+        label {
+            label: Enable Workshop for Multi User
+            alignment: left
+        }
+        settings {
+            useDefaults: false
+            onValue: 1
+            offValue: 0
+        }
+        layout {
+            sequence: 50
+            region: @update-tag
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @workshop-details
+            column: MULTI_WORKSHOP_FLG
+            dataType: number
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            helpText: To configure a multi user workshop ensure there is a Topi Overview URL and Workshop Overview URL configured on the first tab
+        }
+    )
+
+    pageItem P355_NAME (
+        type: textField
+        label {
+            label: <strong>Name Your Workshop</strong>
+            alignment: left
+        }
+        layout {
+            sequence: 60
+            region: @workshop-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @required-above
+            templateOptions: #DEFAULT#
+            width: 80
+        }
+        validation {
+            valueRequired: true
+            maxLength: 100
+        }
+        source {
+            formRegion: @workshop-details
+            column: NAME
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P355_PPT_LAB_URL (
+        type: textField
+        label {
+            label: <strong>Workshop Overview PPT Link</strong>
+            alignment: left
+        }
+        settings {
+            subtype: url
+        }
+        layout {
+            sequence: 250
+            region: @workshop-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            width: 80
+        }
+        validation {
+            maxLength: 200
+        }
+        source {
+            formRegion: @workshop-details
+            column: PPT_LAB_URL
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            helpText: Multi User ONLY - Link to the workshop overview ppt
+        }
+    )
+
+    pageItem P355_PPT_URL (
+        type: textField
+        label {
+            label: <strong>Workshop Topic Overview PPT Link</strong>
+            alignment: left
+        }
+        settings {
+            subtype: url
+        }
+        layout {
+            sequence: 240
+            region: @workshop-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            width: 80
+        }
+        validation {
+            maxLength: 600
+        }
+        source {
+            formRegion: @workshop-details
+            column: PPT_URL
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            helpText: Multi User ONLY - Link to the product/topic overview ppt
+        }
+    )
+
+    pageItem P355_PRODUCT (
+        type: checkboxGroup
+        label {
+            label: "<strong>Product/Technology</strong> "
+            alignment: left
+        }
+        settings {
+            noOfCols: 3
+        }
+        lov {
+            type: sharedComponent
+            lov: @product-tag-lov
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 90
+            region: @tag-management
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            column: 4
+            columnSpan: 5
+        }
+        appearance {
+            template: @required-floating
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @workshop-details
+            column: PRODUCT_TAG
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P355_QA1_RESOURCE (
+        type: selectList
+        label {
+            label: <strong>QA1 Resource</strong>
+            alignment: left
+        }
+        lov {
+            type: sharedComponent
+            lov: @qa-resource
+        }
+        layout {
+            sequence: 40
+            region: @workshop-management
+            slot: regionBody
+            alignment: left
+            columnSpan: 3
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            formRegion: @workshop-details
+            column: QA1_RESOURCE
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            helpText: Enter the name or the assigned QA resource for the first round of QA
+        }
+    )
+
+    pageItem P355_QA2_RESOURCE (
+        type: selectList
+        label {
+            label: <strong>QA2 Resource</strong>
+            alignment: left
+        }
+        lov {
+            type: sharedComponent
+            lov: @qa-resource
+        }
+        layout {
+            sequence: 50
+            region: @workshop-management
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 3
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            formRegion: @workshop-details
+            column: QA2_RESOURCE
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            helpText: Enter the name or the assigned QA resource for the first round of QA
+        }
+    )
+
+    pageItem P355_QA_NOTES (
+        type: richTextEditor
+        label {
+            label: <strong>QA Notes</strong>
+            alignment: left
+        }
+        settings {
+            format: html
+            toolbarStyle: multiline
+            minHeight: 180
+            allowCustomHtml: true
+        }
+        layout {
+            sequence: 70
+            region: @workshop-management
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @workshop-details
+            column: QA_NOTES
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P355_QA_STATUS_1 (
+        type: selectList
+        label {
+            label: <strong>QA Status</strong>
+            alignment: left
+        }
+        lov {
+            type: sharedComponent
+            lov: @qa-status
+        }
+        layout {
+            sequence: 20
+            region: @workshop-management
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @required-above
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            formRegion: @workshop-details
+            column: QA_STATUS
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P355_ROLE (
+        type: checkboxGroup
+        label {
+            label: <strong>Role</strong>
+            alignment: left
+        }
+        settings {
+            noOfCols: 2
+        }
+        lov {
+            type: sharedComponent
+            lov: @role-tag-lov
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 60
+            region: @tag-management
+            slot: regionBody
+            alignment: left
+            columnSpan: 3
+        }
+        appearance {
+            template: @required-floating
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+                t-Form-fieldContainer--radioButtonGroup
+            ]
+        }
+        source {
+            formRegion: @workshop-details
+            column: ROLE_TAG
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P355_ROWID (
+        type: hidden
+        layout {
+            sequence: 50
+            region: @workshop-details
+            slot: regionBody
+        }
+        source {
+            formRegion: @workshop-details
+            column: ROWID
+            dataType: varchar2
+            primaryKey: true
+        }
+        security {
+            sessionStateProtection: checksumRequiredSessionLevel
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P355_SALES_PLAY (
+        type: checkboxGroup
+        label {
+            label: <strong>Sales Play</strong>
+            alignment: left
+        }
+        settings {
+            noOfCols: 2
+        }
+        lov {
+            type: sharedComponent
+            lov: @salesplay-tag-lov
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 70
+            region: @tag-management
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            column: 4
+            columnSpan: 5
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+                t-Form-fieldContainer--radioButtonGroup
+            ]
+        }
+        source {
+            formRegion: @workshop-details
+            column: SALESPLAY_TAG
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P355_SOURCE_LINK (
+        type: textField
+        label {
+            label: <strong>Source Link</strong>
+            alignment: left
+        }
+        settings {
+            subtype: url
+        }
+        layout {
+            sequence: 210
+            region: @workshop-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            width: 80
+        }
+        validation {
+            maxLength: 1000
+        }
+        source {
+            formRegion: @workshop-details
+            column: SOURCE_LINKS
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            helpText: Internal or external location of existing lab or confluence page
+        }
+    )
+
+    pageItem P355_SOURCE_LINK_2 (
+        type: textField
+        label {
+            label: <strong>Source Link 2</strong>
+            alignment: left
+        }
+        settings {
+            subtype: url
+        }
+        layout {
+            sequence: 220
+            region: @workshop-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            width: 80
+        }
+        source {
+            formRegion: @workshop-details
+            column: SOURCE_LINK_2
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            helpText: Internal or external location of existing lab or confluence page
+        }
+    )
+
+    pageItem P355_TIME_IN_HOURS (
+        type: numberField
+        label {
+            label: <strong>Lease Time In Hours</strong>
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 180
+            region: @workshop-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @required-above
+            templateOptions: #DEFAULT#
+            width: 4
+        }
+        validation {
+            valueRequired: true
+            maxLength: 255
+        }
+        source {
+            formRegion: @workshop-details
+            column: TIME_IN_HOURS
+            dataType: number
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            helpText: How long should the lease period be?  Max time is 8 hours.  (Contact Kay Malcolm or Yaisah Granillo for longer requests)
+        }
+    )
+
+    pageItem P355_VALUE1_1 (
+        type: textarea
+        label {
+            label: <strong>Email Value 1</strong>
+            alignment: left
+        }
+        layout {
+            sequence: 40
+            region: @email-management
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            width: 80
+            height: 2
+        }
+        validation {
+            maxLength: 4000
+        }
+        source {
+            formRegion: @workshop-details
+            column: VALUE1
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            inlineHelpText: Free text key field for the LiveLabs Email.  e.g. Ashburn
+        }
+    )
+
+    pageItem P355_VALUE2_1 (
+        type: textarea
+        label {
+            label: <strong>Email Value 2 </strong>
+            alignment: left
+        }
+        layout {
+            sequence: 60
+            region: @email-management
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            width: 80
+            height: 2
+        }
+        validation {
+            maxLength: 4000
+        }
+        source {
+            formRegion: @workshop-details
+            column: VALUE2
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P355_VALUE3_1 (
+        type: textarea
+        label {
+            label: <strong>Email Value 3</strong>
+            alignment: left
+        }
+        layout {
+            sequence: 80
+            region: @email-management
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            width: 80
+            height: 2
+        }
+        validation {
+            maxLength: 4000
+        }
+        source {
+            formRegion: @workshop-details
+            column: VALUE3
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P355_WORKSHOP_AGENDA (
+        type: richTextEditor
+        label {
+            label: <strong>Workshop Agenda</strong>
+            alignment: left
+        }
+        settings {
+            format: html
+            toolbarStyle: multiline
+            minHeight: 180
+            allowCustomHtml: true
+        }
+        layout {
+            sequence: 140
+            region: @workshop-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required-above
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @workshop-details
+            column: OBJECTIVES
+            dataType: varchar2
+        }
+        default {
+            type: static
+            staticValue:
+                ```
+                <ul><li>Introduction and Overview</li>
+                <li>Login to Oracle Cloud</li>
+                <li>Lab 1: <Fill in the rest></li></ul>
+                ```
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            inlineHelpText: Click the down arrow to add Rich Text
+            helpText: "List out the labs that are a part of this workshop.  "
+        }
+    )
+
+    pageItem P355_WORKSHOP_CODE (
+        type: textField
+        label {
+            label: <strong>Workshop Code</strong>
+            alignment: left
+        }
+        layout {
+            sequence: 60
+            region: @workshop-management
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 30
+        }
+        source {
+            formRegion: @workshop-details
+            column: WORKSHOP_CODE
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            helpText: If you want your workshop to only be available to a controlled group select a "code"
+        }
+    )
+
+    pageItem P355_WORKSHOP_STATUS (
+        type: selectList
+        label {
+            label: <strong>Workshop Status</strong>
+            alignment: left
+        }
+        lov {
+            type: sharedComponent
+            lov: @workshop-status
+        }
+        layout {
+            sequence: 10
+            region: @workshop-management
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required-above
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            formRegion: @workshop-details
+            column: WORKSHOP_STATUS
+            dataType: varchar2
+        }
+        default {
+            type: static
+            staticValue: Submitted
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P355_WORKSHOP_TIME (
+        type: numberField
+        label {
+            label: <strong>Workshop Length</strong>
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 160
+            region: @workshop-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required-above
+            templateOptions: #DEFAULT#
+            width: 4
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            formRegion: @workshop-details
+            column: WORKSHOP_TIME
+            dataType: number
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            helpText: How long will this workshop take approximately?
+        }
+    )
+
+    pageItem P355_WORKSHOP_TIME_UNIT (
+        type: selectList
+        label {
+            label: <strong>Workshop Length Unit</strong>
+            alignment: left
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC:hours;hours,minutes;minutes
+        }
+        layout {
+            sequence: 170
+            region: @workshop-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @required-above
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            formRegion: @workshop-details
+            column: WORKSHOP_TIME_UNIT
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            helpText: Choose one
+        }
+    )
+
+    button cancel (
+        buttonName: CANCEL
+        label: Cancel
+        layout {
+            sequence: 30
+            region: @buttons-region
+            slot: belowBox
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 310
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button create (
+        buttonName: CREATE
+        label: Create
+        layout {
+            sequence: 40
+            region: @buttons-region
+            slot: belowBox
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: insert
+        }
+        serverSideCondition {
+            type: itemIsNull
+            item: P355_ROWID
+        }
+    )
+
+    button delete (
+        buttonName: DELETE
+        label: Delete
+        layout {
+            sequence: 10
+            region: @buttons-region
+            slot: belowBox
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectUrl
+            targetUrl: javascript:apex.confirm(htmldb_delete_message,'DELETE');
+            executeValidations: false
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: delete
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P355_ROWID
+        }
+    )
+
+    button save (
+        buttonName: SAVE
+        label: Apply Changes
+        layout {
+            sequence: 20
+            region: @buttons-region
+            slot: belowBox
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: update
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P355_ROWID
+        }
+    )
+
+    process initialize-form-create-edit-workshop (
+        name: Initialize form Create/Edit Workshop
+        type: formInitialization
+        formRegion: @workshop-details
+        execution {
+            sequence: 10
+            point: beforeHeader
+        }
+        advanced {
+            executionMappingIdentifier: 61918973555339468107
+        }
+    )
+
+    process process-form-create-edit-workshop (
+        name: Process form Create/Edit Workshop
+        type: formAutoRowProcessing
+        formRegion: @workshop-details
+        execution {
+            sequence: 10
+        }
+        advanced {
+            executionMappingIdentifier: 61918973977222468109
+        }
+    )
+
+    branch (
+        execution {
+            sequence: 1
+        }
+        behavior {
+            target: {
+                page: 310
+            }
+        }
+    )
+
+)
+

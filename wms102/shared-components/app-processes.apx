@@ -1,0 +1,72 @@
+appProcess getmedia (
+    name: GETMEDIA
+    type: executeCode
+    source {
+        plsqlCode:
+            ```plsql
+            declare
+            v_blob blob;
+            v_url varchar2(4000);
+            begin
+                for c1 in (select *
+                             from workshop_media
+                            where id = :MEDIA_STORAGE_FILENAME) loop
+            
+                    sys.htp.init;
+                    sys.owa_util.mime_header( c1.mime_type, FALSE );
+                    sys.htp.p('Content-length: ' || sys.dbms_lob.getlength(c1.media));
+                    sys.htp.p('Content-Disposition: attachment; filename="' || c1.filename || '"' );
+                    sys.htp.p('Cache-Control: max-age=60');  -- tell the browser to cache for one hour, adjust as necessary
+                    sys.owa_util.http_header_close;
+                    sys.wpg_docload.download_file( c1.media );
+                 
+                    apex_application.stop_apex_engine;
+                end loop;
+            end;
+            ```
+    }
+    execution {
+        sequence: 1
+        point: ajaxCallback
+    }
+    security {
+        authorizationScheme: mustNotBePublicUser
+    }
+)
+
+appProcess getqamedia (
+    name: GETQAMEDIA
+    type: executeCode
+    source {
+        plsqlCode:
+            ```plsql
+            declare
+            v_blob blob;
+            v_url varchar2(4000);
+            begin
+                for c1 in (select *
+                             from workshop_qa_media
+                            where id = :MEDIA_STORAGE_FILENAME) loop
+            
+                    sys.htp.init;
+                    sys.owa_util.mime_header( c1.mime_type, FALSE );
+                    sys.htp.p('Content-length: ' || sys.dbms_lob.getlength(c1.media));
+                    sys.htp.p('Content-Disposition: attachment; filename="' || c1.filename || '"' );
+                    sys.htp.p('Cache-Control: max-age=60');  -- tell the browser to cache for one hour, adjust as necessary
+                    sys.owa_util.http_header_close;
+                    sys.wpg_docload.download_file( c1.media );
+                 
+                    apex_application.stop_apex_engine;
+                end loop;
+            end;
+            ```
+    }
+    execution {
+        sequence: 2
+        point: ajaxCallback
+    }
+    security {
+        authorizationScheme: mustNotBePublicUser
+    }
+)
+

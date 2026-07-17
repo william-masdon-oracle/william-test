@@ -1,0 +1,104 @@
+restDataSource list-objects-hosted-files-c4u02 (
+    name: list-objects-hosted-files-c4u02
+    source {
+        type: oci
+        remoteServer: @objectstorage-us-ashburn-1-oraclecloud-com-n-c4u02
+        urlPathPrefix: b/hosted-files/o/
+    }
+    authentication {
+        credentials: @OCI_API_KEY_C4U02
+    }
+
+    operation get (
+        label: GET
+        operation {
+            urlPattern: .
+            httpMethod: get
+            databaseOperation: fetchRows
+        }
+    )
+
+    parameter bucket-name (
+        name: bucket_name
+        value {
+            defaultValueType: staticValue
+            staticValue: apex_file_storage
+        }
+    )
+
+    parameter fields (
+        name: fields
+        parameter {
+            type: urlQueryString
+        }
+        value {
+            static: true
+            defaultValueType: staticValue
+            staticValue: name,size,timeCreated,md5
+        }
+    )
+
+    dataProfile {
+        name: list-objects-hosted-files-c4u02
+        rowSelector: objects
+    }
+
+    dataProfileColumn md5 (
+        columnName: MD5
+        source {
+            sequence: 1
+            dataType: varchar2
+        }
+        parsing {
+            pathExpression: md5
+        }
+        advanced {
+            sourceDataType: string
+        }
+    )
+
+    dataProfileColumn name (
+        columnName: NAME
+        source {
+            sequence: 2
+            dataType: varchar2
+        }
+        parsing {
+            pathExpression: name
+        }
+        advanced {
+            sourceDataType: string
+        }
+    )
+
+    dataProfileColumn size (
+        columnName: SIZE_
+        source {
+            sequence: 3
+            dataType: number
+        }
+        parsing {
+            pathExpression: size
+        }
+        advanced {
+            sourceDataType: number
+        }
+    )
+
+    dataProfileColumn timecreated (
+        columnName: TIMECREATED
+        source {
+            sequence: 4
+            dataType: timestampWithTimeZone
+        }
+        parsing {
+            pathExpression: timeCreated
+            formatMask: YYYY"-"MM"-"DD"T"HH24":"MI:SS.FF9TZR
+        }
+        advanced {
+            sourceDataType: string
+        }
+    )
+
+)
+

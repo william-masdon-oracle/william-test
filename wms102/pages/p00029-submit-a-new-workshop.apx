@@ -1,0 +1,16 @@
+page 29 (
+    name: Submit a New workshop
+    alias: SUBMIT-A-NEW-WORKSHOP
+    title: Submit a New workshop
+    appearance {
+        pageTemplate: @standard-custom
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+)
+

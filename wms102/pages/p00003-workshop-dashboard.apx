@@ -1,0 +1,889 @@
+page 3 (
+    name: Workshop Dashboard
+    alias: WORKSHOP-DASHBOARD
+    title: Workshop Dashboard
+    appearance {
+        pageTemplate: @standard-custom
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region livelabs-publish-requested-workshops-waiting-for-publisher-to-approve (
+        name: LiveLabs Publish Requested Workshops - Waiting for PUBLISHER to APPROVE
+        type: classicReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select a.ID,
+                       a.TITLE,
+                       a.SHORT_DESC,
+                       a.STAKEHOLDER_ID,
+                       a.COUNCIL_ID,
+                       a.WORKSHOP_OWNER_EMAIL,
+                       ll.publish_status,
+                       ll.id ll_id
+                  from WORKSHOP a, workshop_ll ll
+                 where :P3_ROLE_TYPE = 'PUBLISHER'
+                 and a.id = ll.workshop_id
+                 and ll.publish_status in ('Publish Requested', 'Changes Requested')
+                 and workshop_status in ('Completed', 'Quarterly QA', 'Quarterly QA Complete')
+                 and lower(:APP_USER) in (select email from workshop_person_role where livelabs_publisher_flg = 1)
+                 
+                ```
+        }
+        layout {
+            sequence: 30
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        serverSideCondition {
+            type: rowsReturned
+            sqlQuery: select email from workshop_person_role where livelabs_publisher_flg = 1 and lower(:APP_USER) = email
+        }
+        componentAppearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Report--altRowsDefault
+                t-Report--rowHighlight
+            ]
+        }
+        pagination {
+            type: nextAndPreviousLinks
+        }
+
+        column COUNCIL_ID (
+            reportColumnQueryId: 5
+            derivedColumn: N
+            type: plainTextBasedOnLov
+            heading {
+                heading: Council Id
+                alignment: center
+            }
+            lov {
+                type: sharedComponent
+                lov: @workshop-council
+            }
+            layout {
+                sequence: 70
+            }
+        )
+
+        column ID (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            type: link
+            heading {
+                heading: ID
+                alignment: center
+            }
+            layout {
+                sequence: 10
+            }
+            link {
+                target: {
+                    page: 320
+                    items: {
+                        P320_ID: #ID#
+                    }
+                }
+                linkText: #ID#
+            }
+        )
+
+        column LL_ID (
+            reportColumnQueryId: 8
+            derivedColumn: N
+            heading {
+                heading: LiveLabs ID
+                alignment: center
+            }
+            layout {
+                sequence: 20
+            }
+        )
+
+        column PUBLISH_STATUS (
+            reportColumnQueryId: 7
+            derivedColumn: N
+            heading {
+                heading: Publish Status
+                alignment: center
+            }
+            layout {
+                sequence: 80
+            }
+        )
+
+        column SHORT_DESC (
+            reportColumnQueryId: 3
+            derivedColumn: N
+            heading {
+                heading: Short Desc
+                alignment: center
+            }
+            layout {
+                sequence: 40
+            }
+        )
+
+        column STAKEHOLDER_ID (
+            reportColumnQueryId: 4
+            derivedColumn: N
+            type: plainTextBasedOnLov
+            heading {
+                heading: Stakeholder Id
+                alignment: center
+            }
+            lov {
+                type: sharedComponent
+                lov: @wms-stakeholders
+            }
+            layout {
+                sequence: 60
+            }
+        )
+
+        column TITLE (
+            reportColumnQueryId: 2
+            derivedColumn: N
+            heading {
+                heading: Title
+                alignment: center
+            }
+            layout {
+                sequence: 30
+            }
+        )
+
+        column WORKSHOP_OWNER_EMAIL (
+            reportColumnQueryId: 6
+            derivedColumn: N
+            heading {
+                heading: Workshop Owner Email
+                alignment: center
+            }
+            layout {
+                sequence: 50
+            }
+            columnFormatting {
+                cssClasses: u-textLower
+            }
+        )
+
+    )
+
+    region livestack-requests-waiting-for-council-to-approve (
+        name: LiveStack Requests - Waiting for COUNCIL to Approve
+        type: classicReport
+        source {
+            location: localDatabase
+            tableName: WMS_LIVESTACKS
+            whereClause:
+                ```sql
+                publish_status='Publish Requested'
+                
+                 
+                ```
+        }
+        layout {
+            sequence: 100
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        serverSideCondition {
+            type: rowsReturned
+            sqlQuery: select * from workshop_person_council where upper(email) = v('APP_USER') and council_id = (select id from workshop_council where name = 'LiveStack');
+        }
+        componentAppearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Report--altRowsDefault
+                t-Report--rowHighlight
+            ]
+        }
+        pagination {
+            type: nextAndPreviousLinks
+        }
+        messages {
+            whenNoDataFound: No LiveStacks awaiting publishing.
+        }
+
+        column CREATED_BY (
+            reportColumnQueryId: 15
+            derivedColumn: N
+            heading {
+                heading: Created By
+            }
+            layout {
+                sequence: 80
+            }
+        )
+
+        column CREATED_DATE (
+            reportColumnQueryId: 12
+            derivedColumn: N
+            heading {
+                heading: Created Date
+            }
+            layout {
+                sequence: 90
+            }
+        )
+
+        column DESC_LONG (
+            reportColumnQueryId: 5
+            derivedColumn: N
+            heading {
+                heading: Long Description
+            }
+            layout {
+                sequence: 50
+            }
+        )
+
+        column ID (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            type: link
+            heading {
+                heading: ID
+                alignment: center
+            }
+            layout {
+                sequence: 10
+            }
+            link {
+                target: {
+                    page: 57
+                    items: {
+                        P57_ID: #ID#
+                    }
+                    clearCache: 57
+                }
+                linkText: #ID#
+            }
+        )
+
+        column NAME (
+            reportColumnQueryId: 2
+            derivedColumn: N
+            heading {
+                heading: Name
+            }
+            layout {
+                sequence: 30
+            }
+        )
+
+        column OUTLINE (
+            reportColumnQueryId: 6
+            derivedColumn: N
+            heading {
+                heading: Outline
+            }
+            layout {
+                sequence: 60
+            }
+        )
+
+        column PREREQS (
+            reportColumnQueryId: 7
+            derivedColumn: N
+            heading {
+                heading: Prerequisites
+            }
+            layout {
+                sequence: 70
+            }
+        )
+
+    )
+
+    region qa-completed-workshops-waiting-for-stakeholder-to-complete (
+        name: QA Completed Workshops - Waiting for STAKEHOLDER to COMPLETE
+        type: classicReport
+        source {
+            location: localDatabase
+            tableName: WORKSHOP
+            whereClause:
+                ```sql
+                workshop_status='Self QA Complete' 
+                and ((:P3_ROLE_TYPE = 'STAKEHOLDER' and stakeholder_id = :P3_ROLE_ID)
+                    or (:P3_ROLE_TYPE = 'PUBLISHER'))
+                 
+                ```
+        }
+        layout {
+            sequence: 60
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        serverSideCondition {
+            type: expression
+            plsqlExpression: (:P3_ROLE_TYPE = 'PUBLISHER' or :P3_ROLE_TYPE = 'STAKEHOLDER')
+        }
+        componentAppearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Report--altRowsDefault
+                t-Report--rowHighlight
+            ]
+        }
+        pagination {
+            type: nextAndPreviousLinks
+        }
+
+        column ID (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            type: link
+            heading {
+                heading: ID
+                alignment: center
+            }
+            layout {
+                sequence: 10
+            }
+            link {
+                target: {
+                    page: 320
+                    items: {
+                        P320_ID: #ID#
+                    }
+                }
+                linkText: #ID#
+            }
+        )
+
+        column SHORT_DESC (
+            reportColumnQueryId: 6
+            derivedColumn: N
+            heading {
+                heading: Short Desc
+                alignment: center
+            }
+            layout {
+                sequence: 60
+            }
+        )
+
+        column TITLE (
+            reportColumnQueryId: 2
+            derivedColumn: N
+            heading {
+                heading: Title
+                alignment: center
+            }
+            layout {
+                sequence: 20
+            }
+        )
+
+        column WORKSHOP_OWNER_EMAIL (
+            reportColumnQueryId: 11
+            derivedColumn: N
+            heading {
+                heading: Workshop Owner Email
+                alignment: center
+            }
+            layout {
+                sequence: 110
+            }
+        )
+
+    )
+
+    region quarterly-qa-needs-to-be-completed-as-stakeholder-please-ensure-this-is-completed (
+        name: QUARTERLY QA needs to be completed. As Stakeholder, please ensure this is completed.
+        type: classicReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select LIVELABSID,
+                       WORKSHOP_ID,
+                       TITLE,
+                       WORKSHOP_STATUS,
+                       PUBLISH_STATUS,
+                       PUBLISH_TYPE,
+                       COMPLETION_DATE,
+                       LAST_QA_DATE,
+                       PAGE_VIEWS_YEAR,
+                       WORKSHOP_OWNER_EMAIL	
+                  from vw_workshop_ll_all
+                 where workshop_status in ('Quarterly QA') and publish_status in ('Published') and publish_type in ('Public', 'Event') and floor(sysdate - last_qa_date) > 105
+                 and (:P3_ROLE_TYPE = 'STAKEHOLDER' or :P3_ROLE_TYPE = 'PUBLISHER')
+                 --  and lower(:APP_USER) in (select email from workshop_person_role where livelabs_publisher_flg = 1)
+                
+                ```
+        }
+        layout {
+            sequence: 90
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        serverSideCondition {
+            type: expression
+            plsqlExpression: (:P3_ROLE_TYPE = 'PUBLISHER' or :P3_ROLE_TYPE = 'STAKEHOLDER')
+        }
+        componentAppearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Report--altRowsDefault
+                t-Report--rowHighlight
+            ]
+        }
+        pagination {
+            type: nextAndPreviousLinks
+        }
+
+        column COMPLETION_DATE (
+            reportColumnQueryId: 7
+            derivedColumn: N
+            heading {
+                heading: Completion Date
+                alignment: center
+            }
+            layout {
+                sequence: 50
+            }
+        )
+
+        column LAST_QA_DATE (
+            reportColumnQueryId: 8
+            derivedColumn: N
+            heading {
+                heading: Last Qa Date
+                alignment: center
+            }
+            layout {
+                sequence: 60
+            }
+        )
+
+        column LIVELABSID (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            heading {
+                heading: LiveLabs_ID
+                alignment: center
+            }
+            layout {
+                sequence: 20
+            }
+        )
+
+        column PAGE_VIEWS_YEAR (
+            reportColumnQueryId: 9
+            derivedColumn: N
+            heading {
+                heading: Page Views Year
+                alignment: center
+            }
+            layout {
+                sequence: 80
+            }
+        )
+
+        column PUBLISH_STATUS (
+            reportColumnQueryId: 5
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 70
+            }
+        )
+
+        column PUBLISH_TYPE (
+            reportColumnQueryId: 6
+            derivedColumn: N
+            heading {
+                heading: Publish Type
+                alignment: center
+            }
+            layout {
+                sequence: 40
+            }
+        )
+
+        column TITLE (
+            reportColumnQueryId: 3
+            derivedColumn: N
+            heading {
+                heading: Title
+                alignment: center
+            }
+            layout {
+                sequence: 30
+            }
+        )
+
+        column WORKSHOP_ID (
+            reportColumnQueryId: 2
+            derivedColumn: N
+            type: link
+            heading {
+                heading: Workshop Id
+                alignment: center
+            }
+            layout {
+                sequence: 10
+            }
+            link {
+                target: {
+                    page: 320
+                    items: {
+                        P320_ID: #WORKSHOP_ID#
+                    }
+                }
+                linkText: #WORKSHOP_ID#
+            }
+        )
+
+        column WORKSHOP_OWNER_EMAIL (
+            reportColumnQueryId: 10
+            derivedColumn: N
+            heading {
+                heading: Workshop Owner Email
+                alignment: center
+            }
+            layout {
+                sequence: 100
+            }
+            columnFormatting {
+                cssClasses: u-textLower
+            }
+        )
+
+        column WORKSHOP_STATUS (
+            reportColumnQueryId: 4
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 90
+            }
+        )
+
+    )
+
+    region submitted-workshops-waiting-for-council-to-approve (
+        name: Submitted Workshops - Waiting for COUNCIL to APPROVE
+        type: classicReport
+        source {
+            location: localDatabase
+            tableName: WORKSHOP
+            whereClause:
+                ```sql
+                workshop_status='Submitted' 
+                and ((:P3_ROLE_TYPE = 'COUNCIL' and council_id = :P3_ROLE_ID) 
+                    or (:P3_ROLE_TYPE = 'PUBLISHER'))
+                 
+                ```
+        }
+        layout {
+            sequence: 70
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        serverSideCondition {
+            type: expression
+            plsqlExpression: (:P3_ROLE_TYPE = 'PUBLISHER' or :P3_ROLE_TYPE = 'COUNCIL')
+        }
+        componentAppearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Report--altRowsDefault
+                t-Report--rowHighlight
+            ]
+        }
+        pagination {
+            type: nextAndPreviousLinks
+        }
+
+        column ID (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            type: link
+            heading {
+                heading: ID
+                alignment: center
+            }
+            layout {
+                sequence: 10
+            }
+            link {
+                target: {
+                    page: 320
+                    items: {
+                        P320_ID: #ID#
+                    }
+                }
+                linkText: #ID#
+            }
+        )
+
+        column SHORT_DESC (
+            reportColumnQueryId: 6
+            derivedColumn: N
+            heading {
+                heading: Short Desc
+                alignment: center
+            }
+            layout {
+                sequence: 30
+            }
+        )
+
+        column TITLE (
+            reportColumnQueryId: 2
+            derivedColumn: N
+            heading {
+                heading: Title
+                alignment: center
+            }
+            layout {
+                sequence: 20
+            }
+        )
+
+        column WORKSHOP_OWNER_EMAIL (
+            reportColumnQueryId: 11
+            derivedColumn: N
+            heading {
+                heading: Workshop Owner Email
+                alignment: center
+            }
+            layout {
+                sequence: 40
+            }
+        )
+
+    )
+
+    region workshops-by-status (
+        name: Workshops by Status
+        type: chart
+        layout {
+            sequence: 110
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        security {
+            escapeSpecialChars: false
+        }
+        chart {
+            type: pie
+        }
+        legend {
+            show: false
+        }
+
+        series series (
+            name: Series 1
+            execution {
+                sequence: 10
+            }
+            source {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select workshop_status label, count(1) value from workshop
+                    where ((:P3_ROLE_TYPE = 'COUNCIL' and council_id = :P3_ROLE_ID) 
+                        or (:P3_ROLE_TYPE = 'STAKEHOLDER' and stakeholder_id = :P3_ROLE_ID)
+                        or (:P3_ROLE_TYPE = 'PUBLISHER'))
+                    and workshop_status in ('In Development','Completed','Self QA','More Info Needed','Self QA Complete','Approved','Quarterly QA', 'Quarterly QA Complete')
+                    group by workshop_status
+                    ```
+            }
+            columnMapping {
+                label: LABEL
+                value: VALUE
+            }
+            label {
+                show: true
+            }
+            performance {
+                maxRowsToProcess: 20
+            }
+        )
+
+    )
+
+    region workshops-published-by-date (
+        name: Workshops Published by Date
+        type: chart
+        layout {
+            sequence: 120
+            slot: contentBody
+            startNewRow: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        security {
+            escapeSpecialChars: false
+        }
+        legend {
+            show: false
+        }
+
+        series series (
+            name: Series 1
+            execution {
+                sequence: 10
+            }
+            source {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select completion_date label, Count(1) value from workshop
+                    where workshop_status='Completed'
+                    and completion_date > sysdate-120
+                    and ((:P3_ROLE_TYPE = 'COUNCIL' and council_id = :P3_ROLE_ID) 
+                        or (:P3_ROLE_TYPE = 'STAKEHOLDER' and stakeholder_id = :P3_ROLE_ID)
+                        or (:P3_ROLE_TYPE = 'PUBLISHER'))
+                    group by completion_date
+                    ```
+            }
+            columnMapping {
+                label: LABEL
+                value: VALUE
+            }
+            performance {
+                maxRowsToProcess: 20
+            }
+        )
+
+        axis x (
+            name: x
+            majorTicks {
+                show: auto
+            }
+        )
+
+        axis y (
+            name: y
+            majorTicks {
+                show: auto
+            }
+        )
+
+    )
+
+    pageItem P3_ROLE_ID (
+        type: hidden
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+    )
+
+    pageItem P3_ROLE_TYPE (
+        type: hidden
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+    )
+
+    process get-role (
+        name: Get ROLE
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                declare
+                v_hold number;
+                begin
+                    begin
+                    select id into v_hold from workshop_person_role  where upper(email) = upper(:APP_USER) fetch first 1 rows only;
+                    :P3_ROLE_TYPE := 'PUBLISHER';
+                    return;
+                    exception when no_data_found then v_hold := null;
+                    end;
+                
+                    begin
+                    select stakeholder_id into v_hold from workshop_person_stakeholder where upper(email) = upper(:APP_USER) fetch first 1 rows only;
+                    :P3_ROLE_ID := v_hold;
+                    :P3_ROLE_TYPE := 'STAKEHOLDER';
+                    return;
+                    exception when no_data_found then v_hold := null;  
+                    end;
+                
+                    begin
+                    select council_id into v_hold from workshop_person_council where upper(email) = upper(:APP_USER) fetch first 1 rows only;
+                    :P3_ROLE_ID := v_hold;
+                    :P3_ROLE_TYPE := 'COUNCIL';
+                    return;
+                    exception when no_data_found then v_hold := null; 
+                    end;
+                
+                end;
+                
+                ```
+        }
+        execution {
+            sequence: 10
+            point: beforeHeader
+        }
+        advanced {
+            executionMappingIdentifier: 52170768539951421856
+        }
+    )
+
+)
+

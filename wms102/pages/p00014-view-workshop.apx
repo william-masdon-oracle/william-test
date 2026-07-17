@@ -1,0 +1,4445 @@
+page 14 (
+    name: View Workshop
+    alias: VIEW-WORKSHOP
+    title: View Workshop
+    appearance {
+        pageTemplate: @standard-custom
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    javaScript {
+        functionAndGlobalVariableDeclaration: var htmldb_delete_message='"DELETE_CONFIRM_MSG"';
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region button (
+        name: Button
+        type: staticContent
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region email-the-workshop-team (
+        name: Email the Workshop Team
+        type: staticContent
+        layout {
+            sequence: 60
+            parentRegion: @message-the-team
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    region livelabs-publishing (
+        name: LiveLabs Publishing
+        type: staticContent
+        layout {
+            sequence: 60
+            parentRegion: @workshop-submission-tabs
+            slot: tabs
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    region media-view (
+        name: Media View
+        type: cards
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select ID,
+                       WORKSHOP_ID,
+                       STORAGE_FILENAME,
+                       VISIBLE_FILENAME,
+                       initcap(substr(MIME_TYPE, 1, 5)) as MEDIA_TYPE
+                  from WORKSHOPS_MEDIA
+                 where workshop_id = :P14_ID
+                 order by mime_type
+                ```
+            pageItemsToSubmit: P14_ID
+        }
+        layout {
+            sequence: 10
+            parentRegion: @social
+            slot: subRegions
+        }
+        appearance {
+            template: @blank-with-attributes-no-grid
+            templateOptions: #DEFAULT#
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P14_ID
+        }
+        title {
+            column: VISIBLE_FILENAME
+        }
+        subtitle {
+            column: MEDIA_TYPE
+        }
+        messages {
+            whenNoDataFound: No media was found for this workshop.
+        }
+
+        action action (
+            label: Download
+            layout {
+                sequence: 10
+            }
+            behavior {
+                type: redirectUrl
+                targetUrl: f?p=&APP_ID.:14:&APP_SESSION.:APPLICATION_PROCESS=GETMEDIA:::MEDIA_STORAGE_FILENAME:&STORAGE_FILENAME.
+            }
+        )
+
+    )
+
+    region message-the-team (
+        name: Message the Team
+        type: staticContent
+        layout {
+            sequence: 30
+            parentRegion: @workshop-submission-tabs
+            slot: tabs
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--scrollBody
+            ]
+            icon: fa-users-chat
+        }
+        advanced {
+            htmlDomId: CHRIS
+        }
+    )
+
+    region ohc-learn-publishing (
+        name: OHC Learn Publishing
+        type: staticContent
+        layout {
+            sequence: 80
+            parentRegion: @workshop-submission-tabs
+            slot: tabs
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    region ospa-publishing (
+        name: OSPA Publishing
+        type: staticContent
+        layout {
+            sequence: 90
+            parentRegion: @workshop-submission-tabs
+            slot: tabs
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    region outgoing-emails-sent-over-the-past-hour (
+        name: Outgoing Emails sent over the past Hour.
+        type: classicReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                SELECT MAIL_FROM
+                     , substr(MAIL_SUBJ,1,30) MAIL_SUBJECT
+                     , MAIL_MESSAGE_CREATED
+                     --, MAIL_MESSAGE_SEND_BEGIN
+                     , MAIL_MESSAGE_SEND_END
+                     , (MAIL_BODY_SIZE + MAIL_BODY_HTML_SIZE) MAIL_SIZE
+                     --, MAIL_ATTACHMENT_COUNT
+                     , MAIL_SEND_ERROR
+                  from APEX_MAIL_LOG
+                 where LAST_UPDATED_ON > sysdate - 60/1440
+                   and APP_ID = :APP_ID
+                 ORDER BY LAST_UPDATED_ON DESC;
+                ```
+        }
+        layout {
+            sequence: 110
+            parentRegion: @message-the-team
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        reportLayout {
+            numberOfRows: 30
+        }
+        componentAppearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Report--altRowsDefault
+                t-Report--rowHighlight
+            ]
+        }
+        pagination {
+            type: rowRangesXToYOfZNoPagination
+        }
+
+        column MAIL_FROM (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            heading {
+                heading: Mail From
+                alignment: center
+            }
+            layout {
+                sequence: 10
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column MAIL_MESSAGE_CREATED (
+            reportColumnQueryId: 3
+            derivedColumn: N
+            heading {
+                heading: Mail Message Created
+                alignment: center
+            }
+            layout {
+                sequence: 30
+            }
+            appearance {
+                formatMask: SINCE
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column MAIL_MESSAGE_SEND_END (
+            reportColumnQueryId: 4
+            derivedColumn: N
+            heading {
+                heading: Mail Message Send End
+                alignment: center
+            }
+            layout {
+                sequence: 40
+            }
+            appearance {
+                formatMask: SINCE
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column MAIL_SEND_ERROR (
+            reportColumnQueryId: 6
+            derivedColumn: N
+            heading {
+                heading: Mail Send Error
+                alignment: center
+            }
+            layout {
+                sequence: 60
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column MAIL_SIZE (
+            reportColumnQueryId: 5
+            derivedColumn: N
+            heading {
+                heading: Mail Size
+                alignment: center
+            }
+            layout {
+                sequence: 50
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column MAIL_SUBJECT (
+            reportColumnQueryId: 2
+            derivedColumn: N
+            heading {
+                heading: Mail Subject
+                alignment: center
+            }
+            layout {
+                sequence: 20
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+    )
+
+    region social (
+        name: Social
+        type: staticContent
+        layout {
+            sequence: 50
+            parentRegion: @workshop-submission-tabs
+            slot: tabs
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    region span-style-font-size-1-8em-font-weight-700-view-workshop-details-span (
+        name: <span style="font-size: 1.8em; font-weight: 700">View Workshop Details</span>
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <table><tr><td width="75px">
+                <img src="https://objectstorage.us-ashburn-1.oraclecloud.com/p/JqF1FqwGZL1LBG-ER-CJg2_Ev0-wrwnflP0I7dwc8d065zU6GvXWb9ORoqWvGncJ/n/c4u04/b/wms-storage/o/images/WMS-Logo-01-color.png" width="70px">
+                </td><td>
+                <p>To edit this workshop go back to the home page and click edit.  Only those who have appropriate roles can edit workshops (e.g. Stakeholder, Workshop Team, Publisher teams, etc). <br><br>You can email the workshop team from this page if you need to contact them.</p>
+                </td></tr></table>
+                ```
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region tags (
+        name: Tags
+        type: staticContent
+        layout {
+            sequence: 40
+            parentRegion: @workshop-submission-tabs
+            slot: tabs
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                t-Region--removeHeader
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    region workshop-details (
+        name: Workshop Details
+        type: form
+        source {
+            location: localDatabase
+            tableName: WORKSHOPS
+            includeRowidColumn: true
+        }
+        layout {
+            sequence: 10
+            parentRegion: @workshop-submission-tabs
+            slot: tabs
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--scrollBody
+            ]
+        }
+        edit {
+            enabled: true
+            allowedOperations: [
+                add
+                update
+                delete
+            ]
+        }
+    )
+
+    region workshop-discussion-history (
+        name: Workshop Discussion History
+        type: plSqlDynamicContent
+        source {
+            plsqlCode:
+                ```plsql
+                DECLARE
+                l_body      CLOB;
+                l_body_html CLOB;     
+                
+                Cursor C_WS Is
+                    select to_char(commentdate- (8/24),'DD-MON-YYYY HH:MI AM')||' PST'||' | '|| lower(EMAIL_CREATOR) ||':   '||THE_COMMENT||'' as comments from LL_COMMENTS 
+                    where WORKSHOP_ID=:P14_ID AND COMMENTTYPE='WORKSHOP'
+                    order by COMMENTDATE desc; 
+                BEGIN
+                 
+                
+                  l_body := 'To view the content of this messageuse an HTML enabled mail client.'||utl_tcp.crlf;
+                  l_body_html := ''; 
+                   For row_1 In C_WS Loop
+                           -- l_to_email := row_1.to_list;  
+                            l_body_html := l_body_html || ' '||row_1.comments|| ' </br></hr>' ||utl_tcp.crlf; 
+                   end loop;
+                
+                    
+                    Htp.p( l_body_html );
+                   
+                
+                END;
+                ```
+        }
+        layout {
+            sequence: 80
+            parentRegion: @message-the-team
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    region workshop-discussion-history-2 (
+        name: Workshop Discussion History  ....
+        type: classicReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                 select to_char(commentdate,'DD-MON-YYYY HH24:MI')||' | '|| lower(EMAIL_CREATOR) ||'  says: '||THE_COMMENT||'' as comments from LL_COMMENTS 
+                 where WORKSHOP_ID=:P14_ID AND COMMENTTYPE='WORKSHOP'
+                 order by COMMENTDATE desc;
+                ```
+            pageItemsToSubmit: P14_ID
+        }
+        layout {
+            sequence: 90
+            parentRegion: @message-the-team
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        serverSideCondition {
+            type: never
+        }
+        componentAppearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Report--altRowsDefault
+                t-Report--rowHighlight
+            ]
+        }
+        pagination {
+            type: nextAndPreviousLinks
+        }
+        messages {
+            whenNoDataFound: None
+        }
+
+        column COMMENTS (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            heading {
+                heading: Comments
+                alignment: center
+            }
+            layout {
+                sequence: 1
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+    )
+
+    region workshop-submission-tabs (
+        name: Workshop Submission Tabs
+        type: staticContent
+        layout {
+            sequence: 30
+            slot: contentBody
+        }
+        appearance {
+            template: @tabs-container
+            templateOptions: [
+                #DEFAULT#
+                t-TabsRegion-mod--fillLabels
+                t-TabsRegion-mod--pill
+                t-Form--slimPadding
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    pageItem P14_ABSTRACT (
+        type: richTextEditor
+        label {
+            label: Workshop Abstract
+            alignment: left
+        }
+        settings {
+            format: html
+            minHeight: 220
+            maxHeight: 220
+        }
+        layout {
+            sequence: 200
+            region: @workshop-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required-above
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @workshop-details
+            column: ABSTRACT
+            dataType: varchar2
+        }
+        default {
+            type: static
+            staticValue:
+                ```
+                <ul><li><b>Workshop Elevator Pitch/Messaging</b>:  Required </li>
+                <li><b>Workshop Description</b>:  Required</li>
+                <li><b>Why is this workshop needed?</b> Please fill in</li>
+                <li><b>What products/technologies are used? </b> Please fill in</li>
+                <li><b>Is there a primary Oracle product/technology being showcased?  If so, what is it? </b> Needed for Workshop Council</li>
+                </ul>
+                ```
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            inlineHelpText: This field is what is used for approval by the workshop council. If you don't put enough detail, the council may kick it back and delay your workshop.
+            helpText: This information is needed for approval.  Workshops are reviewed by the workshop council for adherance to current Oracle messaging
+        }
+    )
+
+    pageItem P14_ALWAYS_FREE_FLG (
+        type: selectList
+        label {
+            label: Always Free On?
+            alignment: left
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC:On;1,Off;0
+        }
+        layout {
+            sequence: 60
+            region: @livelabs-publishing
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            formRegion: @workshop-details
+            column: ALWAYS_FREE_FLG
+            dataType: number
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            helpText: Can this workshop be done in an Always Free account using only Always Free services? (i.e. Compute Micro, ADB-Shared, etc)
+        }
+    )
+
+    pageItem P14_BLANK_EMAIL (
+        type: displayOnly
+        label {
+            alignment: left
+        }
+        settings {
+            showLineBreaks: false
+            sendOnPageSubmit: false
+        }
+        layout {
+            sequence: 20
+            region: @workshop-submission-tabs
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P14_BLOG (
+        type: richTextEditor
+        label {
+            label: Blog Post Text
+            alignment: left
+        }
+        settings {
+            minHeight: 180
+        }
+        layout {
+            sequence: 10
+            region: @social
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @workshop-details
+            column: BLOG_POST
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P14_BREAK (
+        type: displayOnly
+        label {
+            alignment: left
+        }
+        settings {
+            format: htmlUnsafe
+            sendOnPageSubmit: false
+        }
+        layout {
+            sequence: 150
+            region: @tags
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P14_COMMENT_1 (
+        type: richTextEditor
+        label {
+            label: Submit comments/questions/discuss with the Workshop team below
+            alignment: left
+        }
+        settings {
+            format: html
+            minHeight: 180
+        }
+        layout {
+            sequence: 10
+            region: @email-the-workshop-team
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P14_COMMENT_HISTORY (
+        type: displayOnly
+        label {
+            label: Last Comment
+            alignment: left
+        }
+        settings {
+            format: htmlUnsafe
+            sendOnPageSubmit: false
+        }
+        layout {
+            sequence: 480
+            region: @workshop-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery:
+                ```sql
+                select to_char(commentdate,'DD-MON-YYYY HH24:MI')||' | '|| lower(EMAIL_CREATOR) ||'  says: '||THE_COMMENT||'' as comments from LL_COMMENTS 
+                 where WORKSHOP_ID=:P14_ID AND COMMENTTYPE='WORKSHOP'
+                 order by COMMENTDATE desc;
+                ```
+        }
+        default {
+            type: static
+            staticValue: No comments
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            inlineHelpText: Click Email Workshop Team to see/make additional comments
+        }
+    )
+
+    pageItem P14_COMPLETION_DATE (
+        type: datePickerJquery
+        label {
+            label: Anticipated Completion Date
+            alignment: left
+        }
+        layout {
+            sequence: 90
+            region: @workshop-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @required-above
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            formRegion: @workshop-details
+            column: COMPLETION_DATE
+            dataType: date
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            inlineHelpText: Anticipated Launch Date
+            helpText: App Listing OCID
+        }
+    )
+
+    pageItem P14_COUNCIL_EDIT (
+        type: selectList
+        label {
+            label: Workshop Council Group
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery: select  name,id from workshop_council where active_flg=1 order by name
+        }
+        layout {
+            sequence: 190
+            region: @workshop-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required-above
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            formRegion: @workshop-details
+            column: COUNCIL_ID
+            dataType: number
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P14_DEPLOYMENT (
+        type: checkboxGroup
+        label {
+            label: <strong>Deployment</strong>
+            alignment: left
+        }
+        settings {
+            noOfCols: 2
+        }
+        lov {
+            type: sharedComponent
+            lov: @series-tag-lov
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 90
+            region: @tags
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 4
+        }
+        appearance {
+            template: @required-floating
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+                t-Form-fieldContainer--radioButtonGroup
+            ]
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            formRegion: @workshop-details
+            column: DEPLOYMENT_TAG
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P14_DESCRIPTION_LONG (
+        type: textarea
+        label {
+            label: Workshop Homepage Description
+            alignment: left
+        }
+        layout {
+            sequence: 350
+            region: @workshop-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            width: 80
+            height: 5
+        }
+        source {
+            formRegion: @workshop-details
+            column: DESCRIPTION
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            inlineHelpText: Up to 1000 characters. LiveLabs/OHC Publishing only. Not applicable for Luna publishing.
+            helpText: Long Description for LiveLabs application.  This goes on the detail page for the workshop.  It should be a thorough description of the workshop.
+        }
+    )
+
+    pageItem P14_DESCRIPTION_SHORT (
+        type: textarea
+        label {
+            label: Workshop Tile Description
+            alignment: left
+        }
+        settings {
+            charCounter: true
+        }
+        layout {
+            sequence: 100
+            region: @workshop-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required-above
+            templateOptions: #DEFAULT#
+            width: 80
+            height: 5
+        }
+        validation {
+            maxLength: 100
+        }
+        source {
+            formRegion: @workshop-details
+            column: SHORT_DESCRIPTION
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            inlineHelpText: This is how what your workshop is about. Make it catchy and interesting. Up to 100 characters
+            helpText: "Short Description for LiveLabs application.  This key piece of information goes on the tile for your workshop.  "
+        }
+    )
+
+    pageItem P14_DEV_GITHUBURL (
+        type: textField
+        label {
+            label: Development GitHub/GitLab URL
+            alignment: left
+        }
+        settings {
+            subtype: url
+        }
+        layout {
+            sequence: 410
+            region: @workshop-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            width: 80
+        }
+        source {
+            formRegion: @workshop-details
+            column: GITHUB_ADDRESS
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            inlineHelpText: This can be the link to your staging GitHub URL
+        }
+    )
+
+    pageItem P14_DOC_URL (
+        type: textField
+        label {
+            label: Blog URL
+            alignment: left
+        }
+        layout {
+            sequence: 40
+            region: @social
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            maxLength: 1000
+        }
+        source {
+            formRegion: @workshop-details
+            column: DOCUMENTATION_URL
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P14_EMAIL_FROM_ADDRESS (
+        type: textField
+        label {
+            label: Workshop Owner Email
+            alignment: left
+        }
+        settings {
+            subtype: email
+        }
+        layout {
+            sequence: 220
+            region: @workshop-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required-above
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        advanced {
+            cssClasses: u-textLower
+        }
+        source {
+            formRegion: @workshop-details
+            column: EMAIL_FROM_ADDRESS
+            dataType: varchar2
+        }
+        default {
+            type: static
+            staticValue: &APP_USER.
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            inlineHelpText: Enter each email once
+            helpText: Owner of the workshop. Primary contact. This person will also be able to edit the workshop settings in LiveLabs.
+        }
+    )
+
+    pageItem P14_FOCUS_AREA (
+        type: checkboxGroup
+        label {
+            label: "<strong>Focus Area/Certification</strong> "
+            alignment: left
+        }
+        settings {
+            noOfCols: 2
+        }
+        lov {
+            type: sharedComponent
+            lov: @focus-tag-lov
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 130
+            region: @tags
+            slot: regionBody
+            alignment: left
+            columnSpan: 4
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--radioButtonGroup
+            ]
+        }
+        source {
+            formRegion: @workshop-details
+            column: FOCUS_TAG
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P14_FREE_TIER_FLG (
+        type: selectList
+        label {
+            label: Free Tier On?
+            alignment: left
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC:On;1,Off;0
+        }
+        layout {
+            sequence: 70
+            region: @livelabs-publishing
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            formRegion: @workshop-details
+            column: FREE_TIER_FLG
+            dataType: number
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            helpText: Can this workshop be done in a Free Tier account using with the $300 (or $500) credit and always free services?
+        }
+    )
+
+    pageItem P14_GENERAL_NOTES (
+        type: richTextEditor
+        label {
+            label: Notes and Additional Info
+            alignment: left
+        }
+        settings {
+            format: html
+            minHeight: 180
+        }
+        layout {
+            sequence: 470
+            region: @workshop-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @workshop-details
+            column: GENERAL_NOTES
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            inlineHelpText: Any additional notes you would like to include about this workshop
+        }
+    )
+
+    pageItem P14_GITHUB_ADDRESS (
+        type: textField
+        label {
+            label: Production GitHub URL - Do not share this link with customers
+            alignment: left
+        }
+        settings {
+            subtype: url
+        }
+        layout {
+            sequence: 400
+            region: @workshop-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            width: 80
+        }
+        source {
+            formRegion: @workshop-details
+            column: GITHUB_LL_URL
+            dataType: varchar2
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P14_ROWID
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            inlineHelpText: "The URL of the oracle.github.io link for your workshop.  There is no analytics on these links. "
+        }
+    )
+
+    pageItem P14_GREEN_BUTTON_REQ (
+        type: richTextEditor
+        label {
+            label: Green Button Requirements
+            alignment: left
+        }
+        settings {
+            format: html
+            minHeight: 180
+        }
+        layout {
+            sequence: 150
+            region: @livelabs-publishing
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @workshop-details
+            column: GREEN_BUTTON_REQ
+            dataType: clob
+        }
+        default {
+            type: static
+            staticValue:
+                ```
+                <b> Please fill out our Green Button Questionnaire to determine if this workshop can be run on a registered LiveLabs Tenancy.  <br><br>If your workshop is in production already, copy this text and submit it via Chat with the Workshop Team and we will process. </b>
+                <br/> <br/> 
+                <u>BASIC QUESTIONS</u><br>
+                <ul>
+                <li><b>1. Do you have a Tenancy or the approved budget to purchase cloud credits? </b> Yes/No </b></li>
+                <li><b>2. Are you in DB Product Management? </b> Yes/No </b></li>
+                <li><b>3. Do you need Cloud Shell access? </b> Yes/No </b></li>
+                <li><b>4. Do you need a compute instance (Linux is by default) </b>  Yes or No</li>
+                <li><b>5. OCI - List of Policies: </b> Enter the list of policies here</li>
+                <li><b>6. Do you have an existing Terraform script? </b> Yes or No</li>
+                <li><b>7. Do you have an existing Shell/Python/CLI Scripts? </b> Enter them here</li> </ul>
+                
+                <br/> <u>NETWORK QUESTIONS</u><br>
+                <ul><li><b>1. OCI - Is VCN Required? </b>  Yes or No</li> 
+                <li><b>2. Do you need the user to modify the VCN?  </b> Yes or No</li>
+                <li><b>3. Are any other port openings required other than 22? If so list them here. (This request may be subject to CSSAP approval) </b> Yes or No</li> </ul>
+                
+                <br/> <u>IMAGES AND THE MARKETPLACE</u><br>
+                <ul><li><b>1. Do you need an image installed and started on compute (DB 19c, EM, Golden Gate, etc)? </b>Enter here </li>
+                <li><b>2. Is the image already in Marketplace? <i>If no, the image needs to be submitted to marketplace in order to proceed, attend Office Hours</i> </b> Yes or No</li>  </ul>
+                
+                <br/> <u>OKE </u><br>
+                <ul><li><b>1. Do you need an OKE cluster </b>  Yes or No</li>
+                <li><b>2. How many nodes? </b> Enter here</li></ul>
+                
+                <br/> <u>DATA SCIENCE</u><br>
+                <ul><li><b>1. Do you need a Data Science service? </b> Answer Here</li> 
+                <li><b>2. Dynamic group required?</b> Yes or No</li> </ul>
+                
+                <br/> <u>DATA SAFE</u><br>
+                <ul><li><b>1. Do you need Data Safe Service? </b> Yes or No</li>  </ul>
+                
+                <br/> <u>ADDITIONAL SERVICES AND QUESTIONS</u><br>
+                <ul><li><b>1. What additional resources/services do you need that aren''t listed above: </b>Enter here</li>
+                <li><b>2. Object Storage </b> Enter Size</li>Size
+                <li><b>3. Block Storage</b> Enter Size</li>
+                <li><b>4. Container Repo</b> Add details here</li> </ul>
+                
+                <br/> <br/> <b>Any Additional requirements? </b> Enter them here
+                <br/> <br/> <br/> --------------------------------NOTES FROM LIVELABS ADMIN--------------------------------<br>(For Official Use Only)<br>
+                ```
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P14_ID (
+        type: displayOnly
+        label {
+            label: Workshop ID
+            alignment: left
+        }
+        settings {
+            showLineBreaks: false
+            sendOnPageSubmit: false
+        }
+        layout {
+            sequence: 60
+            region: @workshop-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @workshop-details
+            column: ID
+            dataType: number
+            primaryKey: true
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P14_ID
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P14_ID_1 (
+        type: displayOnly
+        label {
+            label: <strong>ID:</strong>
+            alignment: left
+        }
+        settings {
+            showLineBreaks: false
+            sendOnPageSubmit: false
+        }
+        layout {
+            sequence: 100
+            region: @tags
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        source {
+            type: item
+            item: P14_ID
+        }
+        default {
+            type: static
+            staticValue: To be assigned
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P14_ID_HOLD (
+        type: hidden
+        layout {
+            sequence: 90
+            region: @social
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P14_INTERNAL_FLG (
+        type: checkbox
+        label {
+            label: This Workshop is Internal Only
+            alignment: left
+        }
+        settings {
+            useDefaults: false
+            checkedValue: Y
+            uncheckedValue: N
+        }
+        layout {
+            sequence: 40
+            region: @ospa-publishing
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @workshop-details
+            column: LUNA_INTERNAL_FLG
+            dataType: varchar2
+        }
+        readOnly {
+            type: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P14_KEY_CONTACT_1 (
+        type: textField
+        label {
+            label: "Technical Contact  1 "
+            alignment: left
+        }
+        settings {
+            subtype: email
+        }
+        layout {
+            sequence: 230
+            region: @workshop-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @required-above
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            formRegion: @workshop-details
+            column: KEY_ORACLE_CONTACT_1
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            inlineHelpText: Email address
+            helpText: Key Workshop Technical Contact. This person will also be able to edit the workshop settings in LiveLabs.
+        }
+    )
+
+    pageItem P14_KEY_CONTACT_2 (
+        type: textField
+        label {
+            label: Technical Contact 2
+            alignment: left
+        }
+        settings {
+            subtype: email
+        }
+        layout {
+            sequence: 240
+            region: @workshop-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        source {
+            formRegion: @workshop-details
+            column: KEY_ORACLE_CONTACT_2
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            inlineHelpText: Email address
+            helpText: Key Workshop Technical Contact. This person will also be able to edit the workshop settings in LiveLabs.
+        }
+    )
+
+    pageItem P14_LAB_PREREQS (
+        type: richTextEditor
+        label {
+            label: Workshop Prerequisites
+            alignment: left
+        }
+        settings {
+            format: html
+            minHeight: 220
+            maxHeight: 220
+        }
+        layout {
+            sequence: 370
+            region: @workshop-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @required-above
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @workshop-details
+            column: AUTHOR_NAME
+            dataType: varchar2
+        }
+        default {
+            type: static
+            staticValue:
+                ```
+                <ul><li>Sample - Familiarity with Database is desirable, but not required</li>
+                <li>Some understanding of cloud and database terms is helpful</li>
+                <li>Familiarity with Oracle Cloud Infrastructure (OCI) is helpful <Fill in or update the rest></li></ul>
+                ```
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            inlineHelpText: What kind of knowledge do they need to do this workshop?
+            helpText: Prerequisites for the workshop
+        }
+    )
+
+    pageItem P14_LEVEL (
+        type: radioGroup
+        label {
+            label: <strong>Level</strong>
+            alignment: left
+        }
+        settings {
+            noOfCols: 3
+        }
+        lov {
+            type: sharedComponent
+            lov: @level-tag-lov
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 80
+            region: @tags
+            slot: regionBody
+            alignment: left
+            columnSpan: 4
+        }
+        appearance {
+            template: @required-floating
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+                t-Form-fieldContainer--radioButtonGroup
+            ]
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            formRegion: @workshop-details
+            column: LEVEL_TAG
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P14_LINKEDIN (
+        type: richTextEditor
+        label {
+            label: LinkedIn Post
+            alignment: left
+        }
+        settings {
+            minHeight: 180
+        }
+        layout {
+            sequence: 20
+            region: @social
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @workshop-details
+            column: LINKEDIN_POST
+            dataType: varchar2
+        }
+        default {
+            type: static
+            staticValue: #OracleLiveLabs
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P14_LIVELABS_TIER_FLG (
+        type: selectList
+        label {
+            label: Green Button On?
+            alignment: left
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC:On;1,Off;0
+        }
+        layout {
+            sequence: 90
+            region: @livelabs-publishing
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            formRegion: @workshop-details
+            column: LIVELABS_TIER_FLG
+            dataType: number
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            helpText: Can this workshop be done in a registered LiveLabs tenancy? AKA Green Button
+        }
+    )
+
+    pageItem P14_LL_PUBLISH_FLG (
+        type: selectList
+        label {
+            label: Publish to LiveLabs?
+            alignment: left
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC2:Yes;1,No;0
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 20
+            region: @livelabs-publishing
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            formRegion: @workshop-details
+            column: ALWAYS_FREE_ID
+            dataType: number
+        }
+        default {
+            type: static
+            staticValue: 1
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P14_LL_WORKSHOP_URL (
+        type: textField
+        label {
+            label: LiveLabs Workshop URL
+            alignment: left
+        }
+        settings {
+            subtype: url
+        }
+        layout {
+            sequence: 110
+            region: @livelabs-publishing
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            width: 80
+        }
+        validation {
+            maxLength: 300
+        }
+        source {
+            formRegion: @workshop-details
+            column: LIVELABS_WORKSHOP_URL
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            inlineHelpText: "Enter the URL for the LiveLabs workshop homepage for this workshop.  "
+        }
+    )
+
+    pageItem P14_LUNA_FLG (
+        type: checkbox
+        label {
+            label: This is a OSPA Workshop
+            alignment: left
+        }
+        settings {
+            useDefaults: false
+            checkedValue: Y
+            uncheckedValue: N
+        }
+        layout {
+            sequence: 30
+            region: @ospa-publishing
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @workshop-details
+            column: LUNA_FLG
+            dataType: varchar2
+        }
+        readOnly {
+            type: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P14_LUNA_PARENT_WORKSHOP_ID (
+        type: popupLov
+        label {
+            label: Parent Workshop
+            alignment: left
+        }
+        lov {
+            type: sharedComponent
+            lov: @workshop-list-return-id
+            nullDisplayValue: -
+        }
+        layout {
+            sequence: 80
+            region: @ospa-publishing
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        source {
+            formRegion: @workshop-details
+            column: LUNA_PARENT_WORKSHOP_ID
+            dataType: number
+        }
+        readOnly {
+            type: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P14_LUNA_STATUS (
+        type: selectList
+        label {
+            label: OSPA Production Status
+            alignment: left
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC2:Hidden;Hidden,Private;Private,Public;Public
+            displayExtraValues: false
+            nullDisplayValue: -
+        }
+        layout {
+            sequence: 60
+            region: @ospa-publishing
+            slot: regionBody
+            alignment: left
+            columnSpan: 3
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            formRegion: @workshop-details
+            column: LUNA_PROD_STATUS
+            dataType: varchar2
+        }
+        readOnly {
+            type: always
+        }
+    )
+
+    pageItem P14_LUNA_VISIBILITY (
+        type: selectList
+        label {
+            label: OSPA Visibility
+            alignment: left
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC2(,):Employees OnlyEmployees OnlyEmployees and PartnersEmployees and PartnersEmployees, Partners, and CustomersEmployees, Partners, and Customers
+            displayExtraValues: false
+            nullDisplayValue: -
+        }
+        layout {
+            sequence: 70
+            region: @ospa-publishing
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 3
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            formRegion: @workshop-details
+            column: LUNA_PROD_VISIBILITY
+            dataType: varchar2
+        }
+        readOnly {
+            type: always
+        }
+    )
+
+    pageItem P14_MANAGER_CONTACT (
+        type: textField
+        label {
+            label: Manager Contact
+            alignment: left
+        }
+        settings {
+            subtype: email
+        }
+        layout {
+            sequence: 260
+            region: @workshop-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        source {
+            formRegion: @workshop-details
+            column: MANAGER_CONTACT
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            inlineHelpText: Email address
+            helpText: Enter the email of the manager (M-)responsible for this workshop
+        }
+    )
+
+    pageItem P14_MARKETPLACE_APP_LISTING (
+        type: textField
+        label {
+            label: Marketplace App Listing OCID
+            alignment: left
+        }
+        layout {
+            sequence: 140
+            region: @livelabs-publishing
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            width: 80
+        }
+        validation {
+            maxLength: 100
+        }
+        source {
+            formRegion: @workshop-details
+            column: APP_LISTING_OCID
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            inlineHelpText: Workshops using OCI Marketplace Images only
+            helpText: App Listing OCID
+        }
+    )
+
+    pageItem P14_MODERNIZER (
+        type: textField
+        label {
+            label: Maintained By
+            alignment: left
+        }
+        settings {
+            subtype: email
+        }
+        layout {
+            sequence: 250
+            region: @workshop-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        source {
+            formRegion: @workshop-details
+            column: MODERNIZER_RESOURCE
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            inlineHelpText: Email address
+            helpText: Enter the name or the assigned person who is doing the work of moving the content into Github and the Template. This person will also be able to edit the workshop settings in LiveLabs.
+        }
+    )
+
+    pageItem P14_NAME (
+        type: textField
+        label {
+            label: Workshop Title
+            alignment: left
+        }
+        layout {
+            sequence: 30
+            region: @workshop-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required-above
+            templateOptions: #DEFAULT#
+            width: 70
+        }
+        validation {
+            valueRequired: true
+            maxLength: 200
+        }
+        source {
+            formRegion: @workshop-details
+            column: NAME
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            inlineHelpText: Up to 200 characters
+            helpText: Choose a descriptive title.  Do not include the word "Workshop" or "Lab".  Try not to use "Oracle Speak" choose a title that users would recognize or understand.
+        }
+    )
+
+    pageItem P14_OHC_GUID (
+        type: textField
+        label {
+            label: Help Center GUID
+            alignment: left
+        }
+        layout {
+            sequence: 80
+            region: @ohc-learn-publishing
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            maxLength: 1000
+        }
+        source {
+            formRegion: @workshop-details
+            column: OHC_GUID
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P14_OHC_PUBLISH_FLG (
+        type: selectList
+        label {
+            label: Publish to Oracle Help Center Learn?
+            alignment: left
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC2:Yes;1,No;0
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 30
+            region: @ohc-learn-publishing
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            formRegion: @workshop-details
+            column: OHC_PUBLISH_FLG
+            dataType: number
+        }
+        default {
+            type: static
+            staticValue: 1
+        }
+        serverSideCondition {
+            type: rowsReturned
+            sqlQuery:
+                ```sql
+                --Superusers and publishers only
+                
+                select b.* from workshop_person_role b,workshops a
+                where upper(:APP_USER) = upper(b.email)
+                and b.active_flg=1
+                and b.workshop_id is null
+                and :P14_ROWID is not null
+                ```
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            inlineHelpText: Publisher only
+        }
+    )
+
+    pageItem P14_OHC_PUBLISH_FLG_DISPLAY (
+        type: hidden
+        layout {
+            sequence: 40
+            region: @ohc-learn-publishing
+            slot: regionBody
+        }
+        source {
+            formRegion: @workshop-details
+            column: OHC_PUBLISH_FLG
+            dataType: number
+        }
+        serverSideCondition {
+            type: rowsReturned
+            sqlQuery:
+                ```sql
+                --Superusers and publishers only
+                
+                select b.* from workshop_person_role b,workshops a
+                where upper(:APP_USER) = upper(b.email)
+                and b.active_flg=1
+                and b.workshop_id is null
+                and :P14_ROWID is not null
+                ```
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P14_OHC_STATUS (
+        type: displayOnly
+        label {
+            label: OHC Status
+            alignment: left
+        }
+        lov {
+            type: sharedComponent
+            lov: @workshop-ohc-status
+        }
+        layout {
+            sequence: 70
+            region: @ohc-learn-publishing
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @workshop-details
+            column: OHC_STATUS
+            dataType: varchar2
+        }
+        serverSideCondition {
+            type: rowsReturned
+            sqlQuery:
+                ```sql
+                --Superusers and publishers only
+                
+                select b.* from workshop_person_role b,workshops a
+                where upper(:APP_USER) = upper(b.email)
+                and b.active_flg=1
+                and b.workshop_id is null
+                and :P14_ROWID is not null
+                
+                
+                ```
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P14_OHC_UAT_URL (
+        type: textField
+        label {
+            label: Help Center UAT URL
+            alignment: left
+        }
+        settings {
+            subtype: url
+            textCase: lower
+        }
+        layout {
+            sequence: 100
+            region: @ohc-learn-publishing
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            maxLength: 1000
+        }
+        source {
+            formRegion: @workshop-details
+            column: OHC_UAT_URL
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P14_OHC_URL (
+        type: textField
+        label {
+            label: Help Center URL
+            alignment: left
+        }
+        settings {
+            subtype: url
+            textCase: lower
+        }
+        layout {
+            sequence: 90
+            region: @ohc-learn-publishing
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            maxLength: 1000
+        }
+        source {
+            formRegion: @workshop-details
+            column: OHC_URL
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P14_OTHER_CONTACT (
+        type: textField
+        label {
+            label: Observer
+            alignment: left
+        }
+        settings {
+            subtype: email
+        }
+        layout {
+            sequence: 270
+            region: @workshop-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        source {
+            formRegion: @workshop-details
+            column: OTHER_CONTACT
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            inlineHelpText: Email address
+            helpText: Enter the email of an additional observer for this workshop
+        }
+    )
+
+    pageItem P14_OTHER_CONTACT_2_1 (
+        type: textField
+        label {
+            label: Additional Observer 2
+            alignment: left
+        }
+        settings {
+            subtype: email
+        }
+        layout {
+            sequence: 280
+            region: @workshop-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            maxLength: 100
+        }
+        source {
+            formRegion: @workshop-details
+            column: OTHER_CONTACT_2
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            inlineHelpText: Email address
+        }
+    )
+
+    pageItem P14_OTHER_CONTACT_3_1 (
+        type: textField
+        label {
+            label: Additional Observer 3
+            alignment: left
+        }
+        settings {
+            subtype: email
+        }
+        layout {
+            sequence: 290
+            region: @workshop-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            maxLength: 100
+        }
+        source {
+            formRegion: @workshop-details
+            column: OTHER_CONTACT_3
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            inlineHelpText: Email Address
+        }
+    )
+
+    pageItem P14_OTHER_CONTACT_4_1 (
+        type: textField
+        label {
+            label: Additional Observer 4
+            alignment: left
+        }
+        settings {
+            subtype: email
+        }
+        layout {
+            sequence: 300
+            region: @workshop-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            maxLength: 100
+        }
+        source {
+            formRegion: @workshop-details
+            column: OTHER_CONTACT_4
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            inlineHelpText: Email addresss
+        }
+    )
+
+    pageItem P14_PAID_POLICIES (
+        type: richTextEditor
+        label {
+            label: Paid Policies
+            alignment: left
+        }
+        settings {
+            format: html
+            minHeight: 180
+        }
+        layout {
+            sequence: 160
+            region: @livelabs-publishing
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @workshop-details
+            column: PAID_POLICIES
+            dataType: clob
+        }
+        default {
+            type: static
+            staticValue:
+                ```
+                To run this workshop in a customer paid tenancy please list the policies that are needed
+                <ul><li><strong>Sample Policy:</strong> Allow group {GroupName} to manage data-science-family in compartment {CompartmentName}  </li>
+                <li><strong>Policy:</strong> Enter policy here</li>
+                <li><strong>Policy:</strong> Enter policy here</li>
+                </ul>
+                ```
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P14_PAID_TIER_FLG (
+        type: selectList
+        label {
+            label: Paid Tier On?
+            alignment: left
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC:On;1,Off;0
+        }
+        layout {
+            sequence: 80
+            region: @livelabs-publishing
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            formRegion: @workshop-details
+            column: PAID_TIER_FLG
+            dataType: number
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            helpText: Can this workshop be done in a customer tenancy?
+        }
+    )
+
+    pageItem P14_PRODUCT (
+        type: checkboxGroup
+        label {
+            label: "<strong>Product/Technology</strong> "
+            alignment: left
+        }
+        settings {
+            noOfCols: 4
+        }
+        lov {
+            type: sharedComponent
+            lov: @product-tag-lov
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 140
+            region: @tags
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            column: 5
+            columnSpan: 8
+        }
+        appearance {
+            template: @required-floating
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+                t-Form-fieldContainer--radioButtonGroup
+            ]
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            formRegion: @workshop-details
+            column: PRODUCT_TAG
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P14_PROD_ID_DISPLAY (
+        type: displayOnly
+        label {
+            label: LiveLabs Production ID
+            alignment: left
+        }
+        settings {
+            showLineBreaks: false
+            sendOnPageSubmit: false
+        }
+        layout {
+            sequence: 70
+            region: @workshop-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @workshop-details
+            column: PROD_ID
+            dataType: varchar2
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P14_PROD_ID_DISPLAY
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P14_PROD_ID_EDIT (
+        type: textField
+        label {
+            label: LiveLabs Production ID
+            alignment: left
+        }
+        layout {
+            sequence: 100
+            region: @livelabs-publishing
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            width: 5
+        }
+        validation {
+            maxLength: 400
+        }
+        source {
+            formRegion: @workshop-details
+            column: PROD_ID
+            dataType: varchar2
+        }
+        serverSideCondition {
+            type: rowsReturned
+            sqlQuery:
+                ```sql
+                --Superusers and publishers only
+                
+                select b.* from workshop_person_role b,workshops a
+                where upper(:APP_USER) = upper(b.email)
+                and b.active_flg=1
+                and b.workshop_id is null
+                and :P14_ROWID is not null
+                ```
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P14_ROLE (
+        type: checkboxGroup
+        label {
+            label: <strong>Role</strong>
+            alignment: left
+        }
+        settings {
+            noOfCols: 2
+        }
+        lov {
+            type: sharedComponent
+            lov: @role-tag-lov
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 110
+            region: @tags
+            slot: regionBody
+            alignment: left
+            columnSpan: 4
+        }
+        appearance {
+            template: @required-floating
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+                t-Form-fieldContainer--radioButtonGroup
+            ]
+        }
+        source {
+            formRegion: @workshop-details
+            column: ROLE_TAG
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P14_ROWID (
+        type: hidden
+        layout {
+            sequence: 50
+            region: @workshop-details
+            slot: regionBody
+        }
+        source {
+            formRegion: @workshop-details
+            column: ROWID
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P14_SALES_PLAY (
+        type: checkboxGroup
+        label {
+            label: <strong>Sales Play</strong>
+            alignment: left
+        }
+        settings {
+            noOfCols: 2
+        }
+        lov {
+            type: sharedComponent
+            lov: @salesplay-tag-lov
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 120
+            region: @tags
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            column: 5
+            columnSpan: 8
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+                t-Form-fieldContainer--radioButtonGroup
+            ]
+        }
+        source {
+            formRegion: @workshop-details
+            column: SALESPLAY_TAG
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P14_SEPARATOR_1_EDIT (
+        type: displayImage
+        label {
+            label: <strong>WORKSHOP BASIC INFORMATION</strong>
+            alignment: left
+        }
+        settings {
+            basedOn: url
+        }
+        layout {
+            sequence: 20
+            region: @workshop-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery:
+                ```sql
+                SELECT 'https://objectstorage.us-ashburn-1.oraclecloud.com/p/1Pp9D6hwIx20_1mVL0qzInCfdk2vhD-XHwAJnnItcMY11FaySePV7ghm_K2AsEYm/n/c4u04/b/wms-storage/o/images/hr.png' as test
+                FROM dual
+                ```
+        }
+        default {
+            type: static
+            staticValue: 1
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P14_ROWID
+        }
+    )
+
+    pageItem P14_SEPARATOR_1_NEW (
+        type: displayImage
+        label {
+            label: <strong>LET'S COLLECT INFORMATION ABOUT YOUR WORKSHOP</strong>
+            alignment: left
+        }
+        settings {
+            basedOn: url
+        }
+        layout {
+            sequence: 10
+            region: @workshop-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery:
+                ```sql
+                SELECT 'https://objectstorage.us-ashburn-1.oraclecloud.com/p/1Pp9D6hwIx20_1mVL0qzInCfdk2vhD-XHwAJnnItcMY11FaySePV7ghm_K2AsEYm/n/c4u04/b/wms-storage/o/images/hr.png' as test
+                FROM dual
+                ```
+        }
+        default {
+            type: static
+            staticValue: 1
+        }
+        serverSideCondition {
+            type: itemIsNull
+            item: P14_ROWID
+        }
+    )
+
+    pageItem P14_SEPARATOR_2_EDIT (
+        type: displayImage
+        label {
+            label: <strong>WORKSHOP STATUS</strong>
+            alignment: left
+        }
+        settings {
+            basedOn: url
+        }
+        layout {
+            sequence: 110
+            region: @workshop-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery:
+                ```sql
+                SELECT 'https://objectstorage.us-ashburn-1.oraclecloud.com/p/1Pp9D6hwIx20_1mVL0qzInCfdk2vhD-XHwAJnnItcMY11FaySePV7ghm_K2AsEYm/n/c4u04/b/wms-storage/o/images/hr.png' as test
+                FROM dual
+                ```
+        }
+        default {
+            type: static
+            staticValue: 1
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P14_ROWID
+        }
+    )
+
+    pageItem P14_SEPARATOR_3 (
+        type: displayImage
+        label {
+            label: <strong>WORKSHOP TEAM MEMBERS</strong>
+            alignment: left
+        }
+        settings {
+            basedOn: url
+        }
+        layout {
+            sequence: 210
+            region: @workshop-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery:
+                ```sql
+                SELECT 'https://objectstorage.us-ashburn-1.oraclecloud.com/p/1Pp9D6hwIx20_1mVL0qzInCfdk2vhD-XHwAJnnItcMY11FaySePV7ghm_K2AsEYm/n/c4u04/b/wms-storage/o/images/hr.png' as test
+                FROM dual
+                ```
+        }
+        default {
+            type: static
+            staticValue: 1
+        }
+        serverSideCondition {
+            type: itemIsNull
+            item: P14_ROWID
+        }
+    )
+
+    pageItem P14_SEPARATOR_3_1 (
+        type: displayImage
+        label {
+            label: <strong>LET'S GET YOUR WORKSHOP APPROVED</strong>
+            alignment: left
+        }
+        settings {
+            basedOn: url
+        }
+        layout {
+            sequence: 160
+            region: @workshop-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery:
+                ```sql
+                SELECT 'https://objectstorage.us-ashburn-1.oraclecloud.com/p/1Pp9D6hwIx20_1mVL0qzInCfdk2vhD-XHwAJnnItcMY11FaySePV7ghm_K2AsEYm/n/c4u04/b/wms-storage/o/images/hr.png' as test
+                FROM dual
+                ```
+        }
+        default {
+            type: static
+            staticValue: 1
+        }
+        serverSideCondition {
+            type: itemIsNull
+            item: P14_ROWID
+        }
+    )
+
+    pageItem P14_SEPARATOR_3_1_EDIT (
+        type: displayImage
+        label {
+            label: <strong>APPROVAL/COUNCIL INFORMATION</strong>
+            alignment: left
+        }
+        settings {
+            basedOn: url
+        }
+        layout {
+            sequence: 170
+            region: @workshop-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery:
+                ```sql
+                SELECT 'https://objectstorage.us-ashburn-1.oraclecloud.com/p/1Pp9D6hwIx20_1mVL0qzInCfdk2vhD-XHwAJnnItcMY11FaySePV7ghm_K2AsEYm/n/c4u04/b/wms-storage/o/images/hr.png' as test
+                FROM dual
+                ```
+        }
+        default {
+            type: static
+            staticValue: 1
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P14_ROWID
+        }
+    )
+
+    pageItem P14_SEPARATOR_3_2 (
+        type: displayImage
+        label {
+            label: <strong>LET'S BUILD YOUR WORKSHOP HOMEPAGE</strong>
+            alignment: left
+        }
+        settings {
+            basedOn: url
+        }
+        layout {
+            sequence: 330
+            region: @workshop-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery:
+                ```sql
+                SELECT 'https://objectstorage.us-ashburn-1.oraclecloud.com/p/1Pp9D6hwIx20_1mVL0qzInCfdk2vhD-XHwAJnnItcMY11FaySePV7ghm_K2AsEYm/n/c4u04/b/wms-storage/o/images/hr.png' as test
+                FROM dual
+                ```
+        }
+        default {
+            type: static
+            staticValue: 1
+        }
+        serverSideCondition {
+            type: itemIsNull
+            item: P14_ROWID
+        }
+    )
+
+    pageItem P14_SEPARATOR_3_21_EDIT (
+        type: displayImage
+        label {
+            label: <strong>WORKSHOP HOMEPAGE</strong>
+            alignment: left
+        }
+        settings {
+            basedOn: url
+        }
+        layout {
+            sequence: 340
+            region: @workshop-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery:
+                ```sql
+                SELECT 'https://objectstorage.us-ashburn-1.oraclecloud.com/p/1Pp9D6hwIx20_1mVL0qzInCfdk2vhD-XHwAJnnItcMY11FaySePV7ghm_K2AsEYm/n/c4u04/b/wms-storage/o/images/hr.png' as test
+                FROM dual
+                ```
+        }
+        default {
+            type: static
+            staticValue: 1
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P14_ROWID
+        }
+    )
+
+    pageItem P14_SEPARATOR_3_2_1 (
+        type: displayImage
+        label {
+            label: <strong>DEFINE WHO OWNS AND SUPPORTS THIS WORKSHOP?</strong>
+            alignment: left
+        }
+        settings {
+            basedOn: url
+        }
+        layout {
+            sequence: 310
+            region: @workshop-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery:
+                ```sql
+                SELECT 'https://objectstorage.us-ashburn-1.oraclecloud.com/p/1Pp9D6hwIx20_1mVL0qzInCfdk2vhD-XHwAJnnItcMY11FaySePV7ghm_K2AsEYm/n/c4u04/b/wms-storage/o/images/hr.png' as test
+                FROM dual
+                ```
+        }
+        default {
+            type: static
+            staticValue: 1
+        }
+        serverSideCondition {
+            type: itemIsNull
+            item: P14_ROWID
+        }
+    )
+
+    pageItem P14_SEPARATOR_3_2_2 (
+        type: displayImage
+        label {
+            label: <strong>DEFINE YOUR GITHUB CONTENT LOCATION</strong>
+            alignment: left
+        }
+        settings {
+            basedOn: url
+        }
+        layout {
+            sequence: 380
+            region: @workshop-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery:
+                ```sql
+                SELECT 'https://objectstorage.us-ashburn-1.oraclecloud.com/p/1Pp9D6hwIx20_1mVL0qzInCfdk2vhD-XHwAJnnItcMY11FaySePV7ghm_K2AsEYm/n/c4u04/b/wms-storage/o/images/hr.png' as test
+                FROM dual
+                ```
+        }
+        default {
+            type: static
+            staticValue: 1
+        }
+        serverSideCondition {
+            type: itemIsNull
+            item: P14_ROWID
+        }
+    )
+
+    pageItem P14_SEPARATOR_3_2_2_1 (
+        type: displayImage
+        label {
+            label: <strong>ARE YOU MIGRATING YOUR WORKSHOP?  ENTER DETAILS HERE</strong>
+            alignment: left
+        }
+        settings {
+            basedOn: url
+        }
+        layout {
+            sequence: 440
+            region: @workshop-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery:
+                ```sql
+                SELECT 'https://objectstorage.us-ashburn-1.oraclecloud.com/p/1Pp9D6hwIx20_1mVL0qzInCfdk2vhD-XHwAJnnItcMY11FaySePV7ghm_K2AsEYm/n/c4u04/b/wms-storage/o/images/hr.png' as test
+                FROM dual
+                ```
+        }
+        default {
+            type: static
+            staticValue: 1
+        }
+    )
+
+    pageItem P14_SEPARATOR_3_2_2_EDIT (
+        type: displayImage
+        label {
+            label: <strong>GITHUB CONTENT LOCATION (Do not share with customers)</strong>
+            alignment: left
+        }
+        settings {
+            basedOn: url
+        }
+        layout {
+            sequence: 390
+            region: @workshop-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery:
+                ```sql
+                SELECT 'https://objectstorage.us-ashburn-1.oraclecloud.com/p/1Pp9D6hwIx20_1mVL0qzInCfdk2vhD-XHwAJnnItcMY11FaySePV7ghm_K2AsEYm/n/c4u04/b/wms-storage/o/images/hr.png' as test
+                FROM dual
+                ```
+        }
+        default {
+            type: static
+            staticValue: 1
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P14_ROWID
+        }
+    )
+
+    pageItem P14_SEPARATOR_3_2_EDIT (
+        type: displayImage
+        label {
+            label: <strong>WORKSHOP SUPPORT AND GROUP OWNERS</strong>
+            alignment: left
+        }
+        settings {
+            basedOn: url
+        }
+        layout {
+            sequence: 130
+            region: @workshop-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery:
+                ```sql
+                SELECT 'https://objectstorage.us-ashburn-1.oraclecloud.com/p/1Pp9D6hwIx20_1mVL0qzInCfdk2vhD-XHwAJnnItcMY11FaySePV7ghm_K2AsEYm/n/c4u04/b/wms-storage/o/images/hr.png' as test
+                FROM dual
+                ```
+        }
+        default {
+            type: static
+            staticValue: 1
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P14_ROWID
+        }
+    )
+
+    pageItem P14_SEPARATOR_HC_1 (
+        type: displayImage
+        label {
+            label: <strong>We need some more details about your workshop</strong>
+            alignment: left
+        }
+        settings {
+            basedOn: url
+        }
+        layout {
+            sequence: 10
+            region: @ohc-learn-publishing
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery:
+                ```sql
+                SELECT 'https://objectstorage.us-ashburn-1.oraclecloud.com/p/1Pp9D6hwIx20_1mVL0qzInCfdk2vhD-XHwAJnnItcMY11FaySePV7ghm_K2AsEYm/n/c4u04/b/wms-storage/o/images/hr.png' as test
+                FROM dual
+                ```
+        }
+        default {
+            type: static
+            staticValue: 1
+        }
+        serverSideCondition {
+            type: rowsReturned
+            sqlQuery:
+                ```sql
+                --Superusers and publishers only
+                
+                select b.* from workshop_person_role b,workshops a
+                where upper(:APP_USER) = upper(b.email)
+                and b.active_flg=1
+                and b.workshop_id is null
+                and :P14_ROWID is not null
+                ```
+        }
+    )
+
+    pageItem P14_SEPARATOR_HC_2 (
+        type: displayImage
+        label {
+            label: <br><strong>Help Center Publishing Values</strong>
+            alignment: left
+        }
+        settings {
+            basedOn: url
+        }
+        layout {
+            sequence: 60
+            region: @ohc-learn-publishing
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery:
+                ```sql
+                SELECT 'https://objectstorage.us-ashburn-1.oraclecloud.com/p/1Pp9D6hwIx20_1mVL0qzInCfdk2vhD-XHwAJnnItcMY11FaySePV7ghm_K2AsEYm/n/c4u04/b/wms-storage/o/images/hr.png' as test
+                FROM dual
+                ```
+        }
+        default {
+            type: static
+            staticValue: 1
+        }
+    )
+
+    pageItem P14_SEPARATOR_LL_1 (
+        type: displayImage
+        label {
+            label: <strong>Let's build your workshop homepage in LiveLabs</strong>
+            alignment: left
+        }
+        settings {
+            basedOn: url
+        }
+        layout {
+            sequence: 50
+            region: @livelabs-publishing
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery:
+                ```sql
+                SELECT 'https://objectstorage.us-ashburn-1.oraclecloud.com/p/1Pp9D6hwIx20_1mVL0qzInCfdk2vhD-XHwAJnnItcMY11FaySePV7ghm_K2AsEYm/n/c4u04/b/wms-storage/o/images/hr.png' as test
+                FROM dual
+                ```
+        }
+        default {
+            type: static
+            staticValue: 1
+        }
+    )
+
+    pageItem P14_SEPARATOR_LL_1_1 (
+        type: displayImage
+        label {
+            label: <strong>Before we publish, the fields below must be filled out</strong>
+            alignment: left
+        }
+        settings {
+            basedOn: url
+        }
+        layout {
+            sequence: 10
+            region: @livelabs-publishing
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery:
+                ```sql
+                SELECT 'https://objectstorage.us-ashburn-1.oraclecloud.com/p/1Pp9D6hwIx20_1mVL0qzInCfdk2vhD-XHwAJnnItcMY11FaySePV7ghm_K2AsEYm/n/c4u04/b/wms-storage/o/images/hr.png' as test
+                FROM dual
+                ```
+        }
+        default {
+            type: static
+            staticValue: 1
+        }
+    )
+
+    pageItem P14_SEPARATOR_LL_3 (
+        type: displayImage
+        label {
+            label: <strong>Want to enable the green button?  Fill in the information below</strong>
+            alignment: left
+        }
+        settings {
+            basedOn: url
+        }
+        layout {
+            sequence: 130
+            region: @livelabs-publishing
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery:
+                ```sql
+                SELECT 'https://objectstorage.us-ashburn-1.oraclecloud.com/p/1Pp9D6hwIx20_1mVL0qzInCfdk2vhD-XHwAJnnItcMY11FaySePV7ghm_K2AsEYm/n/c4u04/b/wms-storage/o/images/hr.png' as test
+                FROM dual
+                ```
+        }
+        default {
+            type: static
+            staticValue: 1
+        }
+    )
+
+    pageItem P14_SOURCE_LINK (
+        type: textField
+        label {
+            label: Source Link
+            alignment: left
+        }
+        settings {
+            subtype: url
+        }
+        layout {
+            sequence: 450
+            region: @workshop-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            width: 80
+        }
+        validation {
+            maxLength: 1000
+        }
+        source {
+            formRegion: @workshop-details
+            column: SOURCE_LINKS
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            inlineHelpText: If there is an existing lab, list it here so we can review it.
+            helpText: Internal or external location of existing lab or confluence page
+        }
+    )
+
+    pageItem P14_SOURCE_LINK_2 (
+        type: textField
+        label {
+            label: Source Link 2
+            alignment: left
+        }
+        settings {
+            subtype: url
+        }
+        layout {
+            sequence: 460
+            region: @workshop-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            column: 5
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            width: 80
+        }
+        source {
+            formRegion: @workshop-details
+            column: SOURCE_LINK_2
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            inlineHelpText: If there is an existing lab, list it here so we can review it.
+            helpText: Internal or external location of existing lab or confluence page
+        }
+    )
+
+    pageItem P14_STAKEHOLDER (
+        type: selectList
+        label {
+            label: <strong>Stakeholder (1st Line Support)</strong>
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select name||' - '||email,id from workshop_stakeholder where active_flg=1 
+                order by name
+                ```
+            displayExtraValues: false
+            nullDisplayValue: Select One:
+        }
+        layout {
+            sequence: 140
+            region: @workshop-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required-above
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            formRegion: @workshop-details
+            column: STAKEHOLDER_ID
+            dataType: number
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            inlineHelpText: Team providing 1st level of support and controlling workflow
+            helpText: Which team should be providing support for your workshop as it progresses from concept to production to post production?
+        }
+    )
+
+    pageItem P14_SUPPORT_CONTACT (
+        type: textField
+        label {
+            label: Support Contact (2nd Line Support)
+            alignment: left
+        }
+        settings {
+            subtype: email
+        }
+        layout {
+            sequence: 320
+            region: @workshop-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        source {
+            formRegion: @workshop-details
+            column: SUPPORT_CONTACT
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            inlineHelpText: Email address. LiveLabs publishing only.
+            helpText: Enter the name or the assigned person who is doing the work of moving the content into Github and the Template. This person will also be able to edit the workshop settings in LiveLabs.
+        }
+    )
+
+    pageItem P14_TAKEAWAYS (
+        type: hidden
+        layout {
+            sequence: 420
+            region: @workshop-details
+            slot: regionBody
+        }
+        source {
+            formRegion: @workshop-details
+            column: TAKEAWAYS
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            inlineHelpText: Up to 200 characters
+            helpText: At the end of this workshop, the user will be able to......
+        }
+    )
+
+    pageItem P14_TIME_IN_HOURS (
+        type: hidden
+        layout {
+            sequence: 430
+            region: @workshop-details
+            slot: regionBody
+        }
+        source {
+            formRegion: @workshop-details
+            column: TIME_IN_HOURS
+            dataType: number
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            helpText: How long should the lease period be?  Max time is 8 hours.  This is only used/set for Green Button workshops.
+        }
+    )
+
+    pageItem P14_TRANSLA_FLG (
+        type: selectList
+        label {
+            label: Should this workshop be translated?
+            alignment: left
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC2:Yes;1,No;0
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 50
+            region: @ohc-learn-publishing
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            formRegion: @workshop-details
+            column: OHC_TRANSLATED_FLG
+            dataType: number
+        }
+        default {
+            type: static
+            staticValue: 1
+        }
+        serverSideCondition {
+            type: rowsReturned
+            sqlQuery:
+                ```sql
+                --Superusers and publishers only
+                
+                select b.* from workshop_person_role b,workshops a
+                where upper(:APP_USER) = upper(b.email)
+                and b.active_flg=1
+                and b.workshop_id is null
+                and :P14_ROWID is not null
+                ```
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            inlineHelpText: Publisher only
+        }
+    )
+
+    pageItem P14_TWITTER (
+        type: richTextEditor
+        label {
+            label: Twitter Post
+            alignment: left
+        }
+        settings {
+            minHeight: 180
+        }
+        layout {
+            sequence: 30
+            region: @social
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @workshop-details
+            column: TWITTER_POST
+            dataType: varchar2
+        }
+        default {
+            type: static
+            staticValue: #OracleLiveLabs
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P14_VIDEO_URL (
+        type: textField
+        label {
+            label: Workshop Video URL
+            alignment: left
+        }
+        settings {
+            subtype: url
+        }
+        layout {
+            sequence: 120
+            region: @livelabs-publishing
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            width: 80
+        }
+        validation {
+            maxLength: 1000
+        }
+        source {
+            formRegion: @workshop-details
+            column: VIDEO_URL
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            inlineHelpText: URL of the video for your workshop page (LIVE!)
+        }
+    )
+
+    pageItem P14_WORKSHOP_AGENDA (
+        type: richTextEditor
+        label {
+            label: Workshop Outline/Agenda
+            alignment: left
+        }
+        settings {
+            format: html
+            minHeight: 220
+            maxHeight: 220
+        }
+        layout {
+            sequence: 360
+            region: @workshop-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required-above
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @workshop-details
+            column: OBJECTIVES
+            dataType: varchar2
+        }
+        default {
+            type: static
+            staticValue:
+                ```
+                <ul><li>Lab 1</li>
+                <li>Lab 2</li>
+                <li>Lab 3<Fill in the rest></li></ul>
+                ```
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            inlineHelpText: List the labs in this workshop as you develop them
+            helpText: "List out the labs that are a part of this workshop.  "
+        }
+    )
+
+    pageItem P14_WORKSHOP_GROUP (
+        type: selectList
+        label {
+            label: Workshop Owner Group
+            alignment: left
+        }
+        lov {
+            type: sharedComponent
+            lov: @workshop-creator-group
+            nullDisplayValue: Select One:
+        }
+        layout {
+            sequence: 150
+            region: @workshop-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @required-above
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            formRegion: @workshop-details
+            column: WORKSHOP_CREATOR_GROUP
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            inlineHelpText: What group do most of the workshop team belong to?
+            helpText: Which group in Oracle is sponsoring this workshop?  Don't see your group listed? Email us at livelabs-admin_us@oracle.com and request an addition.
+        }
+    )
+
+    pageItem P14_WORKSHOP_STATUS_2 (
+        type: displayOnly
+        label {
+            label: Current Status
+            alignment: left
+        }
+        settings {
+            sendOnPageSubmit: false
+        }
+        lov {
+            type: sharedComponent
+            lov: @workshop-status-non-admin
+        }
+        layout {
+            sequence: 120
+            region: @workshop-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @workshop-details
+            column: WORKSHOP_STATUS
+            dataType: varchar2
+        }
+        default {
+            type: static
+            staticValue: Submitted
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P14_ROWID
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P14_WORKSHOP_TIME (
+        type: numberField
+        label {
+            label: Workshop Duration
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 30
+            region: @livelabs-publishing
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            width: 7
+        }
+        source {
+            formRegion: @workshop-details
+            column: WORKSHOP_TIME
+            dataType: number
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            helpText: How long will this workshop take approximately for the average user?
+        }
+    )
+
+    pageItem P14_WORKSHOP_TIME_UNIT (
+        type: selectList
+        label {
+            label: Workshop Duration Unit
+            alignment: left
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC:hours;hours,minutes;minutes
+        }
+        layout {
+            sequence: 40
+            region: @livelabs-publishing
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            formRegion: @workshop-details
+            column: WORKSHOP_TIME_UNIT
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            helpText: Choose one
+        }
+    )
+
+    pageItem P14_WORKSHOP_UID (
+        type: hidden
+        layout {
+            sequence: 490
+            region: @workshop-details
+            slot: regionBody
+        }
+        source {
+            formRegion: @workshop-details
+            column: WORKSHOP_UID
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button edit (
+        buttonName: Edit
+        label: Edit Workshop Details
+        layout {
+            sequence: 20
+            region: @button
+            slot: regionBody
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 320
+                items: {
+                    P320_ROWID: &P14_ROWID.
+                }
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+        serverSideCondition {
+            type: rowsReturned
+            sqlQuery:
+                ```sql
+                /*select *
+                from workshops
+                where active_flg=0
+                and id = :P14_WSID
+                and  workshop_status not in ( 'Cancelled','Submitted','Production','Production - LiveLabs',
+                'Production - Hidden Event','Production - Paid','Production - Free Tier')   
+                union all*/
+                /* Workshop Team */
+                select a.*
+                from workshops a, workshop_person_role b, workshop_role c
+                where a.id = :P14_ID
+                and  a.id=b.workshop_id
+                and b.role_id=c.id
+                and c.name in ('Workshop Team')
+                and a.workshop_status not in ( 'Cancelled','Submitted','Production','Production - LiveLabs','Production - Hidden Event','Production - Paid','Production - Free Tier')   
+                and upper(:APP_USER)=upper(b.email)
+                and b.active_flg=1
+                union all 
+                /*FOR PUBLISHERS*/
+                select *
+                from workshops
+                where id = :P14_ID
+                and  (upper(:APP_USER) in (select upper(email) from workshop_person_role where LIVELABS_PUBLISHER_FLG = 1 and active_flg=1))
+                union all
+                /* FOR OHC PUBLISHERS*/
+                select *
+                from workshops
+                where id = :P14_ID
+                and workshop_status in ('Production','Production - LiveLabs','Production - Hidden Event','Production - Paid','Production - Free Tier','Request Green Button','Green Button in Progress','Green Button Complete','Quarterly QA','Quarterly QA Complete','Quarterly QA Verification Complete')   
+                and upper(:APP_USER) in (select upper(email) from workshop_person_role where workshop_id is null and active_flg=1 and OHC_PUBLISHER_FLG=1)
+                union all
+                /*FOR STAKEHOLDERS NON PRODUCTION*/
+                select a.*
+                from workshops a, workshop_person_stakeholder b
+                where a.id = :P14_ID
+                and  a.stakeholder_id=b.stakeholder_id
+                and a.workshop_status not in ( 'Cancelled','Submitted','Production','Production - LiveLabs','Production - Hidden Event','Production - Paid','Production - Free Tier')   
+                and upper(:APP_USER)=upper(b.email)
+                and b.active_flg=1
+                union all
+                /* FOR APPROVAL COUNCIL NON PRODUCTION */
+                select a.*
+                from workshops a, workshop_person_council b
+                where  a.council_id=b.council_id
+                and a.workshop_status not in ('Production','Production - LiveLabs','Production - Hidden Event','Production - Paid','Production - Free Tier')   
+                and upper(:APP_USER)=upper(b.email)
+                and b.active_flg=1
+                ```
+        }
+    )
+
+    button send (
+        buttonName: Send_1
+        label: Send
+        layout {
+            sequence: 10
+            region: @email-the-workshop-team
+            slot: belowBox
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    button sendcommentmail (
+        buttonName: SendCommentMail
+        label: Send
+        layout {
+            sequence: 20
+            region: @email-the-workshop-team
+            slot: belowBox
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    dynamicAction new (
+        name: New
+        execution {
+            sequence: 20
+        }
+        when {
+            selectionType: items
+            items: P14_WHICHWORKSHOP
+        }
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode: apex.item( "P14_COMMENT" ).setValue("")
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction sendnewcomment (
+        name: sendnewcomment
+        execution {
+            sequence: 30
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @send
+        }
+
+        action native-alert (
+            action: alert
+            settings {
+                message: Your comment has been sent to Workshop Authors.
+            }
+            execution {
+                sequence: 60
+                fireOnInit: false
+            }
+        )
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    DECLARE
+                    l_body      CLOB;
+                    l_body_warning    varchar2(100);
+                    l_body_html CLOB;
+                    l_body_html2 CLOB;
+                    l_to_email    varchar2(100) := 'livelabs-admin_us@oracle.com';
+                    --l_to_email    varchar2(100) := 'madhusudhan.rao@oracle.com';
+                    l_to_email1    varchar2(100);
+                    l_to_email2   varchar2(100);
+                    l_subject VARCHAR2(100) := 'New Comment Submitted  ';
+                    l_sender_email VARCHAR2(100) := lower(:APP_USER) ;
+                    l_replyto_email VARCHAR2(100) ;
+                    l_reason VARCHAR2(4000) := '';
+                    l_valid_from VARCHAR2(100) := '';
+                    l_valid_to VARCHAR2(100) := '';
+                    l_workshop_type	varchar2(100);
+                    l_comment varchar2(4000) := :P14_COMMENT_1;
+                    
+                    /*
+                    Cursor C_WORKSHOP Is
+                       Select  b.name, a.workshop_id, b.prod_id, b.LIVELABS_WORKSHOP_URL, a.email_requestor_2,a.email_requestor,a.email_creator    
+                       From   LL_VOUCHERS a, workshops b  
+                       WHERE  a.ID=:P36_SEQID and a.workshop_id = b.id;
+                       */
+                    
+                    Cursor C_WORKSHOP Is
+                       Select ID,  name,   prod_id  
+                       From   workshops b  
+                       WHERE  ID = :P14_ID; 
+                       
+                    begin 
+                    
+                    insert into LL_COMMENTS (EMAIL_CREATOR, THE_COMMENT, WORKSHOP_ID, COMMENTDATE, COMMENTTYPE )  values ( lower(:APP_USER), :P14_COMMENT_1,   :P14_ID, CURRENT_TIMESTAMP, 'WORKSHOP');
+                    
+                    -- send mail 
+                    l_body := 'To view the content of this messageuse an HTML enabled mail client.'||utl_tcp.crlf;
+                    l_body_html := '<html>';
+                    
+                    l_body_html := l_body_html || 'Comment by : '|| lower(:APP_USER) ;
+                    l_body_html := l_body_html || '<br>Comment : '||l_comment; 
+                    
+                     For row_1 In C_WORKSHOP Loop
+                               --l_to_email := row_1.email_creator;
+                               --l_to_email1 := row_1.email_requestor;
+                              -- l_to_email2 := row_1.email_requestor_2;
+                              -- IF l_to_email1 IS NOT NULL THEN l_to_email := row_1.email_creator||','||row_1.email_requestor; end if;
+                              -- IF l_to_email2 IS NOT NULL THEN l_to_email := row_1.email_creator||','||row_1.email_requestor||','||row_1.email_requestor_2; end if;
+                              l_subject  := l_subject||row_1.name;
+                              --l_body_html := l_body_html ||'<strong>Event Name:</strong> '||row_1.reason||'<br><strong>Workshop Name: </strong>ID'||row_1.workshop_id||' - '||row_1.name||'<br><strong>Workshop Current Production URL:</strong> '||row_1.LIVELABS_WORKSHOP_URL||'<br><strong>Workshop Dates:</strong> '||row_1.VALID_FROM||' - '||row_1.VALID_TO||'<br><strong>Where will the workshop run?</strong> '||l_workshop_type||'<br><br>';
+                              l_body_html := l_body_html ||' <br><strong>Workshop Name: </strong>ID'||row_1.ID||' - '||row_1.name||'  ';
+                     end loop;
+                    
+                    
+                    --l_body_html := l_body_html ||'<strong>HOW DO I MANAGE MY EVENT CODE?</strong> <br>All three contacts for the event can make edits to the event by clicking on <strong><a href="https://apex.oraclecorp.com/pls/apex/f?p=LIVELABS:44">Manage My Events</a></strong> in <a href="https://developer.oracle.com/livelabs">LiveLabs</a>.  You can also communicate with the LiveLabs Team and add comments/questions about your event there.  ';
+                    l_body_html := l_body_html ||'<br><br>Sincerely,<br><br>';
+                    l_body_html := l_body_html ||'LiveLabs Platform Team<br><a href="https://livelabs.oracle.com/">LiveLabs</a><br><a href="https://apex.oraclecorp.com/pls/apex/f?p=LIVELABS">LiveLabs Workshop Management System</a><br><a href="https://confluence.oraclecorp.com/confluence/display/DCS/LiveLabs+Dashboard">LiveLabs Information Page</a><br><br><br>';
+                    l_body_html := l_body_html || '</html><br>';
+                    
+                    --apex_mail.send( p_to   => l_to_email , p_from => l_sender_email, p_body  => l_body, p_body_html => l_body_html, p_subj => l_subject  );
+                    -- p_bcc => l_sender_email, 
+                    
+                    -- send mail
+                    
+                    end;
+                    ```
+                itemsToSubmit: [
+                    P14_ID
+                    P14_COMMENT_1
+                ]
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+        action native-execute-plsql-code-2 (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    DECLARE
+                    l_body      CLOB;
+                    l_body_warning    varchar2(100);
+                    l_body_html CLOB;
+                    l_body_html2 CLOB; 
+                    l_to_email     varchar2(400); 
+                    l_bcc     varchar2(400) := 'livelabs-admin_us@oracle.com';
+                    
+                    l_subject VARCHAR2(100) ; 
+                    l_sender_email VARCHAR2(100) := lower(:APP_USER); 
+                    l_replyto_email VARCHAR2(100) := 'livelabs-admin_us@oracle.com'; 
+                    l_msg VARCHAR2(4000) := :P14_COMMENT_1; 
+                    l_sysdate VARCHAR2(100) := to_char(sysdate,'DD-MON-YYYY') ;  
+                    l_rowid	varchar2(100);
+                    l_wsid number;
+                    l_reply	varchar2(1000);
+                    
+                    Cursor C_WS Is
+                       Select    id, name  , rowid
+                       From   workshops   
+                       WHERE  ID = :P14_ID;
+                    
+                      Cursor C_DISTEMAIL IS
+                        with t(col) as (
+                                                Select     DECODE(MANAGER_CONTACT, NULL, '', '' || MANAGER_CONTACT) ||','||
+                                                    DECODE(SUPPORT_CONTACT, NULL, '', '' || SUPPORT_CONTACT) ||','||
+                                                    DECODE(EMAIL_FROM_ADDRESS, NULL, '', '' || EMAIL_FROM_ADDRESS)   ||','||
+                                                    DECODE(MODERNIZER_RESOURCE, NULL, '', '' || MODERNIZER_RESOURCE) ||','||
+                                                    DECODE(KEY_ORACLE_CONTACT_1, NULL, '', '' || KEY_ORACLE_CONTACT_1) ||','||
+                                                    DECODE(KEY_ORACLE_CONTACT_2, NULL, '', '' || KEY_ORACLE_CONTACT_2) ||','||
+                                                    DECODE(OTHER_CONTACT_2, NULL, '', '' || OTHER_CONTACT_2) ||','||
+                                                    DECODE(OTHER_CONTACT_3, NULL, '', '' || OTHER_CONTACT_3) ||','||
+                                                    DECODE(OTHER_CONTACT_4, NULL, '', '' || OTHER_CONTACT_4) ||','||
+                                                    DECODE(QA1_RESOURCE, NULL, '', '' || QA1_RESOURCE)
+                                                as to_list
+                                        From   workshops
+                                        WHERE  ID = :P14_ID
+                        )
+                        select  replace(column_value,' ',',') to_list
+                      from  t,
+                            xmltable (('xs:string(distinct-values(("' || replace(col,',','","') || '")))')) ;
+                    
+                    BEGIN
+                     
+                    
+                      l_body := 'To view the content of this messageuse an HTML enabled mail client.'||utl_tcp.crlf;
+                      l_body_html := '<html>';
+                     
+                     
+                    
+                     For row_1 In C_WS Loop
+                              l_rowid := row_1.rowid;
+                              l_wsid := row_1.id;
+                             -- l_to_email := row_1.to_list; 
+                              l_subject :=  'COMMENT -  ID#'||row_1.id||'  '||row_1.name  ; 
+                              l_body_html := l_body_html || '<b> Message:  </b> '||l_msg|| ' ' ||utl_tcp.crlf;
+                             -- l_body_html := l_body_html || '<br/><b> From:  </b> '||l_sender_email|| ' ' ||utl_tcp.crlf;
+                             -- l_body_html := l_body_html || '<br/><b> Date:  </b> '||l_sysdate|| ' ' ||utl_tcp.crlf;
+                              
+                     end loop;
+                    
+                     For row_2 In C_DISTEMAIL Loop
+                              l_to_email := row_2.to_list;
+                       end loop;
+                    
+                    
+                        l_to_email := rtrim( l_to_email, ',' );
+                        l_to_email := ltrim( l_to_email, ',' ); 
+                    	 
+                        --working link below 
+                        ---l_body_html := l_body_html ||'<br><br><a href="https://apex.oraclecorp.com/pls/apex/f?p=24885:79:::::P79_WSID:'||:P14_ID||'">Reply to this comment </a> <br><br>';
+                        l_body_html := l_body_html ||'<br><br><a href="https://apex.oraclecorp.com/pls/apex/f?p=24885:79:::::P79_WSID,P79_ROWID:'||:P14_ID||','||l_rowid||'">Reply to this comment </a> <br><br>';
+                          l_body_html := l_body_html ||'Message sent by LWMS <br><br>';
+                        l_body_html := l_body_html ||'LiveLabs Platform Team<br>
+                        <a href="https://livelabs.oracle.com/">LiveLabs</a> |
+                        <a href="https://confluence.oraclecorp.com/confluence/display/DCS/LiveLabs+Dashboard">LiveLabs Information Page</a> 
+                        <a href="https://apex.oraclecorp.com/pls/apex/f?p=LIVELABS">LiveLabs Workshop Management System</a> |
+                          Slack: #livelabs-authors-help <br><br><br>';
+                        l_body_html := l_body_html || '</html><br>';
+                     
+                      apex_mail.send( p_to   => l_to_email , p_cc => l_sender_email , p_bcc => l_bcc,   p_from => l_sender_email, p_body  => l_body, p_body_html => l_body_html, p_subj => l_subject  );
+                    
+                    
+                    END;
+                    
+                    ```
+                itemsToSubmit: [
+                    P14_COMMENT_1
+                    P14_ID
+                ]
+            }
+            execution {
+                sequence: 30
+                fireOnInit: false
+            }
+        )
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @outgoing-emails-sent-over-the-past-hour
+            }
+            execution {
+                sequence: 70
+                fireOnInit: false
+            }
+        )
+
+        action native-show (
+            action: show
+            affectedElements {
+                selectionType: javaScriptExpression
+                javaScriptExpression: apex.item( "P14_COMMENT_1" ).setValue("")
+            }
+            execution {
+                sequence: 40
+            }
+        )
+
+    )
+
+    dynamicAction sendnewcommentshtml (
+        name: sendNewCommentsHTML
+        execution {
+            sequence: 40
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @sendcommentmail
+        }
+
+        action native-alert (
+            action: alert
+            settings {
+                message: Your comment has been sent to the Workshop team
+            }
+            execution {
+                sequence: 40
+                fireOnInit: false
+            }
+        )
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    DECLARE
+                    l_body      CLOB;
+                    l_body_warning    varchar2(100);
+                    l_body_html CLOB;
+                    l_body_html2 CLOB;
+                    l_to_email    varchar2(100) := 'livelabs-admin_us@oracle.com';
+                    --l_to_email    varchar2(100) := 'madhusudhan.rao@oracle.com';
+                    l_to_email1    varchar2(100);
+                    l_to_email2   varchar2(100);
+                    l_subject VARCHAR2(100) := 'New Comment Submitted  ';
+                    l_sender_email VARCHAR2(100) := lower(:APP_USER) ;
+                    l_replyto_email VARCHAR2(100) ;
+                    l_reason VARCHAR2(4000) := '';
+                    l_valid_from VARCHAR2(100) := '';
+                    l_valid_to VARCHAR2(100) := '';
+                    l_workshop_type	varchar2(100);
+                    l_comment varchar2(4000) := :P14_COMMENT_1;
+                    
+                    /*
+                    Cursor C_WORKSHOP Is
+                       Select  b.name, a.workshop_id, b.prod_id, b.LIVELABS_WORKSHOP_URL, a.email_requestor_2,a.email_requestor,a.email_creator    
+                       From   LL_VOUCHERS a, workshops b  
+                       WHERE  a.ID=:P36_SEQID and a.workshop_id = b.id;
+                       */
+                    
+                    Cursor C_WORKSHOP Is
+                       Select ID,  name,   prod_id  
+                       From   workshops b  
+                       WHERE  ID = :P14_ID; 
+                       
+                    begin 
+                    
+                    insert into LL_COMMENTS (EMAIL_CREATOR, THE_COMMENT, WORKSHOP_ID, COMMENTDATE, COMMENTTYPE )  values ( lower(:APP_USER), :P14_COMMENT_1,   :P14_ID, CURRENT_TIMESTAMP, 'WORKSHOP');
+                    
+                    -- send mail 
+                    l_body := 'To view the content of this message use an HTML enabled mail client.'||utl_tcp.crlf;
+                    l_body_html := '<html>';
+                    
+                    l_body_html := l_body_html || 'Comment by : '|| lower(:APP_USER) ;
+                    l_body_html := l_body_html || '<br>Comment : '||l_comment; 
+                    
+                     For row_1 In C_WORKSHOP Loop
+                               --l_to_email := row_1.email_creator;
+                               --l_to_email1 := row_1.email_requestor;
+                              -- l_to_email2 := row_1.email_requestor_2;
+                              -- IF l_to_email1 IS NOT NULL THEN l_to_email := row_1.email_creator||','||row_1.email_requestor; end if;
+                              -- IF l_to_email2 IS NOT NULL THEN l_to_email := row_1.email_creator||','||row_1.email_requestor||','||row_1.email_requestor_2; end if;
+                              l_subject  := l_subject||row_1.name;
+                              --l_body_html := l_body_html ||'<strong>Event Name:</strong> '||row_1.reason||'<br><strong>Workshop Name: </strong>ID'||row_1.workshop_id||' - '||row_1.name||'<br><strong>Workshop Current Production URL:</strong> '||row_1.LIVELABS_WORKSHOP_URL||'<br><strong>Workshop Dates:</strong> '||row_1.VALID_FROM||' - '||row_1.VALID_TO||'<br><strong>Where will the workshop run?</strong> '||l_workshop_type||'<br><br>';
+                              l_body_html := l_body_html ||' <br><strong>Workshop Name: </strong>ID'||row_1.ID||' - '||row_1.name||'  ';
+                     end loop;
+                    
+                    
+                    --l_body_html := l_body_html ||'<strong>HOW DO I MANAGE MY EVENT CODE?</strong> <br>All three contacts for the event can make edits to the event by clicking on <strong><a href="https://apex.oraclecorp.com/pls/apex/f?p=LIVELABS:44">Manage My Events</a></strong> in <a href="https://developer.oracle.com/livelabs">LiveLabs</a>.  You can also communicate with the LiveLabs Team and add comments/questions about your event there.  ';
+                    l_body_html := l_body_html ||'<br><br>Sincerely,<br><br>';
+                    l_body_html := l_body_html ||'LiveLabs Platform Team<br><a href="https://bit.ly/golivelabs">LiveLabs</a><br><a href="https://apex.oraclecorp.com/pls/apex/f?p=LIVELABS">LiveLabs Workshop Management System</a><br><a href="https://bit.ly/livelabsinfopage">LiveLabs Information Page</a><br><br><br>';
+                    l_body_html := l_body_html || '</html><br>';
+                    
+                    --apex_mail.send( p_to   => l_to_email , p_from => l_sender_email, p_body  => l_body, p_body_html => l_body_html, p_subj => l_subject  );
+                    -- p_bcc => l_sender_email, 
+                    
+                    -- send mail
+                    
+                    end;
+                    ```
+                itemsToSubmit: [
+                    P14_ID
+                    P14_COMMENT_1
+                ]
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+        action native-execute-plsql-code-2 (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    DECLARE 
+                      l_msg      varchar2(1000); 
+                      
+                    BEGIN
+                        mail_utils_pkg.mail_comments_proc( :APP_USER , :P14_ID, :P14_COMMENT_1 );
+                    END;
+                    ```
+                itemsToSubmit: [
+                    P14_ID
+                    P14_COMMENT_1
+                ]
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+        action native-show (
+            action: show
+            affectedElements {
+                selectionType: javaScriptExpression
+                javaScriptExpression: apex.item( "P14_COMMENT_1" ).setValue("")
+            }
+            execution {
+                sequence: 30
+            }
+        )
+
+    )
+
+    process initialize-form-create-edit-workshop (
+        name: Initialize form Create/Edit Workshop
+        type: formInitialization
+        formRegion: @workshop-details
+        execution {
+            sequence: 10
+            point: beforeHeader
+        }
+        advanced {
+            executionMappingIdentifier: 62935484559365237067
+        }
+    )
+
+    process process-form-create-edit-workshop (
+        name: Process form Create/Edit Workshop
+        type: formAutoRowProcessing
+        formRegion: @workshop-details
+        execution {
+            sequence: 10
+        }
+        advanced {
+            executionMappingIdentifier: 62935484903004237068
+        }
+    )
+
+    branch (
+        name: Go To Page 32
+        execution {
+            sequence: 1
+        }
+        behavior {
+            target: {
+                page: 32
+            }
+        }
+    )
+
+)
+

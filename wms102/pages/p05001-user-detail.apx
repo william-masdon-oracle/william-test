@@ -1,0 +1,361 @@
+page 5001 (
+    name: User Detail
+    alias: USER-DETAIL
+    title: "User Detail "
+    appearance {
+        pageTemplate: @standard-custom
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+        warnOnUnsavedChanges: false
+    }
+    advanced {
+        reloadOnSubmit: always
+    }
+    help {
+        helpText: No help is available for this page.
+    }
+
+    region search (
+        name: Search
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            customAttributes: style="margin-left:30px;"
+        }
+        settings {
+            outputAs: text
+        }
+    )
+
+    region wms-system-users (
+        name: "WMS System Users "
+        type: classicReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select * from (
+                select DISTINCT
+                       rowid Link
+                     , U.USER_NAME
+                     , U.FIRST_NAME
+                     , U.LAST_NAME
+                     , (select listagg(role_name, ', ') within group (order by role_name) user_roles
+                          from WMS_USERS T1, WMS_USER_ROLES T2
+                         where T1.ID = T2.USER_ID
+                        ) user_roles
+                  from WMS_USERS U
+                 --where U.USER_NAME in (select user_name from user_privs where privilege like 'stakeholder%')
+                order by 2
+                ) where (
+                 instr(upper("USER_NAME"),upper(nvl(:P5001_REPORT_SEARCH,"USER_NAME"))) > 0  or
+                 instr(upper("FIRST_NAME"),upper(nvl(:P5001_REPORT_SEARCH,"FIRST_NAME"))) > 0  or
+                 instr(upper("LAST_NAME"),upper(nvl(:P5001_REPORT_SEARCH,"LAST_NAME"))) > 0  or
+                 instr(upper("USER_ROLES"),upper(nvl(:P5001_REPORT_SEARCH,"USER_ROLES"))) > 0 
+                )
+                
+                ```
+        }
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            customAttributes: style="margin-left:30px;"
+        }
+        reportLayout {
+            numberOfRowsType: itemValue
+            item: P5001_ROWS
+        }
+        componentAppearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Report--altRowsDefault
+                t-Report--rowHighlight
+            ]
+        }
+        pagination {
+            type: rowRangesXToYOfZNoPagination
+            displayPosition: topAndBottomRight
+        }
+        performance {
+            maxRowsToProcess: 10000
+        }
+        messages {
+            whenNoDataFound: No data found.
+        }
+        componentAdvanced {
+            stripHtml: true
+        }
+
+        column FIRST_NAME (
+            reportColumnQueryId: 3
+            derivedColumn: N
+            heading {
+                heading: First Name
+                alignment: center
+            }
+            layout {
+                sequence: 3
+            }
+            columnFormatting {
+                highlightWords: &P5001_REPORT_SEARCH.
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column LAST_NAME (
+            reportColumnQueryId: 4
+            derivedColumn: N
+            heading {
+                heading: Last Name
+                alignment: center
+            }
+            layout {
+                sequence: 4
+            }
+            columnFormatting {
+                highlightWords: &P5001_REPORT_SEARCH.
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column LINK (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            type: link
+            heading {
+                heading: Modify Privilege
+                alignment: center
+            }
+            layout {
+                sequence: 1
+                columnAlignment: center
+            }
+            link {
+                target: {
+                    page: 5005
+                    items: {
+                        P5005_ROWID: #LINK#
+                    }
+                }
+                linkText: <img src="#IMAGE_PREFIX#app_ui/img/icons/apex-edit-pencil-alt.png" class="apex-edit-pencil-alt" alt="">
+            }
+            sorting {
+                sortable: false
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column USER_NAME (
+            reportColumnQueryId: 2
+            derivedColumn: N
+            heading {
+                heading: User Name
+                alignment: center
+            }
+            layout {
+                sequence: 2
+            }
+            columnFormatting {
+                highlightWords: &P5001_REPORT_SEARCH.
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column USER_ROLES (
+            reportColumnQueryId: 5
+            derivedColumn: N
+            heading {
+                heading: User Roles
+                alignment: center
+            }
+            layout {
+                sequence: 14
+            }
+        )
+
+    )
+
+    pageItem P5001_REPORT_SEARCH (
+        type: textField
+        label {
+            label: Search
+            alignment: right
+        }
+        settings {
+            trimSpaces: none
+            submitWhenEnterPressed: true
+        }
+        layout {
+            sequence: 10
+            region: @search
+            slot: regionBody
+            alignment: left
+            labelColumnSpan: 1
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            maxLength: 2000
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P5001_ROWS (
+        type: selectList
+        label {
+            label: Display
+            alignment: right
+        }
+        lov {
+            type: sharedComponent
+            lov: @p5001-report-row-per-page
+            displayNullValue: false
+        }
+        layout {
+            sequence: 20
+            region: @search
+            slot: regionBody
+            alignment: left
+            labelColumnSpan: 1
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            type: staticValue
+            staticValue: 5000
+        }
+        default {
+            type: static
+            staticValue: 5000
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button go (
+        buttonName: GO
+        label: Go
+        layout {
+            sequence: 30
+            region: @search
+            slot: regionBody
+            startNewRow: false
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button reset (
+        buttonName: RESET
+        label: Reset
+        layout {
+            sequence: 40
+            region: @search
+            slot: regionBody
+            startNewRow: false
+            newColumn: false
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    process reset-pagination (
+        name: Reset Pagination
+        type: resetPagination
+        execution {
+            sequence: 10
+        }
+        advanced {
+            executionMappingIdentifier: 55381543817390801622
+        }
+        serverSideCondition {
+            type: requestIsContainedInValue
+            value: GO,P5001_REPORT_SEARCH,RESET
+        }
+    )
+
+    process reset-report-search (
+        name: Reset report search
+        type: clearSessionState
+        clear {
+            type: items
+            items: [
+                P5001_REPORT_SEARCH
+                P5001_ROWS
+            ]
+        }
+        execution {
+            sequence: 20
+        }
+        advanced {
+            executionMappingIdentifier: 55381543460717801621
+        }
+        serverSideCondition {
+            whenButtonPressed: @reset
+        }
+    )
+
+    branch (
+        execution {
+            sequence: 10
+        }
+        behavior {
+            target: {
+                page: 5001
+                successMessage: false
+            }
+        }
+    )
+
+)
+

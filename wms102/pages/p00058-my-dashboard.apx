@@ -1,0 +1,551 @@
+page 58 (
+    name: My Dashboard
+    alias: MY-DASHBOARD
+    title: My Dashboard
+    appearance {
+        pageTemplate: @standard-custom
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    css {
+        inline:
+            ```css
+            #Buttons {
+                display: flex;
+            }
+            ```
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region buttons (
+        name: Buttons
+        title: buttons-region
+        type: staticContent
+        layout {
+            sequence: 10
+            parentRegion: @my-workshops
+            slot: regionBody
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    region buttons_1 (
+        name: Buttons
+        title: buttons-region
+        type: staticContent
+        layout {
+            sequence: 10
+            parentRegion: @my-livestacks
+            slot: subRegions
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    region buttons_2 (
+        name: Buttons
+        title: buttons-region
+        type: staticContent
+        layout {
+            sequence: 10
+            parentRegion: @my-assets
+            slot: subRegions
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    region buttons_3 (
+        name: Buttons
+        title: buttons-region
+        type: staticContent
+        layout {
+            sequence: 10
+            parentRegion: @my-events
+            slot: subRegions
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    region my-assets (
+        name: My Assets
+        title: My Assets
+        type: staticContent
+        layout {
+            sequence: 90
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--scrollBody
+            ]
+            renderComponents: belowContent
+        }
+    )
+
+    region my-events (
+        name: My Events
+        title: My Events
+        type: staticContent
+        layout {
+            sequence: 110
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--scrollBody
+            ]
+            renderComponents: belowContent
+        }
+    )
+
+    region my-livestacks (
+        name: My LiveStacks
+        title: My LiveStacks
+        type: staticContent
+        layout {
+            sequence: 60
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--scrollBody
+            ]
+            renderComponents: belowContent
+        }
+    )
+
+    region my-workshops (
+        name: My Workshops
+        title: My Workshops
+        type: staticContent
+        layout {
+            sequence: 30
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--scrollBody
+            ]
+            renderComponents: belowContent
+        }
+    )
+
+    region new (
+        name: Header
+        title: My Workshops
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @title-bar
+            templateOptions: [
+                #DEFAULT#
+                t-BreadcrumbRegion--useRegionTitle
+            ]
+        }
+    )
+
+    region new_1 (
+        name: Header
+        title: My LiveStacks
+        type: staticContent
+        layout {
+            sequence: 40
+            slot: contentBody
+        }
+        appearance {
+            template: @title-bar
+            templateOptions: [
+                #DEFAULT#
+                t-BreadcrumbRegion--useRegionTitle
+            ]
+        }
+    )
+
+    region new_1_1 (
+        name: Header
+        title: My Assets
+        type: staticContent
+        layout {
+            sequence: 70
+            slot: contentBody
+        }
+        appearance {
+            template: @title-bar
+            templateOptions: [
+                #DEFAULT#
+                t-BreadcrumbRegion--useRegionTitle
+            ]
+        }
+    )
+
+    region new_1_1_1 (
+        name: Header
+        title: My Events
+        type: staticContent
+        layout {
+            sequence: 100
+            slot: contentBody
+        }
+        appearance {
+            template: @title-bar
+            templateOptions: [
+                #DEFAULT#
+                t-BreadcrumbRegion--useRegionTitle
+            ]
+        }
+    )
+
+    region workshop-cards (
+        name: workshop-cards
+        type: cards
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select ID,
+                       TITLE,
+                       SHORT_DESC,  
+                       WORKSHOP_STATUS   
+                from workshop 
+                where workshop_owner_email = v('APP_USER');
+                
+                
+                ```
+        }
+        layout {
+            sequence: 30
+            parentRegion: @my-workshops
+            slot: regionBody
+        }
+        appearance {
+            template: @blank-with-attributes-no-grid
+            templateOptions: #DEFAULT#
+        }
+        componentAppearance {
+            layout: horizontal
+        }
+        title {
+            column: TITLE
+        }
+        subtitle {
+            column: WORKSHOP_STATUS
+        }
+        body {
+            column: SHORT_DESC
+        }
+        iconAndBadge {
+            badgeColumn: WORKSHOP_STATUS
+            badgeLabel: Workshop Status
+        }
+        pagination {
+            type: page
+            showTotalCount: true
+            cardsPerPage: 3
+        }
+        messages {
+            whenNoDataFound:
+                ```
+                You don't own any workshops yet.
+                
+                ```
+        }
+    )
+
+    region workshop-cards_1 (
+        name: workshop-cards
+        type: cards
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select *
+                from wms_livestacks 
+                where created_by = v('APP_USER');
+                
+                
+                ```
+        }
+        layout {
+            sequence: 20
+            parentRegion: @my-livestacks
+            slot: subRegions
+        }
+        appearance {
+            template: @blank-with-attributes-no-grid
+            templateOptions: [
+                #DEFAULT#
+                margin-top-sm
+            ]
+        }
+        card {
+            primaryKeyColumn1: ID
+        }
+        title {
+            column: NAME
+        }
+        subtitle {
+            column: CREATED_DATE
+        }
+        pagination {
+            type: page
+            showTotalCount: true
+            cardsPerPage: 3
+        }
+        messages {
+            whenNoDataFound:
+                ```
+                You don't own any LiveStacks yet.
+                
+                ```
+        }
+
+        action action (
+            type: fullCard
+            layout {
+                sequence: 10
+            }
+            behavior {
+                target: {
+                    page: 57
+                    items: {
+                        P57_ID: &ID.
+                    }
+                }
+            }
+        )
+
+    )
+
+    region workshop-cards_1_1 (
+        name: workshop-cards
+        type: cards
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select ID,
+                       TITLE,
+                       SHORT_DESC,  
+                       WORKSHOP_STATUS   
+                from workshop 
+                where workshop_owner_email = v('APP_USER');
+                
+                
+                ```
+        }
+        layout {
+            sequence: 20
+            parentRegion: @my-assets
+            slot: subRegions
+        }
+        appearance {
+            template: @blank-with-attributes-no-grid
+            templateOptions: #DEFAULT#
+        }
+        componentAppearance {
+            layout: horizontal
+        }
+        title {
+            column: TITLE
+        }
+        subtitle {
+            column: WORKSHOP_STATUS
+        }
+        body {
+            column: SHORT_DESC
+        }
+        iconAndBadge {
+            badgeColumn: WORKSHOP_STATUS
+            badgeLabel: Workshop Status
+        }
+        pagination {
+            type: page
+            showTotalCount: true
+            cardsPerPage: 3
+        }
+        messages {
+            whenNoDataFound:
+                ```
+                You don't own any assets yet.
+                
+                ```
+        }
+    )
+
+    region workshop-cards_1_1_1 (
+        name: workshop-cards
+        type: cards
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select ID,
+                       TITLE,
+                       SHORT_DESC,  
+                       WORKSHOP_STATUS   
+                from workshop 
+                where workshop_owner_email = v('APP_USER');
+                
+                
+                ```
+        }
+        layout {
+            sequence: 20
+            parentRegion: @my-events
+            slot: subRegions
+        }
+        appearance {
+            template: @blank-with-attributes-no-grid
+            templateOptions: #DEFAULT#
+        }
+        componentAppearance {
+            layout: horizontal
+        }
+        title {
+            column: TITLE
+        }
+        subtitle {
+            column: WORKSHOP_STATUS
+        }
+        body {
+            column: SHORT_DESC
+        }
+        iconAndBadge {
+            badgeColumn: WORKSHOP_STATUS
+            badgeLabel: Workshop Status
+        }
+        pagination {
+            type: page
+            showTotalCount: true
+            cardsPerPage: 3
+        }
+        messages {
+            whenNoDataFound:
+                ```
+                You don't own any events yet.
+                
+                ```
+        }
+    )
+
+    button view-all-2 (
+        buttonName: view-all-2
+        label: View All
+        layout {
+            sequence: 10
+            region: @buttons_1
+            slot: regionBody
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--gapLeft
+            ]
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button view-all-3 (
+        buttonName: view-all-3
+        label: View All
+        layout {
+            sequence: 10
+            region: @buttons_2
+            slot: regionBody
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--gapLeft
+            ]
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button view-all-4 (
+        buttonName: view-all-4
+        label: View All
+        layout {
+            sequence: 10
+            region: @buttons_3
+            slot: regionBody
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--gapLeft
+            ]
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button view-all_1 (
+        buttonName: view-all
+        label: View All
+        layout {
+            sequence: 10
+            region: @buttons
+            slot: regionBody
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--gapLeft
+            ]
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+)
+

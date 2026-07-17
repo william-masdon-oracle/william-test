@@ -1,0 +1,1954 @@
+page 57 (
+    name: LiveStack Details
+    alias: LIVESTACK-DETAILS
+    title: LiveStack Details
+    appearance {
+        pageTemplate: @standard-custom
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    javaScript {
+        fileUrls: #APP_FILES#Sortable.js
+        executeWhenPageLoads:
+            ```javascript-browser
+            function initEntriesSortable() {
+                document.querySelectorAll('ul.t-ContentRow').forEach((container) => {
+                    if (container.dataset.sortableInit === 'Y') return;
+            
+                    container.dataset.sortableInit = 'Y';
+            
+                    function renumberEntries() {
+                        container.querySelectorAll('.t-ContentRow-item').forEach((item, index) => {
+                            const badge = item.querySelector('.entry-position');
+                            if (!badge) return;
+            
+                            const newPosition = index + 1;
+                            badge.textContent = newPosition;
+                            item.dataset.position = newPosition;
+                        });
+                    }
+            
+                    Sortable.create(container, {
+                        animation: 150,
+                        draggable: '.t-ContentRow-item',
+                        handle: '.t-ContentRow-selection',
+                        forceFallback: true,
+                        fallbackTolerance: 3,
+                        ghostClass: 'sortable-ghost',
+            
+                        onEnd: function () {
+                            renumberEntries();
+            
+                            const order = [];
+                            container.querySelectorAll('.t-ContentRow-item').forEach((item, index) => {
+                                const badge = item.querySelector('.entry-position');
+                                if (!badge) return;
+            
+                                order.push({
+                                    id: parseInt(badge.dataset.id, 10),
+                                    position: index + 1
+                                });
+                            });
+            
+                            apex.server.process('SAVE_ORDER', {
+                            x01: JSON.stringify(order),
+                            x02: container.querySelector('.ls-sortable--entries') ? 'entries' : 'assets'
+                        });
+                        }
+                    });
+            
+                    console.log('Sortable initialized for', container);
+                });
+            }
+            
+            apex.jQuery(initEntriesSortable);
+            
+            
+            ```
+    }
+    css {
+        inline:
+            ```css
+            .t-ContentRow-selection {
+                cursor: grab;
+                user-select: none;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 36px;
+                min-width: 36px;
+            }
+            
+            .t-ContentRow-selection * {
+                pointer-events: none;
+            }
+            .ls-drag-handle {
+                display: inline-grid;
+                grid-template-columns: repeat(2, 4px);
+                grid-template-rows: repeat(3, 4px);
+                gap: 2px;
+            
+                align-items: center;
+                justify-items: center;
+            
+                width: 22px;
+                min-width: 22px;
+                height: 22px;
+            
+                padding: 6px;
+                margin-right: 8px;
+            
+                border-radius: 6px;
+                cursor: grab;
+                user-select: none;
+                box-sizing: border-box;
+            }
+            
+            .ls-drag-handle span {
+                width: 4px;
+                height: 4px;
+                border-radius: 50%;
+                background: #8b8b8b;
+                pointer-events: none;
+            }
+            
+            .ls-drag-handle:active {
+                cursor: grabbing;
+                background: #f1f1f1;
+            }
+            
+            .entry-position {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 28px;
+                height: 28px;
+                min-width: 28px;
+                border-radius: 50%;
+                background: #e6e6e6;
+                color: #666;
+                font-weight: 600;
+                box-sizing: border-box;
+            }
+            .t-ContentRow-item {
+                margin-bottom: 12px !important;
+                border-bottom: none !important;
+            }
+            
+            .t-ContentRow-wrap {
+                width: 100%;
+                box-sizing: border-box;
+            
+                background: #fff !important;
+                border: 1px solid #dfe3e8 !important;
+                border-radius: 12px !important;
+            
+                padding: 14px 18px !important;
+                box-shadow: 0 1px 2px rgba(0,0,0,.03);
+                transition: all .15s ease;
+            }
+            
+            .t-ContentRow-wrap:hover {
+                border-color: #cfd6dd !important;
+                box-shadow: 0 2px 6px rgba(0,0,0,.06);
+            }
+            
+            .t-ContentRow-selection {
+                margin-right: 8px;
+            }
+            ```
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region assets_2 (
+        name: Assets
+        title: Supporting Assets
+        type: staticContent
+        layout {
+            sequence: 90
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--accent13
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    region basic-information (
+        name: Status
+        type: staticContent
+        layout {
+            sequence: 20
+            parentRegion: @header
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--accent4
+                t-Region--noBorder
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    region entries (
+        name: Entries
+        title: Entries
+        type: staticContent
+        layout {
+            sequence: 80
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--accent13
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    region existing-assets (
+        name: Existing Assets
+        type: classicReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                SELECT i.asset_id,
+                       i.external_flg,
+                       a.link,
+                       (select name from wms_assets where id = i.asset_id) title,
+                       '<span class="entry-position" data-id="' || i.asset_id || '">' || i.position || '</span>' AS icon_html,
+                       i.position,
+                       '<span class="ls-drag-handle" aria-hidden="true">
+                            <span></span><span></span><span></span>
+                            <span></span><span></span><span></span>
+                        </span>' AS selection,
+                        (case i.external_flg when 'Y' then 'External' else 'Internal' end) as description,
+                        'ls-sortable ls-sortable--assets' AS item_classes,
+                        NULL AS actions,
+                        NULL AS misc,
+                        NULL AS icon_class
+                FROM wms_livestack_assets i
+                LEFT JOIN wms_assets a
+                ON i.asset_id = a.id
+                WHERE i.livestack_id = :P57_ID
+                ORDER BY i.position
+                ```
+            pageItemsToSubmit: P57_ID
+        }
+        layout {
+            sequence: 10
+            parentRegion: @assets_2
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--noBorder
+                t-Region--scrollBody
+            ]
+        }
+        componentAppearance {
+            template: @content-row
+        }
+
+        column ACTIONS (
+            reportColumnQueryId: 10
+            derivedColumn: N
+            type: link
+            heading {
+                heading: Actions
+            }
+            layout {
+                sequence: 100
+            }
+            link {
+                target: {
+                    page: 62
+                    items: {
+                        P62_ASSET_ID: #ASSET_ID#
+                        P62_LIVESTACK_ID: &P57_ID.
+                    }
+                    clearCache: 56
+                }
+                linkText: <span role="img" aria-label="Edit" class="fa fa-edit" title="Edit"></span>
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column ASSET_ID (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            heading {
+                heading: Asset Id
+                alignment: end
+            }
+            layout {
+                sequence: 120
+                columnAlignment: end
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column DESCRIPTION (
+            reportColumnQueryId: 8
+            derivedColumn: N
+            heading {
+                heading: Description
+            }
+            layout {
+                sequence: 150
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column EXTERNAL_FLG (
+            reportColumnQueryId: 2
+            derivedColumn: N
+            heading {
+                heading: External Flg
+            }
+            layout {
+                sequence: 130
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column ICON_CLASS (
+            reportColumnQueryId: 12
+            derivedColumn: N
+            heading {
+                heading: Icon Class
+            }
+            layout {
+                sequence: 50
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column ICON_HTML (
+            reportColumnQueryId: 5
+            derivedColumn: N
+            heading {
+                heading: Icon Html
+            }
+            layout {
+                sequence: 40
+            }
+            sorting {
+                sortable: false
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column ITEM_CLASSES (
+            reportColumnQueryId: 9
+            derivedColumn: N
+            heading {
+                heading: Item Classes
+            }
+            layout {
+                sequence: 80
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column LINK (
+            reportColumnQueryId: 3
+            derivedColumn: N
+            heading {
+                heading: Link
+            }
+            layout {
+                sequence: 140
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column MISC (
+            reportColumnQueryId: 11
+            derivedColumn: N
+            heading {
+                heading: Misc
+            }
+            layout {
+                sequence: 110
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column POSITION (
+            reportColumnQueryId: 6
+            derivedColumn: N
+            heading {
+                heading: Position
+                alignment: end
+            }
+            layout {
+                sequence: 70
+                columnAlignment: end
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column SELECTION (
+            reportColumnQueryId: 7
+            derivedColumn: N
+            heading {
+                heading: Selection
+            }
+            layout {
+                sequence: 90
+            }
+            sorting {
+                sortable: false
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column TITLE (
+            reportColumnQueryId: 4
+            derivedColumn: N
+            type: link
+            heading {
+                heading: Title
+            }
+            layout {
+                sequence: 20
+            }
+            link {
+                target: {
+                    type: url
+                    url: #LINK#
+                }
+                linkText: #TITLE#
+                linkAttributes: target="_blank"
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+    )
+
+    region existing-entries (
+        name: Existing Entries
+        type: classicReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                SELECT i.id,
+                       i.entry_id,
+                       (SELECT COALESCE(i.title_override, COALESCE(ll.title_override,(SELECT w.title FROM workshop w WHERE w.id = ll.workshop_id))) FROM workshop_ll ll WHERE ll.id = i.entry_id) title,
+                       typ.name || ' · LL ID #' || i.entry_id  AS description,
+                       '<span class="entry-position" data-id="' || i.id || '">' || i.position || '</span>' AS icon_html,
+                       CASE
+                           WHEN i.active_flg = 1 THEN 'Active'
+                           ELSE 'Inactive'
+                       END AS badge,
+                       i.position,
+                       '<span class="ls-drag-handle" aria-hidden="true">
+                            <span></span><span></span><span></span>
+                            <span></span><span></span><span></span>
+                        </span>' AS selection,
+                       'ls-sortable ls-sortable--entries' AS item_classes,
+                       NULL AS actions,
+                       NULL AS misc,
+                       NULL AS icon_class
+                FROM wms_livestack_entries i
+                LEFT JOIN workshop_ll ll
+                   ON i.entry_id = ll.id
+                LEFT JOIN wms_ll_types typ
+                    on ll.type_id = typ.id
+                WHERE i.livestack_id = :P57_ID
+                ORDER BY i.position
+                
+                
+                ```
+            pageItemsToSubmit: P57_ID
+        }
+        layout {
+            sequence: 10
+            parentRegion: @entries
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--noBorder
+                t-Region--scrollBody
+            ]
+        }
+        componentAppearance {
+            template: @content-row
+            templateOptions: #DEFAULT#
+        }
+
+        column ACTIONS (
+            reportColumnQueryId: 10
+            derivedColumn: N
+            type: link
+            heading {
+                heading: Actions
+            }
+            layout {
+                sequence: 100
+            }
+            link {
+                target: {
+                    page: 59
+                    items: {
+                        P59_ID: #ID#
+                    }
+                    clearCache: 59
+                }
+                linkText: <span role="img" aria-label="Edit" class="fa fa-edit" title="Edit"></span>
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column BADGE (
+            reportColumnQueryId: 6
+            derivedColumn: N
+            heading {
+                heading: Badge
+            }
+            layout {
+                sequence: 60
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column DESCRIPTION (
+            reportColumnQueryId: 4
+            derivedColumn: N
+            heading {
+                heading: Description
+            }
+            layout {
+                sequence: 30
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column ENTRY_ID (
+            reportColumnQueryId: 2
+            derivedColumn: N
+            heading {
+                heading: Entry Id
+                alignment: end
+            }
+            layout {
+                sequence: 120
+                columnAlignment: end
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column ICON_CLASS (
+            reportColumnQueryId: 12
+            derivedColumn: N
+            heading {
+                heading: Icon Class
+            }
+            layout {
+                sequence: 50
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column ICON_HTML (
+            reportColumnQueryId: 5
+            derivedColumn: N
+            heading {
+                heading: Icon Html
+            }
+            layout {
+                sequence: 40
+            }
+            sorting {
+                sortable: false
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column ID (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            heading {
+                heading: Id
+                alignment: end
+            }
+            layout {
+                sequence: 10
+                columnAlignment: end
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column ITEM_CLASSES (
+            reportColumnQueryId: 9
+            derivedColumn: N
+            heading {
+                heading: Item Classes
+            }
+            layout {
+                sequence: 80
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column MISC (
+            reportColumnQueryId: 11
+            derivedColumn: N
+            heading {
+                heading: Misc
+            }
+            layout {
+                sequence: 110
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column POSITION (
+            reportColumnQueryId: 7
+            derivedColumn: N
+            heading {
+                heading: Position
+                alignment: end
+            }
+            layout {
+                sequence: 70
+                columnAlignment: end
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column SELECTION (
+            reportColumnQueryId: 8
+            derivedColumn: N
+            heading {
+                heading: Selection
+            }
+            layout {
+                sequence: 90
+            }
+            sorting {
+                sortable: false
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column TITLE (
+            reportColumnQueryId: 3
+            derivedColumn: N
+            type: link
+            heading {
+                heading: Title
+            }
+            layout {
+                sequence: 20
+            }
+            link {
+                target: {
+                    page: 3203
+                    items: {
+                        P3203_ID: #ITEM_ID#
+                    }
+                }
+                linkText: #TITLE#
+                linkAttributes: target="_blank"
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+    )
+
+    region header (
+        name: Header
+        type: staticContent
+        layout {
+            sequence: 70
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    region new (
+        name: Details
+        type: form
+        source {
+            location: localDatabase
+            tableName: WMS_LIVESTACKS
+        }
+        layout {
+            sequence: 100
+            slot: contentBody
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    region settings (
+        name: Settings
+        type: staticContent
+        layout {
+            sequence: 10
+            parentRegion: @new
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--accent4
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    region title (
+        name: Title
+        title: " &P57_TITLE."
+        type: staticContent
+        layout {
+            sequence: 10
+            parentRegion: @header
+            slot: subRegions
+        }
+        appearance {
+            template: @title-bar
+            templateOptions: [
+                #DEFAULT#
+                t-BreadcrumbRegion--useRegionTitle
+            ]
+        }
+    )
+
+    pageItem P57_ACTIVE_FLG (
+        type: popupLov
+        label {
+            label: Publication Type
+            alignment: left
+        }
+        lov {
+            type: sharedComponent
+            lov: @livestack-publish-types
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 30
+            region: @basic-information
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 3
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        source {
+            formRegion: @new
+            column: ACTIVE_FLG
+            dataType: varchar2
+        }
+        default {
+            type: static
+            staticValue: P
+        }
+    )
+
+    pageItem P57_CREATED_BY (
+        type: displayOnly
+        label {
+            label: Created By
+            alignment: left
+        }
+        layout {
+            sequence: 90
+            region: @settings
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @new
+            column: CREATED_BY
+            dataType: varchar2
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P57_ID
+        }
+    )
+
+    pageItem P57_CREATED_DATE (
+        type: displayOnly
+        label {
+            label: Created On
+            alignment: left
+        }
+        layout {
+            sequence: 80
+            region: @settings
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @new
+            column: CREATED_DATE
+            dataType: date
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P57_ID
+        }
+    )
+
+    pageItem P57_DESC_LONG (
+        type: richTextEditor
+        label {
+            label: Long Description
+            alignment: left
+        }
+        settings {
+            format: html
+            toolbar: basic
+            minHeight: 180
+        }
+        layout {
+            sequence: 20
+            region: @settings
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            formRegion: @new
+            column: DESC_LONG
+            dataType: varchar2
+        }
+    )
+
+    pageItem P57_DESC_SHORT (
+        type: textarea
+        label {
+            label: Short Description
+            alignment: left
+        }
+        layout {
+            sequence: 30
+            region: @settings
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+            width: 30
+            height: 5
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            formRegion: @new
+            column: DESC_SHORT
+            dataType: varchar2
+        }
+    )
+
+    pageItem P57_FEATURED_FLG (
+        type: switch
+        label {
+            label: Featured?
+            alignment: left
+        }
+        layout {
+            sequence: 50
+            region: @basic-information
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 2
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @new
+            column: FEATURED_FLG
+            dataType: varchar2
+        }
+        default {
+            type: static
+            staticValue: N
+        }
+        security {
+            authorizationScheme: @administration-rights
+        }
+    )
+
+    pageItem P57_ID (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        source {
+            formRegion: @new
+            column: ID
+            dataType: number
+            queryOnly: true
+            primaryKey: true
+        }
+        sessionState {
+            storage: session
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P57_LENGTH_OVERRIDE (
+        type: hidden
+        layout {
+            sequence: 120
+            region: @settings
+            slot: regionBody
+        }
+        source {
+            formRegion: @new
+            column: LENGTH_OVERRIDE
+            dataType: number
+        }
+    )
+
+    pageItem P57_LIVESTACK_COUNCIL_EMAILS (
+        type: hidden
+        layout {
+            sequence: 30
+            slot: contentBody
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery:
+                ```sql
+                select listagg(wpc.email,',')  emails
+                from workshop_person_council wpc
+                left join workshop_council wc on wpc.council_id = wc.id 
+                where wc.name = 'LiveStack'
+                ```
+        }
+    )
+
+    pageItem P57_LIVESTACK_TYPE (
+        type: hidden
+        layout {
+            sequence: 100
+            region: @settings
+            slot: regionBody
+        }
+        source {
+            formRegion: @new
+            column: LIVESTACK_TYPE
+            dataType: varchar2
+        }
+    )
+
+    pageItem P57_LL_LIVESTACK_URL (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 50
+            slot: contentBody
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery:
+                ```sql
+                select (select value from wms_system_parameters where name = 'LL_BASE_URL') 
+                || '/livestack-landing-page?p400_id='|| :P57_ID ||'&clear=RR,400' 
+                from dual
+                ```
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P57_NAME (
+        type: textField
+        label {
+            label: Title
+            alignment: left
+        }
+        layout {
+            sequence: 10
+            region: @settings
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+            width: 30
+        }
+        validation {
+            valueRequired: true
+            maxLength: 1000
+        }
+        source {
+            formRegion: @new
+            column: NAME
+            dataType: varchar2
+        }
+    )
+
+    pageItem P57_OUTLINE (
+        type: richTextEditor
+        label {
+            label: Outline
+            alignment: left
+        }
+        settings {
+            format: html
+            minHeight: 180
+        }
+        layout {
+            sequence: 50
+            region: @settings
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            formRegion: @new
+            column: OUTLINE
+            dataType: varchar2
+        }
+    )
+
+    pageItem P57_PREREQS (
+        type: richTextEditor
+        label {
+            label: User Prerequisites
+            alignment: left
+        }
+        settings {
+            format: html
+            minHeight: 180
+        }
+        layout {
+            sequence: 60
+            region: @settings
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @required-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            formRegion: @new
+            column: PREREQS
+            dataType: varchar2
+        }
+    )
+
+    pageItem P57_PUBLISH_STATUS (
+        type: popupLov
+        label {
+            label: Publish Status
+            alignment: left
+        }
+        lov {
+            type: sharedComponent
+            lov: @livestack-publish-statuses
+            nullDisplayValue: Not Published
+        }
+        layout {
+            sequence: 20
+            region: @basic-information
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 3
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            maxLength: 200
+        }
+        source {
+            formRegion: @new
+            column: PUBLISH_STATUS
+            dataType: varchar2
+        }
+        sessionState {
+            storage: session
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P57_STATUS_CHANGED_FLG (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 60
+            slot: contentBody
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P57_STATUS_JUSTIFICATION (
+        type: textarea
+        label {
+            label: Status Justification
+            alignment: left
+        }
+        layout {
+            sequence: 70
+            region: @basic-information
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+            width: 30
+            height: 2
+        }
+        validation {
+            maxLength: 4000
+        }
+        source {
+            formRegion: @new
+            column: STATUS_JUSTIFICATION
+            dataType: varchar2
+        }
+    )
+
+    pageItem P57_TITLE (
+        type: hidden
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        source {
+            type: item
+            item: P57_NAME
+        }
+        default {
+            type: static
+            staticValue: New LiveStack
+        }
+        sessionState {
+            storage: request
+        }
+    )
+
+    pageItem P57_VIDEO_LINK (
+        type: textField
+        label {
+            label: Supporting Video Link
+            alignment: left
+        }
+        layout {
+            sequence: 70
+            region: @settings
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+            width: 30
+        }
+        source {
+            formRegion: @new
+            column: VIDEO_LINK
+            dataType: varchar2
+        }
+    )
+
+    pageItem P57_WMS_LIVESTACK_URL (
+        type: hidden
+        layout {
+            sequence: 40
+            slot: contentBody
+        }
+    )
+
+    button add-asset (
+        buttonName: add-asset
+        label: Add Asset
+        layout {
+            sequence: 10
+            region: @assets_2
+            slot: edit
+        }
+        appearance {
+            buttonTemplate: @text-with-icon
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--iconLeft
+            ]
+            icon: fa-plus-circle-o
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 62
+                items: {
+                    P62_LIVESTACK_ID: &P57_ID.
+                }
+                clearCache: 59
+            }
+        }
+    )
+
+    button add-livelab (
+        buttonName: add-entry
+        label: Add Entry
+        layout {
+            sequence: 10
+            region: @entries
+            slot: edit
+        }
+        appearance {
+            buttonTemplate: @text-with-icon
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--iconLeft
+            ]
+            icon: fa-plus-circle-o
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 59
+                items: {
+                    P59_LIVESTACK_ID: &P57_ID.
+                }
+                clearCache: 59
+            }
+        }
+    )
+
+    button delete (
+        buttonName: Delete
+        label: Delete
+        layout {
+            sequence: 30
+            region: @title
+            slot: edit
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: delete
+            requiresConfirmation: true
+        }
+        confirmation {
+            message: You are about to delete this LiveStack. Are you sure you would like to continue?
+            style: danger
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P57_ID
+        }
+        security {
+            authorizationScheme: @administration-rights
+        }
+    )
+
+    button launch-livestack (
+        buttonName: launch-livestack
+        label: Launch LiveStack
+        layout {
+            sequence: 10
+            region: @title
+            slot: edit
+        }
+        appearance {
+            buttonTemplate: @text-with-icon
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--iconRight
+                t-Button--gapRight
+            ]
+            icon: fa-external-link
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+        serverSideCondition {
+            type: item=value
+            item: P57_PUBLISH_STATUS
+            value: Published
+        }
+    )
+
+    button save (
+        buttonName: Save
+        label: Save
+        layout {
+            sequence: 20
+            region: @title
+            slot: edit
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--gapLeft
+            ]
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: update
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P57_ID
+        }
+    )
+
+    dynamicAction on-change (
+        name: On Change
+        execution {
+            sequence: 50
+        }
+        when {
+            selectionType: items
+            items: P57_PUBLISH_STATUS
+        }
+        clientSideCondition {
+            type: itemIsNull
+            item: P57_PUBLISH_STATUS
+        }
+
+        action native-hide (
+            action: hide
+            affectedElements {
+                selectionType: items
+                items: [
+                    P57_ACTIVE_FLG
+                    P57_STATUS_JUSTIFICATION
+                ]
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+        action native-hide_2 (
+            action: hide
+            affectedElements {
+                selectionType: items
+                items: P57_STATUS_JUSTIFICATION
+            }
+            execution {
+                sequence: 10
+                fireWhenEventResultIs: false
+            }
+            clientSideCondition {
+                type: item=value
+                item: P57_PUBLISH_STATUS
+                value: Published
+            }
+        )
+
+        action native-show (
+            action: show
+            affectedElements {
+                selectionType: items
+                items: P57_ACTIVE_FLG
+            }
+            execution {
+                sequence: 40
+                fireWhenEventResultIs: false
+            }
+        )
+
+        action native-show_1 (
+            action: show
+            affectedElements {
+                selectionType: items
+                items: P57_STATUS_JUSTIFICATION
+            }
+            execution {
+                sequence: 30
+                fireWhenEventResultIs: false
+            }
+            clientSideCondition {
+                type: item!=value
+                item: P57_PUBLISH_STATUS
+                value: Published
+            }
+        )
+
+    )
+
+    dynamicAction on-click (
+        name: On click
+        execution {
+            sequence: 60
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @launch-livestack
+        }
+
+        action view-livestack-in-livelabs (
+            name: View LiveStack in LiveLabs
+            action: executeJsCode
+            settings {
+                jsCode: window.open($v('P57_LL_LIVESTACK_URL'), '_blank');
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction refresh-after-new-asset (
+        name: Refresh Assets - After New Asset
+        execution {
+            sequence: 30
+        }
+        when {
+            event: apexafterclosedialog
+            selectionType: button
+            button: @add-asset
+        }
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @existing-assets
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction refresh-after-new-item (
+        name: Refresh Entries - After New Entry
+        execution {
+            sequence: 10
+        }
+        when {
+            event: apexafterclosedialog
+            selectionType: button
+            button: @add-livelab
+        }
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @existing-entries
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction refresh-after-new-item_1 (
+        name: Refresh Assets - After Updated Entry
+        execution {
+            sequence: 20
+        }
+        when {
+            event: apexafterclosedialog
+            selectionType: region
+            region: @existing-entries
+        }
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @existing-entries
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction refresh-assets-after-updated-asset (
+        name: Refresh Assets - After Updated Asset
+        execution {
+            sequence: 40
+        }
+        when {
+            event: apexafterclosedialog
+            selectionType: region
+            region: @existing-assets
+        }
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @existing-assets
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    validation status-justification-provided (
+        name: Status justification provided?
+        execution {
+            sequence: 10
+        }
+        validation {
+            type: itemIsNotNull
+            item: P57_STATUS_JUSTIFICATION
+        }
+        error {
+            errorMessage: Please justify the current status. This will be included in the owner's notification email.
+        }
+        serverSideCondition {
+            type: expression
+            plsqlExpression: (:P57_PUBLISH_STATUS is not null) and (:P57_PUBLISH_STATUS != 'Published')
+        }
+    )
+
+    computation p57-status-changed-flg (
+        itemName: P57_STATUS_CHANGED_FLG
+        execution {
+            sequence: 10
+            point: afterSubmit
+        }
+        computation {
+            type: expression
+            language: sql
+            sqlExpression:
+                ```sql
+                DECODE(
+                  :P57_PUBLISH_STATUS,
+                  (SELECT publish_status
+                     FROM wms_livestacks
+                    WHERE id = :P57_ID),
+                  'N',
+                  'Y'
+                )
+                ```
+        }
+    )
+
+    computation p57-wms-livestack-url (
+        itemName: P57_WMS_LIVESTACK_URL
+        execution {
+            sequence: 10
+            point: afterSubmit
+        }
+        computation {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                return 'https://apex.oraclecorp.com/pls/apex/' ||
+                       apex_page.get_url(
+                           p_page   => 57,
+                           p_items  => 'P57_ID',
+                           p_values => :P57_ID
+                       );
+                ```
+        }
+    )
+
+    process initialize-form-livestack-details (
+        name: Initialize form LiveStack Details
+        type: formInitialization
+        formRegion: @new
+        execution {
+            sequence: 10
+            point: beforeHeader
+        }
+        advanced {
+            executionMappingIdentifier: 1311435507793229437
+        }
+    )
+
+    process process-livestack-details-form (
+        name: Process LiveStack Details Form
+        type: formAutoRowProcessing
+        formRegion: @new
+        execution {
+            sequence: 20
+        }
+        advanced {
+            executionMappingIdentifier: 3357368784676600429
+        }
+    )
+
+    process save-order (
+        name: SAVE_ORDER
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                DECLARE
+                    l_json CLOB := apex_application.g_x01;
+                    l_type VARCHAR2(30) := apex_application.g_x02;
+                BEGIN
+                    IF l_json IS NULL OR TRIM(l_json) IS NULL THEN
+                        apex_json.open_object;
+                        apex_json.write('status', 'no_data');
+                        apex_json.close_object;
+                        RETURN;
+                    END IF;
+                
+                    FOR r IN (
+                        SELECT
+                            id,
+                            position
+                        FROM json_table(
+                            l_json,
+                            '$[*]'
+                            COLUMNS (
+                                id       NUMBER PATH '$.id',
+                                position NUMBER PATH '$.position'
+                            )
+                        )
+                    )
+                    LOOP
+                        IF l_type = 'entries' THEN
+                            UPDATE wms_livestack_entries
+                               SET position = r.position
+                             WHERE id = r.id;
+                
+                        ELSIF l_type = 'assets' THEN
+                            UPDATE wms_livestack_assets
+                               SET position = r.position
+                             WHERE asset_id = r.id;
+                        END IF;
+                    END LOOP;
+                
+                    apex_json.open_object;
+                    apex_json.write('status', 'ok');
+                    apex_json.close_object;
+                END;
+                ```
+        }
+        execution {
+            sequence: 10
+            point: ajaxCallback
+        }
+        advanced {
+            executionMappingIdentifier: 2914440542729216542
+        }
+    )
+
+    process send-email-new-request (
+        name: Send Email - Publishing Requested
+        type: sendEMail
+        emailHeader {
+            from: livelabs-help-db_us@oracle.com
+            to: &P57_LIVESTACK_COUNCIL_EMAILS.
+            cc: livelabs-help-db_us@oracle.com
+        }
+        emailTemplate {
+            emailTemplate: @livestacknewrequest
+            placeholderValues: {"LIVESTACK_NAME":"&P57_NAME.","REQUESTOR":"&P57_CREATED_BY.","WMS_LIVESTACK_URL":"&P57_WMS_LIVESTACK_URL."}
+        }
+        emailDispatchMode {
+            sendImmediately: true
+        }
+        execution {
+            sequence: 70
+        }
+        advanced {
+            executionMappingIdentifier: 4235867867077982550
+        }
+        serverSideCondition {
+            type: expression
+            language: sql
+            sqlExpression: (:P57_STATUS_CHANGED_FLG = 'Y') and (:P57_PUBLISH_STATUS = 'Publish Requested')
+        }
+    )
+
+    process send-email-publish-approved (
+        name: Send Email - Published
+        type: sendEMail
+        emailHeader {
+            from: livelabs-help-db_us@oracle.com
+            to: &P57_CREATED_BY.
+        }
+        emailTemplate {
+            emailTemplate: @livestackapproved
+            placeholderValues: {"LIVESTACK_NAME":"&P57_NAME.","LL_LIVESTACK_URL":"&P57_LL_LIVESTACK_URL."}
+        }
+        emailDispatchMode {
+            sendImmediately: true
+        }
+        execution {
+            sequence: 50
+        }
+        advanced {
+            executionMappingIdentifier: 3885142650328279744
+        }
+        serverSideCondition {
+            type: expression
+            language: sql
+            sqlExpression: (:P57_STATUS_CHANGED_FLG = 'Y') and (:P57_PUBLISH_STATUS = 'Published')
+        }
+    )
+
+    process send-email-publish-request-not-approved (
+        name: Send Email -  Not Published
+        type: sendEMail
+        emailHeader {
+            from: livelabs-help-db_us@oracle.com
+            to: &P57_CREATED_BY.
+        }
+        emailTemplate {
+            emailTemplate: @livestacknotapproved
+            placeholderValues: {"LIVESTACK_NAME":"&P57_NAME.","STATUS_JUSTIFICATION":"&P57_STATUS_JUSTIFICATION.","WMS_LIVESTACK_URL":"&P57_WMS_LIVESTACK_URL."}
+        }
+        emailDispatchMode {
+            sendImmediately: true
+        }
+        execution {
+            sequence: 60
+        }
+        advanced {
+            executionMappingIdentifier: 3885142728816279745
+        }
+        serverSideCondition {
+            type: expression
+            language: sql
+            sqlExpression: (:P57_STATUS_CHANGED_FLG = 'Y') and (:P57_PUBLISH_STATUS in ('Changes Requested', 'Denied'))
+        }
+    )
+
+    process sync-livestack-delete (
+        name: Sync LiveStack - Delete
+        type: executeCode
+        source {
+            plsqlCode: wms_pkg_ords.deleteLiveStack(:P57_ID);
+        }
+        execution {
+            sequence: 10
+        }
+        advanced {
+            executionMappingIdentifier: 4235865881442982530
+        }
+        serverSideCondition {
+            whenButtonPressed: @delete
+            type: expression
+            language: sql
+            sqlExpression: (select publish_status from wms_livestacks where id = :P57_id) = 'Published'
+        }
+    )
+
+    process sync-livestack-update (
+        name: Sync LiveStack - Create
+        type: executeCode
+        source {
+            plsqlCode: wms_pkg_ords.createLiveStack(:P57_ID);
+        }
+        execution {
+            sequence: 30
+        }
+        advanced {
+            executionMappingIdentifier: 4235865725386982529
+        }
+        serverSideCondition {
+            whenButtonPressed: @save
+            type: expression
+            plsqlExpression: :P57_STATUS_CHANGED_FLG = 'Y' and :P57_PUBLISH_STATUS = 'Published'
+        }
+    )
+
+    process sync-livestack-update_1 (
+        name: Sync LiveStack - Update
+        type: executeCode
+        source {
+            plsqlCode: wms_pkg_ords.updateLiveStack(:P57_ID);
+        }
+        execution {
+            sequence: 40
+        }
+        advanced {
+            executionMappingIdentifier: 5160746545830526904
+        }
+        serverSideCondition {
+            whenButtonPressed: @save
+            type: expression
+            plsqlExpression: :P57_STATUS_CHANGED_FLG = 'N' and :P57_PUBLISH_STATUS = 'Published'
+        }
+    )
+
+)
+

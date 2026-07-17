@@ -1,0 +1,142 @@
+page 19 (
+    name: Workshop Email by Status
+    alias: WORKSHOP-EMAIL-BY-STATUS
+    title: Workshop Email by Status
+    appearance {
+        pageTemplate: @standard-custom
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region span-style-font-size-1-8em-font-weight-700-workshop-emails-by-status-span (
+        name: <span style="font-size: 1.8em; font-weight: 700">Workshop Emails by Status</span>
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <table><tr><td width="120px">
+                <img src="#WORKSPACE_IMAGES#ssworkshop_icon_big.png" width="100px">
+                </td><td>
+                <p>To generate an email list, filter by status and save report.</p></td></tr></table>
+                ```
+        }
+        layout {
+            sequence: 20
+            slot: beforeContentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        security {
+            authorizationScheme: @administration-rights
+        }
+    )
+
+    region workshop-emails-by-status-report (
+        name: Workshop Emails by Status Report
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select distinct replace(email,'.com','.com,'),workshop_status from workshop_email_vw
+                
+                ```
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        pagination {
+            type: rowRangesXToY
+        }
+        messages {
+            whenNoDataFound: No data found.
+            whenMoreDataFound: The maximum row count for this report is #MAX_ROW_COUNT# rows.  Please apply a filter to reduce the number of records in your query.
+        }
+        actionsMenu {
+            subscription: false
+        }
+        advanced {
+            savedReportMappingIdentifier: 19444366533267162247
+        }
+
+        column "REPLACE(EMAIL,'.COM','.COM,')" (
+            type: plainText
+            heading {
+                heading: Email Address
+                alignment: center
+            }
+            layout {
+                sequence: 10
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: D
+            }
+        )
+
+        column WORKSHOP_STATUS (
+            type: plainText
+            heading {
+                heading: Workshop Status
+                alignment: center
+            }
+            layout {
+                sequence: 20
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: E
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: Workshop Contributors Report
+        }
+
+        savedReport 126849096 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn "REPLACE(EMAIL,'.COM','.COM,')" (
+                sequence: 1
+            )
+
+            displayColumn WORKSHOP_STATUS (
+                sequence: 2
+            )
+
+        )
+
+    )
+
+)
+

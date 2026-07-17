@@ -1,0 +1,587 @@
+page 310 (
+    name: Edit Workshops
+    title: Edit Workshops
+    appearance {
+        pageTemplate: @standard-custom
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region all-workshops-interactive-report (
+        name: All Workshops Interactive Report
+        type: interactiveGrid
+        source {
+            location: localDatabase
+            tableName: WORKSHOPS
+            includeRowidColumn: true
+            orderByClause: NAME
+        }
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        componentAppearance {
+            showNullValuesAs: -
+        }
+        toolbar {
+            controls: [
+                searchCol
+                searchField
+                actionsMenu
+                resetButton
+                saveButton
+            ]
+        }
+        download {
+            formats: [
+                csv
+                html
+            ]
+        }
+        advanced {
+            savedReportMappingIdentifier: 8836336176468448873
+        }
+
+        savedReport 10335278 (
+            visibility: primary
+            view {
+                default: grid
+            }
+            singleRowView {
+                displayedColumns: true
+            }
+
+            displayColumn (
+                column: @MODERNIZER_RESOURCE
+                layout {
+                    sequence: 19
+                }
+            )
+
+            displayColumn (
+                column: @TECHNICAL_CONTACT_2
+                layout {
+                    sequence: 21
+                }
+            )
+
+            displayColumn (
+                column: @TECHNICAL_CONTACT_1
+                layout {
+                    sequence: 20
+                }
+            )
+
+            displayColumn (
+                column: @WORKSHOP_STATUS
+                layout {
+                    sequence: 22
+                }
+            )
+
+            displayColumn (
+                column: @QA_STATUS
+                layout {
+                    sequence: 23
+                }
+            )
+
+            displayColumn (
+                column: @APEX$LINK
+                layout {
+                    width: 40
+                    sequence: 1
+                }
+            )
+
+            displayColumn (
+                column: @ROWID
+                layout {
+                    sequence: 2
+                }
+            )
+
+            displayColumn (
+                column: @ID
+                layout {
+                    width: 74
+                    sequence: 3
+                }
+            )
+
+            displayColumn (
+                column: @NAME
+                layout {
+                    width: 201
+                    sequence: 3
+                }
+            )
+
+            displayColumn (
+                column: @DESCRIPTION
+                layout {
+                    width: 484
+                    sequence: 6
+                }
+            )
+
+            displayColumn (
+                column: @GITHUB_ADDRESS
+                layout {
+                    show: false
+                    sequence: 6
+                }
+            )
+
+            displayColumn (
+                column: @ACTIVE_FLG
+                layout {
+                    width: 83
+                    sequence: 8
+                }
+            )
+
+            displayColumn (
+                column: @AUTHOR_NAME
+                layout {
+                    show: false
+                    sequence: 15
+                }
+            )
+
+            displayColumn (
+                column: @EMAIL_FROM_ADDRESS
+                layout {
+                    sequence: 4
+                }
+            )
+
+            displayColumn (
+                column: @WORKSHOP_CODE
+                layout {
+                    sequence: 16
+                }
+            )
+
+            sort (
+                column: @ID
+                sort {
+                    nulls: last
+                    sequence: 1
+                }
+            )
+
+        )
+
+        column ACTIVE_FLG (
+            type: textField
+            heading {
+                heading: Workshop Active Flag
+                alignment: end
+            }
+            layout {
+                sequence: 60
+                columnAlignment: end
+            }
+            validation {
+                valueRequired: true
+            }
+            source {
+                databaseColumn: ACTIVE_FLG
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column APEX$LINK (
+            type: link
+            heading {
+                alignment: center
+            }
+            layout {
+                sequence: 0
+                columnAlignment: center
+            }
+            link {
+                target: {
+                    page: 320
+                    items: {
+                        P320_ROWID: \&ROWID.\
+                    }
+                    action: resetPagination
+                }
+                linkText: <span aria-label="Edit"><span class="fa fa-edit" aria-hidden="true" title="Edit"></span></span>
+            }
+            source {
+                type: none
+            }
+        )
+
+        column AUTHOR_NAME (
+            type: textarea
+            heading {
+                heading: Author Name
+            }
+            layout {
+                sequence: 30
+            }
+            validation {
+                maxLength: 350
+            }
+            source {
+                databaseColumn: AUTHOR_NAME
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column DESCRIPTION (
+            type: textarea
+            heading {
+                heading: Description
+            }
+            layout {
+                sequence: 4
+            }
+            validation {
+                maxLength: 4000
+            }
+            source {
+                databaseColumn: DESCRIPTION
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column EMAIL_FROM_ADDRESS (
+            type: textarea
+            heading {
+                heading: Main Contact
+                alternativeLabel: Main Contact
+            }
+            layout {
+                sequence: 40
+            }
+            validation {
+                maxLength: 100
+            }
+            source {
+                databaseColumn: EMAIL_FROM_ADDRESS
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column GITHUB_ADDRESS (
+            type: textarea
+            heading {
+                heading: LiveLabs URL
+            }
+            layout {
+                sequence: 5
+            }
+            validation {
+                maxLength: 4000
+            }
+            source {
+                databaseColumn: GITHUB_ADDRESS
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column ID (
+            type: textField
+            heading {
+                heading: Id
+                alignment: end
+            }
+            layout {
+                sequence: 2
+                columnAlignment: end
+            }
+            validation {
+                valueRequired: true
+            }
+            source {
+                databaseColumn: ID
+                dataType: number
+            }
+        )
+
+        column MODERNIZER_RESOURCE (
+            type: textarea
+            heading {
+                heading: Maintained By
+            }
+            layout {
+                sequence: 60
+            }
+            source {
+                databaseColumn: MODERNIZER_RESOURCE
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column NAME (
+            type: textarea
+            heading {
+                heading: Name
+            }
+            layout {
+                sequence: 3
+            }
+            appearance {
+                width: 65
+            }
+            validation {
+                maxLength: 100
+            }
+            source {
+                databaseColumn: NAME
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column QA_STATUS (
+            type: displayOnly
+            heading {
+                heading: QA Status
+            }
+            layout {
+                sequence: 20
+            }
+            source {
+                databaseColumn: QA_STATUS
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column ROWID (
+            type: hidden
+            heading {
+                heading: ROWID
+            }
+            layout {
+                sequence: 0
+            }
+            source {
+                databaseColumn: ROWID
+                dataType: rowid
+                primaryKey: true
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column TECHNICAL_CONTACT_1 (
+            type: displayOnly
+            heading {
+                heading: Technical Contact 1
+            }
+            layout {
+                sequence: 70
+            }
+            source {
+                databaseColumn: KEY_ORACLE_CONTACT_1
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column TECHNICAL_CONTACT_2 (
+            type: displayOnly
+            heading {
+                heading: Technical Contact 2
+            }
+            layout {
+                sequence: 80
+            }
+            source {
+                databaseColumn: KEY_ORACLE_CONTACT_2
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column WORKSHOP_CODE (
+            type: hidden
+            layout {
+                sequence: 50
+            }
+            source {
+                databaseColumn: WORKSHOP_CODE
+                dataType: varchar2
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+            security {
+                authorizationScheme: @administration-rights
+            }
+        )
+
+        column WORKSHOP_STATUS (
+            type: displayOnly
+            heading {
+                heading: Overall Status
+            }
+            layout {
+                sequence: 10
+            }
+            source {
+                databaseColumn: WORKSHOP_STATUS
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+    )
+
+    region manage-workshops (
+        name: Manage Workshops
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <table><tr><td width="120px">
+                <img src="#WORKSPACE_IMAGES#ssworkshop_icon_big.png" width="100px">
+                </td><td>
+                <p>Click Actions -> Column to select different columns to view.  Click on the pencil icon to edit.</p></td></tr></table>
+                ```
+        }
+        layout {
+            sequence: 10
+            slot: beforeContentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    button create (
+        buttonName: CREATE
+        label: Create Workshop
+        layout {
+            sequence: 10
+            region: @all-workshops-interactive-report
+            slot: close
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 320
+                clearCache: 320
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+)
+

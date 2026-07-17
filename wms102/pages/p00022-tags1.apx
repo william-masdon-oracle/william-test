@@ -1,0 +1,340 @@
+page 22 (
+    name: Tags
+    alias: TAGS1
+    title: Tags
+    appearance {
+        pageTemplate: @standard-custom
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region tag-info (
+        name: Tag info
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                Insert new tags below and they will automatically be pushed to all LiveLabs Environments. <br>
+                Note: This does not push changes between the WMS environments, those changes will need to be manually synced. <br>
+                Note: You cannot use this page to delete or update tags. That is still a manual process. 
+                ```
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region tags (
+        name: Tags
+        type: interactiveGrid
+        source {
+            location: localDatabase
+            tableName: WORKSHOP_CATEGORIES
+        }
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        edit {
+            enabled: true
+            allowedOperations: [
+                add
+                update
+                delete
+            ]
+        }
+        editAuthorization {
+            update: @administration-rights
+            delete: @administration-rights
+        }
+        toolbar {
+            controls: [
+                searchCol
+                searchField
+                actionsMenu
+                resetButton
+                saveButton
+            ]
+        }
+        download {
+            formats: [
+                csv
+                html
+                pdf
+                excel
+            ]
+        }
+        advanced {
+            savedReportMappingIdentifier: 19918933664779953439
+        }
+
+        savedReport 199189341 (
+            visibility: primary
+            view {
+                default: grid
+            }
+            singleRowView {
+                displayedColumns: true
+            }
+
+            displayColumn (
+                column: @APEX$ROW_ACTION
+                layout {
+                    show: false
+                    frozen: true
+                    width: 55
+                    sequence: 1
+                }
+            )
+
+            displayColumn (
+                column: @CATEGORY_ID
+                layout {
+                    width: 70
+                    sequence: 2
+                }
+            )
+
+            displayColumn (
+                column: @CATEGORY
+                layout {
+                    sequence: 4
+                }
+            )
+
+            displayColumn (
+                column: @SUBCATEGORY
+                layout {
+                    sequence: 5
+                }
+            )
+
+            displayColumn (
+                column: @ITEM
+                layout {
+                    sequence: 6
+                }
+            )
+
+            displayColumn (
+                column: @LL_TAG_ID
+                layout {
+                    show: false
+                    width: 80
+                    sequence: 3
+                }
+            )
+
+            displayColumn (
+                column: @FISCAL_YEAR
+                layout {
+                    show: false
+                    sequence: 7
+                }
+            )
+
+        )
+
+        column APEX$ROW_ACTION (
+            type: actionsMenu
+            layout {
+                sequence: 20
+            }
+        )
+
+        column APEX$ROW_SELECTOR (
+            type: rowSelector
+            layout {
+                sequence: 10
+            }
+        )
+
+        column CATEGORY (
+            type: textField
+            heading {
+                heading: Level 1
+            }
+            layout {
+                sequence: 40
+            }
+            validation {
+                maxLength: 80
+            }
+            source {
+                databaseColumn: CATEGORY
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column CATEGORY_ID (
+            type: displayOnly
+            heading {
+                heading: Tag ID
+                alignment: end
+            }
+            layout {
+                sequence: 30
+            }
+            source {
+                databaseColumn: CATEGORY_ID
+                dataType: number
+                primaryKey: true
+            }
+            columnFilter {
+                lovType: none
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column FISCAL_YEAR (
+            type: textField
+            heading {
+                heading: Fiscal Year
+            }
+            layout {
+                sequence: 80
+            }
+            validation {
+                maxLength: 10
+            }
+            source {
+                databaseColumn: FISCAL_YEAR
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column ITEM (
+            type: textField
+            heading {
+                heading: Level 3
+            }
+            layout {
+                sequence: 60
+            }
+            validation {
+                maxLength: 80
+            }
+            source {
+                databaseColumn: ITEM
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column LL_TAG_ID (
+            type: numberField
+            heading {
+                heading: Ll Tag Id
+                alignment: end
+            }
+            settings {
+                numberAlignment: end
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 70
+                columnAlignment: end
+            }
+            source {
+                databaseColumn: LL_TAG_ID
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column SUBCATEGORY (
+            type: textField
+            heading {
+                heading: Level 2
+            }
+            layout {
+                sequence: 50
+            }
+            validation {
+                maxLength: 80
+            }
+            source {
+                databaseColumn: SUBCATEGORY
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: Tags
+        }
+    )
+
+    process tags-save-interactive-grid-data (
+        name: Tags - Save Interactive Grid Data
+        type: interactiveGridAutoRowProcessing
+        editableRegion: @tags
+        execution {
+            sequence: 10
+        }
+        advanced {
+            executionMappingIdentifier: 19918941937350953452
+        }
+    )
+
+)
+

@@ -1,0 +1,554 @@
+page 10043 (
+    name: Manage Feedback
+    title: Manage Feedback
+    pageGroup: @administration
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @modal-dialog
+        templateOptions: [
+            #DEFAULT#
+            ui-dialog--stretch
+            t-Dialog--noPadding
+        ]
+    }
+    dialog {
+        resizable: false
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    css {
+        inline:
+            ```css
+            /* Color feedback rating icons */
+            .feedback-positive { color: #4caf50; }
+            .feedback-neutral { color: #eb9f41; }
+            .feedback-negative { color: #f44336; }
+            ```
+    }
+    security {
+        authorizationScheme: @administration-rights
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+    help {
+        helpText:
+            ```html
+            <p>Feedback can be entered by end users from any normal page within the application.</p>
+            <p>This report shows the feedback entered, any response enter by administrators, and the status of the feedback.</p>
+            <p>Click the edit icon (yellow pencil) to enter a response or update the feedback status.</p>
+            <p><em><strong>Note:</strong> If feedback recipients have been defined then feedback submissions will also be emailed to the email addresses in the feedback recipients list.</em></p>
+            ```
+    }
+    config {
+        buildOption: @feature-feedback
+    }
+
+    region manage-feedback (
+        name: Manage Feedback
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select feedback_id id,
+                    page_id||'. '||page_name page_name,
+                    created_on created,
+                    lower(created_by) created_by,
+                    feedback,
+                    feedback_rating rating,
+                    case feedback_rating
+                      when 1 then 'fa-frown-o feedback-negative' 
+                      when 2 then 'fa-emoji-neutral feedback-neutral'  
+                      when 3 then 'fa-smile-o feedback-positive'
+                    end rating_icon,
+                    feedback_status status,
+                    public_response response,
+                    http_user_agent user_agent,
+                    updated_on updated,
+                    lower(updated_by) updated_by,
+                    page_id
+                    , (select '<a href="'||apex_util.get_blob_file_src('P10043_ATTACHMENT',id)||'">'|| filename ||'</a>'
+                       from apex$team_dev_files
+                      where component_id = f.feedback_id
+                        and component_type = 'FEEDBACK') download_attachment
+                from apex_team_feedback f
+                where application_id = :APP_ID
+                ```
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: [
+                #DEFAULT#
+                t-IRR-region--noBorders
+            ]
+        }
+        link {
+            linkColumn: customTarget
+            target: {
+                page: 10044
+                items: {
+                    P10044_ID: #ID#
+                }
+            }
+            linkIcon: <img src="#IMAGE_PREFIX#app_ui/img/icons/apex-edit-pencil.png" class="apex-edit-pencil" alt="">
+        }
+        componentAppearance {
+            showNullValuesAs: -
+        }
+        pagination {
+            type: rowRangesXToY
+        }
+        performance {
+            maxRowsToProcess: 1000000
+        }
+        messages {
+            whenNoDataFound: No data found.
+            whenMoreDataFound: The maximum row count for this report is #MAX_ROW_COUNT# rows.  Please apply a filter to reduce the number of records in your query.
+        }
+        actionsMenu {
+            subscription: false
+        }
+        advanced {
+            savedReportMappingIdentifier: 8199030376930429141
+        }
+
+        column CREATED (
+            type: plainText
+            heading {
+                heading: Created
+                alignment: center
+            }
+            layout {
+                sequence: 30
+                columnAlignment: center
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: Q
+            }
+        )
+
+        column CREATED_BY (
+            type: plainText
+            heading {
+                heading: Created By
+                alignment: center
+            }
+            layout {
+                sequence: 40
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: R
+            }
+        )
+
+        column DOWNLOAD_ATTACHMENT (
+            type: plainText
+            heading {
+                heading: Download Attachment
+                alignment: center
+            }
+            layout {
+                sequence: 140
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AB
+            }
+        )
+
+        column FEEDBACK (
+            type: plainText
+            heading {
+                heading: Feedback
+                alignment: center
+            }
+            layout {
+                sequence: 50
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: S
+            }
+        )
+
+        column ID (
+            type: plainText
+            heading {
+                heading: Id
+                alignment: center
+            }
+            layout {
+                sequence: 10
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: O
+            }
+        )
+
+        column PAGE_ID (
+            type: plainText
+            heading {
+                heading: Page Id
+                alignment: center
+            }
+            layout {
+                sequence: 130
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: AA
+            }
+        )
+
+        column PAGE_NAME (
+            type: plainText
+            heading {
+                heading: Page Name
+                alignment: center
+            }
+            layout {
+                sequence: 20
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: P
+            }
+        )
+
+        column RATING (
+            type: plainText
+            heading {
+                heading: Rating
+                alignment: center
+            }
+            layout {
+                sequence: 60
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: T
+            }
+        )
+
+        column RATING_ICON (
+            type: plainText
+            heading {
+                heading: Rating Icon
+                alignment: center
+            }
+            layout {
+                sequence: 70
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: U
+            }
+        )
+
+        column RESPONSE (
+            type: plainText
+            heading {
+                heading: Response
+                alignment: center
+            }
+            layout {
+                sequence: 90
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: W
+            }
+        )
+
+        column STATUS (
+            type: plainText
+            heading {
+                heading: Status
+                alignment: center
+            }
+            layout {
+                sequence: 80
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: V
+            }
+        )
+
+        column UPDATED (
+            type: plainText
+            heading {
+                heading: Updated
+                alignment: center
+            }
+            layout {
+                sequence: 110
+                columnAlignment: center
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: Y
+            }
+        )
+
+        column UPDATED_BY (
+            type: plainText
+            heading {
+                heading: Updated By
+                alignment: center
+            }
+            layout {
+                sequence: 120
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: Z
+            }
+        )
+
+        column USER_AGENT (
+            type: plainText
+            heading {
+                heading: User Agent
+                alignment: center
+            }
+            layout {
+                sequence: 100
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: X
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+
+        savedReport 81990364 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn CREATED (
+                sequence: 3
+            )
+
+            displayColumn CREATED_BY (
+                sequence: 4
+            )
+
+            displayColumn DOWNLOAD_ATTACHMENT (
+                sequence: 14
+            )
+
+            displayColumn FEEDBACK (
+                sequence: 5
+            )
+
+            displayColumn ID (
+                sequence: 1
+            )
+
+            displayColumn PAGE_ID (
+                sequence: 13
+            )
+
+            displayColumn PAGE_NAME (
+                sequence: 2
+            )
+
+            displayColumn RATING (
+                sequence: 6
+            )
+
+            displayColumn RATING_ICON (
+                sequence: 7
+            )
+
+            displayColumn RESPONSE (
+                sequence: 9
+            )
+
+            displayColumn STATUS (
+                sequence: 8
+            )
+
+            displayColumn UPDATED (
+                sequence: 11
+            )
+
+            displayColumn UPDATED_BY (
+                sequence: 12
+            )
+
+            displayColumn USER_AGENT (
+                sequence: 10
+            )
+
+            sort (
+                column: UPDATED
+                sort {
+                    direction: desc
+                    sequence: 1
+                }
+            )
+
+        )
+
+    )
+
+    pageItem P10043_ATTACHMENT (
+        type: fileUpload
+        label {
+            alignment: left
+        }
+        display {
+            contentDisposition: inline
+        }
+        storage {
+            mimeTypeColumn: FILE_MIMETYPE
+            filenameColumn: FILENAME
+            charSetColumn: FILE_CHARSET
+            bobLastUpdatedColumn: UPDATED
+        }
+        layout {
+            sequence: 10
+            region: @manage-feedback
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @hidden
+            templateOptions: #DEFAULT#
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: FILE_BLOB
+            used: always
+        }
+        default {
+            type: static
+            staticValue: REPORT
+        }
+        sessionState {
+            storage: request
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    button reset-report (
+        buttonName: RESET_REPORT
+        label: Reset
+        layout {
+            sequence: 20
+            region: @manage-feedback
+            slot: rightOfInteractiveReportSearchBar
+        }
+        appearance {
+            buttonTemplate: @text-with-icon
+            templateOptions: t-Button--iconLeft
+            icon: fa-undo-alt
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: &APP_PAGE_ID.
+                clearCache: [
+                    &APP_PAGE_ID.
+                    RIR
+                ]
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    dynamicAction refresh-on-dialog-close (
+        name: Refresh on Dialog Close
+        execution {
+            sequence: 10
+        }
+        when {
+            event: apexafterclosedialog
+            selectionType: region
+            region: @manage-feedback
+        }
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @manage-feedback
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    process get-file-id (
+        name: Get File ID
+        type: autoRowFetch
+        source {
+            tableName: APEX$TEAM_DEV_FILES
+            pkColumn: ID
+            pkItem: P10043_ID
+        }
+        execution {
+            sequence: 10
+            point: beforeHeader
+        }
+        advanced {
+            executionMappingIdentifier: 62750656802774370033
+        }
+    )
+
+)
+

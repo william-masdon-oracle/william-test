@@ -1,0 +1,148 @@
+theme universal-theme (
+    name: Universal Theme
+    themeNumber: 42
+    version: 1.4
+    style {
+        currentThemeStyle: @redwood-light-v
+    }
+    javaScript {
+        fileUrls: [
+            #IMAGE_PREFIX#libraries/apex/#MIN_DIRECTORY#widget.stickyWidget#MIN#.js?v=#APEX_VERSION#
+            #THEME_IMAGES#js/theme42#MIN#.js?v=#APEX_VERSION#
+        ]
+    }
+    css {
+        fileUrls: #THEME_IMAGES#css/Core#MIN#.css?v=#APEX_VERSION#
+    }
+    componentDefaults {
+        page: @standard-custom
+        navigationBarList: @navigation-bar
+        navigationMenuListPosition: side
+        navigationMenuListTop: @top-navigation-menu
+        navigationMenuListSide: @side-navigation-menu
+        loginPage: @login
+        errorPage: @login
+        printerFriendlyPage: @standard
+        breadcrumb: @breadcrumb
+        button: @text
+        defaultLabel: @optional-floating
+        optionalLabel: @optional-floating
+        requiredLabel: @required-floating
+        list: @links-list
+        region: @standard
+        classicReport: @standard
+        footerToolbar: @standard
+    }
+    regionDefaults {
+        breadcrumbs: @title-bar
+        charts: @standard
+        forms: @standard
+        lists: @standard
+        reports: @standard
+        wizards: @standard
+        interactiveReports: @interactive-report
+    }
+    dialogDefaults {
+        dialogContentRegion: @blank-with-attributes
+        dialogButtonRegion: @buttons-container
+        dialogPage: @modal-dialog
+    }
+    icons {
+        library: fontApex
+    }
+    advanced {
+        filePrefix: #IMAGE_PREFIX#themes/theme_42/1.4/
+        identifier: UNIVERSAL_THEME
+    }
+    subscription {
+        master: @/8842/universal-theme
+    }
+
+    style redwood-light-v (
+        name: Redwood Light v0
+        themeRollerAttributes {
+            inputParameterFileUrls: #THEME_IMAGES#less/theme/Vita-Slate.less
+            outputCssFileUrl: #THEME_DB_IMAGES#8206296498747474539.css
+            jsonConfig: {"customCSS":"/* Start Overrides */\nbody,\ninput,\nbutton,\ntextarea,\nselect {\n  font-family: \"Oracle Sans\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Oxygen, Ubuntu, Cantarell, \"Fira Sans\", \"Droid Sans\", \"Helvetica Neue\", sans-serif;\n}\n\n/* Oracle Logo */\n.t-Header-logo {\n  font-size: 16px;\n  font-weight: 700;\n}\n\n.t-Header-logo-link {\n  position: relative;\n  display: inline-flex;\n  align-items: center;\n}\n\n.t-Header-logo-link:before {\n  content: '';\n  background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzYiIGhlaWdodD0iMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZmlsbD0iI0M3NDYzNCIgZD0iTTI0LjYyOCAwQzMwLjkyMyAwIDM2IDUuMzc0IDM2IDEyLjAwMyAzNiAxOC42MzIgMzAuOTIzIDI0IDI0LjYyOCAyNGwtMTMuMjQtLjAwNkM1LjA5OSAyMy45OTQgMCAxOC42MzIgMCAxMi4wMDNTNS4wOTkgMCAxMS4zODkgMGgxMy4yMzl6bS0uMzAyIDQuMDI1SDExLjY4MmMtNC4wNyAwLTcuMzY5IDMuNTc0LTcuMzY5IDcuOTk3IDAgNC40MTggMy4zIDguMDAzIDcuMzcgOC4wMDNoMTIuNjQzYzQuMDgyIDAgNy4zNzctMy41ODUgNy4zNzctOC4wMDMgMC00LjQyMy0zLjI5NS03Ljk5Ny03LjM3Ny03Ljk5N3oiLz48L3N2Zz4=);\n  background-repeat: no-repeat;\n  background-position: center center;\n  width: 36px;\n  height: 24px;\n  display: block;\n  margin-left: 4px;\n  margin-right: 12px;\n  position: relative;\n  z-index: -1;\n}\n\n/* Left Nav */\n.t-TreeNav--styleA .a-TreeView-node--topLevel > .a-TreeView-content .a-TreeView-label,\n.t-TreeNav--styleB .a-TreeView-node--topLevel > .a-TreeView-content .a-TreeView-label {\n  font-weight: 500;\n}\n\n.t-TreeNav--styleA .a-TreeView-node--topLevel > .a-TreeView-content.is-current .a-TreeView-label,\n.t-TreeNav--styleB .a-TreeView-node--topLevel > .a-TreeView-content.is-current .a-TreeView-label,\n.t-TreeNav--styleA .a-TreeView-node--topLevel > .a-TreeView-content.is-current--top .a-TreeView-label,\n.t-TreeNav--styleB .a-TreeView-node--topLevel > .a-TreeView-content.is-current--top .a-TreeView-label {\n  font-weight: 700;\n}\n\n/* Comments */\n.t-Comments-userIcon,\n.t-Comments-userImg {\n  border-radius: 4px;\n}\n\n.t-Comments--chat .t-Comments-comment {\n  background-color: #ECE9E6;\n}\n\n.t-Comments--chat .t-Comments-comment:after {\n  border-right-color: #ECE9E6;\n}\n\n/* Menu */\n.a-Menu-content {\n  border: none;\n  box-shadow: 0 12px 24px -12px rgba(0, 0, 0, 0.3);\n  background-color: #FFF;\n  border-radius: 4px;\n  padding: 8px 0;\n  min-width: 200px;\n}\n\n.a-Menu-content .a-Menu-statusCol,\n.a-Menu .a-Menu-item .a-Menu-statusCol {\n  padding: 10px 16px;\n  width: auto;\n}\n\n.a-Menu .a-Menu-item {\n  line-height: 36px;\n  color: #1A1816;\n}\n\n.a-Menu .a-Menu-item > .a-Menu-inner .a-Menu-statusCol {\n  color: inherit !important;\n}\n\n.a-Menu-accel,\n.a-Menu .a-Menu-item.is-expanded > .a-Menu-inner .a-Menu-accel,\n.a-Menu .a-Menu-item.is-expanded > .a-Menu-inner .a-Menu-statusCol,\n.a-Menu .a-Menu-item.is-focused > .a-Menu-inner .a-Menu-accel,\n.a-Menu .a-Menu-item.is-focused > .a-Menu-inner .a-Menu-statusCol {\n  color: rgba(16, 15, 14, 0.60);\n}\n\n.a-Menu .a-Menu-item .a-Menu-subMenuCol {\n  height: 32px;\n  padding: 8px 4px 8px 0;\n}\n\n.a-Menu-itemSep .a-Menu-hSeparator {\n  border-color: rgba(0, 0, 0, 0.1);\n  margin-top: 8px;\n  padding-top: 4px;\n  padding-bottom: 4px;\n}\n\n#group_settings_menu .a-Menu-itemSep .a-Menu-hSeparator {\n  border-color: rgba(0, 0, 0, 0.05);\n}\n\n.a-Menu .a-Menu-item.is-expanded,\n.a-Menu .a-Menu-item.is-focused {\n  background-color: #F1F0EB;\n  background: rgba(49, 45, 42, 0.05);\n  color: inherit;\n}\n\nhtml .a-Menu-item.is-focused {\n  outline: none !important;\n}\n\n/* Page Title & Breadcrumbs */\n.t-HeroRegion-title,\n.t-BreadcrumbRegion-titleText,\n.t-BreadcrumbRegion--useBreadcrumbTitle .t-Breadcrumb-item.is-active .t-Breadcrumb-label {\n  font-weight: 700;\n}\n\n/* Dialogs */\nbody .ui-dialog {\n  box-shadow: 0 24px 48px -24px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(0, 0, 0, .1);\n  border: 0 !important;\n  border-radius: 6px;\n  overflow: hidden;\n  background-color: #FCFBFA;\n}\n\nbody .ui-dialog .ui-dialog-buttonpane {\n  background-color: #FCFBFA;\n  border-top-color: rgba(0, 0, 0, .1);\n}\n\nbody .t-Dialog-header {\n  box-shadow: 0 8px 16px -8px rgba(0, 0, 0, 0.1);\n}\n\nbody .ui-dialog .ui-dialog-titlebar-close {\n  width: 34px;\n  height: 34px;\n  border-radius: 4px;\n  color: #100F0E;\n  background-color: transparent;\n  z-index: 1;\n}\n\nbody .ui-dialog .ui-dialog-titlebar-close:hover {\n  background-color: rgba(49, 45, 42, 0.05)\n}\n\nbody .ui-dialog .ui-dialog-titlebar-close:active {\n  background-color: rgba(49, 45, 42, 0.08)\n}\n\nbody .ui-dialog .ui-dialog-titlebar-close:focus {\n  box-shadow: none;\n}\n\nbody .ui-dialog .ui-dialog-titlebar-close .ui-icon-closethick {\n  margin-top: -12px;\n  margin-left: -12px;\n}\n\nbody .ui-dialog .ui-dialog-titlebar-close .ui-icon-closethick,\nbody .ui-dialog .ui-dialog-titlebar-close .ui-icon-closethick:before {\n  font-size: 20px;\n  width: 24px;\n  height: 24px;\n  line-height: 24px;\n  text-align: center;\n}\n\n\nbody .ui-dialog .ui-dialog-titlebar {\n  padding: 16px;\n  background: none;\n  border: 0;\n}\n\nbody .ui-dialog .ui-dialog-title {\n  font-weight: 700;\n  font-size: 18px;\n  line-height: 26px;\n}\n\nbody .t-Dialog-body {\n  padding: 16px 20px;\n}\n\nbody .t-Dialog-footer .t-ButtonRegion {\n  border: 0;\n}\n\nbody .t-DialogRegion .t-ButtonRegion-col--content,\nbody .t-DialogRegion .t-ButtonRegion-col--left .t-ButtonRegion-buttons,\nbody .t-DialogRegion .t-ButtonRegion-col--right .t-ButtonRegion-buttons {\n  padding: 12px 16px;\n}\n\n/* Tabs */\n.t-Tabs-item.is-active,\n.apex-rds .apex-rds-selected {\n  font-weight: 700;\n}\n\n/* Navigation Tabs */\n.t-NavTabs-item.is-active {\n  font-weight: 700;\n}\n\n.t-NavTabs-item {\n  border-width: 0;\n}\n\n.t-NavTabs {\n  background-color: #312D2A;\n}\n\n/* IRR Select */\n.a-IRR-selectList {\n  background-color: #D9D4D0;\n  border-color: #beb9b6;\n  border-radius: 4px;\n  color: #100f0e\n}","vars":{"@g_Accent-OG":"#fcfbfa","@g_Link-Base":"#ae552c","@g_Focus":"#759c6c","@g_Accent-BG":"#759c6c","@g_Body-Text":"#100f0e","@l_Left-Col-Text":"#403c38","@g_Container-BorderRadius":"6px","@g_Button-BorderRadius":"4px","@g_Nav_Style":"dark","@g_Nav-BG":"#211e1c","@g_Nav-FG":"#fcfbfa","@g_Nav-Active-FG":"#fcfbfa","@g_Nav-Accent-FG":"#fcfbfa","@g_Nav-Badge-FG":"#fcfbfa","@g_NavBarMenu-Active-FG":"#fcfbfa","@g_Nav-Active-BG":"#43593e","@g_Nav-Accent-BG":"#759c6c","@g_NavBarMenu-Active-BG":"#56504b","@g_NavBarMenu-FG":"#100f0e","@g_Actions-Col-Text":"#100f0e","@g_Body-Title-FG":"#100f0e","@l_Left-Col-BG":"#fcfbfa","@g_Header-FG":"#fcfbfa","@g_Region-Header-FG":"#100f0e","@g_Region-FG":"#100f0e","@g_Form-Item-FG":"#100f0e","@g_Form-Item-BG":"#ffffff","@l_Button-Hot-BG":"#759c6c","@l_Button-Hot-Text":"#fcfbfa","@g_Button-Text":"#100f0e","@g_Button-BG":"#d9d4d0","@l_Button-Danger-BG":"#c74534","@l_Button-Primary-Text":"#fcfbfa","@l_Button-Danger-Text":"#fcfbfa","@l_Button-Success-Text":"#fcfbfa","@l_Button-Success-BG":"#759c6c","@l_Button-Simple-Text":"#100f0e","@l_Button-Simple-BG":"#fcfbfa","@l_Button-Warning-Text":"#100f0e","@l_Button-Warning-BG":"#e6ab58","@g_Region-Header-BG":"#f7f5f3","@g_Form-Label":"#403c38","@Head-Height":"56px","@Nav-Exp":"280px","@g_Color-Palette-1":"#477d8a","@g_Color-Palette-2":"#478c89","@g_Color-Palette-3":"#94afaf","@g_Color-Palette-4":"#759c6c","@g_Color-Palette-5":"#539b72","@g_Color-Palette-6":"#beb397","@g_Color-Palette-7":"#facc62","@g_Color-Palette-8":"#e6ab58","@g_Color-Palette-9":"#e3523c","@g_Color-Palette-10":"#bc6a7f","@g_Color-Palette-11":"#8d6a9b","@g_Color-Palette-12":"#5f4669","@g_Color-Palette-13":"#2c5967","@g_Color-Palette-14":"#697b7b","@g_Color-Palette-15":"#2e686c","@g_Success-BG":"#759c6c","@g_Danger-BG":"#c74534","@g_Info-BG":"#477d8a","@g_Header-BG":"#403c38","@g_Form-BorderRadius":"4px","@g_Color-Palette-8-FG":"#100f0e","@g_Color-Palette-7-FG":"#100f0e","@g_Color-Palette-6-FG":"#100f0e","@g_Color-Palette-1-FG":"#fcfbfa","@g_Color-Palette-2-FG":"#fcfbfa","@g_Color-Palette-3-FG":"#fcfbfa","@g_Color-Palette-4-FG":"#fcfbfa","@g_Color-Palette-5-FG":"#fcfbfa","@g_Color-Palette-9-FG":"#fcfbfa","@g_Color-Palette-10-FG":"#fcfbfa","@g_Color-Palette-11-FG":"#fcfbfa","@g_Color-Palette-12-FG":"#fcfbfa","@g_Color-Palette-13-FG":"#fcfbfa","@g_Color-Palette-14-FG":"#fcfbfa","@g_Color-Palette-15-FG":"#fcfbfa"}}
+        }
+        advanced {
+            endUserCanPick: true
+        }
+    )
+
+    style vista (
+        name: Vista
+        css {
+            fileUrls: #THEME_IMAGES#css/Vista#MIN#.css?v=#APEX_VERSION#
+        }
+        themeRollerAttributes {
+            readOnly: true
+        }
+        advanced {
+            endUserCanPick: true
+        }
+    )
+
+    style vita (
+        name: Vita
+        themeRollerAttributes {
+            readOnly: true
+            inputParameterFileUrls: #THEME_IMAGES#less/theme/Vita.less
+            outputCssFileUrl: #THEME_IMAGES#css/Vita#MIN#.css?v=#APEX_VERSION#
+        }
+        advanced {
+            endUserCanPick: true
+            accessibilityTested: true
+        }
+        subscription {
+            master: @vita
+        }
+    )
+
+    style vita-dark (
+        name: Vita - Dark
+        themeRollerAttributes {
+            readOnly: true
+            inputParameterFileUrls: #THEME_IMAGES#less/theme/Vita-Dark.less
+            outputCssFileUrl: #THEME_IMAGES#css/Vita-Dark#MIN#.css?v=#APEX_VERSION#
+        }
+        advanced {
+            endUserCanPick: true
+        }
+        subscription {
+            master: @vita-dark
+        }
+    )
+
+    style vita-red (
+        name: Vita - Red
+        themeRollerAttributes {
+            readOnly: true
+            inputParameterFileUrls: #THEME_IMAGES#less/theme/Vita-Red.less
+            outputCssFileUrl: #THEME_IMAGES#css/Vita-Red#MIN#.css?v=#APEX_VERSION#
+        }
+        advanced {
+            endUserCanPick: true
+        }
+        subscription {
+            master: @vita-red
+        }
+    )
+
+    style vita-slate (
+        name: Vita - Slate
+        themeRollerAttributes {
+            readOnly: true
+            inputParameterFileUrls: #THEME_IMAGES#less/theme/Vita-Slate.less
+            outputCssFileUrl: #THEME_IMAGES#css/Vita-Slate#MIN#.css?v=#APEX_VERSION#
+        }
+        advanced {
+            endUserCanPick: true
+        }
+        subscription {
+            master: @vita-slate
+        }
+    )
+
+)
+

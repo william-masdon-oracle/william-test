@@ -1,0 +1,7 @@
+restDataSourceServer objectstorage-us-ashburn-1-oraclecloud-com-n-c4u02 (
+    name: objectstorage-us-ashburn-1-oraclecloud-com-n-c4u02
+    endpointUrl {
+        url: https://objectstorage.us-ashburn-1.oraclecloud.com/n/c4u02/
+    }
+)
+

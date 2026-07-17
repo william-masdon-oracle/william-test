@@ -1,0 +1,1222 @@
+page 60 (
+    name: Request a Sandbox
+    alias: REQUEST-A-SANDBOX
+    title: Request a Sandbox
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @modal-dialog
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+        warnOnUnsavedChanges: false
+    }
+    css {
+        inline:
+            ```css
+            /* Column holding the button */
+            .button-column-1 {
+              display: flex;
+              align-items: center;   /* vertical center */
+              align-self: stretch !important;
+              height: 100%;          /* ensure it fills row */
+            }
+            ```
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region buttons (
+        name: Buttons
+        type: staticContent
+        layout {
+            sequence: 20
+            slot: dialogFooter
+        }
+        appearance {
+            template: @buttons-container
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    region general-information (
+        name: General Information
+        type: staticContent
+        layout {
+            sequence: 20
+            parentRegion: @request-a-sandbox
+            slot: regionBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    region livestack (
+        name: LiveStack
+        type: staticContent
+        layout {
+            sequence: 60
+            parentRegion: @request-a-sandbox
+            slot: regionBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--scrollBody
+            ]
+        }
+        serverSideCondition {
+            type: item=value
+            item: P60_TYPE
+            value: LiveStack
+        }
+    )
+
+    region request-a-sandbox (
+        name: Request a Sandbox
+        type: form
+        source {
+            location: localDatabase
+            tableName: WMS_SANDBOX_REQUESTS
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+        edit {
+            enabled: true
+            allowedOperations: [
+                add
+                update
+                delete
+            ]
+        }
+    )
+
+    region sandbox-forrm (
+        name: Sandbox Form
+        title: Sandbox Request Form
+        type: staticContent
+        layout {
+            sequence: 30
+            parentRegion: @traditional
+            slot: regionBody
+        }
+        appearance {
+            template: @collapsible
+            templateOptions: [
+                #DEFAULT#
+                is-collapsed
+                t-Region--noUI
+                t-Region--scrollBody
+                margin-top-md
+            ]
+        }
+    )
+
+    region strong-livelabs-sandbox-span-style-color-green-em-lite-em-span-strong (
+        name: Lite
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                For the options below, specify if you would like the USER of your workshop to be able to spin up one of the noted resources. This DOES NOT CREATE any resources on the users behalf. This merely allows the user to create it themselves (with the exception of the VCN option, that option -- if checked -- will automatically provision a VCN for the user).
+                <br>
+                ```
+        }
+        layout {
+            sequence: 50
+            parentRegion: @request-a-sandbox
+            slot: regionBody
+            startNewRow: false
+            newColumn: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--scrollBody
+            ]
+            renderComponents: belowContent
+        }
+        serverSideCondition {
+            type: item=value
+            item: P60_TYPE
+            value: Lite
+        }
+    )
+
+    region traditional (
+        name: Traditional
+        type: staticContent
+        layout {
+            sequence: 40
+            parentRegion: @request-a-sandbox
+            slot: regionBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--scrollBody
+                margin-top-sm
+            ]
+        }
+        headerAndFooter {
+            headerText:
+                ```html
+                <b> Traditional Sandbox Instructions </b></br></br>
+                
+                1. Copy the text in the Sandbox Request Form region below.
+                2. Click the 'Create JIRA Ticket' button.</br>
+                3. Change the description field view to 'Text'.</br>
+                4. Paste the copied text into the description field and change the view back to 'Visual'.</br>
+                4. Fill out the form and submit it.
+                ```
+        }
+        serverSideCondition {
+            type: item=value
+            item: P60_TYPE
+            value: Traditional
+        }
+    )
+
+    pageItem P60_ADW (
+        type: checkbox
+        label {
+            label: <strong>ADW</strong>
+            alignment: left
+        }
+        layout {
+            sequence: 40
+            region: @strong-livelabs-sandbox-span-style-color-green-em-lite-em-span-strong
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: [
+                #DEFAULT#
+                margin-top-md
+            ]
+        }
+        sessionState {
+            storage: request
+        }
+    )
+
+    pageItem P60_ADW_OCPU (
+        type: selectList
+        label {
+            label: ECPU
+            alignment: left
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC:1;1,2;2,3;3,4;4
+        }
+        layout {
+            sequence: 50
+            region: @strong-livelabs-sandbox-span-style-color-green-em-lite-em-span-strong
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: [
+                #DEFAULT#
+                margin-top-md
+            ]
+            height: 1
+        }
+        sessionState {
+            storage: request
+        }
+    )
+
+    pageItem P60_ADW_TB (
+        type: selectList
+        label {
+            label: Storage (TB)
+            alignment: left
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC:1;1,2;2,3;3,4;4
+        }
+        layout {
+            sequence: 60
+            region: @strong-livelabs-sandbox-span-style-color-green-em-lite-em-span-strong
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: [
+                #DEFAULT#
+                margin-top-md
+            ]
+            height: 1
+        }
+        sessionState {
+            storage: request
+        }
+    )
+
+    pageItem P60_AJD (
+        type: checkbox
+        label {
+            label: <strong>AJD</strong>
+            alignment: left
+        }
+        layout {
+            sequence: 100
+            region: @strong-livelabs-sandbox-span-style-color-green-em-lite-em-span-strong
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        sessionState {
+            storage: request
+        }
+    )
+
+    pageItem P60_AJD_OCPU (
+        type: selectList
+        label {
+            label: ECPU
+            alignment: left
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC:1;1,2;2,3;3,4;4
+        }
+        layout {
+            sequence: 110
+            region: @strong-livelabs-sandbox-span-style-color-green-em-lite-em-span-strong
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        sessionState {
+            storage: request
+        }
+    )
+
+    pageItem P60_AJD_TB (
+        type: selectList
+        label {
+            label: Storage (TB)
+            alignment: left
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC:1;1,2;2,3;3,4;4
+        }
+        layout {
+            sequence: 120
+            region: @strong-livelabs-sandbox-span-style-color-green-em-lite-em-span-strong
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        sessionState {
+            storage: request
+        }
+    )
+
+    pageItem P60_ATP (
+        type: checkbox
+        label {
+            label: <strong>ATP</strong>
+            alignment: left
+        }
+        layout {
+            sequence: 70
+            region: @strong-livelabs-sandbox-span-style-color-green-em-lite-em-span-strong
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        sessionState {
+            storage: request
+        }
+    )
+
+    pageItem P60_ATP_OCPU (
+        type: selectList
+        label {
+            label: ECPU
+            alignment: left
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC:1;1,2;2,3;3,4;4
+        }
+        layout {
+            sequence: 80
+            region: @strong-livelabs-sandbox-span-style-color-green-em-lite-em-span-strong
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        sessionState {
+            storage: request
+        }
+    )
+
+    pageItem P60_ATP_TB (
+        type: selectList
+        label {
+            label: Storage (TB)
+            alignment: left
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC:1;1,2;2,3;3,4;4
+        }
+        layout {
+            sequence: 90
+            region: @strong-livelabs-sandbox-span-style-color-green-em-lite-em-span-strong
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        sessionState {
+            storage: request
+        }
+    )
+
+    pageItem P60_CI_OCPU (
+        type: selectList
+        label {
+            label: OCPU
+            alignment: left
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC:1;1,2;2,3;3,4;4
+        }
+        layout {
+            sequence: 140
+            region: @strong-livelabs-sandbox-span-style-color-green-em-lite-em-span-strong
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        sessionState {
+            storage: request
+        }
+    )
+
+    pageItem P60_COMP_INST (
+        type: selectList
+        label {
+            label: Compute Instance
+            alignment: left
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC:Standard E5 Flex;Y
+        }
+        layout {
+            sequence: 130
+            region: @strong-livelabs-sandbox-span-style-color-green-em-lite-em-span-strong
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        sessionState {
+            storage: request
+        }
+    )
+
+    pageItem P60_CREATED_BY (
+        type: hidden
+        layout {
+            sequence: 80
+            region: @request-a-sandbox
+            slot: regionBody
+        }
+        source {
+            formRegion: @request-a-sandbox
+            column: CREATED_BY
+            dataType: varchar2
+        }
+    )
+
+    pageItem P60_CREATED_ON (
+        type: hidden
+        layout {
+            sequence: 90
+            region: @request-a-sandbox
+            slot: regionBody
+        }
+        source {
+            formRegion: @request-a-sandbox
+            column: CREATED_ON
+            dataType: date
+        }
+    )
+
+    pageItem P60_ID (
+        type: hidden
+        layout {
+            sequence: 10
+            region: @request-a-sandbox
+            slot: regionBody
+        }
+        source {
+            formRegion: @request-a-sandbox
+            column: ID
+            dataType: number
+            queryOnly: true
+            primaryKey: true
+        }
+        security {
+            sessionStateProtection: checksumRequiredSessionLevel
+        }
+    )
+
+    pageItem P60_JIRA_TICKET_URL (
+        type: hidden
+        layout {
+            sequence: 70
+            region: @request-a-sandbox
+            slot: regionBody
+        }
+        source {
+            formRegion: @request-a-sandbox
+            column: JIRA_TICKET_URL
+            dataType: varchar2
+        }
+        serverSideCondition {
+            type: item=value
+            item: P60_TYPE
+            value: Traditional
+        }
+    )
+
+    pageItem P60_LIVE_STACK_IMAGE_ID (
+        type: popupLov
+        label {
+            label: LiveStack Base Image
+            alignment: left
+        }
+        lov {
+            type: sharedComponent
+            lov: @live-stack-images
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 20
+            region: @livestack
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+            width: 30
+        }
+        serverSideCondition {
+            type: item=value
+            item: P60_TYPE
+            value: LiveStack
+        }
+    )
+
+    pageItem P60_LIVE_STACK_INSTRUCTIONS (
+        type: displayOnly
+        label {
+            alignment: left
+        }
+        settings {
+            format: html
+        }
+        layout {
+            sequence: 30
+            region: @livestack
+            slot: regionBody
+            alignment: left
+        }
+        source {
+            type: staticValue
+            staticValue: <a href="">LiveStack Full Instructions</a>
+        }
+        serverSideCondition {
+            type: item=value
+            item: P60_TYPE
+            value: LiveStack
+        }
+    )
+
+    pageItem P60_LIVE_STACK_URL (
+        type: textField
+        label {
+            label: LiveStack OS  URL
+            alignment: left
+        }
+        layout {
+            sequence: 10
+            region: @livestack
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+            width: 30
+        }
+        serverSideCondition {
+            type: item=value
+            item: P60_TYPE
+            value: LiveStack
+        }
+    )
+
+    pageItem P60_LL_ID (
+        type: displayOnly
+        label {
+            label: LiveLab ID
+            alignment: left
+        }
+        lov {
+            type: sharedComponent
+            lov: @active-livelab-titles-ids
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 10
+            region: @general-information
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+        }
+        source {
+            formRegion: @request-a-sandbox
+            column: LL_ID
+            dataType: number
+        }
+        default {
+            type: static
+            staticValue: To Be Assigned
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P60_OCS (
+        type: checkbox
+        label {
+            label: <strong>This workshop requires Oracle Cloud Shell access.</strong>
+            alignment: left
+        }
+        layout {
+            sequence: 160
+            region: @strong-livelabs-sandbox-span-style-color-green-em-lite-em-span-strong
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        sessionState {
+            storage: request
+        }
+    )
+
+    pageItem P60_TRADITIONAL_SANDBOX_REQS (
+        type: displayOnly
+        label {
+            alignment: left
+        }
+        layout {
+            sequence: 10
+            region: @sandbox-forrm
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        source {
+            type: staticValue
+            staticValue:
+                ```
+                Sandbox Requirements
+                
+                1.1 Does your sandbox require access to Cloud Shell?
+                Yes or No
+                
+                1.2 Does your sandbox require a VCN? (LiveLabs can provision a VCN as part of the reservation setup with the standard Security List)
+                Yes or No
+                
+                1.3 If yes, list the ports that must be opened for the workshop to function:
+                Example: 129.146.0.0/21 port 22
+                
+                Resource Requirements
+                
+                2.1 List all resources that need to be provisioned by LiveLabs for your workshop
+                (Do not list any resources that the user will spin up)
+                Example: OKE Cluster - 1 Node
+                
+                2.2 List all resources that the user will provision while running the workshop
+                (Do not list any resources provisioned by LiveLabs)
+                Example: ADW - 1 ECPU
+                Example: ADW - 1 TB
+                
+                Terraform
+                
+                3.1 Does your sandbox require a Terraform script?
+                
+                3.2 If yes, attend LiveLabs Office Hours to determine how best to proceed with creating your sandbox.
+                
+                Policies
+                
+                4.1 List all policies that users will need to complete your workshop
+                (This should include access to both LiveLabs-provisioned resources and any resources users will create, edit, or delete)
+                
+                Example: Allow user to manage autonomous-database-family
+                
+                Image and Marketplace Questions
+                
+                5.1 Does your sandbox require the use of an image from OCI Marketplace?
+                Yes or No
+                
+                5.2 Does your required image already exist and is used by another LiveLabs Sandbox?
+                
+                5.3 If yes, provide the following:
+                WMS ID:
+                LiveLabs ID:
+                
+                5.4 If no, you will need to create a Marketplace Image and Listing for your sandbox. Attend LiveLabs Office Hours for assistance.
+                
+                5.5 After creating your image, provide the following:
+                Marketplace App Listing OCID:
+                Marketplace Image OCID:
+                Marketplace Listing Resource Version:
+                
+                Additional Information
+                
+                6.1 Provide any additional information relevant to your sandbox that has not been included above
+                
+                Notes from LiveLabs Admin
+                
+                --For Official Use Only--
+                ```
+            used: always
+        }
+        serverSideCondition {
+            type: item=value
+            item: P60_TYPE
+            value: Traditional
+        }
+    )
+
+    pageItem P60_TYPE (
+        type: radioGroup
+        label {
+            label: Sandbox Type
+            alignment: left
+        }
+        settings {
+            noOfCols: 3
+            pageActionOnSelection: redirectSetValue
+        }
+        lov {
+            type: staticValues
+            staticValues: "STATIC2:Traditional;Traditional,Lite;Lite,LiveStack;LiveStack "
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 30
+            region: @general-information
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                margin-top-md
+            ]
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            formRegion: @request-a-sandbox
+            column: TYPE
+            dataType: varchar2
+        }
+        default {
+            type: item
+            item: P60_TYPE
+        }
+        help {
+            helpText:
+                ```html
+                <b> Traditional (ECT: 1-2 weeks). </b> A Traditional Sandbox is an environment custom made by our LiveLabs Platform team. This option is best for LiveLabs with complex setup requirements. </br></br>
+                <b> Lite (ECT: 1 business day). </b> A Sandbox Lite is the automated, simplified version of a Traditional Sandbox. This sandbox type allows you to choose what resources you want the </u>user to provision.</u> It is not suitable for automatic provisioning of resources (e.g. databases) or executables (e.g. terraform stacks, scripts, etc.). This is most suitable for LiveLabs with simple setup requirements. </br></br>
+                <b> LiveStack (ECT: 1 business day). </b> A LiveStack Sandbox environment is meant for demo-based content. Simply upload your customized stack and select your base image. <a href="">Full Instructions</a>
+                ```
+        }
+    )
+
+    pageItem P60_VCN (
+        type: checkbox
+        label {
+            label: <strong>This workshop requires a VCN.</strong>
+            alignment: left
+        }
+        layout {
+            sequence: 150
+            region: @strong-livelabs-sandbox-span-style-color-green-em-lite-em-span-strong
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        sessionState {
+            storage: request
+        }
+    )
+
+    button cancel (
+        buttonName: CANCEL
+        label: Cancel
+        layout {
+            sequence: 10
+            region: @buttons
+            slot: close
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: triggerAction
+        }
+
+        triggerAction native-dialog-cancel (
+            action: cancelDialog
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    button copy-sandbox-form (
+        buttonName: create-jira-ticket
+        label: Create JIRA Ticket
+        layout {
+            sequence: 20
+            region: @traditional
+            slot: regionBody
+        }
+        appearance {
+            buttonTemplate: @text-with-icon
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--iconRight
+            ]
+            icon: fa-external-link
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+        advanced {
+            customAttributes: style="margin-top: 10px;"
+        }
+    )
+
+    button create (
+        buttonName: CREATE
+        label: Create
+        layout {
+            sequence: 40
+            region: @buttons
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: insert
+        }
+        serverSideCondition {
+            type: itemIsNull
+            item: P60_ID
+        }
+    )
+
+    button delete (
+        buttonName: DELETE
+        label: Delete
+        layout {
+            sequence: 20
+            region: @buttons
+            slot: delete
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            executeValidations: false
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: delete
+            requiresConfirmation: true
+        }
+        confirmation {
+            message: &APP_TEXT$DELETE_MSG!RAW.
+            style: danger
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P60_ID
+        }
+    )
+
+    button request-a-workshop (
+        buttonName: request-a-workshop
+        label: Need  a New Workshop?
+        layout {
+            sequence: 20
+            region: @general-information
+            slot: regionBody
+            columnCssClasses: button-column-1
+        }
+        appearance {
+            buttonTemplate: @text-with-icon
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--iconLeft
+            ]
+            icon: fa-plus
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 320
+            }
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    button save (
+        buttonName: SAVE
+        label: Apply Changes
+        layout {
+            sequence: 30
+            region: @buttons
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: update
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P60_ID
+        }
+    )
+
+    dynamicAction clicked (
+        name: clicked
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @copy-sandbox-form
+        }
+
+        action open-jira-ticket (
+            name: open JIRA Ticket
+            action: executeJsCode
+            settings {
+                jsCode: javascript:void(window.open('https://jira.oraclecorp.com/jira/secure/CreateIssue.jspa?issuetype=11901&pid=101812', '_blank'));
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    process close-dialog (
+        name: Close Dialog
+        type: closeDialog
+        execution {
+            sequence: 50
+        }
+        advanced {
+            executionMappingIdentifier: 269989287409693973
+        }
+        serverSideCondition {
+            type: requestIsContainedInValue
+            value: CREATE,SAVE,DELETE
+        }
+    )
+
+    process initialize-form-request-a-sandbox (
+        name: Initialize form Request a Sandbox
+        type: formInitialization
+        formRegion: @request-a-sandbox
+        execution {
+            sequence: 10
+            point: beforeHeader
+        }
+        advanced {
+            executionMappingIdentifier: 269988478869693972
+        }
+    )
+
+    process process-form-request-a-sandbox (
+        name: Process form Request a Sandbox
+        type: formAutoRowProcessing
+        formRegion: @request-a-sandbox
+        execution {
+            sequence: 10
+        }
+        advanced {
+            executionMappingIdentifier: 269988862627693972
+        }
+    )
+
+    process process-gbl-request (
+        name: Process GBL Request
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                DECLARE
+                  row_count INTEGER;
+                BEGIN
+                  select count(*) 
+                    into row_count
+                    from Green_Button_Lite
+                   where LL_ID = :P3203_ID;
+                
+                  if row_count = 1 then
+                
+                    UPDATE Green_Button_Lite
+                    SET LL_ID =  :P3203_ID,    
+                        WMS_ID = :P3203_WORKSHOP_ID,
+                        ADW = :P3203_ADW,
+                        ADW_OCPU = :P3203_ADW_OCPU,
+                        ADW_TB = :P3203_ADW_TB,
+                        ATP = :P3203_ATP,
+                        ATP_OCPU = :P3203_ATP_OCPU,
+                        ATP_TB = :P3203_ATP_TB,
+                        AJD = :P3203_AJD,
+                        AJD_OCPU = :P3203_AJD_OCPU,
+                        AJD_TB = :P3203_AJD_TB,
+                        COMP_INST = :P3203_COMP_INST,
+                        COMP_INST_OCPU = :P3203_CI_OCPU,
+                        VCN = :P3203_VCN,
+                        OCS = :P3203_OCS,
+                        UPDATED_FLG = 1
+                    WHERE LL_ID = :P3203_ID;   
+                elsif row_count = 0  then
+                insert into Green_Button_Lite
+                    (
+                        LL_ID,
+                        WMS_ID,
+                        ADW,
+                        ADW_OCPU,
+                        ADW_TB,
+                        ATP,
+                        ATP_OCPU,
+                        ATP_TB,
+                        AJD,
+                        AJD_OCPU,
+                        AJD_TB,
+                        COMP_INST,
+                        COMP_INST_OCPU,
+                        VCN,
+                        OCS,
+                        UPDATED_FLG
+                    )
+                values
+                    (
+                        :P3203_ID,    
+                        :P3203_WORKSHOP_ID,
+                        :P3203_ADW,
+                        :P3203_ADW_OCPU,
+                        :P3203_ADW_TB,
+                        :P3203_ATP,
+                        :P3203_ATP_OCPU,
+                        :P3203_ATP_TB,
+                        :P3203_AJD,
+                        :P3203_AJD_OCPU,
+                        :P3203_AJD_TB,
+                        :P3203_COMP_INST,
+                        :P3203_CI_OCPU,
+                        :P3203_VCN,
+                        :P3203_OCS,
+                        1
+                    );
+                end if;
+                end;
+                ```
+        }
+        execution {
+            sequence: 40
+        }
+        advanced {
+            executionMappingIdentifier: 42465049619310162535
+        }
+        serverSideCondition {
+            type: item=value
+            item: P60_TYPE
+            value: Lite
+        }
+    )
+
+    process set-ll-to-sandbox-requested (
+        name: Set Green Button Flag
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                begin
+                    if :P60_TYPE != 'Lite' then
+                        update workshop_ll set greenbutton_flg = 'Y' where id = :P60_LL_ID;
+                    else 
+                        update workshop_ll set greenbutton_flg = 'L' where id = :P60_LL_ID;
+                    end if;
+                end;
+                ```
+        }
+        execution {
+            sequence: 30
+        }
+        advanced {
+            executionMappingIdentifier: 42465049563869162534
+        }
+    )
+
+    process update-terraform-values (
+        name: Update Terraform Values
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                declare
+                    v_listing_id number;
+                begin
+                    if :P60_TYPE = 'LiveStack' then
+                        select listing_id into v_listing_id from omp_images where id = :P60_LIVE_STACK_IMAGE_ID;
+                
+                        update workshop_ll set
+                        terraform_values_json = json_object(
+                            'liveStackURL'            value :P60_LIVE_STACK_URL,
+                            'liveStackAppCatalogOCID' value (select app_catalog_ocid from omp_listings where id = v_listing_id),
+                            'liveStackImageOCID'      value (select image_ocid from omp_images where id = :P60_LIVE_STACK_IMAGE_ID),
+                            'liveStackImageVersion'   value (select version from omp_images where id = :P60_LIVE_STACK_IMAGE_ID)
+                        );
+                    end if;
+                end;
+                ```
+        }
+        execution {
+            sequence: 20
+        }
+        advanced {
+            executionMappingIdentifier: 42465047862686162517
+        }
+    )
+
+)
+

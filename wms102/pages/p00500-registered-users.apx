@@ -1,0 +1,332 @@
+page 500 (
+    name: Registered Users
+    alias: REGISTERED-USERS
+    title: Registered Users
+    pageGroup: @administration
+    appearance {
+        pageTemplate: @standard-custom
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        authorizationScheme: @administration-rights
+        formAutoComplete: false
+    }
+
+    region registered-users (
+        name: Registered Users
+        type: interactiveReport
+        source {
+            location: localDatabase
+            tableName: REGISTRATIONS
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        pagination {
+            type: rowRangesXToY
+        }
+        messages {
+            whenNoDataFound: No data found.
+            whenMoreDataFound: The maximum row count for this report is #MAX_ROW_COUNT# rows.  Please apply a filter to reduce the number of records in your query.
+        }
+        actionsMenu {
+            subscription: false
+        }
+        advanced {
+            savedReportMappingIdentifier: 572834091589039184
+        }
+
+        column COUNTRY (
+            type: plainText
+            heading {
+                heading: Country
+            }
+            layout {
+                sequence: 9
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: I
+            }
+        )
+
+        column EMAIL (
+            type: plainText
+            heading {
+                heading: Email
+            }
+            layout {
+                sequence: 5
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: E
+            }
+        )
+
+        column FOCUS_AREA (
+            type: plainText
+            heading {
+                heading: Focus Area
+            }
+            layout {
+                sequence: 12
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: L
+            }
+        )
+
+        column GIVEN_NAME (
+            type: plainText
+            heading {
+                heading: Given Name
+            }
+            layout {
+                sequence: 2
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: B
+            }
+        )
+
+        column ID (
+            type: plainText
+            heading {
+                heading: Id
+                alignment: end
+            }
+            layout {
+                sequence: 1
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: A
+            }
+        )
+
+        column MANAGERS_EMAIL (
+            type: plainText
+            heading {
+                heading: Managers Email
+            }
+            layout {
+                sequence: 6
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: F
+            }
+        )
+
+        column MOBILE_PHONE (
+            type: plainText
+            heading {
+                heading: Mobile Phone
+            }
+            layout {
+                sequence: 7
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: G
+            }
+        )
+
+        column REGION (
+            type: plainText
+            heading {
+                heading: Region
+            }
+            layout {
+                sequence: 8
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: H
+            }
+        )
+
+        column SURNAME (
+            type: plainText
+            heading {
+                heading: Surname
+            }
+            layout {
+                sequence: 4
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: D
+            }
+        )
+
+        column TITLE (
+            type: plainText
+            heading {
+                heading: Title
+            }
+            layout {
+                sequence: 3
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: C
+            }
+        )
+
+        column USER_DELETED_FLG (
+            type: plainText
+            heading {
+                heading: User Deleted Flg
+                alignment: end
+            }
+            layout {
+                sequence: 10
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: J
+            }
+        )
+
+        column WORKSHOP_CODE (
+            type: plainText
+            heading {
+                heading: Workshop Code
+            }
+            layout {
+                sequence: 13
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: M
+            }
+        )
+
+        column WORKSHOP_ID (
+            type: plainText
+            heading {
+                heading: Workshop Id
+                alignment: end
+            }
+            layout {
+                sequence: 11
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: K
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: Registered Users
+        }
+
+        savedReport 5728483 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn COUNTRY (
+                sequence: 9
+            )
+
+            displayColumn EMAIL (
+                sequence: 5
+            )
+
+            displayColumn FOCUS_AREA (
+                sequence: 12
+            )
+
+            displayColumn GIVEN_NAME (
+                sequence: 2
+            )
+
+            displayColumn ID (
+                sequence: 1
+            )
+
+            displayColumn MANAGERS_EMAIL (
+                sequence: 6
+            )
+
+            displayColumn MOBILE_PHONE (
+                sequence: 7
+            )
+
+            displayColumn REGION (
+                sequence: 8
+            )
+
+            displayColumn SURNAME (
+                sequence: 4
+            )
+
+            displayColumn TITLE (
+                sequence: 3
+            )
+
+            displayColumn USER_DELETED_FLG (
+                sequence: 10
+            )
+
+            displayColumn WORKSHOP_CODE (
+                sequence: 13
+            )
+
+            displayColumn WORKSHOP_ID (
+                sequence: 11
+            )
+
+        )
+
+    )
+
+)
+

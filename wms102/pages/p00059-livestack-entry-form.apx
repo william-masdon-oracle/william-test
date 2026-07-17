@@ -1,0 +1,1054 @@
+page 59 (
+    name: LiveStack Entry Form
+    alias: LIVESTACK-ENTRY-FORM
+    title: LiveStack Entry Form
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @modal-dialog
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region buttons (
+        name: Buttons
+        type: staticContent
+        layout {
+            sequence: 20
+            slot: dialogFooter
+        }
+        appearance {
+            template: @buttons-container
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    region livestack-entry-form (
+        name: LiveStack Entry Form
+        type: form
+        source {
+            location: localDatabase
+            tableName: WMS_LIVESTACK_ENTRIES
+        }
+        layout {
+            sequence: 30
+            slot: contentBody
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+        edit {
+            enabled: true
+            allowedOperations: [
+                add
+                update
+                delete
+            ]
+        }
+    )
+
+    region metadata-overrides (
+        name: Available Overrides
+        type: staticContent
+        layout {
+            sequence: 70
+            parentRegion: @livestack-entry-form
+            slot: regionBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--accent1
+                t-Region--scrollBody
+                margin-top-lg
+            ]
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P59_LL_ID
+        }
+    )
+
+    pageItem P59_ACTIVE_FLG (
+        type: hidden
+        layout {
+            sequence: 80
+            region: @livestack-entry-form
+            slot: regionBody
+        }
+        source {
+            formRegion: @livestack-entry-form
+            column: ACTIVE_FLG
+            dataType: number
+        }
+    )
+
+    pageItem P59_ALERT_FLG (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 40
+            region: @livestack-entry-form
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P59_DESC_SHORT_OVERRIDE (
+        type: textarea
+        label {
+            label: Short Description
+            alignment: left
+        }
+        layout {
+            sequence: 50
+            region: @metadata-overrides
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+            width: 60
+            height: 4
+        }
+        validation {
+            maxLength: 4000
+        }
+        source {
+            formRegion: @livestack-entry-form
+            column: DESC_SHORT_OVERRIDE
+            dataType: varchar2
+        }
+        default {
+            type: sqlQuerySingleValue
+            sqlQuerySingleValue: select COALESCE(ll.desc_short_override,(SELECT w.short_desc FROM workshop w WHERE w.id = ll.workshop_id)) FROM workshop_ll ll WHERE ll.id = :P59_LL_ID
+        }
+    )
+
+    pageItem P59_ENTRY_TYPE (
+        type: selectList
+        label {
+            label: Select a Launch Method
+            alignment: left
+        }
+        lov {
+            type: sharedComponent
+            lov: @livestack-launch-methods
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 30
+            region: @metadata-overrides
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @required-above
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            formRegion: @livestack-entry-form
+            column: ENTRY_TYPE
+            dataType: varchar2
+        }
+        help {
+            helpText:
+                ```html
+                <b>LiveLab Landing Page:</b> When the entry is clicked, users are taken to the LiveLab's landing page, where they can pick from the available deployment options. </br></br>
+                
+                <b>Sandbox Reservation Page:</b> When the entry is clicked, users bypass the landing page are taken directly to the reservation request page. </br></br>
+                
+                <b>Instructions Guide:</b> When the entry is clicked, users are taken directly to the instructions.
+                ```
+        }
+    )
+
+    pageItem P59_ID (
+        type: hidden
+        layout {
+            sequence: 10
+            region: @livestack-entry-form
+            slot: regionBody
+        }
+        source {
+            formRegion: @livestack-entry-form
+            column: ID
+            dataType: number
+            queryOnly: true
+            primaryKey: true
+        }
+        security {
+            sessionStateProtection: checksumRequiredSessionLevel
+        }
+    )
+
+    pageItem P59_LENGTH_HOURS_OVERRIDE (
+        type: numberField
+        label {
+            label: Duration (hours)
+            alignment: left
+        }
+        layout {
+            sequence: 70
+            region: @metadata-overrides
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+            width: 30
+        }
+        source {
+            formRegion: @livestack-entry-form
+            column: LENGTH_HOURS_OVERRIDE
+            dataType: number
+        }
+    )
+
+    pageItem P59_LIVESTACK_ID (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+    )
+
+    pageItem P59_LIVESTACK_ID_1 (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 20
+            region: @livestack-entry-form
+            slot: regionBody
+        }
+        source {
+            formRegion: @livestack-entry-form
+            column: LIVESTACK_ID
+            dataType: number
+        }
+        default {
+            type: item
+            item: P59_LIVESTACK_ID
+        }
+    )
+
+    pageItem P59_LL_ID (
+        type: popupLov
+        label {
+            label: Select a LiveLab Publishing
+            alignment: left
+        }
+        settings {
+            fetchOnSearch: true
+        }
+        lov {
+            type: sharedComponent
+            lov: @livelabs-with-types
+        }
+        layout {
+            sequence: 60
+            region: @livestack-entry-form
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+            width: 30
+        }
+        source {
+            formRegion: @livestack-entry-form
+            column: ENTRY_ID
+            dataType: number
+        }
+        sessionState {
+            storage: session
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P59_POSITION (
+        type: numberField
+        label {
+            label: Position
+            alignment: left
+        }
+        layout {
+            sequence: 60
+            region: @metadata-overrides
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+            width: 30
+        }
+        source {
+            formRegion: @livestack-entry-form
+            column: POSITION
+            dataType: number
+        }
+        default {
+            type: sqlQuerySingleValue
+            sqlQuerySingleValue:
+                ```sql
+                select nvl(max(position), 0) + 1
+                from wms_livestack_entries
+                where livestack_id = :P59_LIVESTACK_ID
+                ```
+        }
+    )
+
+    pageItem P59_ROS_OVERRIDE (
+        type: switch
+        label {
+            label: Run on Sandbox
+            alignment: left
+        }
+        layout {
+            sequence: 20
+            region: @metadata-overrides
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @livestack-entry-form
+            column: ROS_OVERRIDE_FLG
+            dataType: varchar2
+        }
+        default {
+            type: expression
+            language: sql
+            sqlExpression:
+                ```sql
+                CASE
+                  WHEN EXISTS (
+                    SELECT 1
+                    FROM workshop_ll
+                    WHERE id = :P59_LL_ID
+                      AND greenbutton_url IS NOT NULL
+                  )
+                  THEN 'Y'
+                  ELSE 'N'
+                END
+                ```
+        }
+        serverSideCondition {
+            type: expression
+            language: sql
+            sqlExpression:
+                ```sql
+                (:P59_LL_ID is not null) and 
+                (CASE
+                  WHEN EXISTS (
+                    SELECT 1
+                    FROM workshop_ll
+                    WHERE id = :P59_LL_ID
+                      AND greenbutton_url IS NOT NULL
+                  )
+                  THEN 'Y'
+                  ELSE 'N'
+                END) = 'Y'
+                ```
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            helpText: Enablement only allowed if offered in the original LiveLab.
+        }
+    )
+
+    pageItem P59_ROYT_OVERRIDE (
+        type: switch
+        label {
+            label: Run on Your Tenancy
+            alignment: left
+        }
+        layout {
+            sequence: 10
+            region: @metadata-overrides
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @livestack-entry-form
+            column: ROYT_OVERRIDE_FLG
+            dataType: varchar2
+        }
+        default {
+            type: sqlQuerySingleValue
+            sqlQuerySingleValue:
+                ```sql
+                select 
+                case when (paid_flg = 'Y' or sprint_flg = 'Y') then 'Y' else 'N' end royt
+                from workshop_ll 
+                where id = :P59_LL_ID;
+                ```
+        }
+        serverSideCondition {
+            type: expression
+            language: sql
+            sqlExpression: (:P59_LL_ID is not null) and (select 1 from workshop_ll where id = :P59_LL_ID and ((paid_flg='Y') or (sprint_flg = 'Y')))
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            helpText: Enablement only allowed if offered in the original LiveLab.
+        }
+    )
+
+    pageItem P59_SUBMITTED_LL (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 30
+            region: @livestack-entry-form
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P59_TITLE_OVERRIDE (
+        type: textField
+        label {
+            label: Title
+            alignment: left
+        }
+        layout {
+            sequence: 40
+            region: @metadata-overrides
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+            width: 60
+        }
+        validation {
+            maxLength: 1000
+        }
+        source {
+            formRegion: @livestack-entry-form
+            column: TITLE_OVERRIDE
+            dataType: varchar2
+        }
+        default {
+            type: sqlQuerySingleValue
+            sqlQuerySingleValue: select COALESCE(ll.title_override,(SELECT w.title FROM workshop w WHERE w.id = ll.workshop_id)) FROM workshop_ll ll WHERE ll.id = :P59_LL_ID
+        }
+    )
+
+    pageItem P59_WORKSHOP_OWNER (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button cancel (
+        buttonName: CANCEL
+        label: Cancel
+        layout {
+            sequence: 10
+            region: @buttons
+            slot: close
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: triggerAction
+        }
+
+        triggerAction native-dialog-cancel (
+            action: cancelDialog
+            execution {
+                sequence: 10
+            }
+        )
+
+        triggerAction native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    apex.server.process(
+                        "CLEAR_P59"
+                    );
+                    ```
+            }
+            execution {
+                sequence: 20
+            }
+        )
+
+    )
+
+    button create (
+        buttonName: CREATE
+        label: Create
+        layout {
+            sequence: 40
+            region: @buttons
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: insert
+        }
+        serverSideCondition {
+            type: itemIsNull
+            item: P59_ID
+        }
+    )
+
+    button delete (
+        buttonName: DELETE
+        label: Delete
+        layout {
+            sequence: 20
+            region: @buttons
+            slot: delete
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            executeValidations: false
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: delete
+            requiresConfirmation: true
+        }
+        confirmation {
+            message: &APP_TEXT$DELETE_MSG!RAW.
+            style: danger
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P59_ID
+        }
+    )
+
+    button save (
+        buttonName: SAVE
+        label: Apply Changes
+        layout {
+            sequence: 30
+            region: @buttons
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: update
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P59_ID
+        }
+    )
+
+    dynamicAction new (
+        name: On Change
+        execution {
+            sequence: 10
+        }
+        when {
+            selectionType: items
+            items: P59_ENTRY_TYPE_ID
+        }
+        clientSideCondition {
+            type: jsExpression
+            javaScriptExpression:
+                ```javascript-browser
+                apex.item("P59_ENTRY_TYPE_ID")
+                    .displayValueFor(
+                        apex.item("P59_ENTRY_TYPE_ID").getValue()
+                    ) === "LiveLab"
+                ```
+        }
+
+        action hide-asset-id (
+            name: Hide Asset ID
+            action: hide
+            affectedElements {
+                selectionType: items
+                items: P59_ASSET_ID
+            }
+            execution {
+                sequence: 30
+            }
+        )
+
+        action hide-livelab-id (
+            name: Hide LiveLab ID
+            action: hide
+            affectedElements {
+                selectionType: items
+                items: P59_LL_ID
+            }
+            execution {
+                sequence: 20
+                fireWhenEventResultIs: false
+            }
+        )
+
+        action show-asset-id (
+            name: Show Asset ID
+            action: show
+            affectedElements {
+                selectionType: items
+                items: P59_ASSET_ID
+            }
+            execution {
+                sequence: 10
+                fireWhenEventResultIs: false
+            }
+        )
+
+        action show-livelab-id (
+            name: Show LiveLab ID
+            action: show
+            affectedElements {
+                selectionType: items
+                items: P59_LL_ID
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    dynamicAction on-change (
+        name: On Change
+        execution {
+            sequence: 40
+        }
+        when {
+            selectionType: items
+            items: P59_LL_ID
+        }
+
+        action native-alert (
+            action: alert
+            settings {
+                title: LiveLab could not be added.
+                message:
+                    ```html
+                    The LiveLab selected has no deployment options enabled. Workshop team members can enable deployment options in the workshop settings. 
+                    </br></br>
+                    
+                    If you believe this to be a mistake, please contact the workshop owner <b>(&P59_WORKSHOP_OWNER.)</b> or the on-call team via our Slack <a href="https://oracle.enterprise.slack.com/archives/CTUPZQ5HA" target="_blank">help channel</a>.
+                    ```
+                style: danger
+            }
+            execution {
+                sequence: 60
+                fireOnInit: false
+            }
+            clientSideCondition {
+                type: item=value
+                item: P59_ALERT_FLG
+                value: Y
+            }
+        )
+
+        action native-refresh (
+            action: submitPage
+            execution {
+                sequence: 80
+                fireOnInit: false
+            }
+        )
+
+        action native-set-value (
+            action: setValue
+            settings {
+                type: plsqlExpression
+                plsqlExpression: :P59_LL_ID
+                itemsToSubmit: P59_LL_ID
+            }
+            affectedElements {
+                selectionType: items
+                items: P59_SUBMITTED_LL
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+        action native-set-value_1 (
+            action: setValue
+            settings {
+                type: sqlQuery
+                sqlQuery: select workshop_owner_email from workshop where id = (select workshop_id from workshop_ll where id = :P59_LL_ID);
+                itemsToSubmit: P59_LL_ID
+            }
+            affectedElements {
+                selectionType: items
+                items: P59_WORKSHOP_OWNER
+            }
+            execution {
+                sequence: 30
+                fireOnInit: false
+            }
+        )
+
+        action native-set-value_2 (
+            action: setValue
+            settings {
+                type: plsqlExpression
+                plsqlExpression: null
+                suppressChangeEvent: true
+            }
+            affectedElements {
+                selectionType: items
+                items: P59_LL_ID
+            }
+            execution {
+                sequence: 70
+                fireOnInit: false
+            }
+            clientSideCondition {
+                type: item=value
+                item: P59_ALERT_FLG
+                value: Y
+            }
+        )
+
+        action native-set-value_3 (
+            action: setValue
+            settings {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select
+                    (case when
+                    (select 1 from workshop_ll where paid_flg = 'N' and greenbutton_url IS NULL AND id = :P59_LL_ID
+                    AND nvl(sprint_flg,'N') = 'N') = 1 then 'Y'
+                    else 'N'
+                    end) flg
+                    from dual
+                    ```
+                itemsToSubmit: P59_LL_ID
+            }
+            affectedElements {
+                selectionType: items
+                items: P59_ALERT_FLG
+            }
+            execution {
+                sequence: 40
+                fireOnInit: false
+            }
+        )
+
+        action native-set-value_3_1 (
+            action: setValue
+            settings {
+                type: plsqlExpression
+                plsqlExpression: NULL;
+                itemsToSubmit: P59_ALERT_FLG
+            }
+            affectedElements {
+                selectionType: items
+                items: P59_DUMP
+            }
+            execution {
+                sequence: 50
+                fireOnInit: false
+            }
+            serverSideCondition {
+                type: never
+            }
+        )
+
+    )
+
+    dynamicAction on-change_1 (
+        name: On Change
+        execution {
+            sequence: 30
+        }
+        when {
+            selectionType: items
+            items: P59_ASSET_ID
+        }
+
+        action native-set-value (
+            action: setValue
+            settings {
+                type: jsExpression
+                jsExpression: apex.item("P59_ASSET_ID").getValue()
+            }
+            affectedElements {
+                selectionType: items
+                items: P59_LL_ID
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    validation at-least-one-deployment-option-enabled (
+        name: At least one deployment option enabled?
+        execution {
+            sequence: 10
+        }
+        validation {
+            plsqlExpression: (nvl(:P59_ROS_OVERRIDE, 'N') = 'Y') or (nvl(:P59_ROYT_OVERRIDE, 'N') = 'Y')
+            alwaysExecute: true
+        }
+        error {
+            errorMessage: At least one deployment option must be enabled.
+        }
+        serverSideCondition {
+            whenButtonPressed: @create
+        }
+    )
+
+    validation sandbox-enabled-for-sandbox-launch-method (
+        name: Sandbox enabled for sandbox launch method?
+        execution {
+            sequence: 20
+        }
+        validation {
+            plsqlExpression: nvl(:P59_ROS_OVERRIDE, 'N') = 'Y'
+            alwaysExecute: true
+        }
+        error {
+            errorMessage: The sandbox reservation launch method can only be used when the selected LiveLab has the sandbox environment enabled. Either enable the sandbox environment or select a different launch method.
+        }
+        serverSideCondition {
+            type: item=value
+            item: P59_ENTRY_TYPE
+            value: SANDBOX
+        }
+    )
+
+    process close-dialog (
+        name: Close Dialog
+        type: closeDialog
+        execution {
+            sequence: 80
+        }
+        advanced {
+            executionMappingIdentifier: 3321356091330237154
+        }
+        serverSideCondition {
+            type: requestIsContainedInValue
+            value: CREATE,SAVE,DELETE
+        }
+    )
+
+    process initialize-form-livestack-entry-form (
+        name: Initialize form LiveStack Entry Form
+        type: formInitialization
+        formRegion: @livestack-entry-form
+        execution {
+            sequence: 10
+            point: beforeHeader
+        }
+        advanced {
+            executionMappingIdentifier: 3321355258245237151
+        }
+    )
+
+    process process-form-livestack-entry-form (
+        name: Process form LiveStack Entry Form
+        type: formAutoRowProcessing
+        formRegion: @livestack-entry-form
+        execution {
+            sequence: 20
+        }
+        advanced {
+            executionMappingIdentifier: 3321355690931237153
+        }
+        serverSideCondition {
+            type: requestIsContainedInValue
+            value: CREATE,SAVE,DELETE
+        }
+    )
+
+    process sync-entry-create (
+        name: Sync Entry - Create
+        type: executeCode
+        source {
+            plsqlCode: wms_pkg_ords.createLiveStackEntry(:P59_ID);
+        }
+        execution {
+            sequence: 30
+        }
+        advanced {
+            executionMappingIdentifier: 4235865999970982531
+        }
+        serverSideCondition {
+            whenButtonPressed: @create
+        }
+    )
+
+    process sync-entry-delete (
+        name: Sync Entry - Delete
+        type: executeCode
+        source {
+            plsqlCode: wms_pkg_ords.deleteLiveStackEntry(:P59_ID);
+        }
+        execution {
+            sequence: 10
+        }
+        advanced {
+            executionMappingIdentifier: 4235866166847982533
+        }
+        serverSideCondition {
+            whenButtonPressed: @delete
+        }
+    )
+
+    process sync-entry-update (
+        name: Sync Entry - Update
+        type: executeCode
+        source {
+            plsqlCode: wms_pkg_ords.updateLiveStackEntry(:P59_ID);
+        }
+        execution {
+            sequence: 40
+        }
+        advanced {
+            executionMappingIdentifier: 4235866030716982532
+        }
+        serverSideCondition {
+            whenButtonPressed: @save
+        }
+    )
+
+    process update-deployment-overrides (
+        name: Update deployment overrides.
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                begin
+                
+                    update wms_livestack_entries set 
+                        royt_override_flg = :P59_ROYT_OVERRIDE,
+                        ros_override_flg = :P59_ROS_OVERRIDE
+                    where id = :P59_ID;
+                end;
+                ```
+        }
+        execution {
+            sequence: 60
+        }
+        advanced {
+            executionMappingIdentifier: 3885141311440279731
+        }
+        serverSideCondition {
+            type: requestIsContainedInValue
+            value: SAVE,CREATE
+        }
+    )
+
+    process update-positions-after-delete_1 (
+        name: Update positions after delete
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                begin
+                    UPDATE wms_livestack_entries
+                    SET position = position - 1
+                    WHERE livestack_id = :P59_LIVESTACK_ID
+                      AND position > :P59_POSITION;
+                end;
+                ```
+        }
+        execution {
+            sequence: 70
+        }
+        advanced {
+            executionMappingIdentifier: 3307252532761709246
+        }
+        serverSideCondition {
+            whenButtonPressed: @delete
+        }
+    )
+
+)
+

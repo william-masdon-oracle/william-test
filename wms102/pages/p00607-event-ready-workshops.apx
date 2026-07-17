@@ -1,0 +1,525 @@
+page 607 (
+    name: Event Ready Workshops
+    alias: EVENT-READY-WORKSHOPS
+    title: Event Ready Workshops
+    appearance {
+        pageTemplate: @standard-custom
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region event-ready-workshops (
+        name: Event Ready Workshops
+        type: interactiveGrid
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select
+                    w.id as wms_id,
+                    ll.id as livelabs_id,
+                    s.name as stakeholder,
+                    c.name as council,
+                    w.workshop_owner_email as workshop_owner,
+                    nvl(ll.title_override, w.title) as workshop_name,
+                    apex_page.get_url(
+                        p_page   => 320,
+                        p_items  => 'P320_ID',
+                        p_values => w.id
+                    ) as workshop_url,
+                    ll.publish_status,
+                    ll.publish_type,
+                    ll.production_url,
+                    wer.last_updated_by,
+                    wer.last_updated_dtm
+                from workshop_event_ready wer
+                join workshop_ll ll
+                  on ll.id = wer.livelab_id
+                join workshop w
+                  on w.id = ll.workshop_id
+                left join workshop_stakeholder s
+                  on s.id = w.stakeholder_id
+                left join workshop_council c
+                  on c.id = w.council_id
+                where wer.event_ready_flg = 'Y'
+                and ll.publish_status like 'Published%'
+                and ll.publish_type in ('Event','Public')
+                -- order by
+                --     s.name,
+                --     c.name,
+                --     w.workshop_owner_email,
+                --     nvl(ll.title_override, w.title);
+                ```
+        }
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        toolbar {
+            controls: [
+                searchCol
+                searchField
+                actionsMenu
+                resetButton
+                saveButton
+            ]
+        }
+        enableUsersTo {
+            savePublicReport: true
+            savePublicReportAuthorization: @administration-rights
+        }
+        download {
+            formats: [
+                csv
+                html
+                excel
+                pdf
+            ]
+        }
+        advanced {
+            savedReportMappingIdentifier: 25855545566373539169
+        }
+
+        savedReport primary (
+            visibility: primary
+            view {
+                default: grid
+            }
+            singleRowView {
+                displayedColumns: true
+            }
+
+            displayColumn (
+                column: @WORKSHOP_OWNER
+                layout {
+                    width: 112.75
+                    sequence: 4
+                }
+            )
+
+            displayColumn (
+                column: @STAKEHOLDER
+                layout {
+                    sequence: 5
+                }
+            )
+
+            displayColumn (
+                column: @COUNCIL
+                layout {
+                    sequence: 6
+                }
+            )
+
+            displayColumn (
+                column: @WORKSHOP_NAME
+                layout {
+                    sequence: 3
+                }
+            )
+
+            displayColumn (
+                column: @PUBLISH_STATUS
+                layout {
+                    show: false
+                    sequence: 7
+                }
+            )
+
+            displayColumn (
+                column: @PUBLISH_TYPE
+                layout {
+                    sequence: 8
+                }
+            )
+
+            displayColumn (
+                column: @LAST_UPDATED_BY
+                layout {
+                    show: false
+                    sequence: 9
+                }
+            )
+
+            displayColumn (
+                column: @LAST_UPDATED_DTM
+                layout {
+                    width: 120.75
+                    sequence: 10
+                }
+            )
+
+            displayColumn (
+                column: @WMS_ID
+                layout {
+                    width: 61.75
+                    sequence: 1
+                }
+            )
+
+            displayColumn (
+                column: @LIVELABS_ID
+                layout {
+                    width: 76.75
+                    sequence: 2
+                }
+            )
+
+            displayColumn (
+                column: @WORKSHOP_URL
+                layout {
+                    sequence: 11
+                }
+            )
+
+            displayColumn (
+                column: @PRODUCTION_URL
+                layout {
+                    sequence: 12
+                }
+            )
+
+        )
+
+        column COUNCIL (
+            type: textField
+            heading {
+                heading: Council
+            }
+            layout {
+                sequence: 70
+            }
+            validation {
+                maxLength: 100
+            }
+            source {
+                databaseColumn: COUNCIL
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column LAST_UPDATED_BY (
+            type: textField
+            heading {
+                heading: Marked Ready By
+            }
+            layout {
+                sequence: 110
+            }
+            validation {
+                maxLength: 255
+            }
+            source {
+                databaseColumn: LAST_UPDATED_BY
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column LAST_UPDATED_DTM (
+            type: datePicker
+            heading {
+                heading: Marked Ready Date
+            }
+            layout {
+                sequence: 120
+            }
+            validation {
+                valueRequired: true
+            }
+            source {
+                databaseColumn: LAST_UPDATED_DTM
+                dataType: timestamp
+            }
+        )
+
+        column LIVELABS_ID (
+            type: numberField
+            heading {
+                heading: LiveLabs ID
+                alignment: end
+            }
+            layout {
+                sequence: 40
+                columnAlignment: end
+            }
+            validation {
+                valueRequired: true
+            }
+            source {
+                databaseColumn: LIVELABS_ID
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column PRODUCTION_URL (
+            type: link
+            heading {
+                heading: Prod URL
+            }
+            layout {
+                sequence: 140
+            }
+            link {
+                target: {
+                    type: url
+                    url: &PRODUCTION_URL.
+                }
+                linkText: <span class="fa fa-external-link" aria-hidden="true"></span>
+            }
+            source {
+                databaseColumn: PRODUCTION_URL
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column PUBLISH_STATUS (
+            type: textField
+            heading {
+                heading: Publish Status
+            }
+            layout {
+                sequence: 90
+            }
+            validation {
+                maxLength: 100
+            }
+            source {
+                databaseColumn: PUBLISH_STATUS
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column PUBLISH_TYPE (
+            type: textField
+            heading {
+                heading: Publish Type
+            }
+            layout {
+                sequence: 100
+            }
+            validation {
+                maxLength: 100
+            }
+            source {
+                databaseColumn: PUBLISH_TYPE
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column STAKEHOLDER (
+            type: textField
+            heading {
+                heading: Stakeholder
+            }
+            layout {
+                sequence: 60
+            }
+            validation {
+                maxLength: 100
+            }
+            source {
+                databaseColumn: STAKEHOLDER
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column WMS_ID (
+            type: numberField
+            heading {
+                heading: WMS ID
+                alignment: end
+            }
+            layout {
+                sequence: 30
+                columnAlignment: end
+            }
+            validation {
+                valueRequired: true
+            }
+            source {
+                databaseColumn: WMS_ID
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column WORKSHOP_NAME (
+            type: link
+            heading {
+                heading: Workshop Name
+            }
+            layout {
+                sequence: 80
+            }
+            link {
+                target: {
+                    type: url
+                    url: &WORKSHOP_URL.
+                }
+                linkText: &WORKSHOP_NAME.
+            }
+            source {
+                databaseColumn: WORKSHOP_NAME
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column WORKSHOP_OWNER (
+            type: textField
+            heading {
+                heading: Workshop Owner
+            }
+            layout {
+                sequence: 50
+            }
+            validation {
+                maxLength: 100
+            }
+            source {
+                databaseColumn: WORKSHOP_OWNER
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column WORKSHOP_URL (
+            type: hidden
+            heading {
+                heading: Workshop Url
+            }
+            layout {
+                sequence: 130
+            }
+            source {
+                databaseColumn: WORKSHOP_URL
+                dataType: varchar2
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+    )
+
+    region new (
+        name: View Event Ready Workshops
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <table><tr><td width="120px">
+                <img src="#APP_FILES#ssw_icon.png" width="100px">
+                </td><td>
+                <p>
+                  Event Ready workshops have been reviewed for external delivery and are suitable candidates for conferences, training sessions, and customer meetings.
+                  Use this page to find approved LiveLabs sessions, confirm ownership, and open the related WMS or production LiveLabs page.
+                </p></td></tr></table>
+                ```
+        }
+        layout {
+            sequence: 10
+            slot: beforeContentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+)
+

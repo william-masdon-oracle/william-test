@@ -1,0 +1,185 @@
+page 97 (
+    name: Workshop Team Members
+    alias: WORKSHOP-TEAM-MEMBERS
+    title: Workshop Team Members
+    appearance {
+        pageTemplate: @standard-custom
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region span-style-font-size-1-8em-font-weight-700-workshop-team-members-span (
+        name: <span style="font-size: 1.8em; font-weight: 700">Workshop Team Members</span>
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <table><tr><td width="120px">
+                <img src="#APP_FILES#wms_logo.png" width="100px">
+                </td><td>
+                <p>Workshop Team Members by Workshop. To update this report, click EDIT My Workshop and choose the appropriate workshop.</p></td></tr></table>
+                ```
+        }
+        layout {
+            sequence: 20
+            slot: beforeContentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        security {
+            authorizationScheme: @administration-rights
+        }
+    )
+
+    region workshop-members (
+        name: Workshop Members
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select workshop_id,workshop_name,role_name,email from workshop_person_role_vw
+                
+                ```
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        pagination {
+            type: rowRangesXToY
+        }
+        messages {
+            whenNoDataFound: No data found.
+            whenMoreDataFound: The maximum row count for this report is #MAX_ROW_COUNT# rows.  Please apply a filter to reduce the number of records in your query.
+        }
+        actionsMenu {
+            subscription: false
+        }
+        advanced {
+            savedReportMappingIdentifier: 31127889038191652693
+        }
+
+        column EMAIL (
+            type: plainText
+            heading {
+                heading: Email
+                alignment: center
+            }
+            layout {
+                sequence: 20
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: G
+            }
+        )
+
+        column ROLE_NAME (
+            type: plainText
+            heading {
+                heading: Role
+                alignment: center
+            }
+            layout {
+                sequence: 40
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: J
+            }
+        )
+
+        column WORKSHOP_ID (
+            type: plainText
+            heading {
+                heading: Workshop Id
+                alignment: center
+            }
+            layout {
+                sequence: 50
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: K
+            }
+        )
+
+        column WORKSHOP_NAME (
+            type: plainText
+            heading {
+                heading: Workshop
+                alignment: center
+            }
+            layout {
+                sequence: 30
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: I
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: Workshop Contributors Report
+        }
+
+        savedReport 58417376 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn EMAIL (
+                sequence: 1
+            )
+
+            displayColumn ROLE_NAME (
+                sequence: 3
+            )
+
+            displayColumn WORKSHOP_ID (
+                sequence: 4
+            )
+
+            displayColumn WORKSHOP_NAME (
+                sequence: 2
+            )
+
+        )
+
+    )
+
+)
+

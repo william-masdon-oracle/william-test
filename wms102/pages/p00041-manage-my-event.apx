@@ -1,0 +1,506 @@
+page 41 (
+    name: Manage My Event
+    alias: MANAGE-MY-EVENT
+    title: Manage my Event
+    appearance {
+        pageTemplate: @standard-custom
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    css {
+        inline: " "
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region additional-info (
+        name: "Additional Info "
+        type: staticContent
+        layout {
+            sequence: 20
+            parentRegion: @voucher-details
+            slot: wizardSubRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    region comments (
+        name: Comments
+        type: classicReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery: select to_char(commentdate,'DD-MON-YYYY HH24:MI')||' | '||lower(EMAIL_CREATOR) ||'  said: '||THE_COMMENT||'' as comments from LL_COMMENTS where event_id=:P41_SEQID order by COMMENTDATE desc;
+            pageItemsToSubmit: P41_SEQID
+        }
+        layout {
+            sequence: 40
+            parentRegion: @voucher-details
+            slot: wizardSubRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        componentAppearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Report--altRowsDefault
+                t-Report--rowHighlight
+            ]
+        }
+        pagination {
+            type: nextAndPreviousLinks
+        }
+        messages {
+            whenNoDataFound: None
+        }
+
+        column COMMENTS (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            heading {
+                heading: Comments
+                alignment: center
+            }
+            layout {
+                sequence: 1
+            }
+            columnFormatting {
+                htmlExpression: <span style="display:block; width:1000px">#COMMENTS#</span>
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+    )
+
+    region have-a-question (
+        name: Have a question?
+        type: staticContent
+        layout {
+            sequence: 30
+            parentRegion: @voucher-details
+            slot: wizardSubRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    region voucher-details (
+        name: Voucher Details
+        type: list
+        source {
+            list: @event-wizard
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @wizard-container
+            templateOptions: [
+                #DEFAULT#
+                t-Wizard--hideStepsXSmall
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        componentAppearance {
+            listTemplate: @wizard-progress
+            templateOptions: [
+                #DEFAULT#
+                t-WizardSteps--displayLabels
+            ]
+        }
+    )
+
+    region you-event-has-been-created (
+        name: You event has been created!
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <table><tr><td width="120px">
+                <img src="#WORKSPACE_IMAGES#ssworkshop_icon_big.png" width="100px">
+                </td><td>
+                <p>Your event request has been received!  We are reviewing your request now. If we have no questions, your request will be processed and you will be provided your event code. <br><br>If you have any additional questions, please submit them via the form below or livelabs-admin_us@oracle.com</p>
+                </td></tr></table>
+                ```
+        }
+        layout {
+            sequence: 10
+            parentRegion: @voucher-details
+            slot: wizardSubRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    pageItem P41_COMMENT (
+        type: textarea
+        label {
+            label: <strong>Submit comments/questions/discuss with the LiveLabs Team below:</strong>
+            alignment: left
+        }
+        layout {
+            sequence: 20
+            region: @have-a-question
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            width: 800
+            height: 3
+        }
+        validation {
+            maxLength: 4000
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P41_EVENTLINK (
+        type: displayOnly
+        label {
+            label: <strong>Event  Code Link</strong>
+            alignment: left
+        }
+        layout {
+            sequence: 50
+            region: @additional-info
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery: select nvl(QR_LINK,'Coming Soon') from LL_VOUCHERS WHERE  ID=:P41_SEQID;
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            helpText: Once scheduled, this field will be populated.
+        }
+    )
+
+    pageItem P41_EVENTLINK_1 (
+        type: displayOnly
+        label {
+            label: <strong>Event  Code QR Image</strong>
+            alignment: left
+        }
+        layout {
+            sequence: 60
+            region: @additional-info
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        source {
+            type: staticValue
+            staticValue: Coming Soon
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            helpText: Once scheduled, this field will be populated.
+        }
+    )
+
+    pageItem P41_EVENTLINK_1_1 (
+        type: displayOnly
+        label {
+            label: <strong>Event  Code QR Image</strong>
+            alignment: left
+        }
+        layout {
+            sequence: 70
+            region: @additional-info
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery: select nvl(QR_IMAGE,'Coming Soon') from LL_VOUCHERS WHERE EMAIL_CREATOR = lower(:APP_USER) AND ID=:P41_SEQID;
+        }
+        serverSideCondition {
+            type: never
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            helpText: Once scheduled, this field will be populated.
+        }
+    )
+
+    pageItem P41_HEADING (
+        type: displayOnly
+        label {
+            label: <strong>YOUR EVENT CODE DETAILS</strong>
+            alignment: left
+        }
+        settings {
+            sendOnPageSubmit: false
+        }
+        layout {
+            sequence: 10
+            region: @additional-info
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery: select reason from LL_VOUCHERS WHERE EMAIL_CREATOR =   lower(:APP_USER) AND ID=:P41_SEQID;
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P41_NAME (
+        type: displayOnly
+        label {
+            label: <strong>Event Code Name</strong>
+            alignment: left
+        }
+        settings {
+            sendOnPageSubmit: false
+        }
+        layout {
+            sequence: 20
+            region: @additional-info
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery: select reason from LL_VOUCHERS WHERE  ID=:P41_SEQID;
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P41_NAME_1 (
+        type: displayOnly
+        label {
+            label: <strong>Workshop</strong>
+            alignment: left
+        }
+        settings {
+            sendOnPageSubmit: false
+        }
+        layout {
+            sequence: 30
+            region: @additional-info
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery: select b.title from ll_vouchers a, workshop b where  a.workshop_id=b.id and a.ID=:P41_SEQID
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P41_SEQID (
+        type: hidden
+        layout {
+            sequence: 90
+            region: @additional-info
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P41_STATUS (
+        type: displayOnly
+        label {
+            label: <strong>Event Code Status</strong>
+            alignment: left
+        }
+        settings {
+            sendOnPageSubmit: false
+        }
+        layout {
+            sequence: 40
+            region: @additional-info
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery: select status from LL_VOUCHERS WHERE   ID=:P41_SEQID;
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P41_WORKSHOP_ID (
+        type: hidden
+        layout {
+            sequence: 80
+            region: @additional-info
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button send (
+        buttonName: Send
+        label: Send
+        layout {
+            sequence: 10
+            region: @have-a-question
+            slot: belowBox
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    dynamicAction new (
+        name: New
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @send
+        }
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    begin 
+                    
+                    insert into LL_COMMENTS (EMAIL_CREATOR, THE_COMMENT, WORKSHOP_ID, EVENT_ID, COMMENTDATE) 
+                    values (lower(:APP_USER), :P41_COMMENT, :P41_WORKSHOP_ID, :P41_SEQID, CURRENT_TIMESTAMP);
+                    
+                    end;
+                    ```
+                itemsToSubmit: [
+                    P41_COMMENT
+                    P41_WORKSHOP_ID
+                    P41_SEQID
+                ]
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @comments
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction new-2 (
+        name: New_1
+        execution {
+            sequence: 20
+        }
+        when {
+            selectionType: items
+            items: P41_WHICHEVENT
+        }
+
+        action native-submit-page (
+            action: submitPage
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+)
+

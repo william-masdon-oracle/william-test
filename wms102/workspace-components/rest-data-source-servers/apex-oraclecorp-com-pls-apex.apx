@@ -1,0 +1,7 @@
+restDataSourceServer apex_oraclecorp_com_pls_apex (
+    name: apex-oraclecorp-com-pls-apex
+    endpointUrl {
+        url: https://apex.oraclecorp.com/pls/apex/
+    }
+)
+

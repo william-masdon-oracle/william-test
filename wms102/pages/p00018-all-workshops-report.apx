@@ -1,0 +1,697 @@
+page 18 (
+    name: All Workshops Report
+    alias: ALL-WORKSHOPS-REPORT
+    title: All Workshops Report
+    appearance {
+        pageTemplate: @standard-custom
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region all-workshops-report (
+        name: All Workshops Report
+        type: interactiveReport
+        source {
+            location: localDatabase
+            tableName: VW_WORKSHOP_LL_ALL
+        }
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        pagination {
+            type: rowRangesXToY
+        }
+        messages {
+            whenNoDataFound: No data found.
+            whenMoreDataFound: The maximum row count for this report is #MAX_ROW_COUNT# rows.  Please apply a filter to reduce the number of records in your query.
+        }
+        advanced {
+            savedReportMappingIdentifier: 10817013275541976099
+        }
+
+        column ALWAYSFREE_FLG (
+            type: plainText
+            heading {
+                heading: Alwaysfree Flg
+                alignment: center
+            }
+            layout {
+                sequence: 250
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: X
+            }
+        )
+
+        column ALWAYSFREE_URL (
+            type: plainText
+            heading {
+                heading: Alwaysfree Url
+                alignment: center
+            }
+            layout {
+                sequence: 240
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: W
+            }
+        )
+
+        column COMPLETION_DATE (
+            type: plainText
+            heading {
+                heading: Completion Date
+                alignment: center
+            }
+            layout {
+                sequence: 60
+                columnAlignment: center
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: I
+            }
+        )
+
+        column COUNCIL_AREA (
+            type: plainText
+            heading {
+                heading: Council Area
+                alignment: center
+            }
+            layout {
+                sequence: 40
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: G
+            }
+        )
+
+        column FREETIER_FLG (
+            type: plainText
+            heading {
+                heading: Freetier Flg
+                alignment: center
+            }
+            layout {
+                sequence: 210
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: T
+            }
+        )
+
+        column FREETIER_URL (
+            type: plainText
+            heading {
+                heading: Freetier Url
+                alignment: center
+            }
+            layout {
+                sequence: 200
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: S
+            }
+        )
+
+        column GREENBUTTON_FLG (
+            type: plainText
+            heading {
+                heading: Greenbutton Flg
+                alignment: center
+            }
+            layout {
+                sequence: 190
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: R
+            }
+        )
+
+        column GREENBUTTON_URL (
+            type: plainText
+            heading {
+                heading: Greenbutton Url
+                alignment: center
+            }
+            layout {
+                sequence: 180
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: Q
+            }
+        )
+
+        column LAST_QA_DATE (
+            type: plainText
+            heading {
+                heading: Last Qa Date
+                alignment: center
+            }
+            layout {
+                sequence: 310
+                columnAlignment: center
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: AD
+            }
+        )
+
+        column LIVELABSID (
+            type: plainText
+            heading {
+                heading: Livelabs ID
+                alignment: center
+            }
+            layout {
+                sequence: 10
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: A
+            }
+        )
+
+        column MANAGER_EMAIL (
+            type: plainText
+            heading {
+                heading: Manager Email
+            }
+            layout {
+                sequence: 120
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AF
+            }
+        )
+
+        column NOVNC_ENABLED_FLG (
+            type: plainText
+            heading {
+                heading: Novnc Enabled Flg
+                alignment: center
+            }
+            layout {
+                sequence: 260
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: Y
+            }
+        )
+
+        column OCI_LOGIN_FLG (
+            type: plainText
+            heading {
+                heading: Oci Login Flg
+                alignment: center
+            }
+            layout {
+                sequence: 270
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: Z
+            }
+        )
+
+        column PAGE_VIEWS (
+            type: plainText
+            heading {
+                heading: Page Views
+                alignment: center
+            }
+            layout {
+                sequence: 280
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: AA
+            }
+        )
+
+        column PAGE_VIEWS_YEAR (
+            type: plainText
+            heading {
+                heading: Page Views Year
+                alignment: center
+            }
+            layout {
+                sequence: 320
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: AE
+            }
+        )
+
+        column PAID_FLG (
+            type: plainText
+            heading {
+                heading: Paid Flg
+                alignment: center
+            }
+            layout {
+                sequence: 170
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: P
+            }
+        )
+
+        column PAID_URL (
+            type: plainText
+            heading {
+                heading: Paid Url
+                alignment: center
+            }
+            layout {
+                sequence: 160
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: O
+            }
+        )
+
+        column PRODUCTION_URL (
+            type: plainText
+            heading {
+                heading: Production Url
+                alignment: center
+            }
+            layout {
+                sequence: 50
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: N
+            }
+        )
+
+        column PUBLISH_STATUS (
+            type: plainText
+            heading {
+                heading: Publish Status
+                alignment: center
+            }
+            layout {
+                sequence: 100
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: E
+            }
+        )
+
+        column PUBLISH_TYPE (
+            type: plainText
+            heading {
+                heading: Publish Type
+                alignment: center
+            }
+            layout {
+                sequence: 300
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AC
+            }
+        )
+
+        column SPRINT_FLG (
+            type: plainText
+            heading {
+                heading: Sprint Flg
+                alignment: center
+            }
+            layout {
+                sequence: 230
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: V
+            }
+        )
+
+        column SPRINT_URL (
+            type: plainText
+            heading {
+                heading: Sprint Url
+                alignment: center
+            }
+            layout {
+                sequence: 220
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: U
+            }
+        )
+
+        column SUPPORT_CONTACT_EMAIL (
+            type: plainText
+            heading {
+                heading: Support Contact Email
+                alignment: center
+            }
+            layout {
+                sequence: 80
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: K
+            }
+        )
+
+        column SUPPORT_LEVEL_1 (
+            type: plainText
+            heading {
+                heading: Support Level 1
+                alignment: center
+            }
+            layout {
+                sequence: 130
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: H
+            }
+        )
+
+        column TITLE (
+            type: plainText
+            heading {
+                heading: Title
+                alignment: center
+            }
+            layout {
+                sequence: 30
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: C
+            }
+        )
+
+        column WORKSHOP_ID (
+            type: plainText
+            heading {
+                heading: Workshop Id
+                alignment: center
+            }
+            layout {
+                sequence: 20
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: B
+            }
+        )
+
+        column WORKSHOP_LEVEL (
+            type: plainText
+            heading {
+                heading: Workshop Level
+                alignment: center
+            }
+            layout {
+                sequence: 290
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AB
+            }
+        )
+
+        column WORKSHOP_OWNER_EMAIL (
+            type: plainText
+            heading {
+                heading: Workshop Owner Email
+                alignment: center
+            }
+            layout {
+                sequence: 70
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: J
+            }
+        )
+
+        column WORKSHOP_OWNER_GROUP (
+            type: plainText
+            heading {
+                heading: Workshop Owner Group
+                alignment: center
+            }
+            layout {
+                sequence: 140
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: L
+            }
+        )
+
+        column WORKSHOP_STATUS (
+            type: plainText
+            heading {
+                heading: Workshop Status
+                alignment: center
+            }
+            layout {
+                sequence: 90
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: D
+            }
+        )
+
+        column WORKSHOP_TIME (
+            type: plainText
+            heading {
+                heading: Workshop Time
+                alignment: center
+            }
+            layout {
+                sequence: 110
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: F
+            }
+        )
+
+        column YOUTUBE_LINK (
+            type: plainText
+            heading {
+                heading: Youtube Link
+                alignment: center
+            }
+            layout {
+                sequence: 150
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: M
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: All Workshops Report
+        }
+
+        savedReport 108228244 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn COMPLETION_DATE (
+                sequence: 6
+            )
+
+            displayColumn COUNCIL_AREA (
+                sequence: 4
+            )
+
+            displayColumn LIVELABSID (
+                sequence: 1
+            )
+
+            displayColumn PRODUCTION_URL (
+                sequence: 5
+            )
+
+            displayColumn SUPPORT_CONTACT_EMAIL (
+                sequence: 8
+            )
+
+            displayColumn TITLE (
+                sequence: 3
+            )
+
+            displayColumn WORKSHOP_ID (
+                sequence: 2
+            )
+
+            displayColumn WORKSHOP_OWNER_EMAIL (
+                sequence: 7
+            )
+
+        )
+
+    )
+
+    region breadcrumb (
+        name: Breadcrumb
+        type: breadcrumb
+        source {
+            breadcrumb: @breadcrumb
+        }
+        layout {
+            sequence: 10
+            slot: breadcrumbBar
+        }
+        appearance {
+            template: @title-bar
+            templateOptions: [
+                #DEFAULT#
+                t-BreadcrumbRegion--useBreadcrumbTitle
+            ]
+        }
+        componentAppearance {
+            breadcrumbTemplate: @breadcrumb
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    region span-style-font-size-1-2em-font-weight-400-all-published-workshops-report-span (
+        name: <span style="font-size: 1.2em; font-weight: 400">All Published Workshops Report</span>
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <table><tr><td width="120px">
+                <img src="https://c4u04.objectstorage.us-ashburn-1.oci.customer-oci.com/p/cBQqSkJksuZca_VCqfZ2uP2Tvgqafe3eBya0I-EtOKAJ77uF0nN-ygNzr4bcL8QO/n/c4u04/b/logos/o/william_wms_biglogo.png" width="100px">
+                </td><td>
+                <p>All workshops published in the LiveLabs system are listed below.  You can customize the report to your liking and save it for your next session. We also have several canned reports saved for you.<br><strong>To access all the columns or presaved reports:</strong><br>1. Click Actions -> Columns.  <br>2. You can filter, download as an excel, convert to a chart and more in the actions menu.<br><strong>To subscribe and get this report emailed to you monthly or weekly:</strong> <br>1. Click Actions -> Subscription<br>2. Enter your email, subject and frequency<br>3. Click apply<br><strong>To download:</strong> <br>1. Click Actions -> Download<br>2. Choose your report format<br></p></td></tr></table> 
+                ```
+        }
+        layout {
+            sequence: 10
+            slot: beforeContentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+)
+

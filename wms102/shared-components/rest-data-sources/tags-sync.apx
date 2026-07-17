@@ -1,0 +1,196 @@
+restDataSource tags_sync (
+    name: Tags Sync
+    source {
+        type: http
+        remoteServer: @apex_oraclecorp_com_pls_apex
+        urlPathPrefix: wksp_common/taxonomy/txn_technologies_vw
+    }
+    synchronization {
+        localTableOwner: DBPMDEV
+        localTableName: WMS_PHUB_SYNC
+        type: merge
+        httpRequestLimit: 1000
+    }
+
+    operation get (
+        label: GET
+        operation {
+            urlPattern: .
+            httpMethod: get
+            databaseOperation: fetchRows
+        }
+    )
+
+    dataProfile {
+        name: Tags Sync
+        rowSelector: items
+    }
+
+    dataProfileColumn active-yn (
+        columnName: ACTIVE_YN
+        source {
+            sequence: 5
+            dataType: varchar2
+        }
+        parsing {
+            pathExpression: active_yn
+        }
+    )
+
+    dataProfileColumn category-level (
+        columnName: CATEGORY_LEVEL1
+        source {
+            sequence: 7
+            dataType: varchar2
+        }
+        parsing {
+            pathExpression: category_level1
+        }
+    )
+
+    dataProfileColumn category-level-2 (
+        columnName: CATEGORY_LEVEL2
+        source {
+            sequence: 8
+            dataType: varchar2
+        }
+        parsing {
+            pathExpression: category_level2
+        }
+    )
+
+    dataProfileColumn category-level-3 (
+        columnName: CATEGORY_LEVEL3
+        source {
+            sequence: 9
+            dataType: varchar2
+        }
+        parsing {
+            pathExpression: category_level3
+        }
+    )
+
+    dataProfileColumn category-level-4 (
+        columnName: CATEGORY_LEVEL4
+        source {
+            sequence: 10
+            dataType: varchar2
+        }
+        parsing {
+            pathExpression: category_level4
+        }
+    )
+
+    dataProfileColumn category-level-5 (
+        columnName: CATEGORY_LEVEL5
+        source {
+            sequence: 11
+            dataType: varchar2
+        }
+        parsing {
+            pathExpression: category_level5
+        }
+    )
+
+    dataProfileColumn category-level-6 (
+        columnName: CATEGORY_LEVEL6
+        source {
+            sequence: 12
+            dataType: varchar2
+        }
+        parsing {
+            pathExpression: category_level6
+        }
+    )
+
+    dataProfileColumn category-rlevel (
+        columnName: CATEGORY_RLEVEL1
+        source {
+            sequence: 13
+            dataType: varchar2
+        }
+        parsing {
+            pathExpression: category_rlevel1
+        }
+    )
+
+    dataProfileColumn category-rlevel-2 (
+        columnName: CATEGORY_RLEVEL2
+        source {
+            sequence: 14
+            dataType: varchar2
+        }
+        parsing {
+            pathExpression: category_rlevel2
+        }
+    )
+
+    dataProfileColumn category-rlevel-3 (
+        columnName: CATEGORY_RLEVEL3
+        source {
+            sequence: 15
+            dataType: varchar2
+        }
+        parsing {
+            pathExpression: category_rlevel3
+        }
+    )
+
+    dataProfileColumn id (
+        columnName: ID
+        source {
+            sequence: 1
+            dataType: number
+            primaryKey: true
+        }
+        parsing {
+            pathExpression: id
+        }
+    )
+
+    dataProfileColumn name (
+        columnName: NAME
+        source {
+            sequence: 2
+            dataType: varchar2
+        }
+        parsing {
+            pathExpression: name
+        }
+    )
+
+    dataProfileColumn short-name (
+        columnName: SHORT_NAME
+        source {
+            sequence: 6
+            dataType: varchar2
+        }
+        parsing {
+            pathExpression: short_name
+        }
+    )
+
+    dataProfileColumn tag-code (
+        columnName: TAG_CODE
+        source {
+            sequence: 3
+            dataType: varchar2
+        }
+        parsing {
+            pathExpression: tag_code
+        }
+    )
+
+    dataProfileColumn tag-type (
+        columnName: TAG_TYPE
+        source {
+            sequence: 4
+            dataType: varchar2
+        }
+        parsing {
+            pathExpression: tag_type
+        }
+    )
+
+)
+

@@ -1,0 +1,752 @@
+page 71 (
+    name: Workshop Details
+    alias: WORKSHOP-POPUP
+    title: Workshop Details
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @modal-dialog
+        templateOptions: [
+            #DEFAULT#
+            t-Dialog--noPadding
+        ]
+    }
+    dialog {
+        resizable: false
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region workshop-details (
+        name: Workshop Details
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    pageItem P71_CONTACT (
+        type: displayOnly
+        label {
+            label: Workshop Main Contact
+            alignment: left
+        }
+        layout {
+            sequence: 130
+            region: @workshop-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: [
+                #DEFAULT#
+                margin-top-none
+                margin-bottom-md
+                margin-left-sm
+                margin-right-sm
+            ]
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery:
+                ```sql
+                select 
+                nvl(EMAIL_FROM_ADDRESS,'None Found')  
+                from workshops where id = :P71_WORKSHOP_ID;
+                ```
+        }
+        default {
+            type: static
+            staticValue: None Found
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P71_DEPLOYMENT (
+        type: displayOnly
+        label {
+            label: Deployment
+            alignment: left
+        }
+        layout {
+            sequence: 180
+            region: @workshop-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery: select deployment_tag from workshop_categories_values_vw where id=:P71_WORKSHOP_ID
+        }
+        default {
+            type: static
+            staticValue: None Defined
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P71_DURATION (
+        type: displayOnly
+        label {
+            label: Duration
+            alignment: left
+        }
+        layout {
+            sequence: 60
+            region: @workshop-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: [
+                #DEFAULT#
+                margin-top-none
+                margin-bottom-md
+                margin-left-sm
+                margin-right-sm
+            ]
+        }
+        source {
+            type: sqlQueryMultipleValues
+            sqlQuery:
+                ```sql
+                select 
+                WORKSHOP_TIME || ' '||WORKSHOP_TIME_UNIT 
+                from workshops where id = :P71_WORKSHOP_ID;
+                ```
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P71_DURATION_1 (
+        type: displayOnly
+        label {
+            label: LiveLabs Lease Duration
+            alignment: left
+        }
+        layout {
+            sequence: 70
+            region: @workshop-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: [
+                #DEFAULT#
+                margin-top-none
+                margin-bottom-md
+                margin-left-sm
+                margin-right-sm
+            ]
+        }
+        source {
+            type: sqlQueryMultipleValues
+            sqlQuery:
+                ```sql
+                select 
+                TIME_IN_HOURS||' hrs'  
+                from workshops where id = :P71_WORKSHOP_ID;
+                ```
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P71_FOCUS (
+        type: displayOnly
+        label {
+            label: Focus
+            alignment: left
+        }
+        layout {
+            sequence: 200
+            region: @workshop-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: [
+                #DEFAULT#
+                margin-top-none
+                margin-bottom-md
+                margin-left-sm
+                margin-right-sm
+            ]
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery: select focus_tag from workshop_categories_values_vw where id=:P71_WORKSHOP_ID
+        }
+        default {
+            type: static
+            staticValue: None Defined
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P71_FREETIER_LINK (
+        type: displayOnly
+        label {
+            label: Freetier Link
+            alignment: left
+        }
+        layout {
+            sequence: 90
+            region: @workshop-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: [
+                #DEFAULT#
+                margin-top-none
+                margin-bottom-md
+                margin-left-sm
+                margin-right-sm
+            ]
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery:
+                ```sql
+                select 
+                nvl(freetier_url,'None found')
+                from workshops where id = :P71_WORKSHOP_ID;
+                ```
+        }
+        default {
+            type: static
+            staticValue: None Found
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P71_GITHUB_LINK (
+        type: displayOnly
+        label {
+            label: Github Link
+            alignment: left
+        }
+        layout {
+            sequence: 100
+            region: @workshop-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery:
+                ```sql
+                select 
+                nvl(github_address,'None found')
+                from workshops where id = :P71_WORKSHOP_ID;
+                ```
+        }
+        default {
+            type: static
+            staticValue: None Found
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P71_GITURL (
+        type: hidden
+        layout {
+            sequence: 80
+            region: @workshop-details
+            slot: regionBody
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery: select github_address from workshops where id = :P71_WORKSHOP_ID;
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P71_LEVEL (
+        type: displayOnly
+        label {
+            label: Level
+            alignment: left
+        }
+        layout {
+            sequence: 170
+            region: @workshop-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: [
+                #DEFAULT#
+                margin-top-none
+                margin-bottom-md
+                margin-left-sm
+                margin-right-sm
+            ]
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery: select level_tag from workshop_categories_values_vw where id=:P71_WORKSHOP_ID
+        }
+        default {
+            type: static
+            staticValue: None Defined
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P71_MODERNIZER (
+        type: displayOnly
+        label {
+            label: Maintained By
+            alignment: left
+        }
+        layout {
+            sequence: 150
+            region: @workshop-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery:
+                ```sql
+                select 
+                nvl(modernizer_resource,'None Found')
+                from workshops where id = :P71_WORKSHOP_ID;
+                ```
+        }
+        default {
+            type: static
+            staticValue: None Found
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P71_PRODUCTS (
+        type: displayOnly
+        label {
+            label: Product(s)/Technologies
+            alignment: left
+        }
+        layout {
+            sequence: 220
+            region: @workshop-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: [
+                #DEFAULT#
+                margin-top-none
+                margin-bottom-md
+                margin-left-sm
+                margin-right-sm
+            ]
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery: select product_tag from workshop_categories_values_vw where id=:P71_WORKSHOP_ID
+        }
+        default {
+            type: static
+            staticValue: None Defined
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P71_QA_STATUS (
+        type: displayOnly
+        label {
+            label: QA Status
+            alignment: left
+        }
+        layout {
+            sequence: 120
+            region: @workshop-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        source {
+            type: sqlQueryMultipleValues
+            sqlQuery:
+                ```sql
+                select 
+                nvl(qa_status, 'n/a')  
+                from workshops where id = :P71_WORKSHOP_ID;
+                ```
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P71_ROLE (
+        type: displayOnly
+        label {
+            label: Role
+            alignment: left
+        }
+        layout {
+            sequence: 210
+            region: @workshop-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery: select role_tag from workshop_categories_values_vw where id=:P71_WORKSHOP_ID
+        }
+        default {
+            type: static
+            staticValue: None Defined
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P71_SALES_PLAY (
+        type: displayOnly
+        label {
+            label: Sales Play(s)
+            alignment: left
+        }
+        layout {
+            sequence: 190
+            region: @workshop-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: [
+                #DEFAULT#
+                margin-top-none
+                margin-bottom-md
+                margin-left-sm
+                margin-right-sm
+            ]
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery: select salesplay_tag from workshop_categories_values_vw where id=:P71_WORKSHOP_ID
+        }
+        default {
+            type: static
+            staticValue: None Defined
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P71_STATUS (
+        type: displayOnly
+        label {
+            label: Workshop Status
+            alignment: left
+        }
+        layout {
+            sequence: 110
+            region: @workshop-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: [
+                #DEFAULT#
+                margin-top-none
+                margin-bottom-md
+                margin-left-sm
+                margin-right-sm
+            ]
+        }
+        source {
+            type: sqlQueryMultipleValues
+            sqlQuery:
+                ```sql
+                select 
+                workshop_status  
+                from workshops where id = :P71_WORKSHOP_ID;
+                ```
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P71_TECH_CONTACT (
+        type: displayOnly
+        label {
+            label: Technical Contact
+            alignment: left
+        }
+        layout {
+            sequence: 140
+            region: @workshop-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery:
+                ```sql
+                select 
+                replace(nvl(key_oracle_contact_1,'None Found')||', '||nvl(key_oracle_contact_2,'XQZ'),', XQZ','')
+                from workshops where id = :P71_WORKSHOP_ID;
+                ```
+        }
+        default {
+            type: static
+            staticValue: None Found
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P71_WORKSHOP_DESCRIPTION (
+        type: displayOnly
+        label {
+            label: Description
+            alignment: left
+        }
+        layout {
+            sequence: 50
+            region: @workshop-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: [
+                #DEFAULT#
+                margin-top-none
+                margin-bottom-none
+                margin-left-sm
+                margin-right-sm
+            ]
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery: select description from workshops where id = :P71_WORKSHOP_ID;
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P71_WORKSHOP_ID (
+        type: hidden
+        layout {
+            sequence: 20
+            region: @workshop-details
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P71_WORKSHOP_NAME (
+        type: displayOnly
+        label {
+            label: Title
+            alignment: left
+        }
+        layout {
+            sequence: 40
+            region: @workshop-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: [
+                #DEFAULT#
+                margin-top-none
+                margin-bottom-none
+                margin-left-sm
+                margin-right-sm
+            ]
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery: select name from workshops where id = :P71_WORKSHOP_ID;
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button close (
+        buttonName: Close
+        label: Close
+        layout {
+            sequence: 30
+            region: @workshop-details
+            slot: create
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--padRight
+            ]
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button github-workshop-instructions (
+        buttonName: GitHub_Workshop_Instructions
+        label: View workshop instructions
+        layout {
+            sequence: 20
+            region: @workshop-details
+            slot: help
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectUrl
+            targetUrl: javascript:window.open("&P71_GITURL.","_blank");
+            executeValidations: false
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button workshop-register (
+        buttonName: Workshop_register
+        label: Register for this workshop
+        layout {
+            sequence: 40
+            region: @workshop-details
+            slot: close
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--padLeft
+            ]
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 11
+                items: {
+                    P11_WORKSHOP: &P71_WORKSHOP_ID.
+                }
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    dynamicAction close-dialog (
+        name: close dialog
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @close
+        }
+
+        action native-dialog-cancel (
+            action: cancelDialog
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+)
+

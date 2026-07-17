@@ -1,0 +1,89 @@
+page 103 (
+    name: Green Button Status
+    alias: GREENBUTTONSTATUS
+    title: Green Button Status
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @modal-dialog
+        templateOptions: #DEFAULT#
+    }
+    dialog {
+        resizable: false
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region green-button-by-status (
+        name: Green Button by Status
+        type: chart
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        security {
+            escapeSpecialChars: false
+        }
+        chartLayout {
+            height: 400
+        }
+        legend {
+            show: false
+        }
+
+        series series (
+            name: Series 1
+            execution {
+                sequence: 10
+            }
+            source {
+                type: sqlQuery
+                sqlQuery: select green_btn_status, count(green_btn_status) as gbcount from workshops where green_btn_status is not null group by green_btn_status
+            }
+            columnMapping {
+                seriesName: GREEN_BTN_STATUS
+                label: GREEN_BTN_STATUS
+                value: GBCOUNT
+                z: GBCOUNT
+                customTooltip: GREEN_BTN_STATUS
+                legendTooltip: GBCOUNT
+                labelTooltip: GREEN_BTN_STATUS
+            }
+            label {
+                show: true
+            }
+        )
+
+        axis x (
+            name: x
+            majorTicks {
+                show: auto
+            }
+        )
+
+        axis y (
+            name: y
+            value {
+                format: decimal
+                decimalPlaces: 0
+                formatScaling: none
+            }
+            majorTicks {
+                show: auto
+            }
+        )
+
+    )
+
+)
+

@@ -1,0 +1,169 @@
+restDataSource costing_data (
+    name: Costing Data
+    source {
+        type: ords
+        remoteServer: @rddainsuh6u1okc_llreport_adb_us_ashburn_1_oraclecloudapps_com_ords_admin
+        urlPathPrefix: /wms_usage_mv/
+    }
+    authentication {
+        credentials: @COSTING_ADB
+        server: @rddainsuh6u1okc_llreport_adb_us_ashburn_1_oraclecloudapps_com_ords_admin_2_
+        urlPathPrefix: /oauth/token
+    }
+    synchronization {
+        localTableOwner: DBPMDEV
+        localTableName: COSTING_DATA
+        type: fullRefreshDelete
+        schedule: FREQ=WEEKLY;INTERVAL=1;BYDAY=SUN;BYHOUR=0;BYMINUTE=0;BYSECOND=0
+        httpRequestLimit: 400
+    }
+
+    operation get (
+        label: GET
+        operation {
+            urlPattern: .
+            httpMethod: get
+            databaseOperation: fetchRows
+        }
+    )
+
+    operation post (
+        label: POST
+        operation {
+            urlPattern: .
+            httpMethod: post
+            databaseOperation: insert
+        }
+        requestBody {
+            versionNumber: 1
+        }
+    )
+
+    dataProfile {
+        name: Costing Data
+        rowSelector: items
+    }
+
+    dataProfileColumn cost (
+        columnName: COST
+        source {
+            sequence: 9
+            dataType: number
+        }
+        parsing {
+            pathExpression: cost
+        }
+    )
+
+    dataProfileColumn council-area (
+        columnName: COUNCIL_AREA
+        source {
+            sequence: 8
+            dataType: varchar2
+        }
+        parsing {
+            pathExpression: council_area
+        }
+    )
+
+    dataProfileColumn event-title (
+        columnName: EVENT_TITLE
+        source {
+            sequence: 4
+            dataType: varchar2
+        }
+        parsing {
+            pathExpression: event_title
+        }
+    )
+
+    dataProfileColumn livelabs-eventid (
+        columnName: LIVELABS_EVENTID
+        source {
+            sequence: 3
+            dataType: varchar2
+        }
+        parsing {
+            pathExpression: livelabs_eventid
+        }
+    )
+
+    dataProfileColumn livelabs-workshopid (
+        columnName: LIVELABS_WORKSHOPID
+        source {
+            sequence: 5
+            dataType: varchar2
+        }
+        parsing {
+            pathExpression: livelabs_workshopid
+        }
+    )
+
+    dataProfileColumn resource (
+        columnName: RESOURCE
+        source {
+            sequence: 19
+            dataType: varchar2
+        }
+        parsing {
+            pathExpression: ignore
+        }
+    )
+
+    dataProfileColumn service (
+        columnName: SERVICE
+        source {
+            sequence: 2
+            dataType: varchar2
+        }
+        parsing {
+            pathExpression: service
+        }
+    )
+
+    dataProfileColumn tenancy-name (
+        columnName: TENANCY_NAME
+        source {
+            sequence: 1
+            dataType: varchar2
+        }
+        parsing {
+            pathExpression: tenancy_name
+        }
+    )
+
+    dataProfileColumn u-resource (
+        columnName: U_RESOURCE
+        source {
+            sequence: 20
+            dataType: varchar2
+        }
+        parsing {
+            pathExpression: u_resource
+        }
+    )
+
+    dataProfileColumn workshop-name (
+        columnName: WORKSHOP_NAME
+        source {
+            sequence: 6
+            dataType: varchar2
+        }
+        parsing {
+            pathExpression: workshop_name
+        }
+    )
+
+    dataProfileColumn workshop-owner-group (
+        columnName: WORKSHOP_OWNER_GROUP
+        source {
+            sequence: 7
+            dataType: varchar2
+        }
+        parsing {
+            pathExpression: workshop_owner_group
+        }
+    )
+
+)
+

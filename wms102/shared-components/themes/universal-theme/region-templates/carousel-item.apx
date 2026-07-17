@@ -1,0 +1,16 @@
+regionTemplate carousel-item (
+    name: Carousel Item
+    templateClass: borderlessRegion
+    region {
+        template:
+            ```html
+            <div class="carousel-item" id=#REGION_STATIC_ID# #REGION_ATTRIBUTES#>
+                #BODY#
+            </div>
+            ```
+    }
+    advanced {
+        identifier: CAROUSEL_ITEM
+    }
+)
+

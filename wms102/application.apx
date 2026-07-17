@@ -1,0 +1,168 @@
+app WMS (
+    name: Workshop Management System
+    version: 2026.07.16
+    logo {
+        type: custom
+        customHtml: <span style="font-weight: 400">Oracle Workshop Management System</span>
+    }
+    navigation {
+        homeUrl: {
+            page: 51
+        }
+    }
+    navigationMenu {
+        listTemplate: @side-navigation-menu
+        templateOptions: [
+            #DEFAULT#
+            js-navCollapsed--hidden
+            t-TreeNav--styleA
+        ]
+        list: @desktop-navigation-menu
+    }
+    navigationBar {
+        list: @desktop-navigation-bar
+        listTemplate: @navigation-bar
+        templateOptions: #DEFAULT#
+    }
+    userInterface {
+        currentTheme: @universal-theme
+        globalPage: 0
+    }
+    appFormatMasks {
+        date: DS
+        timestamp: DS
+        timestampTimeZone: DS
+    }
+    javaScript {
+        fileUrls: #APP_IMAGES#js/livelabs.js
+        includeLegacyJavascript: [
+            pre18
+            18
+        ]
+    }
+    css {
+        fileUrls: #APP_IMAGES#app-icon.css
+    }
+    authentication {
+        scheme: @single-sign-on-sso
+        publicUser: APEX_PUBLIC_USER
+    }
+    authorization {
+        scheme: @reader-rights
+        runOnBackgroundJob: false
+    }
+    security {
+        deepLinking: true
+        referrerPolicy: strictOriginWhenCrossOrigin
+        runtimeApiUsage: modifyThisApp
+    }
+    sessionStateProtection {
+        checksumSalt: 10223E03807994E117CECF0FB5CC73252F7429C62448A09F508470577777E7F8
+        acceptPre202UrlChecksums: false
+    }
+    sessionManagement {
+        sessionStateCommits: immediate
+    }
+    globalization {
+        documentDirection: leftToRight
+    }
+    progressiveWebApp {
+        enable: false
+    }
+    rowSearch {
+        tokenize: false
+    }
+    reportPrinting {
+        type: useInstanceSettings
+    }
+    runtime {
+        friendlyUrls: false
+        allowFeedback: true
+        compatibilityMode: 19.2-20.1-20.2-21.1
+        accessibleReadOnlyItems: false
+    }
+    staticFiles {
+        appFilesPath: https://livelabs.oracle.com/cdn/wmsappfiles/
+    }
+    availability {
+        status: restricted
+        restrictUserList: [
+            ADELIN.ANDREI.CERNAUTAN@ORACLE.COM
+            " BRIANNA.A.AMBLER@ORACLE.COM"
+            " CARMEN.BERDANT@ORACLE.COM"
+            " DAVID.START@ORACLE.COM"
+            " EUGENIO.GALIANO@ORACLE.COM"
+            " HOPE.FISHER@ORACLE.COM"
+            " IOANA.CRISTINA.MUNTEANU@ORACLE.COM"
+            " KAY.MALCOLM@ORACLE.COM"
+            " KEVIN.LAZARZ@ORACLE.COM"
+            " LINDA.FOINDING@ORACLE.COM"
+            " VASILE-LUCIAN.BRINZEI@ORACLE.COM"
+            " MARCO.ANTONIO.LUCHIAN@ORACLE.COM"
+            " MARY.HESS@ORACLE.COM"
+            " MATTHEW.KOWALIK@ORACLE.COM"
+            " PAT.SHEPHERD@ORACLE.COM"
+            " RAMONA.MAGADAN@ORACLE.COM"
+            " SANDITA.MOISEI@ORACLE.COM"
+            " TEODOR.CONSTANTIN.NECHITA@ORACLE.COM"
+            " VALENTINA.V.CONSTANTIN@ORACLE.COM"
+            " WILLIAM.MASDON@ORACLE.COM"
+        ]
+    }
+    advanced {
+        passEcid: false
+        faviconHtml:
+            ```
+            <link rel="shortcut icon" href="#APP_IMAGES#favicon.ico">
+            <link rel="icon" sizes="16x16" href="#APP_IMAGES#ssw_icon.png">
+            <link rel="icon" sizes="32x32" href="#APP_IMAGES#ssw_icon.png">
+            ```
+        appBuilderIconName: ssw_icon.png
+    }
+    comments {
+        comments: Application created from create application wizard 2020.03.05.
+    }
+
+    substitution APP_NAME (
+        value {
+            staticValue: ssworkshop_newapp
+        }
+    )
+
+    substitution USER_WHITELIST (
+        value {
+            staticValue: ADELIN.ANDREI.CERNAUTAN@ORACLE.COM, BRIANNA.A.AMBLER@ORACLE.COM, CARMEN.BERDANT@ORACLE.COM, DAVID.START@ORACLE.COM, EUGENIO.GALIANO@ORACLE.COM, HOPE.FISHER@ORACLE.COM, IOANA.CRISTINA.MUNTEANU@ORACLE.COM, KAY.MALCOLM@ORACLE.COM, KEVIN.LAZARZ@ORACLE.COM, LINDA.FOINDING@ORACLE.COM, VASILE-LUCIAN.BRINZEI@ORACLE.COM, MARCO.ANTONIO.LUCHIAN@ORACLE.COM, MARY.HESS@ORACLE.COM, MATTHEW.KOWALIK@ORACLE.COM, PAT.SHEPHERD@ORACLE.COM, RAMONA.MAGADAN@ORACLE.COM, SANDITA.MOISEI@ORACLE.COM, TEODOR.CONSTANTIN.NECHITA@ORACLE.COM, VALENTINA.V.CONSTANTIN@ORACLE.COM, WILLIAM.MASDON@ORACLE.COM
+        }
+    )
+
+    appSetting ACCESS_CONTROL_SCOPE (
+        value {
+            staticValue: ALL_USERS
+            onUpgradeKeepValue: true
+        }
+        validation {
+            validValues: ACL_ONLY, ALL_USERS
+        }
+        config {
+            buildOption: @feature-access-control
+        }
+        comments {
+            comments: The default access level given to authenticated users who are not in the access control list
+        }
+    )
+
+    appSetting FEEDBACK_ATTACHMENTS_YN (
+        value {
+            staticValue: Y
+            onUpgradeKeepValue: true
+        }
+        validation {
+            validValues: Y, N
+        }
+        config {
+            buildOption: @feature-feedback
+        }
+    )
+
+)
+

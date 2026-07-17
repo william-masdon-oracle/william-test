@@ -1,0 +1,788 @@
+page 44 (
+    name: Manage All My Events
+    alias: MANAGE-ALL-MY-EVENTS
+    title: Manage All My Events
+    appearance {
+        pageTemplate: @standard-custom
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region requested-events (
+        name: Requested Events
+        type: interactiveGrid
+        source {
+            location: localDatabase
+            tableName: WMS_EVENTS
+            whereClause: (lower(:APP_USER) = lower(email_creator) or lower(:APP_USER) in lower(email_requestor)) or lower(:APP_USER) in (select email from workshop_person_role where workshop_id is null and active_flg = 1)
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        toolbar {
+            controls: [
+                searchCol
+                searchField
+                actionsMenu
+                resetButton
+                saveButton
+            ]
+        }
+        download {
+            formats: [
+                csv
+                html
+                excel
+                pdf
+            ]
+        }
+        advanced {
+            savedReportMappingIdentifier: 13118495445524509137
+        }
+
+        savedReport 133158486 (
+            visibility: primary
+            view {
+                default: grid
+            }
+            singleRowView {
+                displayedColumns: true
+            }
+
+            displayColumn (
+                column: @ID
+                layout {
+                    width: 64
+                    sequence: 1
+                }
+            )
+
+            displayColumn (
+                column: @TITLE
+                layout {
+                    width: 348
+                    sequence: 3
+                }
+            )
+
+            displayColumn (
+                column: @EVENT_CODE
+                layout {
+                    width: 176
+                    sequence: 4
+                }
+            )
+
+            displayColumn (
+                column: @EMAIL_CREATOR
+                layout {
+                    width: 153
+                    sequence: 6
+                }
+            )
+
+            displayColumn (
+                column: @EMAIL_REQUESTOR
+                layout {
+                    show: false
+                    sequence: 7
+                }
+            )
+
+            displayColumn (
+                column: @VALID_FROM
+                layout {
+                    width: 95
+                    sequence: 8
+                }
+            )
+
+            displayColumn (
+                column: @VALID_TO
+                layout {
+                    width: 86
+                    sequence: 9
+                }
+            )
+
+            displayColumn (
+                column: @USERS_MAXIMUM
+                layout {
+                    show: false
+                    sequence: 10
+                }
+            )
+
+            displayColumn (
+                column: @LIVELABS_ID
+                layout {
+                    width: 83
+                    sequence: 2
+                }
+            )
+
+            displayColumn (
+                column: @ALT_DESC_LONG
+                layout {
+                    show: false
+                    sequence: 11
+                }
+            )
+
+            displayColumn (
+                column: @ALT_DESC_SHORT
+                layout {
+                    show: false
+                    sequence: 12
+                }
+            )
+
+            displayColumn (
+                column: @ALT_DESC_OUTLINE
+                layout {
+                    show: false
+                    sequence: 13
+                }
+            )
+
+            displayColumn (
+                column: @ALT_DESC_PREREQ
+                layout {
+                    show: false
+                    sequence: 14
+                }
+            )
+
+            displayColumn (
+                column: @ACTIVE_FLG
+                layout {
+                    show: false
+                    width: 71
+                    sequence: 16
+                }
+            )
+
+            displayColumn (
+                column: @REMARKS
+                layout {
+                    show: false
+                    sequence: 17
+                }
+            )
+
+            displayColumn (
+                column: @VALID_TIMEZONE
+                layout {
+                    show: false
+                    sequence: 18
+                }
+            )
+
+            displayColumn (
+                column: @ALT_URL
+                layout {
+                    show: false
+                    sequence: 19
+                }
+            )
+
+            displayColumn (
+                column: @TENANCY_ID
+                layout {
+                    show: false
+                    sequence: 20
+                }
+            )
+
+            displayColumn (
+                column: @USERS_CONCURRENT
+                layout {
+                    show: false
+                    sequence: 21
+                }
+            )
+
+            displayColumn (
+                column: @ALT_TIME_HOURS
+                layout {
+                    show: false
+                    sequence: 22
+                }
+            )
+
+            displayColumn (
+                column: @ALT_TIME_AVAILABLE
+                layout {
+                    show: false
+                    sequence: 23
+                }
+            )
+
+            displayColumn (
+                column: @DISPLAY_TAGS
+                layout {
+                    show: false
+                    sequence: 24
+                }
+            )
+
+            displayColumn (
+                column: @EVENT_JSON
+                layout {
+                    show: false
+                    sequence: 25
+                }
+            )
+
+            displayColumn (
+                column: @EVENT_STATUS
+                layout {
+                    width: 138
+                    sequence: 5
+                }
+            )
+
+            displayColumn (
+                column: @UPDATED_FLG
+                layout {
+                    sequence: 26
+                }
+            )
+
+        )
+
+        column ACTIVE_FLG (
+            type: textField
+            heading {
+                heading: Active Flg
+            }
+            layout {
+                sequence: 170
+            }
+            validation {
+                maxLength: 1
+            }
+            source {
+                databaseColumn: ACTIVE_FLG
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column ALT_DESC_LONG (
+            type: hidden
+            layout {
+                sequence: 130
+            }
+            source {
+                databaseColumn: ALT_DESC_LONG
+                dataType: varchar2
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column ALT_DESC_OUTLINE (
+            type: hidden
+            layout {
+                sequence: 150
+            }
+            source {
+                databaseColumn: ALT_DESC_OUTLINE
+                dataType: varchar2
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column ALT_DESC_PREREQ (
+            type: hidden
+            layout {
+                sequence: 160
+            }
+            source {
+                databaseColumn: ALT_DESC_PREREQ
+                dataType: varchar2
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column ALT_DESC_SHORT (
+            type: hidden
+            layout {
+                sequence: 140
+            }
+            source {
+                databaseColumn: ALT_DESC_SHORT
+                dataType: varchar2
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column ALT_TIME_AVAILABLE (
+            type: numberField
+            heading {
+                heading: Alt Time Available
+                alignment: end
+            }
+            settings {
+                numberAlignment: end
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 240
+                columnAlignment: end
+            }
+            source {
+                databaseColumn: ALT_TIME_AVAILABLE
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column ALT_TIME_HOURS (
+            type: numberField
+            heading {
+                heading: Alt Time Hours
+                alignment: end
+            }
+            settings {
+                numberAlignment: end
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 230
+                columnAlignment: end
+            }
+            source {
+                databaseColumn: ALT_TIME_HOURS
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column ALT_URL (
+            type: hidden
+            layout {
+                sequence: 200
+            }
+            source {
+                databaseColumn: ALT_URL
+                dataType: varchar2
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column DISPLAY_TAGS (
+            type: hidden
+            layout {
+                sequence: 250
+            }
+            source {
+                databaseColumn: DISPLAY_TAGS
+                dataType: varchar2
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column EMAIL_CREATOR (
+            type: textarea
+            heading {
+                heading: Creator
+            }
+            layout {
+                sequence: 70
+            }
+            validation {
+                maxLength: 200
+            }
+            source {
+                databaseColumn: EMAIL_CREATOR
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column EMAIL_REQUESTOR (
+            type: hidden
+            layout {
+                sequence: 80
+            }
+            source {
+                databaseColumn: EMAIL_REQUESTOR
+                dataType: varchar2
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column EVENT_CODE (
+            type: link
+            heading {
+                heading: Event Code
+            }
+            layout {
+                sequence: 60
+            }
+            link {
+                target: {
+                    type: url
+                    url: javascript:void(window.open("https://livelabs.oracle.com/ords/dbpm/r/livelabs/view-workshop?wec=&EVENT_CODE.","_blank"));
+                }
+                linkText: &EVENT_CODE.
+            }
+            source {
+                databaseColumn: EVENT_CODE
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column EVENT_JSON (
+            type: hidden
+            layout {
+                sequence: 260
+            }
+            source {
+                databaseColumn: EVENT_JSON
+                dataType: varchar2
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column EVENT_STATUS (
+            type: textField
+            heading {
+                heading: Event Status
+            }
+            layout {
+                sequence: 270
+            }
+            source {
+                databaseColumn: EVENT_STATUS
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column ID (
+            type: link
+            heading {
+                heading: Event ID
+            }
+            layout {
+                sequence: 30
+            }
+            link {
+                target: {
+                    page: 35
+                    items: {
+                        P35_ID: &ID.
+                    }
+                }
+                linkText: &ID.
+            }
+            source {
+                databaseColumn: ID
+                dataType: number
+                primaryKey: true
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column LIVELABS_ID (
+            type: numberField
+            heading {
+                heading: LiveLabs ID
+            }
+            settings {
+                numberAlignment: end
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 120
+                columnAlignment: end
+            }
+            validation {
+                valueRequired: true
+            }
+            source {
+                databaseColumn: LIVELABS_ID
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column REMARKS (
+            type: hidden
+            layout {
+                sequence: 180
+            }
+            source {
+                databaseColumn: REMARKS
+                dataType: varchar2
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column TENANCY_ID (
+            type: numberField
+            heading {
+                heading: Tenancy Id
+                alignment: end
+            }
+            settings {
+                numberAlignment: end
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 210
+                columnAlignment: end
+            }
+            source {
+                databaseColumn: TENANCY_ID
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column TITLE (
+            type: textarea
+            heading {
+                heading: Title
+            }
+            layout {
+                sequence: 50
+            }
+            validation {
+                maxLength: 200
+            }
+            source {
+                databaseColumn: TITLE
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column UPDATED_FLG (
+            type: hidden
+            layout {
+                sequence: 280
+            }
+            source {
+                databaseColumn: UPDATED_FLG
+                dataType: number
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column USERS_CONCURRENT (
+            type: hidden
+            layout {
+                sequence: 220
+            }
+            source {
+                databaseColumn: USERS_CONCURRENT
+                dataType: number
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column USERS_MAXIMUM (
+            type: hidden
+            layout {
+                sequence: 110
+            }
+            source {
+                databaseColumn: USERS_MAXIMUM
+                dataType: number
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column VALID_FROM (
+            type: datePicker
+            heading {
+                heading: Valid From
+                alignment: center
+            }
+            layout {
+                sequence: 90
+                columnAlignment: center
+            }
+            source {
+                databaseColumn: VALID_FROM
+                dataType: date
+            }
+        )
+
+        column VALID_TIMEZONE (
+            type: textField
+            heading {
+                heading: Valid Timezone
+            }
+            layout {
+                sequence: 190
+            }
+            validation {
+                maxLength: 50
+            }
+            source {
+                databaseColumn: VALID_TIMEZONE
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column VALID_TO (
+            type: datePicker
+            heading {
+                heading: Valid To
+                alignment: center
+            }
+            layout {
+                sequence: 100
+                columnAlignment: center
+            }
+            source {
+                databaseColumn: VALID_TO
+                dataType: date
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: Requested Events
+        }
+    )
+
+    dynamicAction eventchanged (
+        name: eventchanged
+        execution {
+            sequence: 20
+        }
+        when {
+            selectionType: items
+            items: P44_WHICHEVENT
+        }
+
+        action native-set-value (
+            action: setValue
+            affectedElements {
+                selectionType: items
+                items: P44_COMMENT
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+        action native-submit-page (
+            action: submitPage
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+    )
+
+)
+

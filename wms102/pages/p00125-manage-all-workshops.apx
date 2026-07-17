@@ -1,0 +1,3324 @@
+page 125 (
+    name: Manage All Workshops
+    alias: MANAGE-ALL-WORKSHOPS
+    title: Manage All Workshops
+    appearance {
+        pageTemplate: @standard-custom
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        authorizationScheme: @administration-rights
+        formAutoComplete: false
+    }
+
+    region manage-all-workshops (
+        name: Manage All Workshops
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <table><tr><td width="120px">
+                <img src="#WORKSPACE_IMAGES#ssworkshop_icon_big.png" width="100px">
+                </td><td>
+                <p>This page will be retired, please use the edit my workshops page instead</p></td></tr></table>
+                ```
+        }
+        layout {
+            sequence: 10
+            slot: beforeContentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region manage-all-workshops-2 (
+        name: Manage All Workshops
+        type: interactiveGrid
+        source {
+            location: localDatabase
+            tableName: WORKSHOPS
+            includeRowidColumn: true
+        }
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        edit {
+            enabled: true
+            allowedOperations: [
+                add
+                update
+                delete
+            ]
+        }
+        toolbar {
+            controls: [
+                searchCol
+                searchField
+                actionsMenu
+                resetButton
+                saveButton
+            ]
+        }
+        download {
+            formats: [
+                csv
+                html
+                pdf
+            ]
+        }
+        advanced {
+            savedReportMappingIdentifier: 5520594676740836479
+        }
+
+        savedReport 105006299 (
+            visibility: alternative
+            name: Green Button Management
+            view {
+                default: grid
+            }
+            singleRowView {
+                displayedColumns: true
+            }
+
+            displayColumn (
+                column: @ALWAYS_FREE_FLG
+                layout {
+                    width: 72
+                    sequence: 36
+                }
+            )
+
+            displayColumn (
+                column: @FREE_TIER_FLG
+                layout {
+                    sequence: 37
+                }
+            )
+
+            displayColumn (
+                column: @PAID_TIER_FLG
+                layout {
+                    sequence: 38
+                }
+            )
+
+            displayColumn (
+                column: @LIVELABS_TIER_FLG
+                layout {
+                    width: 40
+                    sequence: 39
+                }
+            )
+
+            displayColumn (
+                column: @COUNCIL_OBSERVER_CONTACT
+                layout {
+                    show: false
+                    width: 100
+                    sequence: 11
+                }
+            )
+
+            displayColumn (
+                column: @LAST_SELF_QA_DATE
+                layout {
+                    sequence: 40
+                }
+            )
+
+            displayColumn (
+                column: @APEX$ROW_ACTION
+                layout {
+                    frozen: true
+                    sequence: 0
+                }
+            )
+
+            displayColumn (
+                column: @ROWID
+                layout {
+                    sequence: 1
+                }
+            )
+
+            displayColumn (
+                column: @NAME
+                layout {
+                    width: 175
+                    sequence: 3
+                }
+            )
+
+            displayColumn (
+                column: @DESCRIPTION
+                layout {
+                    show: false
+                    sequence: 6
+                }
+            )
+
+            displayColumn (
+                column: @GITHUB_ADDRESS
+                layout {
+                    show: false
+                    sequence: 7
+                }
+            )
+
+            displayColumn (
+                column: @LIVELABS2_FLG
+                layout {
+                    sequence: 5
+                }
+            )
+
+            displayColumn (
+                column: @TIME_IN_HOURS
+                layout {
+                    show: false
+                    sequence: 12
+                }
+            )
+
+            displayColumn (
+                column: @AUTHOR_NAME
+                layout {
+                    show: false
+                    sequence: 13
+                }
+            )
+
+            displayColumn (
+                column: @EMAIL_FROM_ADDRESS
+                layout {
+                    show: false
+                    sequence: 14
+                }
+            )
+
+            displayColumn (
+                column: @WORKSHOP_CODE
+                layout {
+                    show: false
+                    sequence: 15
+                }
+            )
+
+            displayColumn (
+                column: @LIVELABS_WORKSHOP_URL
+                layout {
+                    show: false
+                    sequence: 16
+                }
+            )
+
+            displayColumn (
+                column: @GITHUB_LL_URL
+                layout {
+                    show: false
+                    sequence: 18
+                }
+            )
+
+            displayColumn (
+                column: @WORKSHOP_TIME
+                layout {
+                    show: false
+                    sequence: 19
+                }
+            )
+
+            displayColumn (
+                column: @WORKSHOP_TIME_UNIT
+                layout {
+                    show: false
+                    sequence: 20
+                }
+            )
+
+            displayColumn (
+                column: @ID
+                layout {
+                    sequence: 2
+                }
+            )
+
+            displayColumn (
+                column: @MULTI_WORKSHOP_FLG
+                layout {
+                    show: false
+                    sequence: 21
+                }
+            )
+
+            displayColumn (
+                column: @SINGLE_WORKSHOP_FLG
+                layout {
+                    show: false
+                    sequence: 22
+                }
+            )
+
+            displayColumn (
+                column: @APPROVED_FLG
+                layout {
+                    sequence: 8
+                }
+            )
+
+            displayColumn (
+                column: @OBJECTIVES
+                layout {
+                    show: false
+                    sequence: 23
+                }
+            )
+
+            displayColumn (
+                column: @COMPLETION_DATE
+                layout {
+                    show: false
+                    sequence: 24
+                }
+            )
+
+            displayColumn (
+                column: @SOURCE_LINKS
+                layout {
+                    show: false
+                    sequence: 25
+                }
+            )
+
+            displayColumn (
+                column: @WORKSHOP_STATUS
+                layout {
+                    sequence: 9
+                }
+            )
+
+            displayColumn (
+                column: @MODERNIZER_RESOURCE
+                layout {
+                    show: false
+                    sequence: 26
+                }
+            )
+
+            displayColumn (
+                column: @GENERAL_NOTES
+                layout {
+                    show: false
+                    sequence: 27
+                }
+            )
+
+            displayColumn (
+                column: @KEY_ORACLE_CONTACT_1
+                layout {
+                    show: false
+                    sequence: 28
+                }
+            )
+
+            displayColumn (
+                column: @KEY_ORACLE_CONTACT_2
+                layout {
+                    show: false
+                    sequence: 29
+                }
+            )
+
+            displayColumn (
+                column: @FREETIER_URL
+                layout {
+                    show: false
+                    sequence: 30
+                }
+            )
+
+            displayColumn (
+                column: @SOURCE_LINK_2
+                layout {
+                    show: false
+                    sequence: 31
+                }
+            )
+
+            displayColumn (
+                column: @GREEN_BTN_STATUS
+                layout {
+                    sequence: 10
+                }
+            )
+
+            displayColumn (
+                column: @MANAGER_CONTACT
+                layout {
+                    show: false
+                    sequence: 32
+                }
+            )
+
+            displayColumn (
+                column: @SUPPORT_CONTACT
+                layout {
+                    show: false
+                    sequence: 33
+                }
+            )
+
+            displayColumn (
+                column: @WORKSHOP_CREATOR_GROUP
+                layout {
+                    sequence: 34
+                }
+            )
+
+            displayColumn (
+                column: @PROD_ID
+                layout {
+                    sequence: 4
+                }
+            )
+
+            displayColumn (
+                column: @OTHER_CONTACT
+                layout {
+                    show: false
+                    width: 42
+                    sequence: 35
+                }
+            )
+
+        )
+
+        savedReport 10950046 (
+            visibility: alternative
+            name: Workshop Details (Basic) & Contacts - NON PROD
+            view {
+                default: grid
+            }
+            singleRowView {
+                displayedColumns: true
+            }
+            security {
+                authorizationScheme: @administration-rights
+            }
+
+            displayColumn (
+                column: @COUNCIL_OBSERVER_CONTACT
+                layout {
+                    sequence: 24
+                }
+            )
+
+            displayColumn (
+                column: @OTHER_CONTACT
+                layout {
+                    show: false
+                    sequence: 33
+                }
+            )
+
+            displayColumn (
+                column: @ALWAYS_FREE_FLG
+                layout {
+                    width: 97
+                    sequence: 35
+                }
+            )
+
+            displayColumn (
+                column: @FREE_TIER_FLG
+                layout {
+                    sequence: 36
+                }
+            )
+
+            displayColumn (
+                column: @PAID_TIER_FLG
+                layout {
+                    sequence: 37
+                }
+            )
+
+            displayColumn (
+                column: @LIVELABS_TIER_FLG
+                layout {
+                    sequence: 38
+                }
+            )
+
+            displayColumn (
+                column: @APEX$ROW_ACTION
+                layout {
+                    frozen: true
+                    sequence: 0
+                }
+            )
+
+            displayColumn (
+                column: @ROWID
+                layout {
+                    sequence: 1
+                }
+            )
+
+            displayColumn (
+                column: @NAME
+                layout {
+                    width: 427
+                    sequence: 3
+                }
+            )
+
+            displayColumn (
+                column: @DESCRIPTION
+                layout {
+                    show: false
+                    sequence: 9
+                }
+            )
+
+            displayColumn (
+                column: @GITHUB_ADDRESS
+                layout {
+                    show: false
+                    sequence: 10
+                }
+            )
+
+            displayColumn (
+                column: @LIVELABS2_FLG
+                layout {
+                    width: 110
+                    sequence: 4
+                }
+            )
+
+            displayColumn (
+                column: @TIME_IN_HOURS
+                layout {
+                    show: false
+                    sequence: 11
+                }
+            )
+
+            displayColumn (
+                column: @AUTHOR_NAME
+                layout {
+                    show: false
+                    sequence: 12
+                }
+            )
+
+            displayColumn (
+                column: @EMAIL_FROM_ADDRESS
+                layout {
+                    show: false
+                    sequence: 13
+                }
+            )
+
+            displayColumn (
+                column: @WORKSHOP_CODE
+                layout {
+                    show: false
+                    sequence: 14
+                }
+            )
+
+            displayColumn (
+                column: @LIVELABS_WORKSHOP_URL
+                layout {
+                    show: false
+                    sequence: 15
+                }
+            )
+
+            displayColumn (
+                column: @GITHUB_LL_URL
+                layout {
+                    show: false
+                    sequence: 16
+                }
+            )
+
+            displayColumn (
+                column: @WORKSHOP_TIME
+                layout {
+                    show: false
+                    sequence: 17
+                }
+            )
+
+            displayColumn (
+                column: @WORKSHOP_TIME_UNIT
+                layout {
+                    show: false
+                    sequence: 18
+                }
+            )
+
+            displayColumn (
+                column: @ID
+                layout {
+                    width: 55
+                    sequence: 2
+                }
+            )
+
+            displayColumn (
+                column: @MULTI_WORKSHOP_FLG
+                layout {
+                    show: false
+                    sequence: 19
+                }
+            )
+
+            displayColumn (
+                column: @SINGLE_WORKSHOP_FLG
+                layout {
+                    show: false
+                    sequence: 20
+                }
+            )
+
+            displayColumn (
+                column: @APPROVED_FLG
+                layout {
+                    sequence: 5
+                }
+            )
+
+            displayColumn (
+                column: @OBJECTIVES
+                layout {
+                    show: false
+                    sequence: 21
+                }
+            )
+
+            displayColumn (
+                column: @COMPLETION_DATE
+                layout {
+                    show: false
+                    sequence: 22
+                }
+            )
+
+            displayColumn (
+                column: @SOURCE_LINKS
+                layout {
+                    show: false
+                    sequence: 23
+                }
+            )
+
+            displayColumn (
+                column: @WORKSHOP_STATUS
+                layout {
+                    width: 162
+                    sequence: 7
+                }
+            )
+
+            displayColumn (
+                column: @MODERNIZER_RESOURCE
+                layout {
+                    sequence: 26
+                }
+            )
+
+            displayColumn (
+                column: @GENERAL_NOTES
+                layout {
+                    show: false
+                    sequence: 25
+                }
+            )
+
+            displayColumn (
+                column: @KEY_ORACLE_CONTACT_1
+                layout {
+                    sequence: 27
+                }
+            )
+
+            displayColumn (
+                column: @KEY_ORACLE_CONTACT_2
+                layout {
+                    sequence: 28
+                }
+            )
+
+            displayColumn (
+                column: @FREETIER_URL
+                layout {
+                    show: false
+                    sequence: 29
+                }
+            )
+
+            displayColumn (
+                column: @SOURCE_LINK_2
+                layout {
+                    show: false
+                    sequence: 30
+                }
+            )
+
+            displayColumn (
+                column: @MANAGER_CONTACT
+                layout {
+                    sequence: 31
+                }
+            )
+
+            displayColumn (
+                column: @SUPPORT_CONTACT
+                layout {
+                    width: 166
+                    sequence: 32
+                }
+            )
+
+            displayColumn (
+                column: @WORKSHOP_CREATOR_GROUP
+                layout {
+                    width: 176
+                    sequence: 34
+                }
+            )
+
+            displayColumn (
+                column: @PROD_ID
+                layout {
+                    width: 71
+                    sequence: 6
+                }
+            )
+
+            filter (
+                column: @LIVELABS2_FLG
+                value: 0
+            )
+
+            sort (
+                column: @ID
+                sort {
+                    direction: desc
+                    nulls: first
+                    sequence: 1
+                }
+            )
+
+        )
+
+        savedReport 10950051 (
+            visibility: alternative
+            name: Workshop Details (Basic) & Contacts
+            view {
+                default: grid
+            }
+            singleRowView {
+                displayedColumns: true
+            }
+            security {
+                authorizationScheme: @administration-rights
+            }
+
+            displayColumn (
+                column: @COUNCIL_OBSERVER_CONTACT
+                layout {
+                    sequence: 9
+                }
+            )
+
+            displayColumn (
+                column: @OTHER_CONTACT
+                layout {
+                    show: false
+                    sequence: 34
+                }
+            )
+
+            displayColumn (
+                column: @ALWAYS_FREE_FLG
+                layout {
+                    show: false
+                    sequence: 35
+                }
+            )
+
+            displayColumn (
+                column: @FREE_TIER_FLG
+                layout {
+                    show: false
+                    sequence: 36
+                }
+            )
+
+            displayColumn (
+                column: @PAID_TIER_FLG
+                layout {
+                    show: false
+                    sequence: 37
+                }
+            )
+
+            displayColumn (
+                column: @LIVELABS_TIER_FLG
+                layout {
+                    show: false
+                    sequence: 38
+                }
+            )
+
+            displayColumn (
+                column: @APEX$ROW_ACTION
+                layout {
+                    frozen: true
+                    sequence: 0
+                }
+            )
+
+            displayColumn (
+                column: @ROWID
+                layout {
+                    sequence: 1
+                }
+            )
+
+            displayColumn (
+                column: @NAME
+                layout {
+                    sequence: 3
+                }
+            )
+
+            displayColumn (
+                column: @DESCRIPTION
+                layout {
+                    show: false
+                    sequence: 10
+                }
+            )
+
+            displayColumn (
+                column: @GITHUB_ADDRESS
+                layout {
+                    show: false
+                    sequence: 11
+                }
+            )
+
+            displayColumn (
+                column: @LIVELABS2_FLG
+                layout {
+                    sequence: 5
+                }
+            )
+
+            displayColumn (
+                column: @TIME_IN_HOURS
+                layout {
+                    show: false
+                    sequence: 12
+                }
+            )
+
+            displayColumn (
+                column: @AUTHOR_NAME
+                layout {
+                    show: false
+                    sequence: 13
+                }
+            )
+
+            displayColumn (
+                column: @EMAIL_FROM_ADDRESS
+                layout {
+                    show: false
+                    sequence: 14
+                }
+            )
+
+            displayColumn (
+                column: @WORKSHOP_CODE
+                layout {
+                    show: false
+                    sequence: 15
+                }
+            )
+
+            displayColumn (
+                column: @LIVELABS_WORKSHOP_URL
+                layout {
+                    show: false
+                    sequence: 16
+                }
+            )
+
+            displayColumn (
+                column: @GITHUB_LL_URL
+                layout {
+                    show: false
+                    sequence: 17
+                }
+            )
+
+            displayColumn (
+                column: @WORKSHOP_TIME
+                layout {
+                    show: false
+                    sequence: 18
+                }
+            )
+
+            displayColumn (
+                column: @WORKSHOP_TIME_UNIT
+                layout {
+                    show: false
+                    sequence: 19
+                }
+            )
+
+            displayColumn (
+                column: @ID
+                layout {
+                    sequence: 2
+                }
+            )
+
+            displayColumn (
+                column: @MULTI_WORKSHOP_FLG
+                layout {
+                    show: false
+                    sequence: 20
+                }
+            )
+
+            displayColumn (
+                column: @SINGLE_WORKSHOP_FLG
+                layout {
+                    show: false
+                    sequence: 21
+                }
+            )
+
+            displayColumn (
+                column: @APPROVED_FLG
+                layout {
+                    sequence: 6
+                }
+            )
+
+            displayColumn (
+                column: @OBJECTIVES
+                layout {
+                    show: false
+                    sequence: 22
+                }
+            )
+
+            displayColumn (
+                column: @COMPLETION_DATE
+                layout {
+                    show: false
+                    sequence: 23
+                }
+            )
+
+            displayColumn (
+                column: @SOURCE_LINKS
+                layout {
+                    show: false
+                    sequence: 24
+                }
+            )
+
+            displayColumn (
+                column: @WORKSHOP_STATUS
+                layout {
+                    sequence: 7
+                }
+            )
+
+            displayColumn (
+                column: @MODERNIZER_RESOURCE
+                layout {
+                    sequence: 26
+                }
+            )
+
+            displayColumn (
+                column: @GENERAL_NOTES
+                layout {
+                    sequence: 25
+                }
+            )
+
+            displayColumn (
+                column: @KEY_ORACLE_CONTACT_1
+                layout {
+                    sequence: 27
+                }
+            )
+
+            displayColumn (
+                column: @KEY_ORACLE_CONTACT_2
+                layout {
+                    sequence: 28
+                }
+            )
+
+            displayColumn (
+                column: @FREETIER_URL
+                layout {
+                    show: false
+                    sequence: 29
+                }
+            )
+
+            displayColumn (
+                column: @SOURCE_LINK_2
+                layout {
+                    show: false
+                    sequence: 30
+                }
+            )
+
+            displayColumn (
+                column: @MANAGER_CONTACT
+                layout {
+                    sequence: 31
+                }
+            )
+
+            displayColumn (
+                column: @SUPPORT_CONTACT
+                layout {
+                    sequence: 32
+                }
+            )
+
+            displayColumn (
+                column: @WORKSHOP_CREATOR_GROUP
+                layout {
+                    sequence: 33
+                }
+            )
+
+            displayColumn (
+                column: @PROD_ID
+                layout {
+                    width: 93
+                    sequence: 4
+                }
+            )
+
+        )
+
+        savedReport 10950057 (
+            visibility: primary
+            view {
+                default: grid
+            }
+            singleRowView {
+                displayedColumns: true
+            }
+
+            displayColumn (
+                column: @ALWAYS_FREE_FLG
+                layout {
+                    width: 72
+                    sequence: 35
+                }
+            )
+
+            displayColumn (
+                column: @FREE_TIER_FLG
+                layout {
+                    sequence: 36
+                }
+            )
+
+            displayColumn (
+                column: @PAID_TIER_FLG
+                layout {
+                    sequence: 37
+                }
+            )
+
+            displayColumn (
+                column: @LIVELABS_TIER_FLG
+                layout {
+                    width: 40
+                    sequence: 38
+                }
+            )
+
+            displayColumn (
+                column: @COUNCIL_OBSERVER_CONTACT
+                layout {
+                    width: 100
+                    sequence: 10
+                }
+            )
+
+            displayColumn (
+                column: @LAST_SELF_QA_DATE
+                layout {
+                    sequence: 39
+                }
+            )
+
+            displayColumn (
+                column: @APEX$ROW_ACTION
+                layout {
+                    frozen: true
+                    sequence: 0
+                }
+            )
+
+            displayColumn (
+                column: @ROWID
+                layout {
+                    sequence: 1
+                }
+            )
+
+            displayColumn (
+                column: @NAME
+                layout {
+                    width: 175
+                    sequence: 3
+                }
+            )
+
+            displayColumn (
+                column: @DESCRIPTION
+                layout {
+                    show: false
+                    sequence: 6
+                }
+            )
+
+            displayColumn (
+                column: @GITHUB_ADDRESS
+                layout {
+                    show: false
+                    sequence: 7
+                }
+            )
+
+            displayColumn (
+                column: @LIVELABS2_FLG
+                layout {
+                    sequence: 5
+                }
+            )
+
+            displayColumn (
+                column: @TIME_IN_HOURS
+                layout {
+                    show: false
+                    sequence: 11
+                }
+            )
+
+            displayColumn (
+                column: @AUTHOR_NAME
+                layout {
+                    show: false
+                    sequence: 12
+                }
+            )
+
+            displayColumn (
+                column: @EMAIL_FROM_ADDRESS
+                layout {
+                    show: false
+                    sequence: 13
+                }
+            )
+
+            displayColumn (
+                column: @WORKSHOP_CODE
+                layout {
+                    show: false
+                    sequence: 14
+                }
+            )
+
+            displayColumn (
+                column: @LIVELABS_WORKSHOP_URL
+                layout {
+                    show: false
+                    sequence: 15
+                }
+            )
+
+            displayColumn (
+                column: @GITHUB_LL_URL
+                layout {
+                    show: false
+                    sequence: 17
+                }
+            )
+
+            displayColumn (
+                column: @WORKSHOP_TIME
+                layout {
+                    show: false
+                    sequence: 18
+                }
+            )
+
+            displayColumn (
+                column: @WORKSHOP_TIME_UNIT
+                layout {
+                    show: false
+                    sequence: 19
+                }
+            )
+
+            displayColumn (
+                column: @ID
+                layout {
+                    sequence: 2
+                }
+            )
+
+            displayColumn (
+                column: @MULTI_WORKSHOP_FLG
+                layout {
+                    show: false
+                    sequence: 20
+                }
+            )
+
+            displayColumn (
+                column: @SINGLE_WORKSHOP_FLG
+                layout {
+                    show: false
+                    sequence: 21
+                }
+            )
+
+            displayColumn (
+                column: @APPROVED_FLG
+                layout {
+                    sequence: 8
+                }
+            )
+
+            displayColumn (
+                column: @OBJECTIVES
+                layout {
+                    show: false
+                    sequence: 22
+                }
+            )
+
+            displayColumn (
+                column: @COMPLETION_DATE
+                layout {
+                    sequence: 23
+                }
+            )
+
+            displayColumn (
+                column: @SOURCE_LINKS
+                layout {
+                    show: false
+                    sequence: 24
+                }
+            )
+
+            displayColumn (
+                column: @WORKSHOP_STATUS
+                layout {
+                    sequence: 9
+                }
+            )
+
+            displayColumn (
+                column: @MODERNIZER_RESOURCE
+                layout {
+                    sequence: 25
+                }
+            )
+
+            displayColumn (
+                column: @GENERAL_NOTES
+                layout {
+                    sequence: 26
+                }
+            )
+
+            displayColumn (
+                column: @KEY_ORACLE_CONTACT_1
+                layout {
+                    sequence: 27
+                }
+            )
+
+            displayColumn (
+                column: @KEY_ORACLE_CONTACT_2
+                layout {
+                    sequence: 28
+                }
+            )
+
+            displayColumn (
+                column: @FREETIER_URL
+                layout {
+                    show: false
+                    sequence: 29
+                }
+            )
+
+            displayColumn (
+                column: @SOURCE_LINK_2
+                layout {
+                    show: false
+                    sequence: 30
+                }
+            )
+
+            displayColumn (
+                column: @WORKSHOP_UID
+                layout {
+                    sequence: 41
+                }
+            )
+
+            displayColumn (
+                column: @GREEN_BTN_STATUS
+                layout {
+                    sequence: 40
+                }
+            )
+
+            displayColumn (
+                column: @MANAGER_CONTACT
+                layout {
+                    sequence: 31
+                }
+            )
+
+            displayColumn (
+                column: @SUPPORT_CONTACT
+                layout {
+                    sequence: 32
+                }
+            )
+
+            displayColumn (
+                column: @WORKSHOP_CREATOR_GROUP
+                layout {
+                    sequence: 33
+                }
+            )
+
+            displayColumn (
+                column: @PROD_ID
+                layout {
+                    sequence: 4
+                }
+            )
+
+            displayColumn (
+                column: @OTHER_CONTACT
+                layout {
+                    width: 42
+                    sequence: 34
+                }
+            )
+
+        )
+
+        savedReport 10950062 (
+            visibility: alternative
+            name: Workshop Details (Basic) & Contacts - PROD
+            view {
+                default: grid
+            }
+            singleRowView {
+                displayedColumns: true
+            }
+            security {
+                authorizationScheme: @administration-rights
+            }
+
+            displayColumn (
+                column: @GREEN_BTN_STATUS
+                layout {
+                    width: 128.48329999999999
+                    sequence: 40
+                }
+            )
+
+            displayColumn (
+                column: @OTHER_CONTACT
+                layout {
+                    show: false
+                    sequence: 33
+                }
+            )
+
+            displayColumn (
+                column: @ALWAYS_FREE_FLG
+                layout {
+                    sequence: 34
+                }
+            )
+
+            displayColumn (
+                column: @FREE_TIER_FLG
+                layout {
+                    sequence: 35
+                }
+            )
+
+            displayColumn (
+                column: @PAID_TIER_FLG
+                layout {
+                    sequence: 36
+                }
+            )
+
+            displayColumn (
+                column: @COUNCIL_OBSERVER_CONTACT
+                layout {
+                    show: false
+                    sequence: 37
+                }
+            )
+
+            displayColumn (
+                column: @LIVELABS_TIER_FLG
+                layout {
+                    width: 112
+                    sequence: 38
+                }
+            )
+
+            displayColumn (
+                column: @LAST_SELF_QA_DATE
+                layout {
+                    sequence: 40
+                }
+            )
+
+            displayColumn (
+                column: @APEX$ROW_ACTION
+                layout {
+                    frozen: true
+                    sequence: 0
+                }
+            )
+
+            displayColumn (
+                column: @ROWID
+                layout {
+                    sequence: 1
+                }
+            )
+
+            displayColumn (
+                column: @NAME
+                layout {
+                    width: 340
+                    sequence: 3
+                }
+            )
+
+            displayColumn (
+                column: @DESCRIPTION
+                layout {
+                    show: false
+                    sequence: 9
+                }
+            )
+
+            displayColumn (
+                column: @GITHUB_ADDRESS
+                layout {
+                    show: false
+                    sequence: 10
+                }
+            )
+
+            displayColumn (
+                column: @LIVELABS2_FLG
+                layout {
+                    sequence: 6
+                }
+            )
+
+            displayColumn (
+                column: @TIME_IN_HOURS
+                layout {
+                    show: false
+                    sequence: 11
+                }
+            )
+
+            displayColumn (
+                column: @AUTHOR_NAME
+                layout {
+                    show: false
+                    sequence: 12
+                }
+            )
+
+            displayColumn (
+                column: @EMAIL_FROM_ADDRESS
+                layout {
+                    sequence: 15
+                }
+            )
+
+            displayColumn (
+                column: @WORKSHOP_CODE
+                layout {
+                    show: false
+                    sequence: 16
+                }
+            )
+
+            displayColumn (
+                column: @LIVELABS_WORKSHOP_URL
+                layout {
+                    show: false
+                    sequence: 17
+                }
+            )
+
+            displayColumn (
+                column: @GITHUB_LL_URL
+                layout {
+                    show: false
+                    sequence: 18
+                }
+            )
+
+            displayColumn (
+                column: @WORKSHOP_TIME
+                layout {
+                    show: false
+                    sequence: 19
+                }
+            )
+
+            displayColumn (
+                column: @WORKSHOP_TIME_UNIT
+                layout {
+                    show: false
+                    sequence: 20
+                }
+            )
+
+            displayColumn (
+                column: @ID
+                layout {
+                    sequence: 3
+                }
+            )
+
+            displayColumn (
+                column: @MULTI_WORKSHOP_FLG
+                layout {
+                    show: false
+                    sequence: 21
+                }
+            )
+
+            displayColumn (
+                column: @SINGLE_WORKSHOP_FLG
+                layout {
+                    show: false
+                    sequence: 22
+                }
+            )
+
+            displayColumn (
+                column: @APPROVED_FLG
+                layout {
+                    sequence: 6
+                }
+            )
+
+            displayColumn (
+                column: @OBJECTIVES
+                layout {
+                    show: false
+                    sequence: 23
+                }
+            )
+
+            displayColumn (
+                column: @COMPLETION_DATE
+                layout {
+                    sequence: 13
+                }
+            )
+
+            displayColumn (
+                column: @SOURCE_LINKS
+                layout {
+                    show: false
+                    sequence: 24
+                }
+            )
+
+            displayColumn (
+                column: @WORKSHOP_STATUS
+                layout {
+                    sequence: 7
+                }
+            )
+
+            displayColumn (
+                column: @MODERNIZER_RESOURCE
+                layout {
+                    sequence: 26
+                }
+            )
+
+            displayColumn (
+                column: @GENERAL_NOTES
+                layout {
+                    sequence: 25
+                }
+            )
+
+            displayColumn (
+                column: @KEY_ORACLE_CONTACT_1
+                layout {
+                    sequence: 27
+                }
+            )
+
+            displayColumn (
+                column: @KEY_ORACLE_CONTACT_2
+                layout {
+                    sequence: 28
+                }
+            )
+
+            displayColumn (
+                column: @FREETIER_URL
+                layout {
+                    show: false
+                    sequence: 29
+                }
+            )
+
+            displayColumn (
+                column: @SOURCE_LINK_2
+                layout {
+                    show: false
+                    sequence: 30
+                }
+            )
+
+            displayColumn (
+                column: @MANAGER_CONTACT
+                layout {
+                    sequence: 31
+                }
+            )
+
+            displayColumn (
+                column: @SUPPORT_CONTACT
+                layout {
+                    sequence: 32
+                }
+            )
+
+            displayColumn (
+                column: @WORKSHOP_CREATOR_GROUP
+                layout {
+                    sequence: 14
+                }
+            )
+
+            displayColumn (
+                column: @PROD_ID
+                layout {
+                    width: 93
+                    sequence: 4
+                }
+            )
+
+            filter (
+                column: @LIVELABS2_FLG
+                value: 1
+            )
+
+            sort (
+                column: @ID
+                sort {
+                    direction: desc
+                    nulls: first
+                    sequence: 1
+                }
+            )
+
+        )
+
+        savedReport 23410879 (
+            visibility: alternative
+            name: Submitted Workshops
+            view {
+                default: grid
+            }
+            singleRowView {
+                displayedColumns: true
+            }
+            security {
+                authorizationScheme: @administration-rights
+            }
+
+            displayColumn (
+                column: @LAST_SELF_QA_DATE
+                layout {
+                    show: false
+                    sequence: 40
+                }
+            )
+
+            displayColumn (
+                column: @ALWAYS_FREE_FLG
+                layout {
+                    width: 43
+                    sequence: 36
+                }
+            )
+
+            displayColumn (
+                column: @FREE_TIER_FLG
+                layout {
+                    sequence: 36
+                }
+            )
+
+            displayColumn (
+                column: @PAID_TIER_FLG
+                layout {
+                    sequence: 37
+                }
+            )
+
+            displayColumn (
+                column: @LIVELABS_TIER_FLG
+                layout {
+                    width: 40
+                    sequence: 38
+                }
+            )
+
+            displayColumn (
+                column: @COUNCIL_OBSERVER_CONTACT
+                layout {
+                    width: 181
+                    sequence: 10
+                }
+            )
+
+            displayColumn (
+                column: @APEX$ROW_ACTION
+                layout {
+                    frozen: true
+                    sequence: 0
+                }
+            )
+
+            displayColumn (
+                column: @ROWID
+                layout {
+                    sequence: 1
+                }
+            )
+
+            displayColumn (
+                column: @NAME
+                layout {
+                    width: 381
+                    sequence: 4
+                }
+            )
+
+            displayColumn (
+                column: @DESCRIPTION
+                layout {
+                    show: false
+                    sequence: 6
+                }
+            )
+
+            displayColumn (
+                column: @GITHUB_ADDRESS
+                layout {
+                    show: false
+                    sequence: 7
+                }
+            )
+
+            displayColumn (
+                column: @LIVELABS2_FLG
+                layout {
+                    show: false
+                    sequence: 5
+                }
+            )
+
+            displayColumn (
+                column: @TIME_IN_HOURS
+                layout {
+                    show: false
+                    sequence: 11
+                }
+            )
+
+            displayColumn (
+                column: @AUTHOR_NAME
+                layout {
+                    show: false
+                    sequence: 12
+                }
+            )
+
+            displayColumn (
+                column: @EMAIL_FROM_ADDRESS
+                layout {
+                    show: false
+                    sequence: 13
+                }
+            )
+
+            displayColumn (
+                column: @WORKSHOP_CODE
+                layout {
+                    show: false
+                    sequence: 14
+                }
+            )
+
+            displayColumn (
+                column: @LIVELABS_WORKSHOP_URL
+                layout {
+                    show: false
+                    sequence: 15
+                }
+            )
+
+            displayColumn (
+                column: @GITHUB_LL_URL
+                layout {
+                    show: false
+                    sequence: 17
+                }
+            )
+
+            displayColumn (
+                column: @WORKSHOP_TIME
+                layout {
+                    show: false
+                    sequence: 18
+                }
+            )
+
+            displayColumn (
+                column: @WORKSHOP_TIME_UNIT
+                layout {
+                    show: false
+                    sequence: 19
+                }
+            )
+
+            displayColumn (
+                column: @ID
+                layout {
+                    sequence: 2
+                }
+            )
+
+            displayColumn (
+                column: @MULTI_WORKSHOP_FLG
+                layout {
+                    show: false
+                    sequence: 20
+                }
+            )
+
+            displayColumn (
+                column: @SINGLE_WORKSHOP_FLG
+                layout {
+                    show: false
+                    sequence: 21
+                }
+            )
+
+            displayColumn (
+                column: @APPROVED_FLG
+                layout {
+                    width: 89
+                    sequence: 9
+                }
+            )
+
+            displayColumn (
+                column: @OBJECTIVES
+                layout {
+                    show: false
+                    sequence: 22
+                }
+            )
+
+            displayColumn (
+                column: @COMPLETION_DATE
+                layout {
+                    width: 109
+                    sequence: 24
+                }
+            )
+
+            displayColumn (
+                column: @SOURCE_LINKS
+                layout {
+                    show: false
+                    sequence: 24
+                }
+            )
+
+            displayColumn (
+                column: @WORKSHOP_STATUS
+                layout {
+                    width: 136
+                    sequence: 10
+                }
+            )
+
+            displayColumn (
+                column: @MODERNIZER_RESOURCE
+                layout {
+                    width: 74
+                    sequence: 26
+                }
+            )
+
+            displayColumn (
+                column: @GENERAL_NOTES
+                layout {
+                    show: false
+                    sequence: 26
+                }
+            )
+
+            displayColumn (
+                column: @KEY_ORACLE_CONTACT_1
+                layout {
+                    sequence: 27
+                }
+            )
+
+            displayColumn (
+                column: @KEY_ORACLE_CONTACT_2
+                layout {
+                    sequence: 28
+                }
+            )
+
+            displayColumn (
+                column: @FREETIER_URL
+                layout {
+                    show: false
+                    sequence: 29
+                }
+            )
+
+            displayColumn (
+                column: @SOURCE_LINK_2
+                layout {
+                    show: false
+                    sequence: 30
+                }
+            )
+
+            displayColumn (
+                column: @MANAGER_CONTACT
+                layout {
+                    sequence: 31
+                }
+            )
+
+            displayColumn (
+                column: @SUPPORT_CONTACT
+                layout {
+                    width: 40
+                    sequence: 33
+                }
+            )
+
+            displayColumn (
+                column: @WORKSHOP_CREATOR_GROUP
+                layout {
+                    width: 153
+                    sequence: 34
+                }
+            )
+
+            displayColumn (
+                column: @PROD_ID
+                layout {
+                    show: false
+                    sequence: 4
+                }
+            )
+
+            displayColumn (
+                column: @OTHER_CONTACT
+                layout {
+                    width: 42
+                    sequence: 34
+                }
+            )
+
+            filter (
+                column: @WORKSHOP_STATUS
+                operator: in
+                value: SubmittedUnder Council ReviewMore Info Needed
+            )
+
+        )
+
+        savedReport 89546640 (
+            visibility: alternative
+            name: Self QA Every 45 Days
+            view {
+                default: grid
+            }
+            singleRowView {
+                displayedColumns: true
+            }
+            security {
+                authorizationScheme: @administration-rights
+            }
+
+            displayColumn (
+                column: @OTHER_CONTACT
+                layout {
+                    show: false
+                    sequence: 34
+                }
+            )
+
+            displayColumn (
+                column: @ALWAYS_FREE_FLG
+                layout {
+                    show: false
+                    sequence: 35
+                }
+            )
+
+            displayColumn (
+                column: @FREE_TIER_FLG
+                layout {
+                    show: false
+                    sequence: 36
+                }
+            )
+
+            displayColumn (
+                column: @PAID_TIER_FLG
+                layout {
+                    show: false
+                    sequence: 37
+                }
+            )
+
+            displayColumn (
+                column: @COUNCIL_OBSERVER_CONTACT
+                layout {
+                    sequence: 39
+                }
+            )
+
+            displayColumn (
+                column: @LIVELABS_TIER_FLG
+                layout {
+                    show: false
+                    sequence: 38
+                }
+            )
+
+            displayColumn (
+                column: @LAST_SELF_QA_DATE
+                layout {
+                    sequence: 5
+                }
+            )
+
+            displayColumn (
+                column: @APEX$ROW_ACTION
+                layout {
+                    frozen: true
+                    sequence: 0
+                }
+            )
+
+            displayColumn (
+                column: @ROWID
+                layout {
+                    sequence: 1
+                }
+            )
+
+            displayColumn (
+                column: @NAME
+                layout {
+                    width: 340
+                    sequence: 3
+                }
+            )
+
+            displayColumn (
+                column: @DESCRIPTION
+                layout {
+                    show: false
+                    sequence: 10
+                }
+            )
+
+            displayColumn (
+                column: @GITHUB_ADDRESS
+                layout {
+                    show: false
+                    sequence: 11
+                }
+            )
+
+            displayColumn (
+                column: @LIVELABS2_FLG
+                layout {
+                    sequence: 7
+                }
+            )
+
+            displayColumn (
+                column: @TIME_IN_HOURS
+                layout {
+                    show: false
+                    sequence: 12
+                }
+            )
+
+            displayColumn (
+                column: @AUTHOR_NAME
+                layout {
+                    show: false
+                    sequence: 13
+                }
+            )
+
+            displayColumn (
+                column: @EMAIL_FROM_ADDRESS
+                layout {
+                    sequence: 16
+                }
+            )
+
+            displayColumn (
+                column: @WORKSHOP_CODE
+                layout {
+                    show: false
+                    sequence: 17
+                }
+            )
+
+            displayColumn (
+                column: @LIVELABS_WORKSHOP_URL
+                layout {
+                    show: false
+                    sequence: 18
+                }
+            )
+
+            displayColumn (
+                column: @GITHUB_LL_URL
+                layout {
+                    show: false
+                    sequence: 19
+                }
+            )
+
+            displayColumn (
+                column: @WORKSHOP_TIME
+                layout {
+                    show: false
+                    sequence: 20
+                }
+            )
+
+            displayColumn (
+                column: @WORKSHOP_TIME_UNIT
+                layout {
+                    show: false
+                    sequence: 21
+                }
+            )
+
+            displayColumn (
+                column: @ID
+                layout {
+                    sequence: 2
+                }
+            )
+
+            displayColumn (
+                column: @MULTI_WORKSHOP_FLG
+                layout {
+                    show: false
+                    sequence: 22
+                }
+            )
+
+            displayColumn (
+                column: @SINGLE_WORKSHOP_FLG
+                layout {
+                    show: false
+                    sequence: 23
+                }
+            )
+
+            displayColumn (
+                column: @APPROVED_FLG
+                layout {
+                    sequence: 7
+                }
+            )
+
+            displayColumn (
+                column: @OBJECTIVES
+                layout {
+                    show: false
+                    sequence: 24
+                }
+            )
+
+            displayColumn (
+                column: @COMPLETION_DATE
+                layout {
+                    sequence: 15
+                }
+            )
+
+            displayColumn (
+                column: @SOURCE_LINKS
+                layout {
+                    show: false
+                    sequence: 25
+                }
+            )
+
+            displayColumn (
+                column: @WORKSHOP_STATUS
+                layout {
+                    sequence: 8
+                }
+            )
+
+            displayColumn (
+                column: @MODERNIZER_RESOURCE
+                layout {
+                    sequence: 27
+                }
+            )
+
+            displayColumn (
+                column: @GENERAL_NOTES
+                layout {
+                    show: false
+                    sequence: 26
+                }
+            )
+
+            displayColumn (
+                column: @KEY_ORACLE_CONTACT_1
+                layout {
+                    sequence: 28
+                }
+            )
+
+            displayColumn (
+                column: @KEY_ORACLE_CONTACT_2
+                layout {
+                    sequence: 29
+                }
+            )
+
+            displayColumn (
+                column: @FREETIER_URL
+                layout {
+                    show: false
+                    sequence: 30
+                }
+            )
+
+            displayColumn (
+                column: @SOURCE_LINK_2
+                layout {
+                    show: false
+                    sequence: 31
+                }
+            )
+
+            displayColumn (
+                column: @MANAGER_CONTACT
+                layout {
+                    sequence: 32
+                }
+            )
+
+            displayColumn (
+                column: @SUPPORT_CONTACT
+                layout {
+                    sequence: 33
+                }
+            )
+
+            displayColumn (
+                column: @WORKSHOP_CREATOR_GROUP
+                layout {
+                    sequence: 15
+                }
+            )
+
+            displayColumn (
+                column: @PROD_ID
+                layout {
+                    width: 93
+                    sequence: 4
+                }
+            )
+
+            filter (
+                column: @LIVELABS2_FLG
+                value: 1
+            )
+
+            sort (
+                column: @COMPLETION_DATE
+                sort {
+                    nulls: last
+                    sequence: 1
+                }
+            )
+
+        )
+
+        column ALWAYS_FREE_FLG (
+            type: textField
+            heading {
+                heading: Always Free On?
+            }
+            layout {
+                sequence: 380
+            }
+            source {
+                databaseColumn: ALWAYS_FREE_FLG
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column APEX$ROW_ACTION (
+            type: actionsMenu
+            layout {
+                sequence: 20
+            }
+        )
+
+        column APEX$ROW_SELECTOR (
+            type: rowSelector
+            layout {
+                sequence: 10
+            }
+        )
+
+        column APPROVED_FLG (
+            type: numberField
+            heading {
+                heading: Approved Flg
+                alignment: end
+            }
+            settings {
+                numberAlignment: end
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 210
+                columnAlignment: end
+            }
+            source {
+                databaseColumn: APPROVED_FLG
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column AUTHOR_NAME (
+            type: textarea
+            heading {
+                heading: Author Name
+            }
+            layout {
+                sequence: 90
+            }
+            validation {
+                maxLength: 350
+            }
+            source {
+                databaseColumn: AUTHOR_NAME
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column COMPLETION_DATE (
+            type: datePickerJquery
+            heading {
+                heading: Completion Date
+                alignment: center
+            }
+            layout {
+                sequence: 230
+                columnAlignment: center
+            }
+            source {
+                databaseColumn: COMPLETION_DATE
+                dataType: date
+            }
+        )
+
+        column COUNCIL_OBSERVER_CONTACT (
+            type: hidden
+            layout {
+                sequence: 180
+            }
+            source {
+                databaseColumn: COUNCIL_OBSERVER_CONTACT
+                dataType: varchar2
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column DESCRIPTION (
+            type: textarea
+            heading {
+                heading: Description
+            }
+            layout {
+                sequence: 50
+            }
+            validation {
+                maxLength: 4000
+            }
+            source {
+                databaseColumn: DESCRIPTION
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column EMAIL_FROM_ADDRESS (
+            type: textarea
+            heading {
+                heading: Workshop Owner Email
+            }
+            layout {
+                sequence: 100
+            }
+            validation {
+                maxLength: 100
+            }
+            source {
+                databaseColumn: EMAIL_FROM_ADDRESS
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column FREETIER_URL (
+            type: textarea
+            heading {
+                heading: Freetier Url
+            }
+            layout {
+                sequence: 360
+            }
+            validation {
+                maxLength: 1000
+            }
+            source {
+                databaseColumn: FREETIER_URL
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column FREE_TIER_FLG (
+            type: textField
+            heading {
+                heading: Free Tier On?
+            }
+            layout {
+                sequence: 390
+            }
+            source {
+                databaseColumn: FREE_TIER_FLG
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column GENERAL_NOTES (
+            type: textarea
+            heading {
+                heading: General Notes
+            }
+            layout {
+                sequence: 290
+            }
+            validation {
+                maxLength: 4000
+            }
+            source {
+                databaseColumn: GENERAL_NOTES
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column GITHUB_ADDRESS (
+            type: textarea
+            heading {
+                heading: LiveLabs Link
+            }
+            layout {
+                sequence: 60
+            }
+            validation {
+                maxLength: 4000
+            }
+            source {
+                databaseColumn: GITHUB_ADDRESS
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column GITHUB_LL_URL (
+            type: textField
+            heading {
+                heading: GitHub Learning Library URL
+            }
+            layout {
+                sequence: 130
+            }
+            validation {
+                maxLength: 200
+            }
+            source {
+                databaseColumn: GITHUB_LL_URL
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+        )
+
+        column GREEN_BTN_STATUS (
+            type: selectList
+            heading {
+                heading: Green Button Status
+            }
+            lov {
+                type: sharedComponent
+                lov: @green-btn-status
+            }
+            layout {
+                sequence: 420
+            }
+            source {
+                databaseColumn: GREEN_BTN_STATUS
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: useLov
+            }
+        )
+
+        column ID (
+            type: link
+            heading {
+                heading: Id
+                alignment: end
+            }
+            layout {
+                sequence: 160
+                columnAlignment: end
+            }
+            link {
+                target: {
+                    page: 320
+                    items: {
+                        P320_ROWID: &ROWID.
+                        P320_ID: &ID.
+                    }
+                }
+                linkText: &ID.
+            }
+            source {
+                databaseColumn: ID
+                dataType: number
+            }
+            default {
+                duplicateCopiesExistingValue: false
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column KEY_ORACLE_CONTACT_1 (
+            type: textarea
+            heading {
+                heading: Key Oracle Contact 1
+            }
+            layout {
+                sequence: 300
+            }
+            validation {
+                maxLength: 100
+            }
+            source {
+                databaseColumn: KEY_ORACLE_CONTACT_1
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column KEY_ORACLE_CONTACT_2 (
+            type: textarea
+            heading {
+                heading: Key Oracle Contact 2
+            }
+            layout {
+                sequence: 310
+            }
+            validation {
+                maxLength: 100
+            }
+            source {
+                databaseColumn: KEY_ORACLE_CONTACT_2
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column LAST_SELF_QA_DATE (
+            type: datePickerJquery
+            heading {
+                heading: Last Self QA Date
+                alignment: center
+            }
+            layout {
+                sequence: 240
+                columnAlignment: center
+            }
+            source {
+                databaseColumn: LAST_SELF_QA_DATE
+                dataType: date
+            }
+        )
+
+        column LIVELABS2_FLG (
+            type: numberField
+            heading {
+                heading: LiveLabs 2.0 Flg
+                alignment: end
+            }
+            settings {
+                numberAlignment: end
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 70
+                columnAlignment: end
+            }
+            validation {
+                valueRequired: true
+            }
+            source {
+                databaseColumn: ACTIVE_FLG
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column LIVELABS_TIER_FLG (
+            type: textField
+            heading {
+                heading: Green Button On?
+            }
+            layout {
+                sequence: 410
+            }
+            source {
+                databaseColumn: LIVELABS_TIER_FLG
+                dataType: number
+            }
+        )
+
+        column LIVELABS_WORKSHOP_URL (
+            type: textField
+            heading {
+                heading: LiveLabs Workshop URL
+            }
+            layout {
+                sequence: 120
+            }
+            validation {
+                maxLength: 600
+            }
+            source {
+                databaseColumn: LIVELABS_WORKSHOP_URL
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+        )
+
+        column MANAGER_CONTACT (
+            type: textField
+            heading {
+                heading: Manager Contact
+            }
+            layout {
+                sequence: 320
+            }
+            source {
+                databaseColumn: MANAGER_CONTACT
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column MODERNIZER_RESOURCE (
+            type: textarea
+            heading {
+                heading: Maintained By
+            }
+            layout {
+                sequence: 270
+            }
+            validation {
+                maxLength: 4000
+            }
+            source {
+                databaseColumn: MODERNIZER_RESOURCE
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+        )
+
+        column MULTI_WORKSHOP_FLG (
+            type: numberField
+            heading {
+                heading: Multi Workshop Flg
+                alignment: end
+            }
+            settings {
+                numberAlignment: end
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 190
+                columnAlignment: end
+            }
+            source {
+                databaseColumn: MULTI_WORKSHOP_FLG
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column NAME (
+            type: textField
+            heading {
+                heading: Name
+            }
+            layout {
+                sequence: 40
+            }
+            validation {
+                maxLength: 100
+            }
+            source {
+                databaseColumn: NAME
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+        )
+
+        column OBJECTIVES (
+            type: textarea
+            heading {
+                heading: Objectives
+            }
+            layout {
+                sequence: 220
+            }
+            validation {
+                maxLength: 4000
+            }
+            source {
+                databaseColumn: OBJECTIVES
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column OTHER_CONTACT (
+            type: textField
+            heading {
+                heading: Observer
+            }
+            layout {
+                sequence: 340
+            }
+            source {
+                databaseColumn: OTHER_CONTACT
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column PAID_TIER_FLG (
+            type: textField
+            heading {
+                heading: Paid Tier On?
+            }
+            layout {
+                sequence: 400
+            }
+            source {
+                databaseColumn: PAID_TIER_FLG
+                dataType: number
+            }
+        )
+
+        column PROD_ID (
+            type: textField
+            heading {
+                heading: Production ID
+            }
+            layout {
+                sequence: 170
+            }
+            source {
+                databaseColumn: PROD_ID
+                dataType: number
+            }
+        )
+
+        column ROWID (
+            type: hidden
+            layout {
+                sequence: 30
+            }
+            source {
+                databaseColumn: ROWID
+                dataType: rowid
+                primaryKey: true
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column SINGLE_WORKSHOP_FLG (
+            type: numberField
+            heading {
+                heading: Single Workshop Flg
+                alignment: end
+            }
+            settings {
+                numberAlignment: end
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 200
+                columnAlignment: end
+            }
+            source {
+                databaseColumn: SINGLE_WORKSHOP_FLG
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column SOURCE_LINKS (
+            type: textarea
+            heading {
+                heading: Source Links
+            }
+            layout {
+                sequence: 250
+            }
+            validation {
+                maxLength: 1000
+            }
+            source {
+                databaseColumn: SOURCE_LINKS
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column SOURCE_LINK_2 (
+            type: textField
+            heading {
+                heading: Source Link 2
+            }
+            layout {
+                sequence: 370
+            }
+            source {
+                databaseColumn: SOURCE_LINK_2
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+        )
+
+        column SUPPORT_CONTACT (
+            type: textField
+            heading {
+                heading: Support Contact
+            }
+            layout {
+                sequence: 330
+            }
+            source {
+                databaseColumn: SUPPORT_CONTACT
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column TIME_IN_HOURS (
+            type: numberField
+            heading {
+                heading: Time In Hours
+                alignment: end
+            }
+            settings {
+                numberAlignment: end
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 80
+                columnAlignment: end
+            }
+            source {
+                databaseColumn: TIME_IN_HOURS
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column WORKSHOP_CODE (
+            type: textField
+            heading {
+                heading: Workshop Code
+            }
+            layout {
+                sequence: 110
+            }
+            validation {
+                maxLength: 30
+            }
+            source {
+                databaseColumn: APP_LISTING_OCID
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column WORKSHOP_CREATOR_GROUP (
+            type: selectList
+            heading {
+                heading: Workshop Owner Group
+            }
+            lov {
+                type: sharedComponent
+                lov: @workshop-creator-group
+            }
+            layout {
+                sequence: 350
+            }
+            source {
+                databaseColumn: WORKSHOP_CREATOR_GROUP
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: useLov
+            }
+        )
+
+        column WORKSHOP_STATUS (
+            type: selectList
+            heading {
+                heading: Workshop Status
+            }
+            lov {
+                type: sharedComponent
+                lov: @workshop-status
+            }
+            layout {
+                sequence: 260
+            }
+            source {
+                databaseColumn: WORKSHOP_STATUS
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: useLov
+            }
+        )
+
+        column WORKSHOP_TIME (
+            type: numberField
+            heading {
+                heading: Workshop Time
+                alignment: end
+            }
+            settings {
+                numberAlignment: end
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 140
+                columnAlignment: end
+            }
+            source {
+                databaseColumn: WORKSHOP_TIME
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column WORKSHOP_TIME_UNIT (
+            type: textField
+            heading {
+                heading: Workshop Time Unit
+            }
+            layout {
+                sequence: 150
+            }
+            validation {
+                maxLength: 10
+            }
+            source {
+                databaseColumn: WORKSHOP_TIME_UNIT
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column WORKSHOP_UID (
+            type: displayOnly
+            heading {
+                heading: WORKSHOP  UID
+            }
+            layout {
+                sequence: 430
+            }
+            source {
+                databaseColumn: WORKSHOP_UID
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: Manage All Workshops
+        }
+    )
+
+    process manage-all-workshops-save-interactive-grid-data (
+        name: Manage All Workshops - Save Interactive Grid Data
+        type: interactiveGridAutoRowProcessing
+        editableRegion: @manage-all-workshops-2
+        execution {
+            sequence: 10
+        }
+        advanced {
+            executionMappingIdentifier: 60072733076274777579
+        }
+    )
+
+)
+

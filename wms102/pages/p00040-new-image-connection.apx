@@ -1,0 +1,225 @@
+page 40 (
+    name: "New Image Connection "
+    alias: NEW-IMAGE-CONNECTION
+    title: "New Image Connection "
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @modal-dialog
+        templateOptions: #DEFAULT#
+    }
+    dialog {
+        height: 400
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    css {
+        inline:
+            ```css
+            .ui-dialog.ui-dialog-popuplov.ui-widget.ui-widget-content.ui-front.ui-dialog--popup {
+                height: 550px !important;
+            }
+            ```
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region image-connection-details (
+        name: Image Connection Details
+        title: Connect an Image
+        type: form
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select id,
+                       LIVELABS_ID,
+                       IMAGE_ID,
+                       ACTIVE_FLG
+                  from WMS_LL_IMAGES
+                ```
+        }
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+        edit {
+            enabled: true
+            allowedOperations: [
+                add
+                update
+                delete
+            ]
+        }
+    )
+
+    pageItem P40_ACTIVE_FLG (
+        type: hidden
+        layout {
+            sequence: 40
+            region: @image-connection-details
+            slot: regionBody
+        }
+        source {
+            formRegion: @image-connection-details
+            column: ACTIVE_FLG
+            dataType: varchar2
+        }
+    )
+
+    pageItem P40_ID (
+        type: hidden
+        layout {
+            sequence: 10
+            region: @image-connection-details
+            slot: regionBody
+        }
+        source {
+            formRegion: @image-connection-details
+            column: ID
+            dataType: number
+            primaryKey: true
+        }
+        security {
+            sessionStateProtection: checksumRequiredSessionLevel
+        }
+    )
+
+    pageItem P40_IMAGE_ID (
+        type: popupLov
+        label {
+            label: Merketplace Image
+            alignment: left
+        }
+        settings {
+            fetchOnSearch: true
+            popupHeight: 350
+        }
+        lov {
+            type: sharedComponent
+            lov: @images
+        }
+        layout {
+            sequence: 30
+            region: @image-connection-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            formRegion: @image-connection-details
+            column: IMAGE_ID
+            dataType: number
+        }
+        security {
+            sessionStateProtection: checksumRequiredSessionLevel
+        }
+    )
+
+    pageItem P40_LIVELABS_ID (
+        type: hidden
+        layout {
+            sequence: 20
+            region: @image-connection-details
+            slot: regionBody
+        }
+        source {
+            formRegion: @image-connection-details
+            column: LIVELABS_ID
+            dataType: number
+        }
+    )
+
+    button create (
+        buttonName: Create
+        label: Create
+        layout {
+            sequence: 30
+            region: @image-connection-details
+            slot: bottom
+            horizontalAlignment: left
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            showProcessing: true
+            warnOnUnsavedChanges: doNotCheck
+        }
+        serverSideCondition {
+            type: itemIsNull
+            item: P40_IMAGE_ID
+        }
+    )
+
+    process close-dialog (
+        name: Close Dialog
+        type: closeDialog
+        execution {
+            sequence: 40
+        }
+        advanced {
+            executionMappingIdentifier: 35418559293209130741
+        }
+    )
+
+    process initialize-form-edit-image-connection-details (
+        name: Initialize form Edit Image Connection Details
+        type: formInitialization
+        formRegion: @image-connection-details
+        execution {
+            sequence: 10
+            point: beforeHeader
+        }
+        advanced {
+            executionMappingIdentifier: 35418558034402130738
+        }
+    )
+
+    process process-form-create (
+        name: Process Form - Create
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                declare
+                    v_errm clob;
+                begin
+                    insert into wms_ll_images(livelabs_id, image_id, active_flg) values (:P40_LIVELABS_ID, :P40_IMAGE_ID, 'Y') returning id into :P40_ID;
+                    wms_pkg_ords.createImageConnection(:P40_ID);
+                
+                exception when others then
+                    v_errm := SQLERRM;
+                    insert into ords_log(priority, error_message) values(9, 'Error connecting image #' || :P40_IMAGE_ID || ' to LiveLab #' || :P40_LIVELABS_ID || ': ' || v_errm);
+                    raise;
+                end;
+                ```
+        }
+        execution {
+            sequence: 20
+        }
+        advanced {
+            executionMappingIdentifier: 35418558819840130741
+        }
+        serverSideCondition {
+            whenButtonPressed: @create
+        }
+    )
+
+)
+

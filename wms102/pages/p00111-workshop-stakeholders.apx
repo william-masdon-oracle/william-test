@@ -1,0 +1,167 @@
+page 111 (
+    name: Workshop Stakeholders
+    alias: WORKSHOP-STAKEHOLDERS
+    title: Workshop Stakeholders
+    appearance {
+        pageTemplate: @standard-custom
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region span-style-font-size-1-8em-font-weight-700-workshop-stakeholders-span (
+        name: <span style="font-size: 1.8em; font-weight: 700">Workshop Stakeholders</span>
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <table><tr><td width="120px">
+                <img src="#APP_FILES#wms_logo.png" width="100px">
+                </td><td>
+                <p>Workshop Team Members by Workshop. To update this report, click EDIT My Workshop and choose the appropriate workshop.</p></td></tr></table>
+                ```
+        }
+        layout {
+            sequence: 20
+            slot: beforeContentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        security {
+            authorizationScheme: @administration-rights
+        }
+    )
+
+    region workshop-stakeholders (
+        name: Workshop Stakeholders
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select name,email,replace(replace(active_flg,1,'Active'),0,'Inactive') from workshop_person_stakeholder_vw
+                
+                ```
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        pagination {
+            type: rowRangesXToY
+        }
+        messages {
+            whenNoDataFound: No data found.
+            whenMoreDataFound: The maximum row count for this report is #MAX_ROW_COUNT# rows.  Please apply a filter to reduce the number of records in your query.
+        }
+        actionsMenu {
+            subscription: false
+        }
+        advanced {
+            savedReportMappingIdentifier: 36969946968886839217
+        }
+
+        column EMAIL (
+            type: plainText
+            heading {
+                heading: Email
+                alignment: center
+            }
+            layout {
+                sequence: 20
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: G
+            }
+        )
+
+        column NAME (
+            type: plainText
+            heading {
+                heading: Name
+                alignment: center
+            }
+            layout {
+                sequence: 30
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: L
+            }
+        )
+
+        column "REPLACE(REPLACE(ACTIVE_FLG,1,'ACTIVE'),0,'INACTIVE')" (
+            type: plainText
+            heading {
+                heading: Active?
+                alignment: center
+            }
+            layout {
+                sequence: 40
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: N
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: Workshop Contributors Report
+        }
+
+        savedReport 58420618 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn EMAIL (
+                sequence: 1
+            )
+
+            displayColumn NAME (
+                sequence: 3
+            )
+
+            displayColumn "REPLACE(REPLACE(ACTIVE_FLG,1,'ACTIVE'),0,'INACTIVE')" (
+                sequence: 4
+            )
+
+            displayColumn WORKSHOP_ROLE_WORKSHOP_ID (
+                sequence: 2
+            )
+
+        )
+
+    )
+
+)
+

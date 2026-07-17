@@ -1,0 +1,492 @@
+page 34 (
+    name: Compute Images
+    alias: COMPUTE-IMAGES
+    title: Compute Images
+    appearance {
+        pageTemplate: @standard-custom
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region compute-images (
+        name: Compute Images
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select ID,
+                       OCPU_REQUIRED,
+                       SECLIST_REQ,
+                       IMAGE_REQ,
+                       PUBKEY_REQ,
+                       NOVNC_ENABLED,
+                       DATABASE_VERSION,
+                       ADDED_BY,
+                       VERSION,
+                       IMAGE_OCID,
+                       UPDATED_FLG,
+                       ADDED_ON,
+                       LISTING_ID,
+                       (select listing_name from omp_listings where id = listing_id) listing_name,
+                       (select listagg(livelabs_id, ',') from wms_ll_images where image_id = id) workshops_using
+                  from OMP_IMAGES
+                ```
+        }
+        layout {
+            sequence: 10
+            parentRegion: @compute-images-2
+            slot: subRegions
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        link {
+            linkColumn: customTarget
+            target: {
+                page: 53
+                items: {
+                    P53_ID: #ID#
+                }
+            }
+            linkIcon: <span role="img" aria-label="Edit" class="fa fa-edit" title="Edit"></span>
+        }
+        pagination {
+            type: rowRangesXToY
+        }
+        performance {
+            maxRowsToProcess: 1000000
+        }
+        advanced {
+            savedReportMappingIdentifier: 34130224984815456124
+        }
+
+        column ADDED_BY (
+            type: plainText
+            heading {
+                heading: Added By
+            }
+            layout {
+                sequence: 130
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: P
+            }
+        )
+
+        column ADDED_ON (
+            type: plainText
+            heading {
+                heading: Added On
+                alignment: center
+            }
+            layout {
+                sequence: 120
+                columnAlignment: center
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: L
+            }
+        )
+
+        column DATABASE_VERSION (
+            type: plainText
+            heading {
+                heading: Database Version
+                alignment: center
+            }
+            layout {
+                sequence: 70
+                columnAlignment: center
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: G
+            }
+        )
+
+        column ID (
+            type: plainText
+            heading {
+                heading: ID
+                alignment: center
+            }
+            layout {
+                sequence: 10
+                columnAlignment: center
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: A
+            }
+        )
+
+        column IMAGE_OCID (
+            type: plainText
+            heading {
+                heading: Image OCID
+                alignment: center
+            }
+            layout {
+                sequence: 100
+                columnAlignment: center
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: J
+            }
+        )
+
+        column IMAGE_REQ (
+            type: plainText
+            heading {
+                heading: Image Req
+                alignment: center
+            }
+            layout {
+                sequence: 40
+                columnAlignment: center
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: D
+            }
+        )
+
+        column LISTING_ID (
+            type: link
+            heading {
+                heading: Listing
+                alignment: center
+            }
+            layout {
+                sequence: 140
+                columnAlignment: center
+            }
+            link {
+                target: {
+                    page: 39
+                    items: {
+                        P39_ID: #LISTING_ID#
+                    }
+                }
+                linkText: #LISTING_NAME#
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: M
+            }
+        )
+
+        column LISTING_NAME (
+            type: hidden
+            heading {
+                heading: Listing Name
+            }
+            layout {
+                sequence: 150
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: N
+            }
+        )
+
+        column NOVNC_ENABLED (
+            type: plainText
+            heading {
+                heading: NoVNC
+                alignment: center
+            }
+            layout {
+                sequence: 60
+                columnAlignment: center
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: F
+            }
+        )
+
+        column OCPU_REQUIRED (
+            type: plainText
+            heading {
+                heading: OCPU Required
+                alignment: center
+            }
+            layout {
+                sequence: 20
+                columnAlignment: center
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: B
+            }
+        )
+
+        column PUBKEY_REQ (
+            type: plainText
+            heading {
+                heading: SSH Req
+                alignment: center
+            }
+            layout {
+                sequence: 50
+                columnAlignment: center
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: E
+            }
+        )
+
+        column SECLIST_REQ (
+            type: plainText
+            heading {
+                heading: Security List
+                alignment: center
+            }
+            layout {
+                sequence: 30
+                columnAlignment: center
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: C
+            }
+        )
+
+        column UPDATED_FLG (
+            type: plainText
+            heading {
+                heading: Updated Flag
+                alignment: center
+            }
+            layout {
+                sequence: 110
+                columnAlignment: center
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: K
+            }
+        )
+
+        column VERSION (
+            type: plainText
+            heading {
+                heading: Version
+                alignment: center
+            }
+            layout {
+                sequence: 90
+                columnAlignment: center
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: I
+            }
+        )
+
+        column WORKSHOPS_USING (
+            type: plainText
+            heading {
+                heading: Workshops Using
+                alignment: center
+            }
+            layout {
+                sequence: 160
+                columnAlignment: center
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: O
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+
+        savedReport 344492321 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn ADDED_BY (
+                sequence: 13
+            )
+
+            displayColumn ADDED_ON (
+                sequence: 12
+            )
+
+            displayColumn DATABASE_VERSION (
+                sequence: 11
+            )
+
+            displayColumn ID (
+                sequence: 1
+            )
+
+            displayColumn IMAGE_OCID (
+                sequence: 4
+            )
+
+            displayColumn IMAGE_REQ (
+                sequence: 8
+            )
+
+            displayColumn LISTING_ID (
+                sequence: 2
+            )
+
+            displayColumn NOVNC_ENABLED (
+                sequence: 10
+            )
+
+            displayColumn OCPU_REQUIRED (
+                sequence: 6
+            )
+
+            displayColumn PUBKEY_REQ (
+                sequence: 9
+            )
+
+            displayColumn SECLIST_REQ (
+                sequence: 7
+            )
+
+            displayColumn UPDATED_FLG (
+                sequence: 14
+            )
+
+            displayColumn VERSION (
+                sequence: 3
+            )
+
+            displayColumn WORKSHOPS_USING (
+                sequence: 5
+            )
+
+            sort (
+                column: ID
+                sort {
+                    direction: desc
+                    sequence: 1
+                }
+            )
+
+        )
+
+    )
+
+    region compute-images-2 (
+        name: Compute Images
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--accent1
+                t-Region--scrollBody
+                margin-top-sm
+            ]
+        }
+    )
+
+    button create (
+        buttonName: Create
+        label: Create
+        layout {
+            sequence: 10
+            region: @compute-images
+            slot: rightOfInteractiveReportSearchBar
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 36
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    dynamicAction refresh-report (
+        name: Refresh Report
+        execution {
+            sequence: 10
+        }
+        when {
+            event: apexafterclosedialog
+            selectionType: region
+            region: @compute-images
+        }
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @compute-images
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+)
+

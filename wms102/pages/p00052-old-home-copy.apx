@@ -1,0 +1,1992 @@
+page 52 (
+    name: Old Home Copy
+    alias: OLD-HOME-COPY
+    title: Old Home Copy
+    appearance {
+        pageTemplate: @standard-custom
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+        warnOnUnsavedChanges: false
+    }
+    css {
+        inline:
+            ```css
+            body  {
+                margin: 0 auto;
+                background-image: url(#APP_IMAGES#ll_bg_tile.png);
+                background-repeat: repeat;
+            }
+            ```
+    }
+    htmlHeader {
+        htmlHeader:
+            ```html
+            <style>
+                #LL_HEAD{
+                    font-color: white;
+                    background: url(#APP_IMAGES#ll_region_bg.png);
+                    min-height: 100%;
+                }
+            </style>
+            ```
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region announcements-carousel (
+        name: announcements_carousel
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <div align="middle">
+                <p style="padding:5px 5px 5px 5px;font-weight:800;font-size:1.0em">
+                </p>
+                </div>
+                ```
+        }
+        layout {
+            sequence: 20
+            parentRegion: @header
+            slot: subRegions
+        }
+        appearance {
+            template: @carousel-container
+            templateOptions: [
+                js-useLocalStorage
+                js-cycle10s
+                t-Region--carouselSlide
+                t-Region--removeHeader
+                t-Region--noBorder
+                t-Region--hiddenOverflow
+                t-Form--noPadding
+                margin-top-sm
+                margin-bottom-none
+            ]
+        }
+    )
+
+    region bottom (
+        name: BOTTOM
+        type: staticContent
+        layout {
+            sequence: 90
+            parentRegion: @choose-workshop-tags
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--scrollBody
+                t-Form--noPadding
+                margin-top-none
+                margin-bottom-none
+                margin-left-none
+                margin-right-none
+            ]
+        }
+    )
+
+    region choose-workshop-tags (
+        name: Choose workshop tags
+        type: staticContent
+        layout {
+            sequence: 40
+            slot: contentBody
+            startNewRow: false
+            columnSpan: 3
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region current-workshops (
+        name: Current Workshops
+        type: cards
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select "NAME"
+                --||' (#'||id||')'||replace(REPLACE(active_flg,1,' - IN PRODUCTION'),0,'')  
+                CARD_TITLE,
+                rowid,
+                "ID",
+                 --'Status: '|| upper(workshop_status) CARD_SUBTITLE,
+                case when length("DESCRIPTION") > 200 then substr("DESCRIPTION", 1, 200) || '...' 
+                    else "DESCRIPTION" end as CARD_TEXT,
+                    'WMS ID: '||id  IDINFO,
+                  workshop_status as STATUS,
+                  case when "LUNA_FLG"='Y' then '#APP_FILES#luna_icon.png' 
+                    else '#APP_FILES#livelabs_icon.png' end CARD_IMAGE,
+                  "ACTIVE_FLG",
+                  "APPROVED_FLG",
+                  "TIME_IN_HOURS",
+                  "WORKSHOP_TIME"
+                  "NAME",
+                  "DESCRIPTION",
+                  "LEVEL_TAG",
+                  "DEPLOYMENT_TAG",
+                  "ROLE_TAG",
+                  "SALESPLAY_TAG",
+                  "FOCUS_TAG",
+                  "PRODUCT_TAG",
+                  livelabs_workshop_url,
+                  documentation_url BLOG_URL
+                from "WORKSHOPS"
+                where workshop_status!='Cancelled'
+                --Status filter
+                and 
+                (upper(workshop_status) = upper(:P52_STATUSSELECT) or :P52_STATUSSELECT is null)
+                --Owner Group filter
+                and 
+                (upper(workshop_creator_group) = upper(:P52_WORKSHOP_GROUP) or :P52_WORKSHOP_GROUP is null)
+                --Tag filter
+                and(
+                        :P52_LEVEL is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => LEVEL_TAG, p_filter => :P52_LEVEL) = 'Y'
+                        )
+                and(
+                        :P52_ROLE is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => ROLE_TAG, p_filter => :P52_ROLE) = 'Y'
+                        )
+                and(
+                        :P52_SALES_PLAY is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => SALESPLAY_TAG, p_filter => :P52_SALES_PLAY) = 'Y'
+                    )
+                and(
+                        :P52_FOCUS_AREA is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => FOCUS_TAG, p_filter => :P52_FOCUS_AREA) = 'Y'
+                    )
+                and(
+                        :P52_PRODUCT is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => PRODUCT_TAG, p_filter => :P52_PRODUCT) = 'Y'
+                    )
+                and(
+                        :P52_DEPLOYMENT is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => DEPLOYMENT_TAG, p_filter => :P52_DEPLOYMENT) = 'Y'
+                        )
+                --Search bar at top
+                AND (:SEARCH IS NULL OR 
+                          (
+                              (UPPER("NAME") LIKE '%' || UPPER(:SEARCH) || '%')
+                               OR
+                              (UPPER("DESCRIPTION") LIKE '%' || UPPER(:SEARCH) || '%')
+                               OR
+                              (UPPER("ID") LIKE '%' || UPPER(:SEARCH) || '%')
+                               OR
+                               (UPPER("ABSTRACT") LIKE '%' || UPPER(:SEARCH) || '%')
+                               OR
+                               (UPPER("WORKSHOP_STATUS") LIKE '%' || UPPER(:SEARCH) || '%')
+                               OR
+                               (UPPER("SHORT_DESCRIPTION") LIKE '%' || UPPER(:SEARCH) || '%')
+                               OR
+                              (UPPER("PROD_ID") LIKE '%' || UPPER(:SEARCH) || '%')
+                                 OR
+                              (UPPER("KEY_ORACLE_CONTACT_1") LIKE '%' || UPPER(:SEARCH) || '%')
+                                 OR
+                              (UPPER("KEY_ORACLE_CONTACT_2") LIKE '%' || UPPER(:SEARCH) || '%')
+                               OR
+                              (UPPER("EMAIL_FROM_ADDRESS") LIKE '%' || UPPER(:SEARCH) || '%')
+                                 OR
+                              (UPPER("OBJECTIVES") LIKE '%' || UPPER(:SEARCH) || '%')
+                              
+                          )
+                     ) --order by id desc
+                --Order by drop down
+                     order by 
+                     case when :p52_orderby = 'WORKSHOP_STATUS' then workshop_status end asc,
+                        case when :p52_orderby = 'NAMEAsc' then card_title end asc,
+                        case when :p52_ORDERBY = 'IDDesc' then lpad( "ID",10,'0') end desc,
+                        case when :p52_ORDERBY = 'IDAsc' then lpad( "ID",10,'0') end asc,
+                        case when :p52_ORDERBY = 'NAMEDesc' then card_title end desc,
+                        case when :p52_ORDERBY is null then lpad( "ID",10,'0') end desc
+                
+                ;
+                
+                ```
+            pageItemsToSubmit: [
+                P52_WORKSHOP_GROUP
+                P52_STATUSSELECT
+                P52_ORDERBY
+                P52_ROLE
+                P52_DEPLOYMENT
+                P52_SALES_PLAY
+                P52_FOCUS_AREA
+                P52_PRODUCT
+                P52_LEVEL
+            ]
+        }
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @blank-with-attributes-no-grid
+            templateOptions: #DEFAULT#
+        }
+        componentAppearance {
+            gridColumns: 3
+        }
+        card {
+            primaryKeyColumn1: ID
+        }
+        title {
+            column: CARD_TITLE
+        }
+        subtitle {
+            advancedFormatting: true
+            htmlExpression: <span style="color:grey;font-size:0.875em">&IDINFO.</span>
+        }
+        body {
+            column: CARD_TEXT
+        }
+        secondaryBody {
+            advancedFormatting: true
+            htmlExpression: <strong>&STATUS.</strong>
+        }
+        iconAndBadge {
+            iconSource: imageUrl
+            imageUrl: &CARD_IMAGE.
+            iconPosition: end
+        }
+        pagination {
+            type: page
+            showTotalCount: true
+            cardsPerPage: 30
+        }
+        messages {
+            whenNoDataFound: No workshops found.
+        }
+
+        action action (
+            label: Luna
+            layout {
+                sequence: 90
+            }
+            behavior {
+                type: redirectUrl
+                targetUrl: javascript:window.open("&LIVELABS_WORKSHOP_URL.","_blank");
+            }
+            appearance {
+                displayType: textWithIcon
+                icon: fa-moon-o
+                hot: true
+            }
+            serverSideCondition {
+                type: rowsReturned
+                sqlQuery:
+                    ```sql
+                    select * from workshops where id = :ID and luna_flg = 'Y' and luna_prod_status is not null
+                    and ( workshop_status='Production' or 
+                    workshop_status = 'Production - Free Tier' or 
+                    workshop_status = 'Production - LiveLabs' or
+                    workshop_status = 'Production - Hidden Event' or
+                    workshop_status = 'Production - Paid')
+                    ```
+            }
+        )
+
+        action action-2 (
+            label: LiveLabs
+            layout {
+                sequence: 80
+            }
+            behavior {
+                type: redirectUrl
+                targetUrl: javascript:void(window.open("&LIVELABS_WORKSHOP_URL.","_blank"));
+            }
+            appearance {
+                displayType: textWithIcon
+                icon: fa-flask
+                hot: true
+            }
+            serverSideCondition {
+                type: rowsReturned
+                sqlQuery:
+                    ```sql
+                    select * from workshops where id = :ID 
+                    and ( workshop_status='Production' or 
+                    workshop_status = 'Production - Free Tier' or 
+                    workshop_status = 'Production - LiveLabs' or
+                    workshop_status = 'Production - Hidden Event' or
+                    workshop_status = 'Production - Paid')
+                    ```
+            }
+        )
+
+        action action-3 (
+            type: fullCard
+            layout {
+                sequence: 10
+            }
+            behavior {
+                target: {
+                    page: 105
+                    items: {
+                        P105_WORKSHOP_ID: &ID.
+                        P105_WORKSHOP_ID_1: &ID.
+                    }
+                }
+            }
+        )
+
+        action action-4 (
+            label: Edit
+            layout {
+                sequence: 30
+            }
+            behavior {
+                target: {
+                    page: 320
+                    items: {
+                        P320_ROWID: &ROWID.
+                    }
+                }
+            }
+            appearance {
+                displayType: icon
+                icon: fa-edit
+            }
+            serverSideCondition {
+                type: rowsReturned
+                sqlQuery:
+                    ```sql
+                    /*Workshop Team*/
+                    select a.*
+                    from workshops a, workshop_person_role b, workshop_role c
+                    where a.id = :ID
+                    and  a.id=b.workshop_id
+                    and b.role_id=c.id
+                    and c.name in ('Workshop Team')
+                    and a.workshop_status not in ( 'Cancelled','Submitted','Production','Production - LiveLabs','Production - Hidden Event','Production - Paid','Production - Free Tier')   
+                    and upper(:APP_USER)=upper(b.email)
+                    and b.active_flg=1
+                    union all 
+                    /* FOR PUBLISHERS */
+                    select *
+                    from workshops
+                    where id = :ID
+                    and  (upper(:APP_USER) in (select upper(email) from workshop_person_role where workshop_id is null and active_flg=1))
+                    union all
+                    /*STAKEHOLDERS NON PRODUCTION
+                    STAKEHOLDERS CAN EDIT OTHER WORKSHOPS BUT CAN'T CHANGE STATUS*/
+                    select a.*
+                    from workshops a, workshop_person_stakeholder b
+                    where a.id = :ID
+                    and  a.stakeholder_id=b.stakeholder_id
+                    and a.workshop_status not in ( 'Cancelled','Submitted','Production','Production - LiveLabs','Production - Hidden Event','Production - Paid','Production - Free Tier')   
+                    and upper(:APP_USER)=upper(b.email)
+                    and b.active_flg=1
+                    union all
+                    /* APPROVAL COUNCIL NON PRODUCTION */
+                    select a.*
+                    from workshops a, workshop_person_council b
+                    where  a.council_id=b.council_id
+                    and a.workshop_status not in ('Production','Production - LiveLabs','Production - Hidden Event','Production - Paid','Production - Free Tier')   
+                    and upper(:APP_USER)=upper(b.email)
+                    and b.active_flg=1
+                    ```
+            }
+        )
+
+        action action-5 (
+            label: Message
+            layout {
+                sequence: 70
+            }
+            behavior {
+                target: {
+                    page: 106
+                    items: {
+                        P106_WORKSHOP_ID: &ID.
+                        P106_WORKSHOP_ID_1: &ID.
+                    }
+                }
+            }
+            appearance {
+                displayType: icon
+                icon: fa-envelope-edit
+            }
+        )
+
+        action action-6 (
+            label: View Details
+            layout {
+                sequence: 20
+            }
+            behavior {
+                target: {
+                    page: 14
+                    items: {
+                        P14_ID: &ID.
+                    }
+                }
+            }
+            appearance {
+                displayType: icon
+                icon: fa-eye
+            }
+        )
+
+        action action-7 (
+            label: Blog
+            layout {
+                sequence: 100
+            }
+            behavior {
+                type: redirectUrl
+                targetUrl: javascript:void(window.open("&BLOG_URL.","_blank"));
+            }
+            appearance {
+                displayType: textWithIcon
+                icon: fa-book
+            }
+            serverSideCondition {
+                type: rowsReturned
+                sqlQuery: select * from workshops where id=:ID and documentation_url is not null
+            }
+        )
+
+    )
+
+    region deployment (
+        name: Deployment
+        type: staticContent
+        layout {
+            sequence: 20
+            parentRegion: @choose-workshop-tags
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--noUI
+                t-Region--scrollBody
+                t-Form--noPadding
+                margin-top-none
+                margin-bottom-none
+                margin-left-none
+                margin-right-none
+            ]
+        }
+    )
+
+    region focus-area (
+        name: Focus Area
+        type: staticContent
+        layout {
+            sequence: 40
+            parentRegion: @choose-workshop-tags
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--noUI
+                t-Region--scrollBody
+                t-Form--noPadding
+                margin-top-none
+                margin-bottom-none
+                margin-left-none
+                margin-right-none
+            ]
+        }
+        headerAndFooter {
+            headerText: <div style="max-height: 150px;">
+            footerText: </div>
+        }
+    )
+
+    region header (
+        name: header
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <div style="background: url(#APP_IMAGES#ll_region_bg.png);color:white;padding:10px 10px 10px 10px">
+                <table><tr><td width="120px">
+                <img src="https://objectstorage.us-ashburn-1.oraclecloud.com/p/JqF1FqwGZL1LBG-ER-CJg2_Ev0-wrwnflP0I7dwc8d065zU6GvXWb9ORoqWvGncJ/n/c4u04/b/wms-storage/o/images/WMS-Logo-01-color.png" width="110px">
+                </td>
+                <td>
+                <p style="font-size:1.5em;font-weight:600;padding:0px 20px 0px 30px">Welcome to the Oracle Workshop Management System (WMS)</p>
+                <p style="padding:0px 20px 0px 30px">Experience Oracle's cloud and on-premises products and technologies.  One place to submit workshop content, we will help you publish into LiveLabs and Help Center Learn.<br><br>Advance your cloud and license deals, get training on Oracle products and increase cloud consumption now!</p>
+                <p style="padding:0px 20px 0px 30px;font-weight:600">
+                <b>Top Links:&nbsp;&nbsp;&nbsp;</b> 
+                <a target="_blank" href="https://developer.oracle.com/livelabs" style="color:#fcbf37">LiveLabs</a> | <a target="_blank" href="https://docs.oracle.com/learn/" style="color:#fcbf37">Help Center (OHC) Learn</a> | 
+                <a target="_blank" href="https://confluence.oraclecorp.com/confluence/display/LIVELABS/LiveLabs+Information+Page" style="color:#fcbf37">LiveLabs Information Page</a> |
+                <a target="_blank" href="https://oracle.github.io/learning-library/sample-livelabs-templates/create-labs/labs/workshops/freetier/?lab=livelabs-faq" style="color:#fcbf37">Frequently Asked Questions</a> |
+                <a target="_blank" href="https://confluence.oraclecorp.com/confluence/display/LIVELABS/Porting+Workshop+to+LiveLabs+-+Checklist" style="color:#fcbf37">Workshop Checklist</a>
+                </td><td></td></tr></table>
+                </div>
+                ```
+        }
+        layout {
+            sequence: 10
+            slot: beforeContentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--scrollBody
+                t-Form--noPadding
+                margin-top-none
+                margin-bottom-none
+            ]
+        }
+        advanced {
+            htmlDomId: LL_HEAD
+        }
+    )
+
+    region level (
+        name: Level
+        type: staticContent
+        layout {
+            sequence: 70
+            parentRegion: @choose-workshop-tags
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--noUI
+                t-Region--scrollBody
+                t-Form--noPadding
+                margin-top-none
+                margin-bottom-none
+                margin-left-none
+                margin-right-none
+            ]
+        }
+        headerAndFooter {
+            headerText: <div style="min-height: 100px; max-height: 100px;">
+        }
+    )
+
+    region livelabs-outage-notification-march-27th (
+        name: LiveLabs Outage Notification - March 27th
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                Due to the migration last weekend was rolled back caused by corruption on new db hosts, we need to re-run the migration this weekend.<br>
+                Service on apexapps.oracle.com will not be available up to 2 hours between 18:00 - 20:00 PT 27/March, database will be relocated to new db hosts and upgraded from 18.7 to 18.13.
+                ```
+        }
+        layout {
+            sequence: 10
+            parentRegion: @header
+            slot: subRegions
+        }
+        appearance {
+            template: @alert
+            templateOptions: [
+                #DEFAULT#
+                t-Alert--horizontal
+                t-Alert--defaultIcons
+                t-Alert--warning
+                t-Form--slimPadding
+            ]
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    region news (
+        name: news_1
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <div align="middle">
+                <p style="padding: 20px 30px 20px 30px;font-size:0.95em">
+                <strong>This Friday, December 10, 2021, there will be an outage on LiveLabs from 9:00pm-10:00pm PST. </strong>
+                <br>The APEX team will be upgrading APEX to 21.2 and applying the OCT PSU Patch. Please plan accordingly.
+                </p>
+                </div>
+                ```
+        }
+        layout {
+            sequence: 10
+            parentRegion: @announcements-carousel
+            slot: slides
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--hiddenOverflow
+            ]
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    region news-2 (
+        name: news_2
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <div align="middle">
+                <p style="padding: 10px 30px 20px 30px;font-size:0.95em">
+                LiveLabs hit <strong>1 MILLION+</strong> views! (As of September 17)<br>
+                Since April, views up 435,000 and unique visitors up 275,000.
+                </p>
+                </div>
+                ```
+        }
+        layout {
+            sequence: 20
+            parentRegion: @announcements-carousel
+            slot: slides
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    region news-3 (
+        name: news_3
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <div align="middle">
+                <p style="padding: 10px 30px 0px 30px;font-size:0.95em">
+                LWMS has a new name and logo: <strong>WMS</strong>!  One place to submit workshop content, we will help you publish into LiveLabs and Help Center Learn.<br>Submit your workshop now!
+                </p>
+                </div>
+                ```
+        }
+        layout {
+            sequence: 40
+            parentRegion: @announcements-carousel
+            slot: slides
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    region news-4 (
+        name: news_4
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <div align="middle">
+                <p style="padding: 10px 30px 0px 30px;font-size:0.95em">
+                <strong>Use the WMS to message all members of the workshop team. </strong><br>Click on the workshop tile, click Message the Team.<br>Everyone on the list of workshop contacts (and you) will receive an e-mail, and it will be saved in the workshop history.
+                </p>
+                </div>
+                ```
+        }
+        layout {
+            sequence: 50
+            parentRegion: @announcements-carousel
+            slot: slides
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    region news-5 (
+        name: news_5
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <div align="middle">
+                <p style="padding: 10px 30px 0px 30px;font-size:0.95em">
+                <strong>Have a question? </strong> Click the FAQ link above! <br> <strong>Getting started with GitHub?</strong> Click the Workshop Step by Step on the menu bar.
+                </p>
+                </div>
+                ```
+        }
+        layout {
+            sequence: 60
+            parentRegion: @announcements-carousel
+            slot: slides
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    region order (
+        name: Order
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--scrollBody
+                margin-top-none
+                margin-bottom-none
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region product (
+        name: Product
+        type: staticContent
+        layout {
+            sequence: 60
+            parentRegion: @choose-workshop-tags
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--noUI
+                t-Region--scrollBody
+                t-Form--noPadding
+                margin-top-none
+                margin-bottom-none
+                margin-left-none
+                margin-right-none
+            ]
+        }
+        headerAndFooter {
+            headerText: <div style="max-height: 150px;">
+            footerText: </div>
+        }
+    )
+
+    region role (
+        name: Role
+        type: staticContent
+        layout {
+            sequence: 30
+            parentRegion: @choose-workshop-tags
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--noUI
+                t-Region--scrollBody
+                t-Form--noPadding
+                margin-top-none
+                margin-bottom-none
+                margin-left-none
+                margin-right-none
+            ]
+        }
+        headerAndFooter {
+            headerText: <div style="max-height: 150px;">
+            footerText: </div>
+        }
+    )
+
+    region sales-play (
+        name: Sales Play
+        type: staticContent
+        layout {
+            sequence: 50
+            parentRegion: @choose-workshop-tags
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--noUI
+                t-Region--scrollBody
+                t-Form--noPadding
+                margin-top-none
+                margin-bottom-none
+                margin-left-none
+                margin-right-none
+            ]
+        }
+        headerAndFooter {
+            headerText: <div style="max-height: 150px;">
+            footerText: </div>
+        }
+    )
+
+    region top (
+        name: TOP
+        type: staticContent
+        layout {
+            sequence: 10
+            parentRegion: @choose-workshop-tags
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--hiddenOverflow
+                t-Form--noPadding
+                margin-top-none
+                margin-bottom-none
+                margin-left-none
+                margin-right-none
+            ]
+        }
+    )
+
+    region wms-swimlanes-workflow (
+        name: WMS Swimlanes/Workflow
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <table><tr><td>
+                <img src="https://objectstorage.us-ashburn-1.oraclecloud.com/p/GlzOFsMii32WjaH9Mx3RP2EYUHLzPBeusoZOcYGLw9exCe6h92Pz80an2fmIXXqb/n/c4u04/b/data-management-library-files/o/WMS%20Files/wms-swimlane.png" width="1200px"></td></tr><!--<tr><td><b>Workshop Status Values:</b> Submitted, Approved, Workshop In Development, Moving to Github,Self QA, QA Verification, QA Verification Complete, Production - FREE TIER, Production - HIDDEN, Convert to LiveLabs Tenancy, Production - LIVELABS, Complete, Issue, On Hold</td></tr>--></table>
+                ```
+        }
+        layout {
+            sequence: 10
+            slot: footer
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    pageItem 52_SEARCH (
+        type: hidden
+        layout {
+            sequence: 10
+            region: @header
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem 52_SEARCH_1 (
+        type: hidden
+        layout {
+            sequence: 10
+            region: @wms-swimlanes-workflow
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P52_DEPLOYMENT (
+        type: checkboxGroup
+        label {
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select subcategory
+                --||' ('||sum(case COMPARE_CATEGORY_IDS(p_string => DEPLOYMENT_TAG, p_filter => category_id) when 'Y' then 1 else 0 end)||')' 
+                as subcategory , category_id
+                from workshop_categories, workshops 
+                where category = 'Deployment'
+                and(
+                        :P52_LEVEL is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => LEVEL_TAG, p_filter => :P52_LEVEL) = 'Y'
+                        )
+                and(
+                        :P52_ROLE is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => ROLE_TAG, p_filter => :P52_ROLE) = 'Y'
+                        )
+                and(
+                        :P52_SALES_PLAY is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => SALESPLAY_TAG, p_filter => :P52_SALES_PLAY) = 'Y'
+                    )
+                and(
+                        :P52_FOCUS is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => FOCUS_TAG, p_filter => :P52_FOCUS) = 'Y'
+                    )
+                and(
+                        :P52_PRODUCT is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => PRODUCT_TAG, p_filter => :P52_PRODUCT) = 'Y'
+                    )
+                and(
+                        :P52_DEPLOYMENT is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => DEPLOYMENT_TAG, p_filter => :P52_DEPLOYMENT) = 'Y'
+                        )
+                AND (:SEARCH IS NULL OR 
+                          (
+                              (UPPER("NAME") LIKE '%' || UPPER(:SEARCH) || '%')
+                               OR
+                              (UPPER("DESCRIPTION") LIKE '%' || UPPER(:SEARCH) || '%')
+                               OR
+                              (UPPER("ID") LIKE '%' || UPPER(:SEARCH) || '%')
+                               OR
+                               (UPPER("ABSTRACT") LIKE '%' || UPPER(:SEARCH) || '%')
+                               OR
+                               (UPPER("WORKSHOP_STATUS") LIKE '%' || UPPER(:SEARCH) || '%')
+                               OR
+                               (UPPER("SHORT_DESCRIPTION") LIKE '%' || UPPER(:SEARCH) || '%')
+                               OR
+                              (UPPER("PROD_ID") LIKE '%' || UPPER(:SEARCH) || '%')
+                                 OR
+                              (UPPER("KEY_ORACLE_CONTACT_1") LIKE '%' || UPPER(:SEARCH) || '%')
+                                 OR
+                              (UPPER("KEY_ORACLE_CONTACT_2") LIKE '%' || UPPER(:SEARCH) || '%')
+                               OR
+                              (UPPER("EMAIL_FROM_ADDRESS") LIKE '%' || UPPER(:SEARCH) || '%')
+                                 OR
+                              (UPPER("OBJECTIVES") LIKE '%' || UPPER(:SEARCH) || '%')
+                              
+                          )
+                     )
+                and 
+                (upper(workshop_status) = upper(:P52_STATUSSELECT) or :P52_STATUSSELECT is null)
+                --Owner Group filter
+                and 
+                (upper(workshop_creator_group) = upper(:P52_WORKSHOP_GROUP) or :P52_WORKSHOP_GROUP is null)
+                group by subcategory, category_id 
+                having sum(case COMPARE_CATEGORY_IDS(p_string => DEPLOYMENT_TAG, p_filter => category_id) when 'Y' then 1 else 0 end) > 0
+                
+                ```
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 10
+            region: @deployment
+            slot: regionBody
+            alignment: left
+            column: 1
+            labelColumnSpan: 0
+        }
+        appearance {
+            template: @optional
+            templateOptions: [
+                #DEFAULT#
+                margin-top-none
+                margin-bottom-none
+                margin-left-none
+                margin-right-none
+            ]
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P52_FOCUS_AREA (
+        type: checkboxGroup
+        label {
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select item
+                --||' ('||sum(case COMPARE_CATEGORY_IDS(p_string => FOCUS_TAG, p_filter => category_id) when 'Y' then 1 else 0 end)||')' 
+                as item , category_id
+                from workshop_categories, workshops 
+                where category = 'Focus'
+                and(
+                        :P52_LEVEL is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => LEVEL_TAG, p_filter => :P52_LEVEL) = 'Y'
+                        )
+                and(
+                        :P52_ROLE is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => ROLE_TAG, p_filter => :P52_ROLE) = 'Y'
+                        )
+                and(
+                        :P52_SALES_PLAY is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => SALESPLAY_TAG, p_filter => :P52_SALES_PLAY) = 'Y'
+                    )
+                and(
+                        :P52_FOCUS_AREA is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => FOCUS_TAG, p_filter => :P52_FOCUS_AREA) = 'Y'
+                    )
+                and(
+                        :P52_PRODUCT is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => PRODUCT_TAG, p_filter => :P52_PRODUCT) = 'Y'
+                    )
+                and(
+                        :P52_DEPLOYMENT is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => DEPLOYMENT_TAG, p_filter => :P52_DEPLOYMENT) = 'Y'
+                        )
+                AND (:SEARCH IS NULL OR 
+                          (
+                              (UPPER("NAME") LIKE '%' || UPPER(:SEARCH) || '%')
+                               OR
+                              (UPPER("DESCRIPTION") LIKE '%' || UPPER(:SEARCH) || '%')
+                               OR
+                              (UPPER("ID") LIKE '%' || UPPER(:SEARCH) || '%')
+                               OR
+                               (UPPER("ABSTRACT") LIKE '%' || UPPER(:SEARCH) || '%')
+                               OR
+                               (UPPER("WORKSHOP_STATUS") LIKE '%' || UPPER(:SEARCH) || '%')
+                               OR
+                               (UPPER("SHORT_DESCRIPTION") LIKE '%' || UPPER(:SEARCH) || '%')
+                               OR
+                              (UPPER("PROD_ID") LIKE '%' || UPPER(:SEARCH) || '%')
+                                 OR
+                              (UPPER("KEY_ORACLE_CONTACT_1") LIKE '%' || UPPER(:SEARCH) || '%')
+                                 OR
+                              (UPPER("KEY_ORACLE_CONTACT_2") LIKE '%' || UPPER(:SEARCH) || '%')
+                               OR
+                              (UPPER("EMAIL_FROM_ADDRESS") LIKE '%' || UPPER(:SEARCH) || '%')
+                                 OR
+                              (UPPER("OBJECTIVES") LIKE '%' || UPPER(:SEARCH) || '%')
+                              
+                          )
+                     )
+                and 
+                (upper(workshop_status) = upper(:P52_STATUSSELECT) or :P52_STATUSSELECT is null)
+                --Owner Group filter
+                and 
+                (upper(workshop_creator_group) = upper(:P52_WORKSHOP_GROUP) or :P52_WORKSHOP_GROUP is null)
+                group by item, category_id 
+                having sum(case COMPARE_CATEGORY_IDS(p_string => FOCUS_TAG, p_filter => category_id) when 'Y' then 1 else 0 end) > 0 order by item
+                
+                ```
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 10
+            region: @focus-area
+            slot: regionBody
+            alignment: left
+            column: 1
+            labelColumnSpan: 0
+        }
+        appearance {
+            template: @hidden
+            templateOptions: [
+                #DEFAULT#
+                margin-top-none
+                margin-bottom-none
+                margin-left-none
+                margin-right-none
+            ]
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P52_LEVEL (
+        type: checkboxGroup
+        label {
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select subcategory
+                --||' ('||sum(case COMPARE_CATEGORY_IDS(p_string => LEVEL_TAG, p_filter => category_id) when 'Y' then 1 else 0 end)||')' 
+                as subcategory , category_id
+                from workshop_categories, workshops 
+                where category = 'Level'
+                and(
+                        :P52_LEVEL is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => LEVEL_TAG, p_filter => :P52_LEVEL) = 'Y'
+                        )
+                and(
+                        :P52_ROLE is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => ROLE_TAG, p_filter => :P52_ROLE) = 'Y'
+                        )
+                and(
+                        :P52_SALES_PLAY is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => SALESPLAY_TAG, p_filter => :P52_SALES_PLAY) = 'Y'
+                    )
+                and(
+                        :P52_FOCUS is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => FOCUS_TAG, p_filter => :P52_FOCUS) = 'Y'
+                    )
+                and(
+                        :P52_PRODUCT is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => PRODUCT_TAG, p_filter => :P52_PRODUCT) = 'Y'
+                    )
+                and(
+                        :P52_DEPLOYMENT is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => DEPLOYMENT_TAG, p_filter => :P52_DEPLOYMENT) = 'Y'
+                        )
+                AND (:SEARCH IS NULL OR 
+                          (
+                              (UPPER("NAME") LIKE '%' || UPPER(:SEARCH) || '%')
+                               OR
+                              (UPPER("DESCRIPTION") LIKE '%' || UPPER(:SEARCH) || '%')
+                               OR
+                              (UPPER("ID") LIKE '%' || UPPER(:SEARCH) || '%')
+                               OR
+                               (UPPER("ABSTRACT") LIKE '%' || UPPER(:SEARCH) || '%')
+                               OR
+                               (UPPER("WORKSHOP_STATUS") LIKE '%' || UPPER(:SEARCH) || '%')
+                               OR
+                               (UPPER("SHORT_DESCRIPTION") LIKE '%' || UPPER(:SEARCH) || '%')
+                               OR
+                              (UPPER("PROD_ID") LIKE '%' || UPPER(:SEARCH) || '%')
+                                 OR
+                              (UPPER("KEY_ORACLE_CONTACT_1") LIKE '%' || UPPER(:SEARCH) || '%')
+                                 OR
+                              (UPPER("KEY_ORACLE_CONTACT_2") LIKE '%' || UPPER(:SEARCH) || '%')
+                               OR
+                              (UPPER("EMAIL_FROM_ADDRESS") LIKE '%' || UPPER(:SEARCH) || '%')
+                                 OR
+                              (UPPER("OBJECTIVES") LIKE '%' || UPPER(:SEARCH) || '%')
+                              
+                          )
+                     )
+                and 
+                (upper(workshop_status) = upper(:P52_STATUSSELECT) or :P52_STATUSSELECT is null)
+                --Owner Group filter
+                and 
+                (upper(workshop_creator_group) = upper(:P52_WORKSHOP_GROUP) or :P52_WORKSHOP_GROUP is null)
+                group by subcategory, category_id 
+                having sum(case COMPARE_CATEGORY_IDS(p_string => LEVEL_TAG, p_filter => category_id) when 'Y' then 1 else 0 end) > 0
+                
+                ```
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 10
+            region: @level
+            slot: regionBody
+            alignment: left
+            column: 1
+            labelColumnSpan: 0
+        }
+        appearance {
+            template: @optional
+            templateOptions: [
+                #DEFAULT#
+                margin-top-none
+                margin-bottom-none
+                margin-left-sm
+                margin-right-none
+            ]
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P52_ORDERBY (
+        type: selectList
+        label {
+            label: Sort Workshops By:
+            alignment: left
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC2:WMS ID - Ascending;IDAsc,WMS ID - Descending;IDDesc,Name (A-Z);NAMEAsc,Name (Z-A);NAMEDesc
+            displayExtraValues: false
+            nullDisplayValue: Select one (Clear):
+        }
+        layout {
+            sequence: 20
+            region: @order
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P52_PRODUCT (
+        type: checkboxGroup
+        label {
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select item
+                --||' ('||sum(case COMPARE_CATEGORY_IDS(p_string => PRODUCT_TAG, p_filter => category_id) when 'Y' then 1 else 0 end)||')' 
+                as item , category_id
+                from workshop_categories, workshops 
+                where category = 'Product'
+                and(
+                        :P52_LEVEL is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => LEVEL_TAG, p_filter => :P52_LEVEL) = 'Y'
+                        )
+                and(
+                        :P52_ROLE is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => ROLE_TAG, p_filter => :P52_ROLE) = 'Y'
+                        )
+                and(
+                        :P52_SALES_PLAY is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => SALESPLAY_TAG, p_filter => :P52_SALES_PLAY) = 'Y'
+                    )
+                and(
+                        :P52_FOCUS is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => FOCUS_TAG, p_filter => :P52_FOCUS) = 'Y'
+                    )
+                and(
+                        :P52_PRODUCT is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => PRODUCT_TAG, p_filter => :P52_PRODUCT) = 'Y'
+                    )
+                and(
+                        :P52_DEPLOYMENT is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => DEPLOYMENT_TAG, p_filter => :P52_DEPLOYMENT) = 'Y'
+                        )
+                AND (:SEARCH IS NULL OR 
+                          (
+                              (UPPER("NAME") LIKE '%' || UPPER(:SEARCH) || '%')
+                               OR
+                              (UPPER("DESCRIPTION") LIKE '%' || UPPER(:SEARCH) || '%')
+                               OR
+                              (UPPER("ID") LIKE '%' || UPPER(:SEARCH) || '%')
+                               OR
+                               (UPPER("ABSTRACT") LIKE '%' || UPPER(:SEARCH) || '%')
+                               OR
+                               (UPPER("WORKSHOP_STATUS") LIKE '%' || UPPER(:SEARCH) || '%')
+                               OR
+                               (UPPER("SHORT_DESCRIPTION") LIKE '%' || UPPER(:SEARCH) || '%')
+                               OR
+                              (UPPER("PROD_ID") LIKE '%' || UPPER(:SEARCH) || '%')
+                                 OR
+                              (UPPER("KEY_ORACLE_CONTACT_1") LIKE '%' || UPPER(:SEARCH) || '%')
+                                 OR
+                              (UPPER("KEY_ORACLE_CONTACT_2") LIKE '%' || UPPER(:SEARCH) || '%')
+                               OR
+                              (UPPER("EMAIL_FROM_ADDRESS") LIKE '%' || UPPER(:SEARCH) || '%')
+                                 OR
+                              (UPPER("OBJECTIVES") LIKE '%' || UPPER(:SEARCH) || '%')
+                              
+                          )
+                     )
+                and 
+                (upper(workshop_status) = upper(:P52_STATUSSELECT) or :P52_STATUSSELECT is null)
+                --Owner Group filter
+                and 
+                (upper(workshop_creator_group) = upper(:P52_WORKSHOP_GROUP) or :P52_WORKSHOP_GROUP is null)
+                group by item, category_id 
+                having sum(case COMPARE_CATEGORY_IDS(p_string => PRODUCT_TAG, p_filter => category_id) when 'Y' then 1 else 0 end) > 0 order by item
+                
+                ```
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 20
+            region: @product
+            slot: regionBody
+            alignment: left
+            column: 1
+            labelColumnSpan: 0
+        }
+        appearance {
+            template: @hidden
+            templateOptions: [
+                #DEFAULT#
+                margin-left-none
+                margin-right-none
+            ]
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P52_ROLE (
+        type: checkboxGroup
+        label {
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select subcategory
+                --||' ('||sum(case COMPARE_CATEGORY_IDS(p_string => ROLE_TAG, p_filter => category_id) when 'Y' then 1 else 0 end)||')' 
+                as subcategory , category_id
+                from workshop_categories, workshops 
+                where category = 'Role'
+                and(
+                        :P52_LEVEL is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => LEVEL_TAG, p_filter => :P52_LEVEL) = 'Y'
+                        )
+                and(
+                        :P52_ROLE is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => ROLE_TAG, p_filter => :P52_ROLE) = 'Y'
+                        )
+                and(
+                        :P52_SALES_PLAY is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => SALESPLAY_TAG, p_filter => :P52_SALES_PLAY) = 'Y'
+                    )
+                and(
+                        :P52_FOCUS is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => FOCUS_TAG, p_filter => :P52_FOCUS) = 'Y'
+                    )
+                and(
+                        :P52_PRODUCT is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => PRODUCT_TAG, p_filter => :P52_PRODUCT) = 'Y'
+                    )
+                and(
+                        :P52_DEPLOYMENT is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => DEPLOYMENT_TAG, p_filter => :P52_DEPLOYMENT) = 'Y'
+                        )
+                AND (:SEARCH IS NULL OR 
+                          (
+                              (UPPER("NAME") LIKE '%' || UPPER(:SEARCH) || '%')
+                               OR
+                              (UPPER("DESCRIPTION") LIKE '%' || UPPER(:SEARCH) || '%')
+                               OR
+                              (UPPER("ID") LIKE '%' || UPPER(:SEARCH) || '%')
+                               OR
+                               (UPPER("ABSTRACT") LIKE '%' || UPPER(:SEARCH) || '%')
+                               OR
+                               (UPPER("WORKSHOP_STATUS") LIKE '%' || UPPER(:SEARCH) || '%')
+                               OR
+                               (UPPER("SHORT_DESCRIPTION") LIKE '%' || UPPER(:SEARCH) || '%')
+                               OR
+                              (UPPER("PROD_ID") LIKE '%' || UPPER(:SEARCH) || '%')
+                                 OR
+                              (UPPER("KEY_ORACLE_CONTACT_1") LIKE '%' || UPPER(:SEARCH) || '%')
+                                 OR
+                              (UPPER("KEY_ORACLE_CONTACT_2") LIKE '%' || UPPER(:SEARCH) || '%')
+                               OR
+                              (UPPER("EMAIL_FROM_ADDRESS") LIKE '%' || UPPER(:SEARCH) || '%')
+                                 OR
+                              (UPPER("OBJECTIVES") LIKE '%' || UPPER(:SEARCH) || '%')
+                              
+                          )
+                     )
+                and 
+                (upper(workshop_status) = upper(:P52_STATUSSELECT) or :P52_STATUSSELECT is null)
+                --Owner Group filter
+                and 
+                (upper(workshop_creator_group) = upper(:P52_WORKSHOP_GROUP) or :P52_WORKSHOP_GROUP is null)
+                group by subcategory, category_id 
+                having sum(case COMPARE_CATEGORY_IDS(p_string => ROLE_TAG, p_filter => category_id) when 'Y' then 1 else 0 end) > 0 order by subcategory
+                
+                ```
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 10
+            region: @role
+            slot: regionBody
+            alignment: left
+            column: 1
+            labelColumnSpan: 0
+        }
+        appearance {
+            template: @hidden
+            templateOptions: [
+                #DEFAULT#
+                margin-top-none
+                margin-bottom-none
+                margin-left-none
+                margin-right-none
+            ]
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P52_SALES_PLAY (
+        type: checkboxGroup
+        label {
+            label: <strong>Sales Play</strong>
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select subcategory
+                --||' ('||sum(case COMPARE_CATEGORY_IDS(p_string => SALESPLAY_TAG, p_filter => category_id) when 'Y' then 1 else 0 end)||')' 
+                as subcategory , category_id
+                from workshop_categories, workshops 
+                where category = 'Sales Play'
+                and(
+                        :P52_LEVEL is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => LEVEL_TAG, p_filter => :P52_LEVEL) = 'Y'
+                        )
+                and(
+                        :P52_ROLE is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => ROLE_TAG, p_filter => :P52_ROLE) = 'Y'
+                        )
+                and(
+                        :P52_SALES_PLAY is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => SALESPLAY_TAG, p_filter => :P52_SALES_PLAY) = 'Y'
+                    )
+                and(
+                        :P52_FOCUS is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => FOCUS_TAG, p_filter => :P52_FOCUS) = 'Y'
+                    )
+                and(
+                        :P52_PRODUCT is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => PRODUCT_TAG, p_filter => :P52_PRODUCT) = 'Y'
+                    )
+                and(
+                        :P52_DEPLOYMENT is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => DEPLOYMENT_TAG, p_filter => :P52_DEPLOYMENT) = 'Y'
+                        )
+                AND (:SEARCH IS NULL OR 
+                          (
+                              (UPPER("NAME") LIKE '%' || UPPER(:SEARCH) || '%')
+                               OR
+                              (UPPER("DESCRIPTION") LIKE '%' || UPPER(:SEARCH) || '%')
+                               OR
+                              (UPPER("ID") LIKE '%' || UPPER(:SEARCH) || '%')
+                               OR
+                               (UPPER("ABSTRACT") LIKE '%' || UPPER(:SEARCH) || '%')
+                               OR
+                               (UPPER("WORKSHOP_STATUS") LIKE '%' || UPPER(:SEARCH) || '%')
+                               OR
+                               (UPPER("SHORT_DESCRIPTION") LIKE '%' || UPPER(:SEARCH) || '%')
+                               OR
+                              (UPPER("PROD_ID") LIKE '%' || UPPER(:SEARCH) || '%')
+                                 OR
+                              (UPPER("KEY_ORACLE_CONTACT_1") LIKE '%' || UPPER(:SEARCH) || '%')
+                                 OR
+                              (UPPER("KEY_ORACLE_CONTACT_2") LIKE '%' || UPPER(:SEARCH) || '%')
+                               OR
+                              (UPPER("EMAIL_FROM_ADDRESS") LIKE '%' || UPPER(:SEARCH) || '%')
+                                 OR
+                              (UPPER("OBJECTIVES") LIKE '%' || UPPER(:SEARCH) || '%')
+                              
+                          )
+                     )
+                and 
+                (upper(workshop_status) = upper(:P52_STATUSSELECT) or :P52_STATUSSELECT is null)
+                --Owner Group filter
+                and 
+                (upper(workshop_creator_group) = upper(:P52_WORKSHOP_GROUP) or :P52_WORKSHOP_GROUP is null)
+                group by subcategory, category_id 
+                having sum(case COMPARE_CATEGORY_IDS(p_string => SALESPLAY_TAG, p_filter => category_id) when 'Y' then 1 else 0 end) > 0 order by subcategory
+                
+                ```
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 10
+            region: @sales-play
+            slot: regionBody
+            alignment: left
+            column: 1
+            labelColumnSpan: 0
+        }
+        appearance {
+            template: @hidden
+            templateOptions: [
+                #DEFAULT#
+                margin-top-none
+                margin-bottom-none
+                margin-left-none
+                margin-right-none
+            ]
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P52_STATUSSELECT (
+        type: selectList
+        label {
+            label: Filter by Workshop Status:
+            alignment: left
+        }
+        lov {
+            type: sharedComponent
+            lov: @workshop-status
+            displayExtraValues: false
+            nullDisplayValue: Select one (Clear):
+        }
+        layout {
+            sequence: 30
+            region: @order
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P52_WORKSHOP_GROUP (
+        type: selectList
+        label {
+            label: Filter by Workshop Group Owner:
+            alignment: left
+        }
+        lov {
+            type: sharedComponent
+            lov: @workshop-creator-group
+            displayExtraValues: false
+            nullDisplayValue: Select one (Clear):
+        }
+        layout {
+            sequence: 40
+            region: @order
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button clear-filters-bottom (
+        buttonName: CLEAR_FILTERS_BOTTOM
+        label: Clear Filters
+        layout {
+            sequence: 10
+            region: @bottom
+            slot: regionBody
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--link
+                t-Button--stretch
+            ]
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button clear-filters-top (
+        buttonName: CLEAR_FILTERS_TOP
+        label: Clear Filters
+        layout {
+            sequence: 20
+            region: @top
+            slot: regionBody
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--link
+                t-Button--stretch
+            ]
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    dynamicAction clear-filters-bottom (
+        name: Clear_Filters_bottom
+        execution {
+            sequence: 80
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @clear-filters-bottom
+        }
+
+        action native-clear (
+            action: clear
+            affectedElements {
+                selectionType: items
+                items: [
+                    P52_DEPLOYMENT
+                    P52_ROLE
+                    P52_SALES_PLAY
+                    P52_FOCUS_AREA
+                    P52_PRODUCT
+                    P52_LEVEL
+                ]
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction clear-filters-top (
+        name: Clear_Filters_top
+        execution {
+            sequence: 70
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @clear-filters-top
+        }
+
+        action native-clear (
+            action: clear
+            affectedElements {
+                selectionType: items
+                items: [
+                    P52_DEPLOYMENT
+                    P52_ROLE
+                    P52_SALES_PLAY
+                    P52_FOCUS_AREA
+                    P52_PRODUCT
+                    P52_LEVEL
+                ]
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction newrefresh (
+        name: Newrefresh
+        execution {
+            sequence: 90
+        }
+        when {
+            selectionType: items
+            items: P52_ORDERBY
+        }
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @current-workshops
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction refresh-on-deployment-check (
+        name: refresh_on_deployment_check
+        execution {
+            sequence: 20
+        }
+        when {
+            selectionType: items
+            items: P52_DEPLOYMENT
+        }
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @current-workshops
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction refresh-on-focus-check (
+        name: refresh_on_focus_check
+        execution {
+            sequence: 40
+        }
+        when {
+            selectionType: items
+            items: P52_FOCUS_AREA
+        }
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @current-workshops
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction refresh-on-level-check (
+        name: refresh_on_level_check
+        execution {
+            sequence: 60
+        }
+        when {
+            selectionType: items
+            items: P52_LEVEL
+        }
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @current-workshops
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction refresh-on-product-check (
+        name: refresh_on_product_check
+        execution {
+            sequence: 50
+        }
+        when {
+            selectionType: items
+            items: P52_PRODUCT
+        }
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @current-workshops
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction refresh-on-role-check (
+        name: refresh_on_role_check
+        execution {
+            sequence: 10
+        }
+        when {
+            selectionType: items
+            items: P52_ROLE
+        }
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @current-workshops
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction refresh-on-sales-play-check (
+        name: refresh_on_sales_play_check
+        execution {
+            sequence: 30
+        }
+        when {
+            selectionType: items
+            items: P52_SALES_PLAY
+        }
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @current-workshops
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction refreshworkshopgroup (
+        name: refreshWorkshopGroup
+        execution {
+            sequence: 110
+        }
+        when {
+            selectionType: items
+            items: P52_WORKSHOP_GROUP
+        }
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @current-workshops
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction statusrefresh (
+        name: Statusrefresh
+        execution {
+            sequence: 100
+        }
+        when {
+            selectionType: items
+            items: P52_STATUSSELECT
+        }
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @current-workshops
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+)
+

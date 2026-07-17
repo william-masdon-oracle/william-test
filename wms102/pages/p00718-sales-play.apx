@@ -1,0 +1,265 @@
+page 718 (
+    name: Sales Play
+    alias: SALES-PLAY
+    title: Sales Play
+    appearance {
+        pageTemplate: @standard-custom
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region sales-play (
+        name: Sales Play
+        type: interactiveGrid
+        source {
+            location: localDatabase
+            tableName: WORKSHOP_CATEGORIES
+            includeRowidColumn: true
+        }
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        edit {
+            enabled: true
+            allowedOperations: [
+                add
+                update
+                delete
+            ]
+        }
+        toolbar {
+            controls: [
+                searchCol
+                searchField
+                actionsMenu
+                resetButton
+                saveButton
+            ]
+        }
+        download {
+            formats: [
+                csv
+                html
+                pdf
+            ]
+        }
+        advanced {
+            savedReportMappingIdentifier: 5602478552773024140
+        }
+
+        savedReport 10335386 (
+            visibility: primary
+            view {
+                default: grid
+            }
+            singleRowView {
+                displayedColumns: true
+            }
+
+            displayColumn (
+                column: @APEX$ROW_ACTION
+                layout {
+                    sequence: 0
+                }
+            )
+
+            displayColumn (
+                column: @ROWID
+                layout {
+                    sequence: 1
+                }
+            )
+
+            displayColumn (
+                column: @CATEGORY_ID
+                layout {
+                    sequence: 2
+                }
+            )
+
+            displayColumn (
+                column: @CATEGORY
+                layout {
+                    sequence: 3
+                }
+            )
+
+            displayColumn (
+                column: @SUBCATEGORY
+                layout {
+                    sequence: 4
+                }
+            )
+
+            displayColumn (
+                column: @ITEM
+                layout {
+                    sequence: 5
+                }
+            )
+
+        )
+
+        column APEX$ROW_ACTION (
+            type: actionsMenu
+            layout {
+                sequence: 20
+            }
+        )
+
+        column APEX$ROW_SELECTOR (
+            type: rowSelector
+            layout {
+                sequence: 10
+            }
+        )
+
+        column CATEGORY (
+            type: textField
+            heading {
+                heading: Category
+            }
+            layout {
+                sequence: 50
+            }
+            validation {
+                maxLength: 80
+            }
+            source {
+                databaseColumn: CATEGORY
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column CATEGORY_ID (
+            type: numberField
+            heading {
+                heading: Category Id
+                alignment: end
+            }
+            settings {
+                numberAlignment: end
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 40
+                columnAlignment: end
+            }
+            validation {
+                valueRequired: true
+            }
+            source {
+                databaseColumn: CATEGORY_ID
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column ITEM (
+            type: textField
+            heading {
+                heading: Item
+            }
+            layout {
+                sequence: 70
+            }
+            validation {
+                maxLength: 80
+            }
+            source {
+                databaseColumn: ITEM
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column ROWID (
+            type: hidden
+            layout {
+                sequence: 30
+            }
+            source {
+                databaseColumn: ROWID
+                dataType: rowid
+                primaryKey: true
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column SUBCATEGORY (
+            type: textField
+            heading {
+                heading: Subcategory
+            }
+            layout {
+                sequence: 60
+            }
+            validation {
+                maxLength: 80
+            }
+            source {
+                databaseColumn: SUBCATEGORY
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: Sales Play
+        }
+    )
+
+    process sales-play-save-interactive-grid-data (
+        name: Sales Play - Save Interactive Grid Data
+        type: interactiveGridAutoRowProcessing
+        editableRegion: @sales-play
+        execution {
+            sequence: 10
+        }
+        advanced {
+            executionMappingIdentifier: 60154101460292965299
+        }
+    )
+
+)
+

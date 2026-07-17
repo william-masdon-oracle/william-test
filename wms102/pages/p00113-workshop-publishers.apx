@@ -1,0 +1,272 @@
+page 113 (
+    name: Workshop Publishers
+    alias: WORKSHOP-PUBLISHERS
+    title: Workshop Publishers
+    appearance {
+        pageTemplate: @standard-custom
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region span-style-font-size-1-8em-font-weight-700-workshop-publishers-span (
+        name: <span style="font-size: 1.8em; font-weight: 700">Workshop Publishers</span>
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <table><tr><td width="120px">
+                <img src="#APP_FILES#wms_logo.png" width="100px">
+                </td><td>
+                <p>Workshop Publishers for LiveLabs and Help Center Learn.</p></td></tr></table>
+                ```
+        }
+        layout {
+            sequence: 20
+            slot: beforeContentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        security {
+            authorizationScheme: @administration-rights
+        }
+    )
+
+    region workshop-publishers-superusers (
+        name: Workshop Publishers/Superusers
+        type: interactiveGrid
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select id, email,role_desc,active_flg from workshop_person_role where workshop_id is null
+                
+                ```
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        edit {
+            enabled: true
+            allowedOperations: [
+                add
+                update
+                delete
+            ]
+        }
+        toolbar {
+            controls: [
+                searchCol
+                searchField
+                actionsMenu
+                resetButton
+                saveButton
+            ]
+        }
+        download {
+            formats: [
+                csv
+                html
+                excel
+                pdf
+            ]
+        }
+        advanced {
+            savedReportMappingIdentifier: 6994528254770601
+        }
+
+        savedReport primary (
+            visibility: primary
+            view {
+                default: grid
+            }
+            singleRowView {
+                displayedColumns: true
+            }
+
+            displayColumn (
+                column: @EMAIL
+                layout {
+                    sequence: 1
+                }
+            )
+
+            displayColumn (
+                column: @ROLE_DESC
+                layout {
+                    sequence: 2
+                }
+            )
+
+            displayColumn (
+                column: @ACTIVE_FLG
+                layout {
+                    sequence: 3
+                }
+            )
+
+            displayColumn (
+                column: @APEX$ROW_ACTION
+                layout {
+                    sequence: 0
+                }
+            )
+
+            displayColumn (
+                column: @ID
+                layout {
+                    sequence: 4
+                }
+            )
+
+        )
+
+        column ACTIVE_FLG (
+            type: numberField
+            heading {
+                heading: Active Flg
+                alignment: end
+            }
+            layout {
+                sequence: 50
+                columnAlignment: end
+            }
+            source {
+                databaseColumn: ACTIVE_FLG
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column APEX$ROW_ACTION (
+            type: actionsMenu
+            layout {
+                sequence: 20
+            }
+        )
+
+        column APEX$ROW_SELECTOR (
+            type: rowSelector
+            layout {
+                sequence: 10
+            }
+        )
+
+        column EMAIL (
+            type: textField
+            heading {
+                heading: Email
+            }
+            layout {
+                sequence: 30
+            }
+            validation {
+                valueRequired: true
+                maxLength: 100
+            }
+            source {
+                databaseColumn: EMAIL
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column ID (
+            type: numberField
+            heading {
+                heading: Id
+                alignment: end
+            }
+            layout {
+                sequence: 60
+                columnAlignment: end
+            }
+            validation {
+                valueRequired: true
+            }
+            source {
+                databaseColumn: ID
+                dataType: number
+                primaryKey: true
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column ROLE_DESC (
+            type: textarea
+            heading {
+                heading: Role Desc
+            }
+            layout {
+                sequence: 40
+            }
+            validation {
+                maxLength: 1000
+            }
+            source {
+                databaseColumn: ROLE_DESC
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+    )
+
+    process workshop-publishers-superusers-save-interactive-grid-data (
+        name: Workshop Publishers/Superusers - Save Interactive Grid Data
+        type: interactiveGridAutoRowProcessing
+        editableRegion: @workshop-publishers-superusers
+        execution {
+            sequence: 10
+        }
+        advanced {
+            executionMappingIdentifier: 6995186095770607
+        }
+    )
+
+)
+

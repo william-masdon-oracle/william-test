@@ -1,0 +1,437 @@
+page 65 (
+    name: Direct Link
+    alias: DIRECT-LINK
+    title: Direct Link
+    appearance {
+        pageTemplate: @standard-custom
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region additional-info (
+        name: Additional Info
+        type: staticContent
+        layout {
+            sequence: 30
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    region event-code-discussion-history (
+        name: Event Code Discussion History
+        type: classicReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery: select to_char(commentdate,'DD-MON-YYYY HH24:MI')||' | '||lower(EMAIL_CREATOR) ||'  said: '||THE_COMMENT||'' as comments from LL_COMMENTS where event_id=:P65_WHICHEVENT order by COMMENTDATE desc;
+            pageItemsToSubmit: P65_WHICHEVENT
+        }
+        layout {
+            sequence: 20
+            slot: contentBody
+            startNewRow: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        componentAppearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Report--altRowsDefault
+                t-Report--rowHighlight
+            ]
+        }
+        pagination {
+            type: nextAndPreviousLinks
+        }
+        messages {
+            whenNoDataFound: None
+        }
+
+        column COMMENTS (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            heading {
+                heading: Comments
+                alignment: center
+            }
+            layout {
+                sequence: 1
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+    )
+
+    region have-a-question (
+        name: Have a Question?
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    pageItem P65_COMMENT (
+        type: textarea
+        label {
+            label: <strong>Submit comments/questions/discuss with the LiveLabs Team below</strong>
+            alignment: left
+        }
+        layout {
+            sequence: 20
+            region: @have-a-question
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            width: 800
+            height: 3
+        }
+        validation {
+            maxLength: 4000
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P65_EVENTLINK_1 (
+        type: displayOnly
+        label {
+            label: <strong>Event  Code Link</strong>
+            alignment: left
+        }
+        layout {
+            sequence: 70
+            region: @additional-info
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery: select nvl(QR_LINK, 'Not assigned yet') from LL_VOUCHERS WHERE  ID=:P65_WHICHEVENT;
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            helpText: Once scheduled, this field will be populated.
+        }
+    )
+
+    pageItem P65_EVENTLINK_1_1 (
+        type: hidden
+        layout {
+            sequence: 80
+            region: @additional-info
+            slot: regionBody
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery: select QR_IMAGE from LL_VOUCHERS WHERE EMAIL_CREATOR = lower(:APP_USER) AND ID=:P65_WHICHEVENT;
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            helpText: Once scheduled, this field will be populated.
+        }
+    )
+
+    pageItem P65_HEADING (
+        type: displayOnly
+        label {
+            label: <strong>QUICK EVENT CODE DETAILS</strong><br>
+            alignment: left
+        }
+        settings {
+            sendOnPageSubmit: false
+        }
+        layout {
+            sequence: 20
+            region: @additional-info
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            newColumn: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery: select reason from LL_VOUCHERS WHERE EMAIL_CREATOR =   lower(:APP_USER) AND  ID=:P65_WHICHEVENT;
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P65_NAME (
+        type: displayOnly
+        label {
+            label: <strong>Event Code Name</strong>
+            alignment: left
+        }
+        settings {
+            sendOnPageSubmit: false
+        }
+        layout {
+            sequence: 40
+            region: @additional-info
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery: select reason from LL_VOUCHERS WHERE ID=:P65_WHICHEVENT;
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P65_NAME_1 (
+        type: displayOnly
+        label {
+            label: <strong>Workshop</strong>
+            alignment: left
+        }
+        settings {
+            sendOnPageSubmit: false
+        }
+        layout {
+            sequence: 50
+            region: @additional-info
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery:
+                ```sql
+                select b.name from ll_vouchers a, workshops b
+                where a.workshop_id=b.id
+                and a.ID=:P65_WHICHEVENT;
+                ```
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P65_NEW_EVENT_ID (
+        type: textField
+        label {
+            label: New Event Id
+            alignment: left
+        }
+        layout {
+            sequence: 30
+            region: @have-a-question
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P65_SEQID_1 (
+        type: hidden
+        layout {
+            sequence: 100
+            region: @additional-info
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P65_STATUS_1 (
+        type: displayOnly
+        label {
+            label: <strong>Event Code Status</strong>
+            alignment: left
+        }
+        settings {
+            sendOnPageSubmit: false
+        }
+        layout {
+            sequence: 60
+            region: @additional-info
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery: select status from LL_VOUCHERS WHERE ID=:P65_WHICHEVENT;
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P65_WHICHEVENT (
+        type: selectList
+        label {
+            label: Select an event to begin
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select distinct  l.id||'-'||l.reason||' ('||w.name||')-'||l.valid_from as d,   l.id as v from ll_vouchers l , workshops w where  
+                (l.EMAIL_CREATOR = lower(:APP_USER) or l.email_requestor=lower(:APP_USER) or l.email_requestor_2=lower(:APP_USER)) AND w.id = l.workshop_id;
+                ```
+        }
+        layout {
+            sequence: 30
+            region: @additional-info
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P65_WORKSHOP_ID_1 (
+        type: hidden
+        layout {
+            sequence: 90
+            region: @additional-info
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button page-submit (
+        buttonName: Page_Submit
+        label: Page Submit
+        layout {
+            sequence: 20
+            region: @have-a-question
+            slot: belowBox
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 65
+                items: {
+                    P65_NEW_EVENT_ID: &P65_WHICHEVENT.
+                }
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button send (
+        buttonName: Send
+        label: Send
+        layout {
+            sequence: 10
+            region: @have-a-question
+            slot: belowBox
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    dynamicAction new (
+        name: New
+        execution {
+            sequence: 10
+        }
+        when {
+            selectionType: items
+            items: P65_WHICHEVENT
+        }
+
+        action native-submit-page (
+            action: submitPage
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+)
+

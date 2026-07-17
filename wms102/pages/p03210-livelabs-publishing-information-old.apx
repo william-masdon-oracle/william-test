@@ -1,0 +1,2058 @@
+page 3210 (
+    name: LiveLabs Publishing Information OLD
+    alias: LIVELABS-PUBLISHING-INFORMATION-OLD
+    title: LiveLabs Publishing Information OLD
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @modal-dialog
+        templateOptions: #DEFAULT#
+    }
+    dialog {
+        resizable: false
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+    advanced {
+        enableDuplicatePageSubmissions: false
+    }
+
+    region green-button-information (
+        name: Green Button Information
+        type: staticContent
+        layout {
+            sequence: 50
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region green-button-request (
+        name: Green Button Request
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <span style="font-size:20px;">Green Button</span>
+                <img src="#APP_FILES#wms-line.png"><br>
+                <strong>If you are requesting a Green Button on LiveLabs, please fill out this section. Also be sure to email livelabs-help-db_us@oracle.com to start the process of creating your Green Button.</strong>
+                ```
+        }
+        layout {
+            sequence: 310
+            parentRegion: @livelabs-publishing-info
+            slot: regionBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--scrollBody
+                margin-top-md
+            ]
+            renderComponents: belowContent
+        }
+    )
+
+    region livelabs-publishing-info (
+        name: LiveLabs Publishing Info
+        type: form
+        source {
+            location: localDatabase
+            tableName: WORKSHOP_LL
+        }
+        layout {
+            sequence: 40
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        readOnly {
+            type: item!=value
+            item: P3210_CAN_EDIT
+            value: TRUE
+        }
+        edit {
+            enabled: true
+            allowedOperations: [
+                add
+                update
+            ]
+        }
+    )
+
+    pageItem 3210_URL_ERROR (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 1
+            slot: contentBody
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P3210_CAN_EDIT (
+        type: hidden
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+    )
+
+    pageItem P3210_DESC_LONG_OVERRIDE (
+        type: textarea
+        label {
+            label: Desc Long Override
+            alignment: left
+        }
+        layout {
+            sequence: 270
+            region: @livelabs-publishing-info
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+            height: 5
+        }
+        validation {
+            maxLength: 4000
+        }
+        source {
+            formRegion: @livelabs-publishing-info
+            column: DESC_LONG_OVERRIDE
+            dataType: varchar2
+        }
+    )
+
+    pageItem P3210_DESC_OUTCOME_OVERRIDE (
+        type: textarea
+        label {
+            label: Desc Outcome Override
+            alignment: left
+        }
+        layout {
+            sequence: 300
+            region: @livelabs-publishing-info
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+            height: 5
+        }
+        validation {
+            maxLength: 4000
+        }
+        source {
+            formRegion: @livelabs-publishing-info
+            column: DESC_OUTCOME_OVERRIDE
+            dataType: varchar2
+        }
+    )
+
+    pageItem P3210_DESC_OUTLINE_OVERRIDE (
+        type: textarea
+        label {
+            label: Desc Outline Override
+            alignment: left
+        }
+        layout {
+            sequence: 280
+            region: @livelabs-publishing-info
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+            height: 5
+        }
+        validation {
+            maxLength: 4000
+        }
+        source {
+            formRegion: @livelabs-publishing-info
+            column: DESC_OUTLINE_OVERRIDE
+            dataType: varchar2
+        }
+    )
+
+    pageItem P3210_DESC_PREREQ_OVERRIDE (
+        type: textarea
+        label {
+            label: Desc Prereq Override
+            alignment: left
+        }
+        layout {
+            sequence: 290
+            region: @livelabs-publishing-info
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+            height: 5
+        }
+        validation {
+            maxLength: 4000
+        }
+        source {
+            formRegion: @livelabs-publishing-info
+            column: DESC_PREREQ_OVERRIDE
+            dataType: varchar2
+        }
+    )
+
+    pageItem P3210_DESC_SHORT_OVERRIDE (
+        type: textarea
+        label {
+            label: Desc Short Override
+            alignment: left
+        }
+        layout {
+            sequence: 260
+            region: @livelabs-publishing-info
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+            height: 5
+        }
+        validation {
+            maxLength: 4000
+        }
+        source {
+            formRegion: @livelabs-publishing-info
+            column: DESC_SHORT_OVERRIDE
+            dataType: varchar2
+        }
+    )
+
+    pageItem P3210_DESKTOPAPP1_URL (
+        type: textField
+        label {
+            label: Desktop App 1 URL
+            alignment: left
+        }
+        settings {
+            subtype: url
+        }
+        layout {
+            sequence: 250
+            region: @green-button-information
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            maxLength: 250
+        }
+        source {
+            formRegion: @livelabs-publishing-info
+            column: DESKTOPAPP1_URL
+            dataType: varchar2
+        }
+    )
+
+    pageItem P3210_DESKTOPAPP2_URL (
+        type: textField
+        label {
+            label: Desktop App 2 URL
+            alignment: left
+        }
+        settings {
+            subtype: url
+        }
+        layout {
+            sequence: 260
+            region: @green-button-information
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            maxLength: 250
+        }
+        source {
+            formRegion: @livelabs-publishing-info
+            column: DESKTOPAPP2_URL
+            dataType: varchar2
+        }
+    )
+
+    pageItem P3210_DESKTOPGUIDE_URL (
+        type: textField
+        label {
+            label: Desktop Guide URL
+            alignment: left
+        }
+        settings {
+            subtype: url
+        }
+        layout {
+            sequence: 230
+            region: @green-button-information
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            maxLength: 250
+        }
+        source {
+            formRegion: @livelabs-publishing-info
+            column: DESKTOPGUIDE_URL
+            dataType: varchar2
+        }
+    )
+
+    pageItem P3210_GREENBUTTON_FLG (
+        type: switch
+        label {
+            label: Green Button Enabled?
+            alignment: left
+        }
+        layout {
+            sequence: 200
+            region: @green-button-information
+            slot: regionBody
+            alignment: left
+            columnSpan: 4
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @livelabs-publishing-info
+            column: GREENBUTTON_FLG
+            dataType: varchar2
+        }
+        help {
+            helpText: "Enabling this switch does not mean that your workshop will have a Green Button in LiveLabs automatically. In order to create a Green Button, please view the section below title 'Green Button Questionnaire'. After completing that section, make sure to email livelabs-help-db_us@oracle.com to get started with your Green Button. "
+        }
+    )
+
+    pageItem P3210_GREENBUTTON_INFO (
+        type: richTextEditor
+        label {
+            alignment: left
+        }
+        settings {
+            format: html
+            minHeight: 180
+        }
+        layout {
+            sequence: 270
+            region: @green-button-information
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                margin-top-none
+            ]
+        }
+        source {
+            formRegion: @livelabs-publishing-info
+            column: GREENBUTTON_INFO
+            dataType: clob
+        }
+        default {
+            type: static
+            staticValue:
+                ```
+                Please fill out our Green Button Questionnaire to determine if this workshop can be run on a registered LiveLabs Tenancy.<br><br>
+                
+                <b>NOTE: Not all resources in OCI are supported by LiveLabs. If the LiveLabs team encounters such a resource in your request, we will reach out to determine if there is another option.</b>
+                
+                <br><br>
+                
+                <b><u>BASIC QUESTIONS</u></b>
+                <ol>
+                <li>Does your green button require access to Cloud Shell?
+                    <ul>
+                    <li>Yes or No</li>
+                    </ul></li>
+                <li>Does your green button require a VCN? (LiveLabs can provision a VCN as a part of the reservation setup with our standard Security List)
+                    <ul>
+                    <li>Yes or No</li>
+                    </ul></li>
+                <li>If yes, please list the ports that must be opened for the function of your workshop:
+                    <ul>
+                    <li>Example: 129.146.0.0/21 port 22</li>
+                    <li></li>
+                    </ul></li>
+                <li>List all resources that need to be provisioned by LiveLabs for your workshop (do not list any resources that the user will spin up):
+                    <ul>
+                    <li>Example: OKE Cluster - 1 Node</li>
+                    <li></li>
+                    </ul></li>
+                <li>List all resources that the user will provision while running the workshop (do not list any resources provisioned by LiveLabs):
+                    <ul>
+                    <li>Example: ADW - 1 OCPU</li>
+                    <li>Example: ADW - 1 TB</li>
+                    <li></li>
+                    </ul></li>
+                <li>Does your green button require a terraform script?
+                    <ul>
+                    <li><b>If yes,</b> please attend LiveLabs Office Hours to determine how best to proceed with the creation of your green button</li>
+                    </ul></li>
+                </ol>
+                
+                <br>
+                <b><u>POLICIES</u><br></b>
+                Please list all of the policies that users will need to complete your workshop. This should include access to the resources provisioned by LiveLabs as well as the resources that the users need to create/edit/delete.<br>
+                <ul>
+                <li>Example: Allow user to manage autonomous-database-family</li>
+                <li></li>
+                </ul>
+                
+                
+                <br>
+                <b><u>IMAGE AND MARKETPLACE QUESTIONS</u></b>
+                <ol>
+                <li>Does your green button require the use of an image from OCI Marketplace?
+                    <ul>
+                    <li>Yes or No</li>
+                    </ul></li>
+                <li>Does your require image already exist and is used by another LiveLabs Green Button?
+                    <ul>
+                    <li><b>If yes,</b> please provide the WMS and LiveLabs ID for the workshop:
+                        <ul>
+                        <li>WMS ID:</li>
+                        <li>LiveLabs ID:</li>
+                        </ul>
+                        </li>
+                    <li><b>If no,</b> you will need to create a Marketplace Image and Listing for your green button. Please attend LiveLabs Office Hours for assistance with this. After creating your image, please provide the following:
+                        <ul>
+                        <li>Marketplace App Listing OCID:</li>
+                        <li>Marketplace Image OCID:</li>
+                        <li>Marketplace Listing Resource Version: </li>
+                        </ul>
+                        </li>
+                    </ul>
+                </li>
+                </ol>
+                
+                
+                <br>
+                <b><u>ADDITIONAL INFORMATION</u></b><br>
+                Please provide any addition information to the LiveLabs team that is pertinent to your Green Button that you haven't detailed above:
+                <ul><li></li></ul>
+                
+                <br/> <br/> <br/> --------------------------------NOTES FROM LIVELABS ADMIN--------------------------------<br>(For Official Use Only)<br>
+                ```
+        }
+    )
+
+    pageItem P3210_GREENBUTTON_URL (
+        type: textField
+        label {
+            label: Green Button URL
+            alignment: left
+        }
+        settings {
+            subtype: url
+        }
+        layout {
+            sequence: 210
+            region: @green-button-information
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            maxLength: 250
+        }
+        source {
+            formRegion: @livelabs-publishing-info
+            column: GREENBUTTON_URL
+            dataType: varchar2
+        }
+    )
+
+    pageItem P3210_GREEN_BUTTON_MOVE (
+        type: displayOnly
+        label {
+            label: Green Button Move
+            alignment: left
+        }
+        settings {
+            format: htmlUnsafe
+            sendOnPageSubmit: false
+        }
+        layout {
+            sequence: 200
+            region: @livelabs-publishing-info
+            slot: regionBody
+            alignment: left
+            labelColumnSpan: 0
+        }
+        appearance {
+            template: @hidden
+            templateOptions: #DEFAULT#
+        }
+        source {
+            type: staticValue
+            staticValue: <span style="font-weight:normal;color:red;">Looking for the Green Button? Please use the new Green Button section at the bottom of this page.</span>
+        }
+    )
+
+    pageItem P3210_GREEN_BUTTON_REQUESTED (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 330
+            region: @livelabs-publishing-info
+            slot: regionBody
+        }
+        source {
+            formRegion: @livelabs-publishing-info
+            column: GREEN_BUTTON_REQUESTED
+            dataType: varchar2
+        }
+    )
+
+    pageItem P3210_ID (
+        type: hidden
+        layout {
+            sequence: 20
+            region: @livelabs-publishing-info
+            slot: regionBody
+        }
+        source {
+            formRegion: @livelabs-publishing-info
+            column: ID
+            dataType: number
+            primaryKey: true
+        }
+        security {
+            sessionStateProtection: checksumRequiredSessionLevel
+        }
+    )
+
+    pageItem P3210_ID_SHOW (
+        type: displayOnly
+        label {
+            label: LiveLabs ID
+            alignment: left
+        }
+        settings {
+            sendOnPageSubmit: false
+        }
+        layout {
+            sequence: 30
+            region: @livelabs-publishing-info
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P3210_NOVNC_ENABLED_FLG (
+        type: switch
+        label {
+            label: NoVNC Enabled Image?
+            alignment: left
+        }
+        settings {
+            useDefaults: false
+            onValue: Y
+            onLabel: Yes
+            offValue: N
+            offLabel: No
+        }
+        layout {
+            sequence: 220
+            region: @green-button-information
+            slot: regionBody
+            alignment: left
+            columnSpan: 4
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @livelabs-publishing-info
+            column: NOVNC_ENABLED_FLG
+            dataType: varchar2
+        }
+        help {
+            inlineHelpText: Green Button Only
+            helpText: Will this workshop be using a NoVNC enabled image? (If you aren't sure, the answer is most likely no)
+        }
+    )
+
+    pageItem P3210_OVERRIDE_SUBTITLE (
+        type: displayOnly
+        label {
+            label: <strong>These fields are used to override existing fields in the workshop. If you would like to replace the workshop description with something more customized, this is where you will fill in the overriding data. </strong>
+            alignment: left
+        }
+        settings {
+            showLineBreaks: false
+            sendOnPageSubmit: false
+        }
+        layout {
+            sequence: 240
+            region: @livelabs-publishing-info
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            newColumn: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                margin-bottom-none
+            ]
+        }
+    )
+
+    pageItem P3210_PAID_FLG (
+        type: switch
+        label {
+            label: "Brown Button Enabled? "
+            alignment: left
+        }
+        layout {
+            sequence: 180
+            region: @livelabs-publishing-info
+            slot: regionBody
+            alignment: left
+            columnSpan: 4
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+        }
+        source {
+            formRegion: @livelabs-publishing-info
+            column: PAID_FLG
+            dataType: varchar2
+        }
+        help {
+            helpText: "This enabled the \"Run on Your Tenancy\" button in LiveLabs that is intended to walk the user through the steps to complete this workshop in their own tenancy. "
+        }
+    )
+
+    pageItem P3210_PAID_URL (
+        type: textField
+        label {
+            label: Brown Button URL
+            alignment: left
+        }
+        settings {
+            subtype: url
+        }
+        layout {
+            sequence: 190
+            region: @livelabs-publishing-info
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            maxLength: 250
+        }
+        source {
+            formRegion: @livelabs-publishing-info
+            column: PAID_URL
+            dataType: varchar2
+        }
+    )
+
+    pageItem P3210_PRODUCTION_URL (
+        type: hidden
+        layout {
+            sequence: 110
+            region: @livelabs-publishing-info
+            slot: regionBody
+        }
+        source {
+            formRegion: @livelabs-publishing-info
+            column: PRODUCTION_URL
+            dataType: varchar2
+        }
+    )
+
+    pageItem P3210_PUBLISH_STATUS (
+        type: selectList
+        label {
+            label: Publish Status
+            alignment: left
+        }
+        lov {
+            type: sharedComponent
+            lov: @publish-status
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 80
+            region: @livelabs-publishing-info
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            formRegion: @livelabs-publishing-info
+            column: PUBLISH_STATUS
+            dataType: varchar2
+        }
+        default {
+            type: static
+            staticValue: Publish Requested
+        }
+        serverSideCondition {
+            type: expression
+            plsqlExpression: :P3210_ID is not null and :WORKSHOP_ROLE = 'PUBLISHER'
+        }
+        help {
+            helpText:
+                ```html
+                <strong>Publish Requested</strong> - Initial state. Also used to signify requested changes have been implemented<br>
+                <strong>Publish Approved</strong> - The workshop has been approved and will be moved to production within 24 hours (LiveLabs Only)<br>
+                <strong>Changes Requested</strong> - The Publishing team will be in contact to request changes to the workshop before publishing<br>
+                <strong>Green Button Requested</strong> - The Publishing team will be in contact to discuss your green button request<br>
+                <strong>Published</strong> - The workshop has been published and is available as specified by the Publish Type<br>
+                <strong>Delete Requested</strong> - The workshop should be deleted from LiveLabs. The LiveLabs Team will manually handle this request. 
+                ```
+        }
+    )
+
+    pageItem P3210_PUBLISH_TYPE (
+        type: selectList
+        label {
+            label: Publish Type
+            alignment: left
+        }
+        lov {
+            type: sharedComponent
+            lov: @publish-type
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 100
+            region: @livelabs-publishing-info
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            formRegion: @livelabs-publishing-info
+            column: PUBLISH_TYPE
+            dataType: varchar2
+        }
+        help {
+            helpText:
+                ```html
+                <strong>Public</strong> - Available to the public through search and links<br>
+                <strong>Event</strong> - Available only through events (LiveLabs only)<br>
+                <strong>Private</strong> - Available only through links<br>
+                <strong>Disabled</strong> - Unavailable to anyone except platform administrators
+                ```
+        }
+    )
+
+    pageItem P3210_SEPARATOR (
+        type: displayImage
+        label {
+            label: <strong>OVERRIDE WORKSHOP FIELDS</strong>
+            alignment: left
+        }
+        settings {
+            basedOn: url
+        }
+        layout {
+            sequence: 230
+            region: @livelabs-publishing-info
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+        }
+        source {
+            type: staticValue
+            staticValue: #APP_FILES#wms-line.png
+        }
+    )
+
+    pageItem P3210_SEPARATOR_2 (
+        type: displayImage
+        label {
+            label: <strong>BASIC PUBLISHING INFO</strong>
+            alignment: left
+        }
+        settings {
+            basedOn: url
+        }
+        layout {
+            sequence: 70
+            region: @livelabs-publishing-info
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+        }
+        source {
+            type: staticValue
+            staticValue: #APP_FILES#wms-line.png
+        }
+    )
+
+    pageItem P3210_SPRINT_FLG (
+        type: switch
+        label {
+            label: LiveLabs Sprint Enabled?
+            alignment: left
+        }
+        layout {
+            sequence: 210
+            region: @livelabs-publishing-info
+            slot: regionBody
+            alignment: left
+            columnSpan: 4
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @livelabs-publishing-info
+            column: SPRINT_FLG
+            dataType: varchar2
+        }
+        help {
+            helpText: "LiveLabs Sprints are a new kind of workshop in LiveLabs. They aim to answer a single question like \"How do you download an ADB wallet from the command line?\" If you aren't sure whether or not your workshop is a sprint, it most likely is not. "
+        }
+    )
+
+    pageItem P3210_SPRINT_URL (
+        type: textField
+        label {
+            label: Sprint URL
+            alignment: left
+        }
+        settings {
+            subtype: url
+        }
+        layout {
+            sequence: 220
+            region: @livelabs-publishing-info
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            maxLength: 250
+        }
+        source {
+            formRegion: @livelabs-publishing-info
+            column: SPRINT_URL
+            dataType: varchar2
+        }
+    )
+
+    pageItem P3210_TITLE_OVERRIDE (
+        type: textField
+        label {
+            label: Title Override
+            alignment: left
+        }
+        layout {
+            sequence: 250
+            region: @livelabs-publishing-info
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: [
+                #DEFAULT#
+                margin-top-none
+            ]
+            width: 30
+        }
+        validation {
+            maxLength: 200
+        }
+        source {
+            formRegion: @livelabs-publishing-info
+            column: TITLE_OVERRIDE
+            dataType: varchar2
+        }
+    )
+
+    pageItem P3210_UPDATED_PUBLISH_FLG (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 320
+            region: @livelabs-publishing-info
+            slot: regionBody
+        }
+        source {
+            formRegion: @livelabs-publishing-info
+            column: UPDATED_PUBLISH_FLG
+            dataType: number
+        }
+    )
+
+    pageItem P3210_VIEW_STATUS (
+        type: displayOnly
+        label {
+            label: Current Publish Status
+            alignment: left
+        }
+        settings {
+            sendOnPageSubmit: false
+        }
+        lov {
+            type: sharedComponent
+            lov: @publish-status
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 50
+            region: @livelabs-publishing-info
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        default {
+            type: expression
+            plsqlExpression: case when :P3210_PUBLISH_STATUS is null then 'Publish Requested' else :P3210_PUBLISH_STATUS end
+        }
+        help {
+            helpText:
+                ```html
+                <strong>Publish Requested</strong> - Initial state. Also used to signify requested changes have been implemented<br>
+                <strong>Publish Approved</strong> - The workshop has been approved and will be moved to production within 24 hours (LiveLabs Only)<br>
+                <strong>Changes Requested</strong> - The Publishing team will be in contact to request changes to the workshop before publishing<br>
+                <strong>Published</strong> - The workshop has been published and is available as specified by the Publish Type<br>
+                <strong>Delete Requested</strong> - The workshop should be deleted from LiveLabs. The LiveLabs Team will manually handle this request. 
+                ```
+        }
+    )
+
+    pageItem P3210_WORKSHOP_ID (
+        type: displayOnly
+        label {
+            label: WMS ID
+            alignment: left
+        }
+        layout {
+            sequence: 40
+            region: @livelabs-publishing-info
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @livelabs-publishing-info
+            column: WORKSHOP_ID
+            dataType: number
+        }
+    )
+
+    pageItem P3210_WORKSHOP_TIME (
+        type: numberField
+        label {
+            label: Workshop Time (in hours)
+            alignment: left
+        }
+        settings {
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 130
+            region: @livelabs-publishing-info
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 8
+        }
+        source {
+            formRegion: @livelabs-publishing-info
+            column: WORKSHOP_TIME
+            dataType: number
+        }
+    )
+
+    pageItem P3210_YOUTUBE_LINK (
+        type: textField
+        label {
+            label: YouTube Link
+            alignment: left
+        }
+        settings {
+            subtype: url
+        }
+        layout {
+            sequence: 120
+            region: @livelabs-publishing-info
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            maxLength: 250
+        }
+        source {
+            formRegion: @livelabs-publishing-info
+            column: YOUTUBE_LINK
+            dataType: varchar2
+        }
+    )
+
+    button cancel (
+        buttonName: Cancel
+        label: Cancel
+        layout {
+            sequence: 10
+            region: @livelabs-publishing-info
+            slot: aboveBox
+            horizontalAlignment: left
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button create (
+        buttonName: Create
+        label: Create
+        layout {
+            sequence: 40
+            region: @livelabs-publishing-info
+            slot: aboveBox
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: insert
+        }
+        serverSideCondition {
+            type: expression
+            plsqlExpression: (:P3210_CAN_EDIT = 'TRUE' and :P3210_ID is null)
+        }
+    )
+
+    button request-green-button (
+        buttonName: Request_Green_Button
+        label: Request Green Button
+        layout {
+            sequence: 10
+            region: @green-button-request
+            slot: regionBody
+            columnSpan: 12
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: [
+                #DEFAULT#
+                t-Button--stretch
+                t-Button--gapTop
+            ]
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button request-publish-again (
+        buttonName: request_publish_again
+        label: Request Publish
+        layout {
+            sequence: 60
+            region: @livelabs-publishing-info
+            slot: regionBody
+            startNewRow: false
+            columnAttributes: style="padding:10px"
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--simple
+                t-Button--gapLeft
+                t-Button--gapTop
+            ]
+        }
+        behavior {
+            action: definedByDynamicAction
+            executeValidations: false
+        }
+        advanced {
+            customAttributes: style="align=bottom"
+        }
+        serverSideCondition {
+            type: expression
+            plsqlExpression: :P3210_ID is not null and :WORKSHOP_ROLE in ('WORKSHOP_TEAM','STAKEHOLDER','PUBLISHER') and :P3210_VIEW_STATUS = 'Changes Requested'
+        }
+    )
+
+    button save (
+        buttonName: Save
+        label: Save
+        layout {
+            sequence: 30
+            region: @livelabs-publishing-info
+            slot: aboveBox
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+            databaseAction: update
+        }
+        serverSideCondition {
+            type: expression
+            plsqlExpression: (:P3210_CAN_EDIT = 'TRUE' and :P3210_ID is not null)
+        }
+    )
+
+    dynamicAction cancel-dialog-ll (
+        name: Cancel Dialog LL
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @cancel
+        }
+
+        action native-dialog-cancel (
+            action: cancelDialog
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction check-url-validity (
+        name: Check URL Validity_1
+        execution {
+            sequence: 100
+        }
+        when {
+            selectionType: items
+            items: P3210_PAID_URL
+        }
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    $.ajax({
+                        type: 'HEAD',
+                        url: $(this.triggeringElement).val(),
+                    success: function() {
+                    console.log($(this.triggeringElement).val());
+                            console.log('page exists');
+                            apex.item('URL_ERROR').setValue('valid');
+                    },
+                    error: function() {
+                            // page does not exist
+                            console.log($(this.triggeringElement).val());
+                            console.log('page does not exist');
+                            apex.item('URL_ERROR').setValue('invalid');
+                    }
+                    });
+                    ```
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction check-url-validity-2 (
+        name: Check URL Validity
+        execution {
+            sequence: 90
+        }
+        when {
+            selectionType: items
+            items: P3210_GREENBUTTON_URL
+        }
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    $.ajax({
+                        type: 'HEAD',
+                        url: $(this.triggeringElement).val(),
+                    success: function() {
+                    console.log($(this.triggeringElement).val());
+                            console.log('page exists');
+                            apex.item('URL_ERROR').setValue('valid');
+                    },
+                    error: function() {
+                            // page does not exist
+                            console.log($(this.triggeringElement).val());
+                            console.log('page does not exist');
+                            apex.item('URL_ERROR').setValue('invalid');
+                    }
+                    });
+                    ```
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction disable-save-if-url-invalid (
+        name: Disable Save if URL Invalid
+        execution {
+            sequence: 110
+        }
+        when {
+            selectionType: items
+            items: URL_ERROR
+        }
+        clientSideCondition {
+            type: item=value
+            item: URL_ERROR
+            value: invalid
+        }
+
+        action native-alert (
+            action: alert
+            settings {
+                message: URL is invalid
+            }
+            execution {
+                sequence: 30
+                fireOnInit: false
+            }
+        )
+
+        action native-disable (
+            action: disable
+            affectedElements {
+                selectionType: button
+                button: @save
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+        action native-disable-2 (
+            action: disable
+            affectedElements {
+                selectionType: button
+                button: @create
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+        action native-enable (
+            action: enable
+            affectedElements {
+                selectionType: button
+                button: @save
+            }
+            execution {
+                sequence: 20
+                fireWhenEventResultIs: false
+                fireOnInit: false
+            }
+        )
+
+        action native-enable-2 (
+            action: enable
+            affectedElements {
+                selectionType: button
+                button: @create
+            }
+            execution {
+                sequence: 10
+                fireWhenEventResultIs: false
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction hide-green-button (
+        name: Hide Green Button
+        execution {
+            sequence: 130
+        }
+        when {
+            event: ready
+        }
+        clientSideCondition {
+            type: item!=value
+            item: P3210_GREEN_BUTTON_REQUESTED
+            value: Y
+        }
+
+        action native-hide (
+            action: hide
+            affectedElements {
+                selectionType: region
+                region: @green-button-information
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+        action native-hide-2 (
+            action: hide
+            affectedElements {
+                selectionType: region
+                region: @green-button-request
+            }
+            execution {
+                sequence: 20
+                fireWhenEventResultIs: false
+            }
+        )
+
+    )
+
+    dynamicAction request-green-button (
+        name: Request Green Button
+        execution {
+            sequence: 120
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @request-green-button
+        }
+
+        action native-confirm (
+            action: confirm
+            settings {
+                title: Request Green Button
+                message:
+                    ```html
+                    The creation of a green button is not an automatic process. Please ensure you fill out the fields below to the best of your ability before submitting this green button request. <br><br>
+                    <strong>Failing to fill out the requested fields will significantly delay the development of your green button.</strong>
+                    ```
+                style: warning
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+        action native-hide (
+            action: hide
+            affectedElements {
+                selectionType: region
+                region: @green-button-request
+            }
+            execution {
+                sequence: 30
+                fireOnInit: false
+            }
+        )
+
+        action native-set-value (
+            action: setValue
+            settings {
+                value: Green Button Requested
+            }
+            affectedElements {
+                selectionType: items
+                items: P3210_PUBLISH_STATUS
+            }
+            execution {
+                sequence: 40
+                fireOnInit: false
+            }
+        )
+
+        action native-set-value-2 (
+            action: setValue
+            settings {
+                value: Green Button Requested
+            }
+            affectedElements {
+                selectionType: items
+                items: P3210_VIEW_STATUS
+            }
+            execution {
+                sequence: 50
+                fireOnInit: false
+            }
+        )
+
+        action native-set-value-3 (
+            action: setValue
+            settings {
+                value: Y
+            }
+            affectedElements {
+                selectionType: items
+                items: P3210_GREEN_BUTTON_REQUESTED
+            }
+            execution {
+                sequence: 60
+                fireOnInit: false
+            }
+        )
+
+        action native-show (
+            action: show
+            affectedElements {
+                selectionType: region
+                region: @green-button-information
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction set-id-show (
+        name: set ID show
+        execution {
+            sequence: 70
+        }
+        when {
+            event: ready
+        }
+
+        action native-set-value (
+            action: setValue
+            settings {
+                value: To be assigned
+            }
+            affectedElements {
+                selectionType: items
+                items: P3210_ID_SHOW
+            }
+            execution {
+                sequence: 10
+            }
+            clientSideCondition {
+                type: itemIsNull
+                item: P3210_ID
+            }
+        )
+
+        action native-set-value-2 (
+            action: setValue
+            settings {
+                value: &P3210_ID.
+            }
+            affectedElements {
+                selectionType: items
+                items: P3210_ID_SHOW
+            }
+            execution {
+                sequence: 20
+            }
+            clientSideCondition {
+                type: itemIsNotNull
+                item: P3210_ID
+            }
+        )
+
+    )
+
+    dynamicAction set-publish-status-to-requested (
+        name: set publish status to requested
+        execution {
+            sequence: 60
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @request-publish-again
+        }
+
+        action native-confirm (
+            action: confirm
+            settings {
+                title: Change Status?
+                message:
+                    ```html
+                    Do you wish to change the status to "Publish Requested"? This will notify the Publishing Team. <br><br>
+                    Remember to click save in order to submit this new status!
+                    ```
+                confirmLabel: Yes
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+        action native-disable (
+            action: disable
+            affectedElements {
+                selectionType: button
+                button: @request-publish-again
+            }
+            execution {
+                sequence: 40
+                fireOnInit: false
+            }
+        )
+
+        action native-set-value (
+            action: setValue
+            settings {
+                value: Publish Requested
+            }
+            affectedElements {
+                selectionType: items
+                items: P3210_PUBLISH_STATUS
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction validate-ords-save (
+        name: Validate ORDS - Save
+        execution {
+            sequence: 80
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @save
+        }
+
+        action native-confirm (
+            action: confirm
+            settings {
+                title: Confirm Push to LiveLabs
+                message:
+                    ```html
+                    WMS and LiveLabs now sync automatically on a daily basis. Please ensure that ALL FIELDS in WMS are correct and up-to-date. Failure to do so will cause issues in LiveLabs and your workshop may be disabled. <br><br>
+                    If you do not have a LiveLabs publishing entry that is in the 'Publishing Approved' or 'Published' status, please disregard this message. Your workshop will not be pushed to LiveLabs without a LiveLabs publishing entry in one of those statuses.<br><br>
+                    <b>Please <i>triple</i> check your workshop and the LiveLabs publishing entry for accuracy before confirming. <b>
+                    ```
+                confirmLabel: Push to LiveLabs
+                cancelLabel: Go Back
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+            clientSideCondition {
+                type: itemIsInList
+                item: P3210_PUBLISH_STATUS
+                list: [
+                    Publish Approved
+                    Published
+                ]
+            }
+        )
+
+        action native-submit-page (
+            action: submitPage
+            settings {
+                requestButtonName: Save
+            }
+            execution {
+                sequence: 30
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    validation alwaysfree-null (
+        name: alwaysfree null
+        execution {
+            sequence: 10
+        }
+        validation {
+            type: itemIsNotNull
+            item: P3210_ALWAYSFREE_URL
+        }
+        error {
+            errorMessage: Please specify a URL for the Always Free Tier
+        }
+        serverSideCondition {
+            type: item=value
+            item: P3210_ALWAYSFREE_FLG
+            value: Y
+        }
+    )
+
+    validation free-null (
+        name: free null
+        execution {
+            sequence: 20
+        }
+        validation {
+            type: itemIsNotNull
+            item: P3210_FREETIER_URL
+        }
+        error {
+            errorMessage: Please specify a URL for the Free Tier
+        }
+        serverSideCondition {
+            type: item=value
+            item: P3210_FREETIER_FLG
+            value: Y
+        }
+    )
+
+    validation greenbutton-null (
+        name: greenbutton null
+        execution {
+            sequence: 40
+        }
+        validation {
+            type: itemIsNotNull
+            item: P3210_GREENBUTTON_URL
+        }
+        error {
+            errorMessage: Please specify a URL for the Green Button
+        }
+        serverSideCondition {
+            type: item=value
+            item: P3210_GREENBUTTON_FLG
+            value: Y
+        }
+    )
+
+    validation only-sprint-flag (
+        name: only Sprint flag
+        execution {
+            sequence: 110
+        }
+        validation {
+            plsqlExpression:
+                ```plsql
+                (:P3210_PAID_FLG = 'N' or :P3210_PAID_FLG is null)
+                and (:P3210_GREENBUTTON_FLG = 'N' or :P3210_GREENBUTTON_FLG is null)
+                ```
+        }
+        error {
+            errorMessage: "If a workshop is a LiveLabs Sprint, it cannot have any other buttons. Either disable the other workshop types or disable LiveLabs Sprints. Contact Kevin Lazarz if you believe this is not the case for your workshop. "
+        }
+        serverSideCondition {
+            type: expression
+            plsqlExpression: :P3210_SPRINT_FLG = 'Y'
+        }
+    )
+
+    validation paid-null (
+        name: paid null
+        execution {
+            sequence: 30
+        }
+        validation {
+            type: itemIsNotNull
+            item: P3210_PAID_URL
+        }
+        error {
+            errorMessage: Please specify a URL for the Paid Tier
+        }
+        serverSideCondition {
+            type: item=value
+            item: P3210_PAID_FLG
+            value: Y
+        }
+    )
+
+    validation sprint-null (
+        name: sprint null
+        execution {
+            sequence: 50
+        }
+        validation {
+            type: itemIsNotNull
+            item: P3210_SPRINT_URL
+        }
+        error {
+            errorMessage: Please specify a URL for the LiveLabs Sprint
+        }
+        serverSideCondition {
+            type: item=value
+            item: P3210_SPRINT_FLG
+            value: Y
+        }
+    )
+
+    process initialize-form-publish-information (
+        name: Initialize form Publish Information
+        type: formInitialization
+        formRegion: @livelabs-publishing-info
+        execution {
+            sequence: 10
+            point: beforeHeader
+        }
+        advanced {
+            executionMappingIdentifier: 21459284349815074096
+        }
+    )
+
+    process mark-updated-create (
+        name: Mark Updated - Create
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                begin
+                update workshop_ll set updated_publish_flg = 2 where id= :P3210_ID;
+                update workshop set updated_flg = 1 where id = :P3210_WORKSHOP_ID;
+                end;
+                ```
+        }
+        execution {
+            sequence: 30
+        }
+        advanced {
+            executionMappingIdentifier: 21459296066436074118
+        }
+        serverSideCondition {
+            whenButtonPressed: @create
+        }
+    )
+
+    process mark-updated-save (
+        name: Mark Updated - Save
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                declare
+                v_hold number;
+                begin
+                select updated_publish_flg into v_hold from workshop_ll where id= :P3210_ID;
+                if v_hold != 2 then
+                update workshop_ll set updated_publish_flg = 1 where id= :P3210_ID;
+                end if;
+                update workshop set updated_flg = 1 where id = :P3210_WORKSHOP_ID;
+                end;
+                ```
+        }
+        execution {
+            sequence: 20
+        }
+        advanced {
+            executionMappingIdentifier: 21459295688006074118
+        }
+        serverSideCondition {
+            whenButtonPressed: @save
+        }
+    )
+
+    process process-form-livelabs-publishing-info (
+        name: Process form LiveLabs Publishing Info
+        type: formAutoRowProcessing
+        formRegion: @livelabs-publishing-info
+        execution {
+            sequence: 10
+        }
+        advanced {
+            executionMappingIdentifier: 21459284733866074097
+        }
+    )
+
+    process set-can-edit (
+        name: Set CAN_EDIT
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                declare
+                v_hold varchar2(4000);
+                begin
+                if :P3210_WORKSHOP_ID is not null then
+                    -- publishers 
+                    begin
+                    select email into v_hold
+                    from workshop_person_role
+                    where upper(:APP_USER) = upper(email)
+                    and workshop_id is  null
+                    and active_flg = 1;
+                    exception when no_data_found then v_hold := null; end;
+                    if v_hold is not null then :P3210_CAN_EDIT := 'TRUE';return; end if;
+                    v_hold := null;
+                
+                    -- workshop team 
+                    -- begin
+                    -- select b.email into v_hold
+                    -- from workshop a, workshop_person_role b, workshop_role c
+                    -- where a.id = :P320_ID
+                    -- and a.id = b.workshop_id
+                    -- and b.role_id = c.id
+                    -- and  c.name in ('Workshop Team')
+                    -- and upper(:APP_USER) = upper(b.email)
+                    -- and b.active_flg = 1;
+                    -- exception when no_data_found then v_hold := null; end;
+                    -- if v_hold is not null then :P320_CAN_EDIT := 'TRUE'; return; end if;
+                    -- v_hold := null;
+                
+                    -- workshop team
+                    begin
+                    select title into v_hold
+                    from workshop a
+                    where (
+                        upper(workshop_owner_email) = upper(:APP_USER)
+                        or upper(tech_contact_email) = upper(:APP_USER)
+                        or upper(support_contact_email) = upper(:APP_USER)
+                        or upper(manager_email) = upper(:APP_USER)
+                        or upper(observer_email) = upper(:APP_USER)
+                        or upper(ospa_observer_email) = upper(:APP_USER)
+                    ) and id = :P3210_WORKSHOP_ID;
+                    exception when no_data_found then v_hold := null; end;
+                    if v_hold is not null then :P3210_CAN_EDIT := 'TRUE'; return; end if;
+                    v_hold := null;
+                
+                    -- stakeholder
+                    begin
+                    select b.email into v_hold
+                    from workshop a, workshop_person_stakeholder b
+                    where a.id = :P3210_workshop_ID
+                    and a.stakeholder_id = b.stakeholder_id
+                    and upper(:APP_USER) = upper(b.email)
+                    and b.active_flg = 1;
+                    exception when no_data_found then v_hold := null; end;
+                    if v_hold is not null then :P3210_CAN_EDIT := 'TRUE'; return; end if;
+                
+                    -- not authorized
+                    :P3210_CAN_EDIT := 'FALSE';
+                else 
+                    :P3210_CAN_EDIT := 'NULL';
+                end if;
+                end;
+                ```
+        }
+        execution {
+            sequence: 20
+            point: beforeHeader
+        }
+        advanced {
+            executionMappingIdentifier: 21459295223538074116
+        }
+    )
+
+    process set-updated-fields-create (
+        name: Set Updated Fields - Create
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                begin
+                update workshop set last_update_person = lower(:APP_USER), last_update_time = sysdate where id= :P3210_WORKSHOP_ID;
+                end;
+                ```
+        }
+        execution {
+            sequence: 40
+        }
+        advanced {
+            executionMappingIdentifier: 21459296407377074119
+        }
+        serverSideCondition {
+            whenButtonPressed: @create
+        }
+    )
+
+    process set-updated-fields-save (
+        name: Set Updated Fields - Save
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                begin
+                update workshop set last_update_person = lower(:APP_USER), last_update_time = sysdate where id= :P3210_WORKSHOP_ID;
+                end;
+                ```
+        }
+        execution {
+            sequence: 50
+        }
+        advanced {
+            executionMappingIdentifier: 21459296818906074119
+        }
+        serverSideCondition {
+            whenButtonPressed: @save
+        }
+    )
+
+    branch (
+        name: redirect to view workshop
+        execution {
+            sequence: 10
+        }
+        behavior {
+            target: {
+                page: 320
+                items: {
+                    P320_ID: &P3210_WORKSHOP_ID.
+                }
+            }
+        }
+    )
+
+)
+

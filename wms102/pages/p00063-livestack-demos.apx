@@ -1,0 +1,249 @@
+page 63 (
+    name: LiveStack Demos
+    alias: LIVESTACK-DEMOS
+    title: LiveStack Demos
+    appearance {
+        pageTemplate: @standard-custom
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region livestack-demos (
+        name: LiveStack Demos
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select LL_ID,
+                       ASSET_ID,
+                       IMAGE_ID,
+                       (select name from wms_assets where id = asset_id) asset_name,
+                       (select coalesce(ll.title_override, w.title) from workshop_ll ll left join workshop w on ll.workshop_id = w.id where ll.id = ll_id) title
+                  from WMS_LIVESTACK_DEMOS
+                ```
+        }
+        layout {
+            sequence: 10
+            parentRegion: @livestack-demos_1
+            slot: subRegions
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        link {
+            linkColumn: customTarget
+            target: {
+                page: 66
+                items: {
+                    P66_LL_ID: #LL_ID#
+                }
+                clearCache: 66
+            }
+            linkIcon: <span role="img" aria-label="Edit" class="fa fa-edit" title="Edit"></span>
+        }
+        pagination {
+            type: rowRangesXToY
+        }
+        messages {
+            whenNoDataFound: No data found.
+            whenMoreDataFound: The maximum row count for this report is #MAX_ROW_COUNT# rows.  Please apply a filter to reduce the number of records in your query.
+        }
+        advanced {
+            savedReportMappingIdentifier: 4804221847250971368
+        }
+
+        column ASSET_ID (
+            type: link
+            heading {
+                heading: Asset ID
+                alignment: center
+            }
+            layout {
+                sequence: 40
+                columnAlignment: center
+            }
+            link {
+                target: {
+                    page: 56
+                    items: {
+                        P56_ID: #ASSET_ID#
+                    }
+                }
+                linkText: #ASSET_NAME#
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: B
+            }
+        )
+
+        column ASSET_NAME (
+            type: plainText
+            heading {
+                heading: Asset Name
+            }
+            layout {
+                sequence: 60
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: E
+            }
+        )
+
+        column IMAGE_ID (
+            type: link
+            heading {
+                heading: Image ID
+                alignment: center
+            }
+            layout {
+                sequence: 50
+                columnAlignment: center
+            }
+            link {
+                target: {
+                    page: 53
+                    items: {
+                        P53_ID: #IMAGE_ID#
+                    }
+                }
+                linkText: #IMAGE_ID#
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: C
+            }
+        )
+
+        column LL_ID (
+            type: hidden
+            heading {
+                heading: Ll ID
+            }
+            layout {
+                sequence: 20
+            }
+            source {
+                primaryKey: true
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: A
+            }
+        )
+
+        column TITLE (
+            type: link
+            heading {
+                heading: Title
+                alignment: center
+            }
+            layout {
+                sequence: 30
+                columnAlignment: center
+            }
+            link {
+                target: {
+                    page: 3203
+                    items: {
+                        P3203_ID: #LL_ID#
+                    }
+                }
+                linkText: #TITLE#
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: D
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+
+        savedReport primary (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn ASSET_ID (
+                sequence: 2
+            )
+
+            displayColumn IMAGE_ID (
+                sequence: 3
+            )
+
+            displayColumn TITLE (
+                sequence: 1
+            )
+
+        )
+
+    )
+
+    region livestack-demos_1 (
+        name: LiveStack Demos
+        title: LiveStack Demos
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--accent1
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    button new-demo (
+        buttonName: new-demo
+        label: New LiveStack Demo
+        layout {
+            sequence: 10
+            region: @livestack-demos_1
+            slot: edit
+        }
+        appearance {
+            buttonTemplate: @text-with-icon
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--iconLeft
+            ]
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 66
+                clearCache: 66
+            }
+        }
+    )
+
+)
+

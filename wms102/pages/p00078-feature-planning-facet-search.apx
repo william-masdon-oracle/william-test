@@ -1,0 +1,645 @@
+page 78 (
+    name: Feature Planning Facet Search
+    alias: FEATURE-PLANNING-FACET-SEARCH
+    title: Feature Planning Facet Search
+    appearance {
+        pageTemplate: @standard-custom
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region calendar (
+        name: Calendar
+        type: calendar
+        source {
+            location: localDatabase
+            tableName: LL_FEATURE_PLANNING
+        }
+        layout {
+            sequence: 10
+            parentRegion: @dashboard
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        settings {
+            displayColumn: TITLE
+            startDateColumn: ENTRY_DATE
+            pkColumn: ID
+            additionalCalendarViews: [
+                list
+                navigation
+            ]
+        }
+        performance {
+            lazyLoading: true
+        }
+    )
+
+    region dashboard (
+        name: Dashboard
+        type: chart
+        layout {
+            sequence: 30
+            parentRegion: @feature-planning
+            slot: tabs
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        chartLayout {
+            height: 400
+        }
+        legend {
+            show: false
+        }
+
+        series status-dashboard (
+            name: Status Dashboard
+            execution {
+                sequence: 10
+            }
+            source {
+                type: sqlQuery
+                sqlQuery: select status, count(status) as Status_Count from LL_FEATURE_PLANNING group by status
+            }
+            columnMapping {
+                label: STATUS
+                value: STATUS_COUNT
+            }
+        )
+
+        axis x (
+            name: x
+            minorTicks {
+                show: false
+            }
+        )
+
+        axis y (
+            name: y
+            value {
+                format: decimal
+                decimalPlaces: 0
+                formatScaling: none
+            }
+            minorTicks {
+                show: false
+            }
+        )
+
+    )
+
+    region feature-planning (
+        name: Feature Planning
+        type: staticContent
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @tabs-container
+            templateOptions: [
+                #DEFAULT#
+                t-TabsRegion-mod--simple
+            ]
+        }
+    )
+
+    region new (
+        name: New
+        type: facetedSearch
+        source {
+            filteredRegion: @search
+        }
+        layout {
+            sequence: 40
+            parentRegion: @search-facet
+            slot: subRegions
+            columnSpan: 2
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        settings {
+            compactNosThreshold: 10000
+            displayChartForTopNValues: 10
+        }
+
+        facet P78_APEX_USER (
+            type: checkboxGroup
+            label {
+                label: Apex User
+                showLabelForCurrentFacet: false
+            }
+            lov {
+                type: distinctValues
+            }
+            layout {
+                sequence: 20
+            }
+            listEntries {
+                maxDisplayedEntries: 5
+            }
+            actionsMenu {
+                filter: false
+            }
+            advanced {
+                collapsible: true
+            }
+            source {
+                databaseColumn: APEX_USER
+            }
+            security {
+                encryptSessionState: false
+            }
+        )
+
+        facet P78_FIX_BY_VERSION (
+            type: checkboxGroup
+            label {
+                label: Fix By Version
+                showLabelForCurrentFacet: false
+            }
+            lov {
+                type: distinctValues
+            }
+            layout {
+                sequence: 70
+            }
+            listEntries {
+                maxDisplayedEntries: 5
+            }
+            actionsMenu {
+                filter: false
+            }
+            advanced {
+                collapsible: true
+            }
+            source {
+                databaseColumn: FIX_BY_VERSION
+            }
+            security {
+                encryptSessionState: false
+            }
+        )
+
+        facet P78_FIX_TYPE (
+            type: checkboxGroup
+            label {
+                label: Fix Type
+                showLabelForCurrentFacet: false
+            }
+            lov {
+                type: distinctValues
+            }
+            layout {
+                sequence: 30
+            }
+            listEntries {
+                maxDisplayedEntries: 5
+            }
+            actionsMenu {
+                filter: false
+            }
+            advanced {
+                collapsible: true
+            }
+            source {
+                databaseColumn: FIX_TYPE
+            }
+            security {
+                encryptSessionState: false
+            }
+        )
+
+        facet P78_OWNED_BY (
+            type: checkboxGroup
+            label {
+                label: Owned By
+                showLabelForCurrentFacet: false
+            }
+            lov {
+                type: distinctValues
+            }
+            layout {
+                sequence: 50
+            }
+            listEntries {
+                maxDisplayedEntries: 5
+            }
+            actionsMenu {
+                filter: false
+            }
+            advanced {
+                collapsible: true
+            }
+            source {
+                databaseColumn: OWNED_BY
+            }
+            security {
+                encryptSessionState: false
+            }
+        )
+
+        facet P78_PRIORITY (
+            type: checkboxGroup
+            label {
+                label: Priority
+                showLabelForCurrentFacet: false
+            }
+            lov {
+                type: distinctValues
+            }
+            layout {
+                sequence: 40
+            }
+            listEntries {
+                maxDisplayedEntries: 5
+            }
+            actionsMenu {
+                filter: false
+            }
+            advanced {
+                collapsible: true
+            }
+            source {
+                databaseColumn: PRIORITY
+            }
+            security {
+                encryptSessionState: false
+            }
+        )
+
+        facet P78_SEARCH (
+            type: search
+            label {
+                label: Search
+            }
+            layout {
+                sequence: 10
+            }
+            source {
+                dbColumns: APEX_USER,TITLE,REQUIREMENT_STATUS,STATUS,FIX_BY_VERSION,FIX_TYPE
+            }
+            security {
+                encryptSessionState: false
+            }
+        )
+
+        facet P78_STATUS (
+            type: checkboxGroup
+            label {
+                label: Status
+                showLabelForCurrentFacet: false
+            }
+            lov {
+                type: distinctValues
+            }
+            layout {
+                sequence: 60
+            }
+            listEntries {
+                maxDisplayedEntries: 5
+            }
+            actionsMenu {
+                filter: false
+            }
+            advanced {
+                collapsible: true
+            }
+            source {
+                databaseColumn: STATUS
+            }
+            security {
+                encryptSessionState: false
+            }
+        )
+
+    )
+
+    region search (
+        name: Search
+        type: classicReport
+        source {
+            location: localDatabase
+            tableName: LL_FEATURE_PLANNING
+        }
+        layout {
+            sequence: 50
+            parentRegion: @search-facet
+            slot: subRegions
+            startNewRow: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        componentAppearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Report--altRowsDefault
+                t-Report--rowHighlight
+            ]
+        }
+        pagination {
+            type: nextAndPreviousLinks
+        }
+
+        column APEX_USER (
+            reportColumnQueryId: 2
+            derivedColumn: N
+            heading {
+                heading: Apex User
+                alignment: center
+            }
+            layout {
+                sequence: 20
+            }
+        )
+
+        column ENTRY_DATE (
+            reportColumnQueryId: 13
+            derivedColumn: N
+            heading {
+                heading: Entry Date
+                alignment: center
+            }
+            layout {
+                sequence: 130
+            }
+        )
+
+        column FEEDBACK (
+            reportColumnQueryId: 4
+            derivedColumn: N
+            heading {
+                heading: Feedback
+                alignment: center
+            }
+            layout {
+                sequence: 40
+            }
+        )
+
+        column FEEDBACK_BY (
+            reportColumnQueryId: 15
+            derivedColumn: N
+            heading {
+                heading: Feedback By
+                alignment: center
+            }
+            layout {
+                sequence: 150
+            }
+        )
+
+        column FIX_BY_VERSION (
+            reportColumnQueryId: 8
+            derivedColumn: N
+            heading {
+                heading: Fix By Version
+                alignment: center
+            }
+            layout {
+                sequence: 80
+            }
+        )
+
+        column FIX_TYPE (
+            reportColumnQueryId: 10
+            derivedColumn: N
+            heading {
+                heading: Fix Type
+                alignment: center
+            }
+            layout {
+                sequence: 100
+            }
+        )
+
+        column ID (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            heading {
+                heading: Id
+                alignment: center
+            }
+            layout {
+                sequence: 10
+            }
+        )
+
+        column LAST_UPDATE (
+            reportColumnQueryId: 14
+            derivedColumn: N
+            heading {
+                heading: Last Update
+                alignment: center
+            }
+            layout {
+                sequence: 140
+            }
+        )
+
+        column OWNED_BY (
+            reportColumnQueryId: 11
+            derivedColumn: N
+            heading {
+                heading: Owned By
+                alignment: center
+            }
+            layout {
+                sequence: 110
+            }
+        )
+
+        column OWNED_BY_SECONDARY (
+            reportColumnQueryId: 17
+            derivedColumn: N
+            heading {
+                heading: Secondary Owner
+                alignment: center
+            }
+            layout {
+                sequence: 170
+            }
+        )
+
+        column PRIORITY (
+            reportColumnQueryId: 7
+            derivedColumn: N
+            heading {
+                heading: Priority
+                alignment: center
+            }
+            layout {
+                sequence: 70
+            }
+        )
+
+        column REMARKS (
+            reportColumnQueryId: 12
+            derivedColumn: N
+            heading {
+                heading: Remarks
+                alignment: center
+            }
+            layout {
+                sequence: 120
+            }
+        )
+
+        column REQUIREMENT_STATUS (
+            reportColumnQueryId: 5
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 50
+            }
+        )
+
+        column SECURITY_ISSUE (
+            reportColumnQueryId: 9
+            derivedColumn: N
+            heading {
+                heading: Security Issue
+                alignment: center
+            }
+            layout {
+                sequence: 90
+            }
+        )
+
+        column SORTORDER (
+            reportColumnQueryId: 16
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 160
+            }
+        )
+
+        column STATUS (
+            reportColumnQueryId: 6
+            derivedColumn: N
+            heading {
+                heading: Status
+                alignment: center
+            }
+            layout {
+                sequence: 60
+            }
+        )
+
+        column TITLE (
+            reportColumnQueryId: 3
+            derivedColumn: N
+            heading {
+                heading: Title
+                alignment: center
+            }
+            layout {
+                sequence: 30
+            }
+        )
+
+    )
+
+    region search-facet (
+        name: Search Facet
+        type: staticContent
+        layout {
+            sequence: 20
+            parentRegion: @feature-planning
+            slot: tabs
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    button all-features (
+        buttonName: All_Features
+        label: All Features
+        layout {
+            sequence: 10
+            region: @feature-planning
+            slot: aboveBox
+        }
+        appearance {
+            buttonTemplate: @text-with-icon
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--large
+                t-Button--primary
+                t-Button--iconRight
+            ]
+            icon: fa-stock-chart
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 69
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button my-tasks (
+        buttonName: My_Tasks
+        label: My Tasks
+        layout {
+            sequence: 20
+            region: @feature-planning
+            slot: aboveBox
+        }
+        appearance {
+            buttonTemplate: @text-with-icon
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--large
+                t-Button--iconRight
+            ]
+            icon: fa-clipboard-new
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 76
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+)
+

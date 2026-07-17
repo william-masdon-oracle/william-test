@@ -1,0 +1,321 @@
+page 3201 (
+    name: Delete QA Media
+    alias: DELETE-QA-MEDIA
+    title: Delete QA Media
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @modal-dialog
+        templateOptions: #DEFAULT#
+    }
+    dialog {
+        resizable: false
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region failure (
+        name: Failure
+        type: staticContent
+        source {
+            htmlCode: "Please try again later. "
+        }
+        layout {
+            sequence: 30
+            slot: contentBody
+        }
+        appearance {
+            template: @alert
+            templateOptions: [
+                #DEFAULT#
+                t-Alert--horizontal
+                t-Alert--defaultIcons
+                t-Alert--danger
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region success (
+        name: Success
+        type: staticContent
+        source {
+            htmlCode: Your media has been deleted. Please refresh the page the see the changes.
+        }
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @alert
+            templateOptions: [
+                #DEFAULT#
+                t-Alert--horizontal
+                t-Alert--defaultIcons
+                t-Alert--success
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region variables (
+        name: Variables
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    pageItem P3201_DOWNLOAD_URL (
+        type: hidden
+        layout {
+            sequence: 60
+            region: @variables
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P3201_MEDIA_ID (
+        type: hidden
+        layout {
+            sequence: 20
+            region: @variables
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P3201_METHOD (
+        type: hidden
+        layout {
+            sequence: 30
+            region: @variables
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P3201_REST_RESULT (
+        type: hidden
+        layout {
+            sequence: 70
+            region: @variables
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P3201_STORAGE_FILENAME (
+        type: hidden
+        layout {
+            sequence: 40
+            region: @variables
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P3201_VISIBLE_FILENAME (
+        type: hidden
+        layout {
+            sequence: 50
+            region: @variables
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P3201_WORKSHOP_ID (
+        type: hidden
+        layout {
+            sequence: 10
+            region: @variables
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    dynamicAction hide-and-show-regions (
+        name: Hide and Show Regions
+        execution {
+            sequence: 20
+        }
+        when {
+            event: ready
+        }
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    begin
+                    while :P3201_REST_RESULT is null or :P3201_REST_RESULT = '' loop
+                        apex_util.pause(1);
+                    end loop;
+                    end;
+                    ```
+            }
+            execution {
+                sequence: 40
+            }
+        )
+
+        action native-hide (
+            action: hide
+            affectedElements {
+                selectionType: region
+                region: @failure
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+        action native-hide-2 (
+            action: hide
+            affectedElements {
+                selectionType: region
+                region: @success
+            }
+            execution {
+                sequence: 20
+            }
+        )
+
+        action native-hide-3 (
+            action: hide
+            affectedElements {
+                selectionType: region
+                region: @variables
+            }
+            execution {
+                sequence: 30
+            }
+        )
+
+        action native-show (
+            action: show
+            affectedElements {
+                selectionType: region
+                region: @failure
+            }
+            execution {
+                sequence: 60
+            }
+            clientSideCondition {
+                type: item=value
+                item: P3201_REST_RESULT
+                value: FAILURE
+            }
+        )
+
+        action native-show-2 (
+            action: show
+            affectedElements {
+                selectionType: region
+                region: @success
+            }
+            execution {
+                sequence: 50
+            }
+            clientSideCondition {
+                type: item=value
+                item: P3201_REST_RESULT
+                value: SUCCESS
+            }
+        )
+
+    )
+
+    process delete-object (
+        name: Delete Object
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                declare
+                v_result number;
+                v_deleted boolean := false;
+                begin
+                -- delete media
+                if :P3201_METHOD = q'['DELETE']' then
+                    -- for try in 1 .. 3 loop
+                        -- v_result := wms_pkg_rest.deleteMediaObject(:P3201_STORAGE_FILENAME);
+                
+                        -- if v_result = 204 then
+                            DELETE FROM workshop_qa_media where id = :P3201_MEDIA_ID;
+                            v_deleted := true;
+                        -- end if;
+                    -- end loop;
+                
+                    if v_deleted then
+                        :P3201_REST_RESULT := 'SUCCESS';--'Successfully deleted the media.';
+                    else
+                        :P3201_REST_RESULT := 'FAILURE';--'Failed to delete the media. Please try again and if it does not work again, contact a WMS Admin.';
+                    end if;
+                
+                
+                end if;
+                end;
+                ```
+        }
+        execution {
+            sequence: 20
+            point: beforeRegions
+        }
+        advanced {
+            executionMappingIdentifier: 21999223632160427757
+        }
+    )
+
+    branch (
+        name: redirect to 320
+        execution {
+            sequence: 10
+        }
+        behavior {
+            target: {
+                page: 320
+                items: {
+                    P320_ID: &P3201_WORKSHOP_ID.
+                }
+            }
+        }
+    )
+
+)
+

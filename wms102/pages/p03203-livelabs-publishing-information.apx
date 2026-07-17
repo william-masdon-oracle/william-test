@@ -1,0 +1,4972 @@
+page 3203 (
+    name: LiveLabs Publishing Information
+    alias: LIVELABS-PUBLISHING-INFORMATION
+    title: LiveLabs Publishing Information
+    appearance {
+        pageTemplate: @standard-custom
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+        warnOnUnsavedChanges: false
+    }
+    css {
+        inline:
+            ```css
+            .image-upload {
+                display: flex;
+                align-self: center;
+            }
+            
+            #sandbox-buttons .container {
+                display: flex;
+                justify-content: end;
+            }
+            
+            .pill-style .Y {
+              display: inline-block;
+              padding: 0.3em 1em;
+              border-radius: 999px;
+              background-color: #b2ffbba6 !important;
+              color: #fff;
+              font-size: 1em;
+            }
+            
+            .pill-style {
+              display: inline-block;
+              padding: 0.3em 1em;
+              border-radius: 999px;
+              background-color: #616060a6 !important;
+              color: #fff;
+              font-size: 1em;
+            }
+            
+            .equal-height-col {
+              display: flex;
+              align-items: stretch;
+              height: auto !important;
+            }
+            
+            .equal-height-col .t-Region {
+              display: flex;
+              flex-direction: column;
+              flex: 1 1 auto;
+              width: 100%;
+            }
+            
+            .equal-height-col .t-Region-bodyWrap {
+              flex: 1 1 auto;
+            }
+            
+            .equal-height-col .t-Region-body {
+              flex: 1 1 auto;
+            }
+            
+            #livestack-demo-region .container,
+            #livestack-demo-region .row {
+                display: flex;
+                align-items: flex-end;
+            }
+            ```
+    }
+    security {
+        formAutoComplete: false
+    }
+    advanced {
+        enableDuplicatePageSubmissions: false
+    }
+
+    region available-overrides (
+        name: Available Overrides
+        title: Available Overrides
+        type: staticContent
+        layout {
+            sequence: 170
+            parentRegion: @livelabs-publishing-info
+            slot: regionBody
+        }
+        appearance {
+            template: @collapsible
+            templateOptions: [
+                #DEFAULT#
+                is-collapsed
+                t-Region--scrollBody
+            ]
+        }
+        headerAndFooter {
+            headerText: "These fields are used to override existing fields in the workshop. If you would like to replace the workshop description with something more customized, this is where you will fill in the overriding data. "
+        }
+    )
+
+    region basic-information (
+        name: Basic Information
+        type: staticContent
+        layout {
+            sequence: 10
+            parentRegion: @tabs
+            slot: tabs
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--accent1
+                t-Region--noBorder
+                t-Region--scrollBody
+                margin-top-md
+            ]
+        }
+    )
+
+    region basic-information-2 (
+        name: Basic Information
+        type: staticContent
+        layout {
+            sequence: 10
+            parentRegion: @basic-sandbox-information
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--accent1
+                t-Region--noBorder
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    region basic-sandbox-information (
+        name: Sandbox Settings
+        type: staticContent
+        layout {
+            sequence: 10
+            parentRegion: @sandbox-environment
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--scrollBody
+                margin-top-md
+            ]
+        }
+        serverSideCondition {
+            type: expression
+            language: sql
+            sqlExpression: :P3203_GREENBUTTON_FLG in ('Y','L','G')
+        }
+    )
+
+    region buttons-2 (
+        name: Buttons
+        type: staticContent
+        layout {
+            sequence: 71
+            slot: contentBody
+        }
+        appearance {
+            template: @buttons-container
+            templateOptions: [
+                #DEFAULT#
+                t-ButtonRegion--noUI
+            ]
+        }
+    )
+
+    region col (
+        name: Col1
+        type: staticContent
+        layout {
+            sequence: 40
+            parentRegion: @basic-information-2
+            slot: regionBody
+            columnCssClasses: equal-height-col
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    region col-2 (
+        name: Col2
+        type: staticContent
+        layout {
+            sequence: 60
+            parentRegion: @basic-information-2
+            slot: regionBody
+            startNewRow: false
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    region green-button-request-steps (
+        name: <strong>LiveLabs Sandbox Request</strong>
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <ol><li>Click the button below to open a Jira Ticket in the LiveLabs Project.</li>
+                <li>Fill out the Summary in the following form: "[Sandbox] WMS ID: (insert WMS ID) LL ID: (insert LiveLabs ID) (insert Title)"</li>
+                <li>Copy and paste everything below the Jira button into the <strong>Description</strong> field of the ticket. </li>
+                <li>Complete the questionnaire in Jira. Do not worry about any other fields. </li>
+                <li>The LiveLabs team will reach out through Jira with any other questions. Be sure to fill out other relevant fields in WMS. </li>
+                </ol>
+                If you would like to update an existing LiveLabs Sandbox, please follow the same steps above, but at the beginning of your description, explain what needs to change about your current sandbox. 
+                ```
+        }
+        layout {
+            sequence: 20
+            parentRegion: @request-a-livelabs-sandbox
+            slot: regionBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--scrollBody
+                margin-top-lg
+            ]
+            renderComponents: belowContent
+        }
+    )
+
+    region images (
+        name: Images
+        type: classicReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select
+                    id,
+                    image_id,
+                    (select listing_id from omp_images where id = image_id) listing_id,
+                    (select listing_name from omp_listings where id = (select listing_id from omp_images where id = image_id)) title,
+                    (select 'Version: ' || version from omp_images where id = image_id) description,
+                    null icon_class,
+                    null actions,
+                    null icon_html,
+                    null item_classes,
+                    null selection,
+                    null misc
+                from wms_ll_images
+                where livelabs_id = :P3203_ID;
+                
+                
+                
+                
+                  
+                ```
+        }
+        layout {
+            sequence: 30
+            parentRegion: @basic-sandbox-information
+            slot: subRegions
+            columnCssClasses: equal-height-col
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--accent1
+                t-Region--scrollBody
+            ]
+        }
+        componentAppearance {
+            template: @content-row
+            templateOptions: [
+                #DEFAULT#
+                t-Report--hideNoPagination
+            ]
+        }
+        messages {
+            whenNoDataFound: No custom images are used in this Sandbox Environment.
+        }
+
+        column ACTIONS (
+            reportColumnQueryId: 7
+            derivedColumn: N
+            type: link
+            heading {
+                heading: Actions
+            }
+            layout {
+                sequence: 50
+            }
+            link {
+                target: {
+                    page: 54
+                    items: {
+                        P54_LIVELABS_ID: &P3203_ID.
+                        P54_IMAGE_ID: #IMAGE_ID#
+                        P54_ID: #ID#
+                    }
+                }
+                linkText: " Edit"
+                linkAttributes: class="fa fa-edit"
+            }
+        )
+
+        column DESCRIPTION (
+            reportColumnQueryId: 5
+            derivedColumn: N
+            heading {
+                heading: Description
+            }
+            layout {
+                sequence: 30
+            }
+        )
+
+        column ICON_CLASS (
+            reportColumnQueryId: 6
+            derivedColumn: N
+            heading {
+                heading: Icon Class
+            }
+            layout {
+                sequence: 40
+            }
+        )
+
+        column ICON_HTML (
+            reportColumnQueryId: 8
+            derivedColumn: N
+            heading {
+                heading: Icon Html
+            }
+            layout {
+                sequence: 60
+            }
+        )
+
+        column ID (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 120
+            }
+        )
+
+        column IMAGE_ID (
+            reportColumnQueryId: 2
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 100
+            }
+        )
+
+        column ITEM_CLASSES (
+            reportColumnQueryId: 9
+            derivedColumn: N
+            heading {
+                heading: Item Classes
+            }
+            layout {
+                sequence: 70
+            }
+        )
+
+        column LISTING_ID (
+            reportColumnQueryId: 3
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 110
+            }
+        )
+
+        column MISC (
+            reportColumnQueryId: 11
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 90
+            }
+        )
+
+        column SELECTION (
+            reportColumnQueryId: 10
+            derivedColumn: N
+            heading {
+                heading: Selection
+            }
+            layout {
+                sequence: 80
+            }
+        )
+
+        column TITLE (
+            reportColumnQueryId: 4
+            derivedColumn: N
+            type: link
+            heading {
+                heading: Title
+            }
+            layout {
+                sequence: 20
+            }
+            link {
+                target: {
+                    page: 39
+                    items: {
+                        P39_ID: #LISTING_ID#
+                    }
+                }
+                linkText: #TITLE#
+            }
+        )
+
+    )
+
+    region livelabs-publishing-info (
+        name: LiveLabs Publishing Info
+        type: form
+        source {
+            location: localDatabase
+            tableName: WORKSHOP_LL
+        }
+        layout {
+            sequence: 10
+            parentRegion: @basic-information
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--noBorder
+                t-Region--scrollBody
+                margin-top-md
+            ]
+        }
+        readOnly {
+            type: item!=value
+            item: P3203_CAN_EDIT
+            value: TRUE
+        }
+        edit {
+            enabled: true
+            allowedOperations: [
+                add
+                update
+            ]
+        }
+    )
+
+    region livestack (
+        name: LiveStack Demo Setup
+        title: LiveStack Demo Setup
+        type: staticContent
+        layout {
+            sequence: 130
+            parentRegion: @livelabs-publishing-info
+            slot: regionBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--accent1
+                t-Region--scrollBody
+                margin-top-md
+            ]
+        }
+        headerAndFooter {
+            headerText: For externally hosted LiveStack Demos, provide the URL. Otherwise, upload the zip file directly.
+        }
+        serverSideCondition {
+            type: expression
+            language: sql
+            sqlExpression:
+                ```sql
+                not exists (
+                    select 1
+                      from workshop_ll
+                     where id = :P3203_ID
+                       and livestack_demo_url is not null
+                )
+                ```
+        }
+    )
+
+    region publishing (
+        name: Publishing
+        title: Publishing Settings
+        type: staticContent
+        layout {
+            sequence: 115
+            parentRegion: @livelabs-publishing-info
+            slot: regionBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--accent1
+                t-Region--scrollBody
+                margin-top-lg
+            ]
+        }
+    )
+
+    region request-a-livelabs-sandbox (
+        name: Request a LiveLabs Sandbox
+        type: staticContent
+        source {
+            htmlCode: We offer two options to create a "Run on LiveLabs Sandbox" button. A Sandbox Lite provides users the <strong>ability</strong> to provision certain resources by themselves, but it happens automatically and will be ready within 1 business day! A regular "Run on LiveLabs Sandbox" button can provision resources for the user but can take 1-3 weeks to develop depending on the workshop's complexity.
+        }
+        layout {
+            sequence: 20
+            parentRegion: @sandbox-environment
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+                margin-top-md
+            ]
+            renderComponents: belowContent
+        }
+        serverSideCondition {
+            type: expression
+            plsqlExpression: :P3203_GREENBUTTON_FLG is null or :P3203_GREENBUTTON_FLG not in ('Y','L','G')
+        }
+    )
+
+    region sandbox-environment (
+        name: Sandbox Environment
+        type: staticContent
+        layout {
+            sequence: 20
+            parentRegion: @tabs
+            slot: tabs
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P3203_ID
+        }
+    )
+
+    region select-a-sandbox-type (
+        name: Select a Sandbox Type
+        type: staticContent
+        layout {
+            sequence: 10
+            parentRegion: @request-a-livelabs-sandbox
+            slot: regionBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    region strong-livelabs-sandbox-span-style-color-green-em-lite-em-span-strong (
+        name: <strong>LiveLabs Sandbox <span style="color:green;"><em>Lite</em> </span> Request</strong>
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                A Sandbox Lite is a quick an easy way to create a Sandbox for your workshop. Instead of provisioning actual resources for the lab, a Sandbox Lite will spin up an environment in one of the LiveLabs tenancies with policies and quotas that will allow the USER to provision resources. <br><br>
+                For the options below, specify if you would like the USER of your workshop to be able to spin up one of the noted resources. This DOES NOT CREATE any resources on the users behalf. This merely allows the user to create it themselves (with the exception of the VCN option, that option -- if checked -- will automatically provision a VCN for the user).
+                <br>
+                ```
+        }
+        layout {
+            sequence: 30
+            parentRegion: @request-a-livelabs-sandbox
+            slot: regionBody
+            startNewRow: false
+            newColumn: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+                margin-top-md
+            ]
+            renderComponents: belowContent
+        }
+    )
+
+    region tabs (
+        name: Tabs
+        type: staticContent
+        layout {
+            sequence: 81
+            slot: contentBody
+        }
+        appearance {
+            template: @tabs-container
+            templateOptions: [
+                #DEFAULT#
+                js-useLocalStorage
+                t-TabsRegion-mod--simple
+            ]
+        }
+    )
+
+    pageItem P3203_ADW (
+        type: checkbox
+        label {
+            label: <strong>ADW</strong>
+            alignment: left
+        }
+        layout {
+            sequence: 40
+            region: @strong-livelabs-sandbox-span-style-color-green-em-lite-em-span-strong
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: [
+                #DEFAULT#
+                margin-top-md
+            ]
+        }
+        sessionState {
+            storage: request
+        }
+    )
+
+    pageItem P3203_ADW_OCPU (
+        type: selectList
+        label {
+            label: ECPU
+            alignment: left
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC:1;1,2;2,3;3,4;4
+        }
+        layout {
+            sequence: 50
+            region: @strong-livelabs-sandbox-span-style-color-green-em-lite-em-span-strong
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: [
+                #DEFAULT#
+                margin-top-md
+            ]
+            height: 1
+        }
+        sessionState {
+            storage: request
+        }
+    )
+
+    pageItem P3203_ADW_TB (
+        type: selectList
+        label {
+            label: Storage (TB)
+            alignment: left
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC:1;1,2;2,3;3,4;4
+        }
+        layout {
+            sequence: 60
+            region: @strong-livelabs-sandbox-span-style-color-green-em-lite-em-span-strong
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: [
+                #DEFAULT#
+                margin-top-md
+            ]
+            height: 1
+        }
+        sessionState {
+            storage: request
+        }
+    )
+
+    pageItem P3203_AJD (
+        type: checkbox
+        label {
+            label: <strong>AJD</strong>
+            alignment: left
+        }
+        layout {
+            sequence: 100
+            region: @strong-livelabs-sandbox-span-style-color-green-em-lite-em-span-strong
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        sessionState {
+            storage: request
+        }
+    )
+
+    pageItem P3203_AJD_OCPU (
+        type: selectList
+        label {
+            label: ECPU
+            alignment: left
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC:1;1,2;2,3;3,4;4
+        }
+        layout {
+            sequence: 110
+            region: @strong-livelabs-sandbox-span-style-color-green-em-lite-em-span-strong
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        sessionState {
+            storage: request
+        }
+    )
+
+    pageItem P3203_AJD_TB (
+        type: selectList
+        label {
+            label: Storage (TB)
+            alignment: left
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC:1;1,2;2,3;3,4;4
+        }
+        layout {
+            sequence: 120
+            region: @strong-livelabs-sandbox-span-style-color-green-em-lite-em-span-strong
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        sessionState {
+            storage: request
+        }
+    )
+
+    pageItem P3203_ATP (
+        type: checkbox
+        label {
+            label: <strong>ATP</strong>
+            alignment: left
+        }
+        layout {
+            sequence: 70
+            region: @strong-livelabs-sandbox-span-style-color-green-em-lite-em-span-strong
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        sessionState {
+            storage: request
+        }
+    )
+
+    pageItem P3203_ATP_OCPU (
+        type: selectList
+        label {
+            label: ECPU
+            alignment: left
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC:1;1,2;2,3;3,4;4
+        }
+        layout {
+            sequence: 80
+            region: @strong-livelabs-sandbox-span-style-color-green-em-lite-em-span-strong
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        sessionState {
+            storage: request
+        }
+    )
+
+    pageItem P3203_ATP_TB (
+        type: selectList
+        label {
+            label: Storage (TB)
+            alignment: left
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC:1;1,2;2,3;3,4;4
+        }
+        layout {
+            sequence: 90
+            region: @strong-livelabs-sandbox-span-style-color-green-em-lite-em-span-strong
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        sessionState {
+            storage: request
+        }
+    )
+
+    pageItem P3203_CAN_EDIT (
+        type: hidden
+        layout {
+            sequence: 21
+            slot: contentBody
+        }
+    )
+
+    pageItem P3203_CI_OCPU (
+        type: selectList
+        label {
+            label: OCPU
+            alignment: left
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC:1;1,2;2,3;3,4;4
+        }
+        layout {
+            sequence: 140
+            region: @strong-livelabs-sandbox-span-style-color-green-em-lite-em-span-strong
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        sessionState {
+            storage: request
+        }
+    )
+
+    pageItem P3203_COMP_INST (
+        type: selectList
+        label {
+            label: Compute Instance
+            alignment: left
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC:Standard E5 Flex;Y
+        }
+        layout {
+            sequence: 130
+            region: @strong-livelabs-sandbox-span-style-color-green-em-lite-em-span-strong
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        sessionState {
+            storage: request
+        }
+    )
+
+    pageItem P3203_DESC_LONG_OVERRIDE (
+        type: textarea
+        label {
+            label: Long Description
+            alignment: left
+        }
+        layout {
+            sequence: 300
+            region: @available-overrides
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+            width: 30
+            height: 5
+        }
+        validation {
+            maxLength: 4000
+        }
+        source {
+            formRegion: @livelabs-publishing-info
+            column: DESC_LONG_OVERRIDE
+            dataType: varchar2
+        }
+    )
+
+    pageItem P3203_DESC_OUTLINE_OVERRIDE (
+        type: richTextEditor
+        label {
+            label: Outline
+            alignment: left
+        }
+        settings {
+            format: html
+            toolbar: basic
+            minHeight: 180
+            allowCustomHtml: true
+        }
+        layout {
+            sequence: 310
+            region: @available-overrides
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+        }
+        source {
+            formRegion: @livelabs-publishing-info
+            column: DESC_OUTLINE_OVERRIDE
+            dataType: varchar2
+        }
+    )
+
+    pageItem P3203_DESC_PREREQ_OVERRIDE (
+        type: richTextEditor
+        label {
+            label: User Prerequisites
+            alignment: left
+        }
+        settings {
+            format: html
+            toolbar: basic
+            minHeight: 180
+            allowCustomHtml: true
+        }
+        layout {
+            sequence: 320
+            region: @available-overrides
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+        }
+        source {
+            formRegion: @livelabs-publishing-info
+            column: DESC_PREREQ_OVERRIDE
+            dataType: varchar2
+        }
+    )
+
+    pageItem P3203_DESC_SHORT_OVERRIDE (
+        type: textarea
+        label {
+            label: Short Description
+            alignment: left
+        }
+        layout {
+            sequence: 290
+            region: @available-overrides
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+            width: 30
+            height: 5
+        }
+        validation {
+            maxLength: 4000
+        }
+        source {
+            formRegion: @livelabs-publishing-info
+            column: DESC_SHORT_OVERRIDE
+            dataType: varchar2
+        }
+    )
+
+    pageItem P3203_DESKTOPAPP1_URL (
+        type: textField
+        label {
+            label: Desktop App 1 Link
+            alignment: left
+        }
+        settings {
+            subtype: url
+        }
+        layout {
+            sequence: 30
+            region: @col-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            width: 150
+        }
+        validation {
+            maxLength: 250
+        }
+        source {
+            formRegion: @livelabs-publishing-info
+            column: DESKTOPAPP1_URL
+            dataType: varchar2
+        }
+    )
+
+    pageItem P3203_DESKTOPAPP2_URL (
+        type: textField
+        label {
+            label: Desktop App 2 Link
+            alignment: left
+        }
+        settings {
+            subtype: url
+        }
+        layout {
+            sequence: 40
+            region: @col-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            width: 150
+        }
+        validation {
+            maxLength: 250
+        }
+        source {
+            formRegion: @livelabs-publishing-info
+            column: DESKTOPAPP2_URL
+            dataType: varchar2
+        }
+    )
+
+    pageItem P3203_DESKTOPGUIDE_URL (
+        type: textField
+        label {
+            label: Remote Desktop Guide
+            alignment: left
+        }
+        layout {
+            sequence: 10
+            region: @col-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+            width: 130
+        }
+        source {
+            formRegion: @livelabs-publishing-info
+            column: DESKTOPGUIDE_URL
+            dataType: varchar2
+        }
+    )
+
+    pageItem P3203_FEATURED_FLG (
+        type: switch
+        label {
+            label: Featured?
+            alignment: left
+        }
+        layout {
+            sequence: 50
+            region: @publishing
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 4
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @livelabs-publishing-info
+            column: FEATURED_FLG
+            dataType: varchar2
+        }
+        serverSideCondition {
+            type: expression
+            language: sql
+            sqlExpression: :P3203_TYPE_ID_SELECTION = (select id from wms_ll_types where name = 'Workshop')
+        }
+        security {
+            authorizationScheme: @administration-rights
+        }
+    )
+
+    pageItem P3203_GITHUB_OVERRIDE_FLG (
+        type: switch
+        label {
+            label: Override CDN URLs with Github Pages URLs?
+            alignment: left
+        }
+        layout {
+            sequence: 190
+            region: @publishing
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 8
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @livelabs-publishing-info
+            column: GITHUB_OVERRIDE_FLG
+            dataType: varchar2
+        }
+        security {
+            authorizationScheme: @administration-rights
+        }
+        help {
+            helpText: "ADMIN ONLY - LiveLabs now uses CDN links by default unless there's an emergency and the Github Pages link is needed instead. "
+        }
+    )
+
+    pageItem P3203_GREENBUTTON_FLG (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 10
+            region: @basic-information
+            slot: regionBody
+        }
+        source {
+            formRegion: @livelabs-publishing-info
+            column: GREENBUTTON_FLG
+            dataType: varchar2
+        }
+        help {
+            helpText: "Enabling this switch does not mean that your workshop will have a Green Button in LiveLabs automatically. In order to create a Green Button, please view the section below title 'Green Button Questionnaire'. After completing that section, make sure to email livelabs-help-db_us@oracle.com to get started with your Green Button. "
+        }
+    )
+
+    pageItem P3203_GREENBUTTON_INFO (
+        type: richTextEditor
+        label {
+            alignment: left
+        }
+        settings {
+            format: html
+            minHeight: 180
+        }
+        layout {
+            sequence: 20
+            region: @green-button-request-steps
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                margin-top-none
+            ]
+        }
+        default {
+            type: static
+            staticValue:
+                ```
+                Please fill out our Sandbox Questionnaire to determine if this workshop can be run on a registered LiveLabs Tenancy.<br><br>
+                
+                <b>NOTE: Not all resources in OCI are supported by LiveLabs. If the LiveLabs team encounters such a resource in your request, we will reach out to determine if there is another option.</b>
+                
+                
+                <b><u>BASIC QUESTIONS</u></b>
+                <ol>
+                <li>Does your sandbox require access to Cloud Shell?
+                    <ul>
+                    <li>Yes or No</li>
+                    </ul></li>
+                <li>Does your sandbox require a VCN? (LiveLabs can provision a VCN as a part of the reservation setup with our standard Security List)
+                    <ul>
+                    <li>Yes or No</li>
+                    </ul></li>
+                <li>If yes, please list the ports that must be opened for the function of your workshop:
+                    <ul>
+                    <li>Example: 129.146.0.0/21 port 22</li>
+                    <li></li>
+                    </ul></li>
+                <li>List all resources that need to be provisioned by LiveLabs for your workshop (do not list any resources that the user will spin up):
+                    <ul>
+                    <li>Example: OKE Cluster - 1 Node</li>
+                    <li></li>
+                    </ul></li>
+                <li>List all resources that the user will provision while running the workshop (do not list any resources provisioned by LiveLabs):
+                    <ul>
+                    <li>Example: ADW - 1 ECPU</li>
+                    <li>Example: ADW - 1 TB</li>
+                    <li></li>
+                    </ul></li>
+                <li>Does your sandbox require a terraform script?
+                    <ul>
+                    <li><b>If yes,</b> please attend LiveLabs Office Hours to determine how best to proceed with the creation of your sandbox</li>
+                    </ul></li>
+                </ol>
+                
+                <b><u>POLICIES</u><br></b>
+                Please list all of the policies that users will need to complete your workshop. This should include access to the resources provisioned by LiveLabs as well as the resources that the users need to create/edit/delete.<br>
+                <ul>
+                <li>Example: Allow user to manage autonomous-database-family</li>
+                <li></li>
+                </ul>
+                
+                <b><u>IMAGE AND MARKETPLACE QUESTIONS</u></b>
+                <ol>
+                <li>Does your sandbox require the use of an image from OCI Marketplace?
+                    <ul>
+                    <li>Yes or No</li>
+                    </ul></li>
+                <li>Does your require image already exist and is used by another LiveLabs Sandbox?
+                    <ul>
+                    <li><b>If yes,</b> please provide the WMS and LiveLabs ID for the workshop:
+                        <ul>
+                        <li>WMS ID:</li>
+                        <li>LiveLabs ID:</li>
+                        </ul>
+                        </li>
+                    <li><b>If no,</b> you will need to create a Marketplace Image and Listing for your sandbox. Please attend LiveLabs Office Hours for assistance with this. After creating your image, please provide the following:
+                        <ul>
+                        <li>Marketplace App Listing OCID:</li>
+                        <li>Marketplace Image OCID:</li>
+                        <li>Marketplace Listing Resource Version: </li>
+                        </ul>
+                        </li>
+                    </ul>
+                </li>
+                </ol>
+                
+                <b><u>ADDITIONAL INFORMATION</u></b><br>
+                Please provide any addition information to the LiveLabs team that is pertinent to your sandbox that you haven't detailed above:
+                <ul><li></li></ul>
+                
+                --------------------------------NOTES FROM LIVELABS ADMIN--------------------------------<br>(For Official Use Only)<br>
+                ```
+        }
+        readOnly {
+            type: always
+        }
+    )
+
+    pageItem P3203_GREENBUTTON_URL (
+        type: textField
+        label {
+            label: Run on Sandbox Guide
+            alignment: left
+        }
+        settings {
+            subtype: url
+        }
+        layout {
+            sequence: 20
+            region: @col
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+            width: 130
+        }
+        validation {
+            maxLength: 250
+        }
+        source {
+            formRegion: @livelabs-publishing-info
+            column: GREENBUTTON_URL
+            dataType: varchar2
+        }
+        help {
+            helpText: "Provide the workshop instruction's URL in this field. Note: this should be an oracle-livelabs.github.io link. Do not use your personal repo's link. "
+        }
+    )
+
+    pageItem P3203_GREENBUTTON_URL_1 (
+        type: textField
+        label {
+            label: Run on LiveLabs Sandbox URL
+            alignment: left
+        }
+        settings {
+            subtype: url
+        }
+        layout {
+            sequence: 10
+            region: @select-a-sandbox-type
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required-above
+            templateOptions: #DEFAULT#
+            width: 150
+        }
+        validation {
+            maxLength: 250
+        }
+        source {
+            formRegion: @livelabs-publishing-info
+            column: GREENBUTTON_URL
+            dataType: varchar2
+        }
+        help {
+            helpText: "Provide the workshop instruction's URL in this field. Note: this should be an oracle-livelabs.github.io link. Do not use your personal repo's link. "
+        }
+    )
+
+    pageItem P3203_ID (
+        type: hidden
+        layout {
+            sequence: 20
+            region: @livelabs-publishing-info
+            slot: regionBody
+        }
+        source {
+            formRegion: @livelabs-publishing-info
+            column: ID
+            dataType: number
+            primaryKey: true
+        }
+        sessionState {
+            storage: session
+        }
+        security {
+            sessionStateProtection: checksumRequiredSessionLevel
+        }
+    )
+
+    pageItem P3203_ID_SHOW (
+        type: displayOnly
+        label {
+            label: LiveLabs ID
+            alignment: left
+        }
+        settings {
+            sendOnPageSubmit: false
+        }
+        layout {
+            sequence: 80
+            region: @livelabs-publishing-info
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P3203_IS_UPDATED (
+        type: switch
+        label {
+            label: Is this a major workshop update?
+            alignment: left
+        }
+        layout {
+            sequence: 180
+            region: @publishing
+            slot: regionBody
+            alignment: left
+            columnSpan: 4
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        source {
+            type: staticValue
+            staticValue: N
+        }
+        sessionState {
+            storage: request
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P3203_ID
+        }
+        security {
+            authorizationScheme: @administration-rights
+        }
+    )
+
+    pageItem P3203_LIVESQL_FLG (
+        type: switch
+        label {
+            label: "Run on LiveSQL Enabled? "
+            alignment: left
+        }
+        layout {
+            sequence: 140
+            region: @publishing
+            slot: regionBody
+            alignment: left
+            columnSpan: 4
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+        }
+        source {
+            formRegion: @livelabs-publishing-info
+            column: LIVESQL_FLG
+            dataType: varchar2
+        }
+        help {
+            helpText: "This enables the \"Run on LiveSQL\" button in LiveLabs that will link the user out to a LiveSQL page. Please only use in tandem with a valid LiveSQL link.  "
+        }
+    )
+
+    pageItem P3203_LIVESQL_URL (
+        type: textField
+        label {
+            label: Run on LiveSQL URL
+            alignment: left
+        }
+        settings {
+            subtype: url
+        }
+        layout {
+            sequence: 150
+            region: @publishing
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 8
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+            width: 100
+        }
+        validation {
+            maxLength: 1000
+        }
+        source {
+            formRegion: @livelabs-publishing-info
+            column: LIVESQL_URL
+            dataType: varchar2
+        }
+    )
+
+    pageItem P3203_LIVESTACK_ASSET_ID (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 60
+            region: @livelabs-publishing-info
+            slot: regionBody
+        }
+        source {
+            type: sqlQueryMultipleValues
+            sqlQuery:
+                ```sql
+                select id
+                  from wms_assets
+                 where link = (select livestack_demo_url
+                                 from workshop_ll
+                                where id = :P3203_ID)
+                   and rownum = 1
+                ```
+        }
+        default {
+            type: sqlQuerySingleValue
+            sqlQuerySingleValue:
+                ```sql
+                select id
+                  from wms_assets
+                 where link = (select livestack_demo_url
+                                 from workshop_ll
+                                where id = :P3203_ID)
+                   and rownum = 1
+                ```
+        }
+    )
+
+    pageItem P3203_LIVESTACK_DEMO_URL (
+        type: textField
+        label {
+            label: LiveStack Demo URL
+            alignment: left
+        }
+        layout {
+            sequence: 10
+            region: @livestack
+            slot: regionBody
+            alignment: left
+            columnSpan: 12
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+            width: 100
+        }
+        validation {
+            maxLength: 1000
+        }
+        source {
+            formRegion: @livelabs-publishing-info
+            column: LIVESTACK_DEMO_URL
+            dataType: varchar2
+        }
+        help {
+            helpText: If you already have a hosted LiveStack demo URL, enter it here. If you upload a zip file instead, this field will be populated with the generated PAR link after save.
+        }
+    )
+
+    pageItem P3203_LIVESTACK_DEMO_URL_2 (
+        type: textField
+        label {
+            label: LiveStack Demo Link
+            alignment: left
+        }
+        layout {
+            sequence: 30
+            region: @col
+            slot: regionBody
+            alignment: left
+            columnSpan: 12
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+            width: 100
+        }
+        validation {
+            maxLength: 1000
+        }
+        source {
+            formRegion: @livelabs-publishing-info
+            column: LIVESTACK_DEMO_URL
+            dataType: varchar2
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P3203_LIVESTACK_DEMO_URL
+        }
+        help {
+            helpText: If you already have a hosted LiveStack demo URL, enter it here. If you upload a zip file instead, this field will be populated with the generated PAR link after save.
+        }
+    )
+
+    pageItem P3203_LIVESTACK_INSTRUCTIONS_URL (
+        type: textField
+        label {
+            label: LiveStack Instructions URL
+            alignment: left
+        }
+        settings {
+            subtype: url
+        }
+        layout {
+            sequence: 60
+            region: @livestack
+            slot: regionBody
+            alignment: left
+            columnSpan: 12
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+            width: 100
+        }
+        validation {
+            maxLength: 250
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery:
+                ```sql
+                select greenbutton_url
+                  from workshop_ll
+                 where id = :P3203_ID
+                ```
+        }
+        help {
+            helpText: Provide the LiveLabs instructions URL for this LiveStack Demo.
+        }
+    )
+
+    pageItem P3203_LIVESTACK_SOURCE (
+        type: radioGroup
+        label {
+            label: Demo Source
+            alignment: left
+        }
+        settings {
+            noOfCols: 2
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC:Use a URL;URL,Upload a zip file;ZIP
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 5
+            region: @livestack
+            slot: regionBody
+            alignment: left
+            columnSpan: 12
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--radioButtonGroup
+            ]
+        }
+        validation {
+            valueRequired: true
+        }
+        default {
+            type: static
+            staticValue: URL
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P3203_LIVE_STACK_ASSET (
+        type: popupLov
+        label {
+            label: Existing Asset
+            alignment: left
+        }
+        lov {
+            type: sharedComponent
+            lov: @assets
+        }
+        layout {
+            sequence: 40
+            region: @livestack
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 5
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+            width: 30
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    pageItem P3203_LIVE_STACK_ZIP (
+        type: fileUpload
+        label {
+            label: Upload Zip File
+            alignment: left
+        }
+        storage {
+            type: appTempFiles
+            purgeFileAt: endOfRequest
+        }
+        layout {
+            sequence: 50
+            region: @livestack
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 5
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            width: 130
+        }
+        help {
+            helpText: Upload a zip file only if you need WMS to host the LiveStack demo file for you.
+        }
+    )
+
+    pageItem P3203_OCS (
+        type: checkbox
+        label {
+            label: <strong>This workshop requires Oracle Cloud Shell access.</strong>
+            alignment: left
+        }
+        layout {
+            sequence: 160
+            region: @strong-livelabs-sandbox-span-style-color-green-em-lite-em-span-strong
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        sessionState {
+            storage: request
+        }
+    )
+
+    pageItem P3203_ORIGIN (
+        type: hidden
+        layout {
+            sequence: 101
+            slot: contentBody
+        }
+        default {
+            type: static
+            staticValue: 320
+        }
+    )
+
+    pageItem P3203_PAID_FLG (
+        type: switch
+        label {
+            label: "Run on your Tenancy Enabled? "
+            alignment: left
+        }
+        layout {
+            sequence: 120
+            region: @publishing
+            slot: regionBody
+            alignment: left
+            columnSpan: 4
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+        }
+        source {
+            formRegion: @livelabs-publishing-info
+            column: PAID_FLG
+            dataType: varchar2
+        }
+        help {
+            helpText: "This enabled the \"Run on Your Tenancy\" button in LiveLabs that is intended to walk the user through the steps to complete this workshop in their own tenancy. "
+        }
+    )
+
+    pageItem P3203_PAID_URL (
+        type: textField
+        label {
+            label: Run on your Tenancy URL
+            alignment: left
+        }
+        settings {
+            subtype: url
+        }
+        layout {
+            sequence: 130
+            region: @publishing
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 8
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+            width: 100
+        }
+        validation {
+            maxLength: 250
+        }
+        source {
+            formRegion: @livelabs-publishing-info
+            column: PAID_URL
+            dataType: varchar2
+        }
+    )
+
+    pageItem P3203_PREEXISTING_ASSET_FLG (
+        type: switch
+        label {
+            label: Use Existing Asset
+            alignment: left
+        }
+        layout {
+            sequence: 30
+            region: @livestack
+            slot: regionBody
+            alignment: left
+            columnSpan: 2
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    pageItem P3203_PRODUCTION_URL (
+        type: hidden
+        layout {
+            sequence: 30
+            region: @livelabs-publishing-info
+            slot: regionBody
+        }
+        source {
+            formRegion: @livelabs-publishing-info
+            column: PRODUCTION_URL
+            dataType: varchar2
+        }
+    )
+
+    pageItem P3203_PUBLISH_STATUS (
+        type: selectList
+        label {
+            label: Publish Status
+            alignment: left
+        }
+        lov {
+            type: sharedComponent
+            lov: @publish-status
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 30
+            region: @publishing
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 4
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            formRegion: @livelabs-publishing-info
+            column: PUBLISH_STATUS
+            dataType: varchar2
+        }
+        default {
+            type: static
+            staticValue: Publish Requested
+        }
+        serverSideCondition {
+            type: expression
+            plsqlExpression: :P3203_ID is not null and :WORKSHOP_ROLE = 'PUBLISHER'
+        }
+        help {
+            helpText:
+                ```html
+                <strong>Publish Requested</strong> - Initial state. Also used to signify requested changes have been implemented<br>
+                <strong>Publish Approved</strong> - The workshop has been approved and will be moved to production within 24 hours (LiveLabs Only)<br>
+                <strong>Changes Requested</strong> - The Publishing team will be in contact to request changes to the workshop before publishing<br>
+                <strong>Green Button Requested</strong> - The Publishing team will be in contact to discuss your green button request<br>
+                <strong>Published</strong> - The workshop has been published and is available as specified by the Publish Type<br>
+                <strong>Delete Requested</strong> - The workshop should be deleted from LiveLabs. The LiveLabs Team will manually handle this request. 
+                ```
+        }
+    )
+
+    pageItem P3203_PUBLISH_TYPE (
+        type: selectList
+        label {
+            label: Publish Type
+            alignment: left
+        }
+        lov {
+            type: sharedComponent
+            lov: @publish-type
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 40
+            region: @publishing
+            slot: regionBody
+            alignment: left
+            columnSpan: 4
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            formRegion: @livelabs-publishing-info
+            column: PUBLISH_TYPE
+            dataType: varchar2
+        }
+        help {
+            helpText:
+                ```html
+                <strong>Public</strong> - Available to the public through search and links<br>
+                <strong>Event</strong> - Available only through events (LiveLabs only)<br>
+                <strong>Private</strong> - Available only through links<br>
+                <strong>Disabled</strong> - Unavailable to anyone except platform administrators
+                ```
+        }
+    )
+
+    pageItem P3203_RUN_ON_FREESQL (
+        type: hidden
+        layout {
+            sequence: 51
+            slot: contentBody
+        }
+        default {
+            type: sqlQuerySingleValue
+            sqlQuerySingleValue: select livesql_flg from workshop_ll where id = :P3203_ID;
+        }
+    )
+
+    pageItem P3203_RUN_ON_SANDBOX (
+        type: hidden
+        layout {
+            sequence: 41
+            slot: contentBody
+        }
+        default {
+            type: sqlQuerySingleValue
+            sqlQuerySingleValue: select greenbutton_flg from workshop_ll where id = :P3203_ID;
+        }
+    )
+
+    pageItem P3203_RUN_ON_TENANCY (
+        type: hidden
+        layout {
+            sequence: 31
+            slot: contentBody
+        }
+        default {
+            type: sqlQuerySingleValue
+            sqlQuerySingleValue: select paid_flg from workshop_ll where id = :P3203_ID;
+        }
+    )
+
+    pageItem P3203_SPRINT_FLG (
+        type: switch
+        label {
+            label: LiveLabs Sprint Enabled?
+            alignment: left
+        }
+        layout {
+            sequence: 160
+            region: @publishing
+            slot: regionBody
+            alignment: left
+            columnSpan: 4
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @livelabs-publishing-info
+            column: SPRINT_FLG
+            dataType: varchar2
+        }
+        help {
+            helpText: "LiveLabs Sprints are a new kind of workshop in LiveLabs. They aim to answer a single question like \"How do you download an ADB wallet from the command line?\" If you aren't sure whether or not your workshop is a sprint, it most likely is not. "
+        }
+    )
+
+    pageItem P3203_SPRINT_URL (
+        type: textField
+        label {
+            label: Sprint URL
+            alignment: left
+        }
+        settings {
+            subtype: url
+        }
+        layout {
+            sequence: 170
+            region: @publishing
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 8
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+            width: 100
+        }
+        validation {
+            maxLength: 250
+        }
+        source {
+            formRegion: @livelabs-publishing-info
+            column: SPRINT_URL
+            dataType: varchar2
+        }
+    )
+
+    pageItem P3203_STATUS (
+        type: displayOnly
+        label {
+            label: Status
+            alignment: left
+        }
+        layout {
+            sequence: 20
+            region: @basic-information-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery:
+                ```sql
+                select
+                    case when (select greenbutton_flg from workshop_ll where id = :P3203_ID) in ('G', 'Y')
+                    then 'Active'
+                    else 'Inactive'
+                    end case
+                from dual;
+                ```
+        }
+    )
+
+    pageItem P3203_TITLE_OVERRIDE (
+        type: textField
+        label {
+            label: Title
+            alignment: left
+        }
+        layout {
+            sequence: 280
+            region: @available-overrides
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+                margin-top-md
+            ]
+            width: 30
+        }
+        validation {
+            maxLength: 200
+        }
+        source {
+            formRegion: @livelabs-publishing-info
+            column: TITLE_OVERRIDE
+            dataType: varchar2
+        }
+    )
+
+    pageItem P3203_TYPE_ID (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 20
+            region: @publishing
+            slot: regionBody
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            formRegion: @livelabs-publishing-info
+            column: TYPE_ID
+            dataType: number
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P3203_TYPE_ID_SELECTION (
+        type: selectList
+        label {
+            label: LiveLab Type
+            alignment: left
+        }
+        lov {
+            type: sharedComponent
+            lov: @livelab-types
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 10
+            region: @publishing
+            slot: regionBody
+            alignment: left
+            columnSpan: 4
+        }
+        appearance {
+            template: @required-above
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        validation {
+            valueRequired: true
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            formRegion: @livelabs-publishing-info
+            column: TYPE_ID
+            dataType: number
+        }
+        default {
+            type: sqlQuerySingleValue
+            sqlQuerySingleValue: select id from wms_ll_types where name = 'Workshop'
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P3203_UPDATED_PUBLISH_FLG (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 50
+            region: @livelabs-publishing-info
+            slot: regionBody
+        }
+        source {
+            formRegion: @livelabs-publishing-info
+            column: UPDATED_PUBLISH_FLG
+            dataType: number
+        }
+    )
+
+    pageItem P3203_VCN (
+        type: checkbox
+        label {
+            label: <strong>This workshop requires a VCN.</strong>
+            alignment: left
+        }
+        layout {
+            sequence: 150
+            region: @strong-livelabs-sandbox-span-style-color-green-em-lite-em-span-strong
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        sessionState {
+            storage: request
+        }
+    )
+
+    pageItem P3203_VIEW_STATUS (
+        type: displayOnly
+        label {
+            label: Current Publish Status
+            alignment: left
+        }
+        settings {
+            sendOnPageSubmit: false
+        }
+        lov {
+            type: sharedComponent
+            lov: @publish-status
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 20
+            region: @publishing
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 4
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        default {
+            type: expression
+            plsqlExpression: case when :P3203_PUBLISH_STATUS is null then 'Publish Requested' else :P3203_PUBLISH_STATUS end
+        }
+        help {
+            helpText:
+                ```html
+                <strong>Publish Requested</strong> - Initial state. Also used to signify requested changes have been implemented<br>
+                <strong>Publish Approved</strong> - The workshop has been approved and will be moved to production within 24 hours (LiveLabs Only)<br>
+                <strong>Changes Requested</strong> - The Publishing team will be in contact to request changes to the workshop before publishing<br>
+                <strong>Published</strong> - The workshop has been published and is available as specified by the Publish Type<br>
+                <strong>Delete Requested</strong> - The workshop should be deleted from LiveLabs. The LiveLabs Team will manually handle this request. 
+                ```
+        }
+    )
+
+    pageItem P3203_WORKSHOP_ID (
+        type: hidden
+        layout {
+            sequence: 11
+            slot: contentBody
+        }
+    )
+
+    pageItem P3203_WORKSHOP_ID_FORM (
+        type: displayOnly
+        label {
+            label: WMS ID
+            alignment: left
+        }
+        layout {
+            sequence: 90
+            region: @livelabs-publishing-info
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @livelabs-publishing-info
+            column: WORKSHOP_ID
+            dataType: number
+        }
+        default {
+            type: item
+            item: P3203_WORKSHOP_ID
+        }
+        security {
+            sessionStateProtection: checksumRequiredSessionLevel
+        }
+    )
+
+    pageItem P3203_WORKSHOP_TIME (
+        type: numberField
+        label {
+            label: Estimated Completion Time (mins)
+            alignment: left
+        }
+        settings {
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 60
+            region: @publishing
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required-above
+            templateOptions: #DEFAULT#
+            width: 8
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            formRegion: @livelabs-publishing-info
+            column: WORKSHOP_TIME
+            dataType: number
+        }
+    )
+
+    pageItem P3203_YOUTUBE_LINK (
+        type: textField
+        label {
+            label: Video URL
+            alignment: left
+        }
+        settings {
+            subtype: url
+        }
+        layout {
+            sequence: 70
+            region: @publishing
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            column: 5
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            maxLength: 250
+        }
+        source {
+            formRegion: @livelabs-publishing-info
+            column: YOUTUBE_LINK
+            dataType: varchar2
+        }
+    )
+
+    pageItem URL_ERROR (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 1
+            slot: contentBody
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button cancel (
+        buttonName: Cancel
+        label: Cancel
+        layout {
+            sequence: 80
+            region: @buttons-2
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 320
+                items: {
+                    P320_ID: &P3203_WORKSHOP_ID.
+                }
+            }
+        }
+    )
+
+    button cancel-green-button (
+        buttonName: Cancel_Green_Button
+        label: Cancel LiveLabs Sandbox
+        layout {
+            sequence: 40
+            region: @select-a-sandbox-type
+            slot: regionBody
+            startNewRow: false
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: [
+                #DEFAULT#
+                t-Button--large
+                t-Button--danger
+                t-Button--stretch
+                t-Button--gapBottom
+            ]
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button connect-image (
+        buttonName: Connect-Image
+        label: Connect Image
+        layout {
+            sequence: 10
+            region: @images
+            slot: create
+        }
+        appearance {
+            buttonTemplate: @icon
+            hot: true
+            templateOptions: #DEFAULT#
+            icon: fa-plus-square-o
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 40
+                items: {
+                    P40_LIVELABS_ID: &P3203_ID.
+                }
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+        security {
+            authorizationScheme: @administration-rights
+        }
+    )
+
+    button create (
+        buttonName: Create
+        label: Create
+        layout {
+            sequence: 100
+            region: @buttons-2
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: insert
+        }
+        serverSideCondition {
+            type: expression
+            plsqlExpression: (:P3203_CAN_EDIT = 'TRUE' and :P3203_ID is null)
+        }
+    )
+
+    button green-button (
+        buttonName: Green_Button
+        label: Run on LiveLabs Sandbox
+        layout {
+            sequence: 30
+            region: @select-a-sandbox-type
+            slot: regionBody
+            startNewRow: false
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: [
+                #DEFAULT#
+                t-Button--large
+                t-Button--success
+                t-Button--stretch
+                t-Button--gapBottom
+            ]
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button green-button-lite (
+        buttonName: Green_Button_Lite
+        label: Sandbox Lite
+        layout {
+            sequence: 20
+            region: @select-a-sandbox-type
+            slot: regionBody
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: [
+                #DEFAULT#
+                t-Button--large
+                t-Button--primary
+                t-Button--stretch
+            ]
+        }
+        behavior {
+            action: definedByDynamicAction
+            executeValidations: false
+        }
+        advanced {
+            customAttributes: style="color:black"
+        }
+    )
+
+    button open-jira-ticket (
+        buttonName: Open_Jira_Ticket
+        label: Open Jira Ticket
+        layout {
+            sequence: 10
+            region: @green-button-request-steps
+            slot: regionBody
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--large
+                t-Button--stretch
+                t-Button--padTop
+            ]
+        }
+        behavior {
+            action: redirectUrl
+            targetUrl: javascript:void(window.open('https://jira.oraclecorp.com/jira/secure/CreateIssue.jspa?issuetype=11901&pid=101812', '_blank'));
+            executeValidations: false
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button request-publish-again (
+        buttonName: request_publish_again
+        label: Request Publish
+        layout {
+            sequence: 110
+            region: @livelabs-publishing-info
+            slot: regionBody
+            startNewRow: false
+            columnAttributes: style="padding:10px"
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--simple
+                t-Button--gapLeft
+                t-Button--gapTop
+            ]
+        }
+        behavior {
+            action: definedByDynamicAction
+            executeValidations: false
+        }
+        advanced {
+            customAttributes: style="align=bottom"
+        }
+        serverSideCondition {
+            type: expression
+            plsqlExpression: :P3203_ID is not null and :WORKSHOP_ROLE in ('WORKSHOP_TEAM','STAKEHOLDER','PUBLISHER') and :P3203_VIEW_STATUS = 'Changes Requested'
+        }
+    )
+
+    button save (
+        buttonName: Save
+        label: Save
+        layout {
+            sequence: 90
+            region: @buttons-2
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+            databaseAction: update
+        }
+        serverSideCondition {
+            type: expression
+            plsqlExpression: (:P3203_CAN_EDIT = 'TRUE' and :P3203_ID is not null)
+        }
+    )
+
+    dynamicAction adw-checked (
+        name: ADW_Checked
+        execution {
+            sequence: 140
+        }
+        when {
+            selectionType: items
+            items: P3203_ADW
+        }
+
+        action native-disable (
+            action: disable
+            affectedElements {
+                selectionType: items
+                items: [
+                    P3203_ADW_OCPU
+                    P3203_ADW_TB
+                ]
+            }
+            execution {
+                sequence: 10
+            }
+            clientSideCondition {
+                type: item!=value
+                item: P3203_ADW
+                value: Y
+            }
+        )
+
+        action native-enable (
+            action: enable
+            affectedElements {
+                selectionType: items
+                items: [
+                    P3203_ADW_OCPU
+                    P3203_ADW_TB
+                ]
+            }
+            execution {
+                sequence: 10
+            }
+            clientSideCondition {
+                type: item=value
+                item: P3203_ADW
+                value: Y
+            }
+        )
+
+    )
+
+    dynamicAction ajd-checked (
+        name: AJD_Checked
+        execution {
+            sequence: 160
+        }
+        when {
+            selectionType: items
+            items: P3203_AJD
+        }
+
+        action native-disable (
+            action: disable
+            affectedElements {
+                selectionType: items
+                items: [
+                    P3203_AJD_OCPU
+                    P3203_AJD_TB
+                ]
+            }
+            execution {
+                sequence: 20
+            }
+            clientSideCondition {
+                type: item!=value
+                item: P3203_AJD
+                value: Y
+            }
+        )
+
+        action native-enable (
+            action: enable
+            affectedElements {
+                selectionType: items
+                items: [
+                    P3203_AJD_OCPU
+                    P3203_AJD_TB
+                ]
+            }
+            execution {
+                sequence: 10
+            }
+            clientSideCondition {
+                type: item=value
+                item: P3203_AJD
+                value: Y
+            }
+        )
+
+    )
+
+    dynamicAction atp-checked (
+        name: ATP_Checked
+        execution {
+            sequence: 150
+        }
+        when {
+            selectionType: items
+            items: P3203_ATP
+        }
+
+        action native-disable (
+            action: disable
+            affectedElements {
+                selectionType: items
+                items: [
+                    P3203_ATP_OCPU
+                    P3203_ATP_TB
+                ]
+            }
+            execution {
+                sequence: 30
+            }
+            clientSideCondition {
+                type: item!=value
+                item: P3203_ATP
+                value: Y
+            }
+        )
+
+        action native-enable (
+            action: enable
+            affectedElements {
+                selectionType: items
+                items: [
+                    P3203_ATP_OCPU
+                    P3203_ATP_TB
+                ]
+            }
+            execution {
+                sequence: 10
+            }
+            clientSideCondition {
+                type: item=value
+                item: P3203_ATP
+                value: Y
+            }
+        )
+
+    )
+
+    dynamicAction cancel-green-button (
+        name: cancel green button
+        execution {
+            sequence: 210
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @cancel-green-button
+        }
+
+        action native-confirm (
+            action: confirm
+            settings {
+                title: Cancel Sandbox
+                message: "Are you sure you want to cancel your sandbox request or disable your current sandbox? "
+                style: warning
+                confirmLabel: Yes
+                cancelLabel: No
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+        action native-hide-2 (
+            action: hide
+            affectedElements {
+                selectionType: region
+                region: @strong-livelabs-sandbox-span-style-color-green-em-lite-em-span-strong
+            }
+            execution {
+                sequence: 30
+                fireOnInit: false
+            }
+        )
+
+        action native-set-value (
+            action: setValue
+            affectedElements {
+                selectionType: items
+                items: P3203_GREENBUTTON_FLG
+            }
+            execution {
+                sequence: 50
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction check-url-validity (
+        name: Check URL Validity_1
+        execution {
+            sequence: 100
+        }
+        when {
+            selectionType: items
+            items: P3203_PAID_URL
+        }
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    $.ajax({
+                        type: 'HEAD',
+                        url: $(this.triggeringElement).val(),
+                    success: function() {
+                    console.log($(this.triggeringElement).val());
+                            console.log('page exists');
+                            apex.item('URL_ERROR').setValue('valid');
+                    },
+                    error: function() {
+                            // page does not exist
+                            console.log($(this.triggeringElement).val());
+                            console.log('page does not exist');
+                            apex.item('URL_ERROR').setValue('invalid');
+                    }
+                    });
+                    ```
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction check-url-validity-2 (
+        name: Check URL Validity
+        execution {
+            sequence: 90
+        }
+        when {
+            selectionType: items
+            items: P3203_GREENBUTTON_URL
+        }
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    $.ajax({
+                        type: 'HEAD',
+                        url: $(this.triggeringElement).val(),
+                    success: function() {
+                    console.log($(this.triggeringElement).val());
+                            console.log('page exists');
+                            apex.item('URL_ERROR').setValue('valid');
+                    },
+                    error: function() {
+                            // page does not exist
+                            console.log($(this.triggeringElement).val());
+                            console.log('page does not exist');
+                            apex.item('URL_ERROR').setValue('invalid');
+                    }
+                    });
+                    ```
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction ci-selected (
+        name: CI_Selected
+        execution {
+            sequence: 170
+        }
+        when {
+            selectionType: items
+            items: P3203_COMP_INST
+        }
+
+        action native-disable (
+            action: disable
+            affectedElements {
+                selectionType: items
+                items: P3203_CI_OCPU
+            }
+            execution {
+                sequence: 20
+            }
+            clientSideCondition {
+                type: itemIsNull
+                item: P3203_COMP_INST
+            }
+        )
+
+        action native-enable (
+            action: enable
+            affectedElements {
+                selectionType: items
+                items: P3203_CI_OCPU
+            }
+            execution {
+                sequence: 10
+            }
+            clientSideCondition {
+                type: itemIsNotNull
+                item: P3203_COMP_INST
+            }
+        )
+
+    )
+
+    dynamicAction confirm-save (
+        name: Confirm Save
+        execution {
+            sequence: 140
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @save
+        }
+
+        action native-confirm (
+            action: confirm
+            settings {
+                title: Confirm LiveLabs Update
+                message:
+                    ```html
+                    Your changes will be immediately saved in WMS and reflected in LiveLabs after the next daily sync. <br><br>
+                    Confirm to continue.
+                    ```
+                confirmLabel: Confirm
+                cancelLabel: Go Back
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+        action native-submit-page (
+            action: submitPage
+            settings {
+                requestButtonName: Save
+            }
+            execution {
+                sequence: 30
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction disable-save-if-url-invalid (
+        name: Disable Save if URL Invalid
+        execution {
+            sequence: 110
+        }
+        when {
+            selectionType: items
+            items: URL_ERROR
+        }
+        clientSideCondition {
+            type: item=value
+            item: URL_ERROR
+            value: invalid
+        }
+
+        action native-alert (
+            action: alert
+            settings {
+                message: URL is invalid
+            }
+            execution {
+                sequence: 30
+                fireOnInit: false
+            }
+        )
+
+        action native-disable (
+            action: disable
+            affectedElements {
+                selectionType: button
+                button: @save
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+        action native-disable-2 (
+            action: disable
+            affectedElements {
+                selectionType: button
+                button: @create
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+            clientSideCondition {
+                type: itemIsInList
+                item: P3203_PUBLISH_STATUS
+                list: [
+                    Publish Approved
+                    Published
+                ]
+            }
+        )
+
+        action native-enable (
+            action: enable
+            affectedElements {
+                selectionType: button
+                button: @create
+            }
+            execution {
+                sequence: 10
+                fireWhenEventResultIs: false
+                fireOnInit: false
+            }
+        )
+
+        action native-enable-2 (
+            action: enable
+            affectedElements {
+                selectionType: button
+                button: @save
+            }
+            execution {
+                sequence: 20
+                fireWhenEventResultIs: false
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction green-button-lite-requested (
+        name: green button lite requested
+        execution {
+            sequence: 190
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @green-button-lite
+        }
+
+        action native-confirm (
+            action: confirm
+            settings {
+                title: Sandbox Lite
+                message:
+                    ```html
+                    A Sandbox Lite is a quick and easy way to set up a sandbox for your workshop. This option DOES NOT create any resources for the user, but allows <i>them</i> to create it in an isolated environment in one of our LiveLabs tenancies. 
+                    <br>
+                    The following resources are offered in a Sandbox Lite:
+                    <ul><li>ATP</li>
+                    <li>AJD</li>
+                    <li>ADW</li>
+                    <li>Standard Flex E5 Compute Instance</li>
+                    <li>VCN</li>
+                    <li>Cloud Shell</li>
+                    </ul>
+                    ```
+                style: information
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+        action native-hide (
+            action: hide
+            affectedElements {
+                selectionType: region
+                region: @green-button-request-steps
+            }
+            execution {
+                sequence: 30
+            }
+        )
+
+        action native-set-value (
+            action: setValue
+            settings {
+                value: L
+            }
+            affectedElements {
+                selectionType: items
+                items: P3203_GREENBUTTON_FLG
+            }
+            execution {
+                sequence: 40
+                fireOnInit: false
+            }
+        )
+
+        action native-show (
+            action: show
+            affectedElements {
+                selectionType: region
+                region: @strong-livelabs-sandbox-span-style-color-green-em-lite-em-span-strong
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction green-button-requested (
+        name: green button requested
+        execution {
+            sequence: 200
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @green-button
+        }
+
+        action native-confirm (
+            action: confirm
+            settings {
+                title: LiveLabs Sandbox
+                message:
+                    ```html
+                    A LiveLabs Sandbox providers users automatically provisioned resources in an isolated environment in one of our LiveLabs tenancies. With this option, you can provision many OCI resources on behalf of the user, who will then be able to complete your workshop with little or no setup. 
+                    <br><br>
+                    Note: LiveLabs cannot handle all OCI resources for sandboxes, so each request will be evaluated on a case-by-case basis. Also, depending on the sandbox's complexity, completion time for a sandbox can range from 1-3 weeks.
+                    ```
+                style: information
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+        action native-hide (
+            action: hide
+            affectedElements {
+                selectionType: region
+                region: @strong-livelabs-sandbox-span-style-color-green-em-lite-em-span-strong
+            }
+            execution {
+                sequence: 30
+                fireOnInit: false
+            }
+        )
+
+        action native-set-value (
+            action: setValue
+            settings {
+                value: G
+            }
+            affectedElements {
+                selectionType: items
+                items: P3203_GREENBUTTON_FLG
+            }
+            execution {
+                sequence: 50
+                fireOnInit: false
+            }
+        )
+
+        action native-show (
+            action: show
+            affectedElements {
+                selectionType: region
+                region: @green-button-request-steps
+            }
+            execution {
+                sequence: 40
+            }
+        )
+
+    )
+
+    dynamicAction if-changed-to-livestack-demo (
+        name: If Changed to LiveStack Demo
+        execution {
+            sequence: 270
+        }
+        when {
+            selectionType: items
+            items: P3203_TYPE_ID_SELECTION
+        }
+        clientSideCondition {
+            type: jsExpression
+            javaScriptExpression: apex.item("P3203_TYPE_ID_SELECTION").displayValueFor(apex.item("P3203_TYPE_ID_SELECTION").getValue()) === "LiveStack Demo"
+        }
+
+        action hide-add-image-button_1 (
+            name: Hide add image button.
+            action: hide
+            affectedElements {
+                selectionType: button
+                button: @connect-image
+            }
+            execution {
+                sequence: 30
+            }
+        )
+
+        action hide-the-livestack-region (
+            name: Hide the LiveStack Region
+            action: hide
+            affectedElements {
+                selectionType: region
+                region: @livestack
+            }
+            execution {
+                sequence: 20
+                fireWhenEventResultIs: false
+            }
+        )
+
+        action hide-workshop-only-fields (
+            name: Hide workshop only items.
+            action: hide
+            affectedElements {
+                selectionType: items
+                items: [
+                    P3203_LIVESQL_FLG
+                    P3203_LIVESQL_URL
+                    P3203_SPRINT_FLG
+                    P3203_SPRINT_URL
+                ]
+            }
+            execution {
+                sequence: 20
+            }
+        )
+
+        action show-add-image-button (
+            name: Show add image button.
+            action: show
+            affectedElements {
+                selectionType: button
+                button: @connect-image
+            }
+            execution {
+                sequence: 40
+                fireWhenEventResultIs: false
+            }
+        )
+
+        action show-the-livestack-region (
+            name: Show the LiveStack Region
+            action: show
+            affectedElements {
+                selectionType: region
+                region: @livestack
+            }
+            execution {
+                sequence: 40
+            }
+        )
+
+        action show-workshop-only-fields (
+            name: Show workshop only items.
+            action: show
+            affectedElements {
+                selectionType: items
+                items: [
+                    P3203_LIVESQL_FLG
+                    P3203_LIVESQL_URL
+                    P3203_SPRINT_FLG
+                    P3203_SPRINT_URL
+                ]
+            }
+            execution {
+                sequence: 30
+                fireWhenEventResultIs: false
+            }
+        )
+
+    )
+
+    dynamicAction initialize-livestack-demo-section (
+        name: Initialize LiveStack Demo Section
+        execution {
+            sequence: 245
+        }
+        when {
+            event: ready
+        }
+        clientSideCondition {
+            type: jsExpression
+            javaScriptExpression: apex.item("P3203_TYPE_ID_SELECTION").displayValueFor(apex.item("P3203_TYPE_ID_SELECTION").getValue()) === "LiveStack Demo"
+        }
+
+        action hide-add-image-button (
+            name: Hide add image button.
+            action: hide
+            affectedElements {
+                selectionType: button
+                button: @connect-image
+            }
+            execution {
+                sequence: 30
+            }
+        )
+
+        action hide-livestack-demo-section (
+            name: Hide LiveStack Demo Section
+            action: hide
+            affectedElements {
+                selectionType: region
+                region: @livestack
+            }
+            execution {
+                sequence: 20
+                fireWhenEventResultIs: false
+            }
+        )
+
+        action hide-workshop-only-fields (
+            name: Hide workshop only items.
+            action: hide
+            affectedElements {
+                selectionType: items
+                items: [
+                    P3203_LIVESQL_FLG
+                    P3203_LIVESQL_URL
+                    P3203_SPRINT_FLG
+                    P3203_SPRINT_URL
+                ]
+            }
+            execution {
+                sequence: 20
+            }
+        )
+
+        action show-add-image-button (
+            name: Show add image button.
+            action: show
+            affectedElements {
+                selectionType: button
+                button: @connect-image
+            }
+            execution {
+                sequence: 40
+                fireWhenEventResultIs: false
+            }
+        )
+
+        action show-livestack-demo-section (
+            name: Show LiveStack Demo Section
+            action: show
+            affectedElements {
+                selectionType: region
+                region: @livestack
+            }
+            execution {
+                sequence: 40
+            }
+        )
+
+        action show-workshop-only-fields (
+            name: Show workshop only items.
+            action: show
+            affectedElements {
+                selectionType: items
+                items: [
+                    P3203_LIVESQL_FLG
+                    P3203_LIVESQL_URL
+                    P3203_SPRINT_FLG
+                    P3203_SPRINT_URL
+                ]
+            }
+            execution {
+                sequence: 30
+                fireWhenEventResultIs: false
+            }
+        )
+
+    )
+
+    dynamicAction initialize-livestack-demo-source (
+        name: Initialize LiveStack Demo Source
+        execution {
+            sequence: 246
+        }
+        when {
+            event: ready
+        }
+        clientSideCondition {
+            type: item=value
+            item: P3203_LIVESTACK_SOURCE
+            value: URL
+        }
+
+        action hide-upload-field (
+            name: Hide Upload Field
+            action: hide
+            affectedElements {
+                selectionType: items
+                items: P3203_LIVE_STACK_ZIP
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+        action hide-url-field (
+            name: Hide URL Field
+            action: hide
+            affectedElements {
+                selectionType: items
+                items: P3203_LIVESTACK_DEMO_URL
+            }
+            execution {
+                sequence: 10
+                fireWhenEventResultIs: false
+            }
+        )
+
+        action show-upload-field (
+            name: Show Upload Field
+            action: show
+            affectedElements {
+                selectionType: items
+                items: P3203_LIVE_STACK_ZIP
+            }
+            execution {
+                sequence: 20
+                fireWhenEventResultIs: false
+            }
+        )
+
+        action show-url-field (
+            name: Show URL Field
+            action: show
+            affectedElements {
+                selectionType: items
+                items: P3203_LIVESTACK_DEMO_URL
+            }
+            execution {
+                sequence: 20
+            }
+        )
+
+    )
+
+    dynamicAction livestack-demo-source-changed (
+        name: LiveStack Demo Source Changed
+        execution {
+            sequence: 275
+        }
+        when {
+            selectionType: items
+            items: P3203_LIVESTACK_SOURCE
+        }
+        clientSideCondition {
+            type: item=value
+            item: P3203_LIVESTACK_SOURCE
+            value: URL
+        }
+
+        action clear-upload-field (
+            name: Clear Upload Field
+            action: clear
+            affectedElements {
+                selectionType: items
+                items: P3203_LIVE_STACK_ZIP
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+        action hide-upload-field (
+            name: Hide Upload Field
+            action: hide
+            affectedElements {
+                selectionType: items
+                items: P3203_LIVE_STACK_ZIP
+            }
+            execution {
+                sequence: 20
+            }
+        )
+
+        action hide-url-field (
+            name: Hide URL Field
+            action: hide
+            affectedElements {
+                selectionType: items
+                items: P3203_LIVESTACK_DEMO_URL
+            }
+            execution {
+                sequence: 20
+                fireWhenEventResultIs: false
+            }
+        )
+
+        action show-upload-field (
+            name: Show Upload Field
+            action: show
+            affectedElements {
+                selectionType: items
+                items: P3203_LIVE_STACK_ZIP
+            }
+            execution {
+                sequence: 30
+                fireWhenEventResultIs: false
+            }
+        )
+
+        action show-url-field (
+            name: Show URL Field
+            action: show
+            affectedElements {
+                selectionType: items
+                items: P3203_LIVESTACK_DEMO_URL
+            }
+            execution {
+                sequence: 30
+            }
+        )
+
+    )
+
+    dynamicAction major-update-confirmed (
+        name: Major_Update_Confirmed
+        execution {
+            sequence: 230
+        }
+        when {
+            selectionType: items
+            items: P3203_IS_UPDATED
+        }
+        clientSideCondition {
+            type: item=value
+            item: P3203_IS_UPDATED
+            value: Y
+        }
+        security {
+            authorizationScheme: @administration-rights
+        }
+
+        action native-alert (
+            action: alert
+            settings {
+                message:
+                    ```html
+                    Switching this toggle on should only be used for <strong>significant workshop updates</strong>, such as a complete refresh, major content additions, or modernization.<br><br>
+                    <strong>Do not use this</strong> for minor edits like fixing typos, updating a few sentences, or replacing screenshots.
+                    
+                    ```
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+        action native-show (
+            action: show
+            affectedElements {
+                selectionType: items
+                items: P3203_LAST_UPDATE
+            }
+            execution {
+                sequence: 20
+            }
+        )
+
+    )
+
+    dynamicAction new (
+        name: New
+        execution {
+            sequence: 240
+        }
+        when {
+            event: ready
+        }
+
+        action native-hide (
+            action: hide
+            affectedElements {
+                selectionType: items
+                items: P3203_LAST_UPDATE
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    dynamicAction on-change (
+        name: On Change
+        execution {
+            sequence: 260
+        }
+        when {
+            selectionType: items
+            items: P3203_PREEXISTING_ASSET_FLG
+        }
+        clientSideCondition {
+            type: item=value
+            item: P3203_PREEXISTING_ASSET_FLG
+            value: Y
+        }
+
+        action hide-asset-selector (
+            name: Hide Asset Selector
+            action: hide
+            affectedElements {
+                selectionType: items
+                items: P3203_LIVE_STACK_ASSET
+            }
+            execution {
+                sequence: 10
+                fireWhenEventResultIs: false
+            }
+        )
+
+        action hide-file-upload (
+            name: Hide File Upload
+            action: hide
+            affectedElements {
+                selectionType: items
+                items: P3203_LIVE_STACK_ZIP
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+        action show-asset-selector (
+            name: Show Asset Selector
+            action: show
+            affectedElements {
+                selectionType: items
+                items: P3203_LIVE_STACK_ASSET
+            }
+            execution {
+                sequence: 20
+            }
+        )
+
+        action show-file-upload (
+            name: Show File Upload
+            action: show
+            affectedElements {
+                selectionType: items
+                items: P3203_LIVE_STACK_ZIP
+            }
+            execution {
+                sequence: 20
+                fireWhenEventResultIs: false
+            }
+        )
+
+    )
+
+    dynamicAction refresh-images (
+        name: Refresh Images
+        execution {
+            sequence: 250
+        }
+        when {
+            event: apexafterclosedialog
+            selectionType: region
+            region: @images
+        }
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @images
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction set-id-show (
+        name: set ID show
+        execution {
+            sequence: 70
+        }
+        when {
+            event: ready
+        }
+
+        action native-set-value (
+            action: setValue
+            settings {
+                value: To be assigned
+            }
+            affectedElements {
+                selectionType: items
+                items: P3203_ID_SHOW
+            }
+            execution {
+                sequence: 10
+            }
+            clientSideCondition {
+                type: itemIsNull
+                item: P3203_ID
+            }
+        )
+
+        action native-set-value-2 (
+            action: setValue
+            settings {
+                value: &P3203_ID.
+            }
+            affectedElements {
+                selectionType: items
+                items: P3203_ID_SHOW
+            }
+            execution {
+                sequence: 20
+            }
+            clientSideCondition {
+                type: itemIsNotNull
+                item: P3203_ID
+            }
+        )
+
+    )
+
+    dynamicAction set-publish-status-to-requested (
+        name: set publish status to requested
+        execution {
+            sequence: 60
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @request-publish-again
+        }
+
+        action native-confirm (
+            action: confirm
+            settings {
+                title: Change Status?
+                message:
+                    ```html
+                    Do you wish to change the status to "Publish Requested"? This will notify the Publishing Team. <br><br>
+                    Remember to click save in order to submit this new status!
+                    ```
+                confirmLabel: Yes
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+        action native-disable (
+            action: disable
+            affectedElements {
+                selectionType: button
+                button: @request-publish-again
+            }
+            execution {
+                sequence: 40
+                fireOnInit: false
+            }
+        )
+
+        action native-set-value (
+            action: setValue
+            settings {
+                value: Publish Requested
+            }
+            affectedElements {
+                selectionType: items
+                items: P3203_PUBLISH_STATUS
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction show-hide-green-button (
+        name: Show/Hide Green Button
+        execution {
+            sequence: 220
+        }
+        when {
+            event: ready
+        }
+
+        action native-hide (
+            action: hide
+            affectedElements {
+                selectionType: region
+                region: @strong-livelabs-sandbox-span-style-color-green-em-lite-em-span-strong
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+        action native-show (
+            action: show
+            affectedElements {
+                selectionType: region
+                region: @strong-livelabs-sandbox-span-style-color-green-em-lite-em-span-strong
+            }
+            execution {
+                sequence: 30
+            }
+            clientSideCondition {
+                type: item=value
+                item: P3203_GREENBUTTON_FLG
+                value: L
+            }
+        )
+
+    )
+
+    validation adw-ocpu-req (
+        name: ADW_OCPU_REQ
+        execution {
+            sequence: 110
+        }
+        validation {
+            type: itemIsNotNull
+            item: P3203_ADW_OCPU
+        }
+        error {
+            errorMessage: ECPU field is missing in your ADW request.
+            associatedItem: @P3203_ADW_OCPU
+        }
+        serverSideCondition {
+            whenButtonPressed: @save
+            type: item=value
+            item: P3203_ADW
+            value: Y
+        }
+    )
+
+    validation adw-tb-req (
+        name: ADW_TB_REQ
+        execution {
+            sequence: 120
+        }
+        validation {
+            type: itemIsNotNull
+            item: P3203_ADW_TB
+        }
+        error {
+            errorMessage: Storage field is missing in your ADW request.
+            associatedItem: @P3203_ADW_TB
+        }
+        serverSideCondition {
+            whenButtonPressed: @save
+            type: item=value
+            item: P3203_ADW
+            value: Y
+        }
+    )
+
+    validation ajd-ocpu-req (
+        name: AJD_OCPU_REQ
+        execution {
+            sequence: 130
+        }
+        validation {
+            type: itemIsNotNull
+            item: P3203_AJD_OCPU
+        }
+        error {
+            errorMessage: ECPU field is missing in your ADW request.
+            associatedItem: @P3203_AJD_OCPU
+        }
+        serverSideCondition {
+            whenButtonPressed: @save
+            type: item=value
+            item: P3203_AJD
+            value: Y
+        }
+    )
+
+    validation ajd-tb-req (
+        name: AJD_TB_REQ
+        execution {
+            sequence: 140
+        }
+        validation {
+            type: itemIsNotNull
+            item: P3203_AJD_TB
+        }
+        error {
+            errorMessage: Storage field is missing in your AJD request.
+            associatedItem: @P3203_AJD_TB
+        }
+        serverSideCondition {
+            whenButtonPressed: @save
+            type: item=value
+            item: P3203_AJD
+            value: Y
+        }
+    )
+
+    validation atp-ocpu-req (
+        name: ATP_OCPU_REQ
+        execution {
+            sequence: 90
+        }
+        validation {
+            type: itemIsNotNull
+            item: P3203_ATP_OCPU
+        }
+        error {
+            errorMessage: ECPU field is missing in your ATP request.
+            associatedItem: @P3203_ATP_OCPU
+        }
+        serverSideCondition {
+            whenButtonPressed: @save
+            type: item=value
+            item: P3203_ATP
+            value: Y
+        }
+    )
+
+    validation atp-tb-req (
+        name: ATP_TB_REQ
+        execution {
+            sequence: 100
+        }
+        validation {
+            type: itemIsNotNull
+            item: P3203_ATP_TB
+        }
+        error {
+            errorMessage: Storage field is missing in your ATP request.
+            associatedItem: @P3203_ATP_TB
+        }
+        serverSideCondition {
+            whenButtonPressed: @save
+            type: item=value
+            item: P3203_ATP
+            value: Y
+        }
+    )
+
+    validation ci-ocpu-req (
+        name: CI_OCPU_REQ
+        execution {
+            sequence: 150
+        }
+        validation {
+            type: itemIsNotNull
+            item: P3203_CI_OCPU
+        }
+        error {
+            errorMessage: OCPU field is missing in your Compute Instance request.
+            associatedItem: @P3203_CI_OCPU
+        }
+        serverSideCondition {
+            whenButtonPressed: @save
+            type: itemIsNotNull
+            item: P3203_COMP_INST
+        }
+    )
+
+    validation livesql-null (
+        name: livesql null
+        execution {
+            sequence: 60
+        }
+        validation {
+            type: itemIsNotNull
+            item: P3203_LIVESQL_URL
+        }
+        error {
+            errorMessage: Please specify a URL for LiveSQL
+        }
+        serverSideCondition {
+            type: item=value
+            item: P3203_LIVESQL_FLG
+            value: Y
+        }
+    )
+
+    validation livestack-instructions-provided (
+        name: LiveStack Demo instructions provided
+        execution {
+            sequence: 170
+        }
+        validation {
+            type: itemIsNotNull
+            item: P3203_LIVESTACK_INSTRUCTIONS_URL
+        }
+        error {
+            errorMessage: Provide the LiveStack demo instructions URL.
+            associatedItem: @P3203_LIVESTACK_INSTRUCTIONS_URL
+        }
+        serverSideCondition {
+            type: expression
+            language: sql
+            sqlExpression:
+                ```sql
+                :P3203_TYPE_ID_SELECTION = (select id from wms_ll_types where name = 'LiveStack Demo')
+                and not exists (
+                    select 1
+                      from workshop_ll
+                     where id = :P3203_ID
+                       and livestack_demo_url is not null
+                )
+                ```
+        }
+    )
+
+    validation livestack-url-or-zip-only (
+        name: LiveStack Demo URL or zip only
+        execution {
+            sequence: 165
+        }
+        validation {
+            plsqlExpression:
+                ```plsql
+                (:P3203_LIVESTACK_SOURCE = 'URL' and :P3203_LIVE_STACK_ZIP is null)
+                or :P3203_LIVESTACK_SOURCE = 'ZIP'
+                ```
+        }
+        error {
+            errorMessage: Clear the zip file upload before saving a URL.
+        }
+        serverSideCondition {
+            type: expression
+            language: sql
+            sqlExpression:
+                ```sql
+                :P3203_TYPE_ID_SELECTION = (select id from wms_ll_types where name = 'LiveStack Demo')
+                and not exists (
+                    select 1
+                      from workshop_ll
+                     where id = :P3203_ID
+                       and livestack_demo_url is not null
+                )
+                ```
+        }
+    )
+
+    validation livestack-zip-file-provided (
+        name: LiveStack Demo provided?
+        execution {
+            sequence: 160
+        }
+        validation {
+            plsqlExpression:
+                ```plsql
+                (:P3203_LIVESTACK_SOURCE = 'URL' and :P3203_LIVESTACK_DEMO_URL is not null)
+                or (:P3203_LIVESTACK_SOURCE = 'ZIP' and :P3203_LIVE_STACK_ZIP is not null)
+                ```
+        }
+        error {
+            errorMessage: Provide the value for the selected demo source.
+        }
+        serverSideCondition {
+            type: expression
+            language: sql
+            sqlExpression:
+                ```sql
+                :P3203_TYPE_ID_SELECTION = (select id from wms_ll_types where name = 'LiveStack Demo')
+                and not exists (
+                    select 1
+                      from workshop_ll
+                     where id = :P3203_ID
+                       and livestack_demo_url is not null
+                )
+                ```
+        }
+    )
+
+    validation livestack-zip-valid (
+        name: LiveStack Demo zip is valid
+        execution {
+            sequence: 168
+        }
+        validation {
+            type: functionBodyReturningBoolean
+            plsqlFunctionBody:
+                ```plsql
+                declare
+                    l_count pls_integer;
+                begin
+                    select count(*)
+                      into l_count
+                      from apex_application_temp_files
+                     where name = :P3203_LIVE_STACK_ZIP
+                       and lower(filename) like '%.zip'
+                       and dbms_lob.getlength(blob_content) > 0;
+                
+                    return l_count > 0;
+                end;
+                ```
+        }
+        error {
+            errorMessage: Upload a non-empty zip file for the LiveStack demo.
+            associatedItem: @P3203_LIVE_STACK_ZIP
+        }
+        serverSideCondition {
+            type: expression
+            language: sql
+            sqlExpression:
+                ```sql
+                :P3203_TYPE_ID_SELECTION = (select id from wms_ll_types where name = 'LiveStack Demo')
+                and :P3203_LIVESTACK_SOURCE = 'ZIP'
+                and not exists (
+                    select 1
+                      from workshop_ll
+                     where id = :P3203_ID
+                       and livestack_demo_url is not null
+                )
+                ```
+        }
+    )
+
+    validation only-sprint-flag (
+        name: only Sprint flag
+        execution {
+            sequence: 80
+        }
+        validation {
+            plsqlExpression:
+                ```plsql
+                (:P3203_PAID_FLG = 'N' or :P3203_PAID_FLG is null)
+                and (:P3203_GREENBUTTON_FLG = 'N' or :P3203_GREENBUTTON_FLG is null)
+                ```
+        }
+        error {
+            errorMessage: "If a workshop is a LiveLabs Sprint, it cannot have any other buttons. Either disable the other workshop types or disable LiveLabs Sprints. Contact Kevin Lazarz if you believe this is not the case for your workshop. "
+        }
+        serverSideCondition {
+            type: expression
+            plsqlExpression: :P3203_SPRINT_FLG = 'Y'
+        }
+    )
+
+    validation run-on-livelabs-sandbox-null (
+        name: Run on LiveLabs Sandbox null
+        execution {
+            sequence: 50
+        }
+        validation {
+            type: itemIsNotNull
+            item: P3203_GREENBUTTON_URL
+        }
+        error {
+            errorMessage: Please specify a URL for Run on LiveLabs Sandbox
+        }
+        serverSideCondition {
+            type: expression
+            language: sql
+            sqlExpression:
+                ```sql
+                :P3203_GREENBUTTON_FLG is not null
+                and :P3203_TYPE_ID_SELECTION != (select id from wms_ll_types where name = 'LiveStack Demo')
+                ```
+        }
+    )
+
+    validation run-on-your-tenancy-null (
+        name: Run on your Tenancy null
+        execution {
+            sequence: 30
+        }
+        validation {
+            type: itemIsNotNull
+            item: P3203_PAID_URL
+        }
+        error {
+            errorMessage: Please specify a URL for Run on your Tenancy
+        }
+        serverSideCondition {
+            type: item=value
+            item: P3203_PAID_FLG
+            value: Y
+        }
+    )
+
+    validation sprint-null (
+        name: sprint null
+        execution {
+            sequence: 70
+        }
+        validation {
+            type: itemIsNotNull
+            item: P3203_SPRINT_URL
+        }
+        error {
+            errorMessage: Please specify a URL for the LiveLabs Sprint
+        }
+        serverSideCondition {
+            type: item=value
+            item: P3203_SPRINT_FLG
+            value: Y
+        }
+    )
+
+    computation p3203-greenbutton-flg (
+        itemName: P3203_GREENBUTTON_FLG
+        execution {
+            sequence: 20
+            point: afterSubmit
+        }
+        computation {
+            type: staticValue
+            staticValue: Y
+        }
+        serverSideCondition {
+            type: expression
+            language: sql
+            sqlExpression: :P3203_TYPE_ID_SELECTION = (select id from wms_ll_types where name = 'LiveStack Demo')
+        }
+    )
+
+    computation p3203-livestack-asset-id (
+        itemName: P3203_LIVESTACK_ASSET_ID
+        execution {
+            sequence: 30
+            point: afterSubmit
+        }
+        computation {
+            type: item
+            itemName: P3203_LIVE_STACK_ASSET
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    computation p3203-type-id_2 (
+        itemName: P3203_TYPE_ID
+        execution {
+            sequence: 10
+            point: afterSubmit
+        }
+        computation {
+            type: item
+            itemName: P3203_TYPE_ID_SELECTION
+        }
+    )
+
+    process initialize-form-publish-information (
+        name: Initialize form Publish Information
+        type: formInitialization
+        formRegion: @livelabs-publishing-info
+        execution {
+            sequence: 10
+            point: beforeHeader
+        }
+        advanced {
+            executionMappingIdentifier: 21459673357081972319
+        }
+    )
+
+    process mark-updated-create (
+        name: Mark Updated - Create
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                begin
+                update workshop_ll set updated_publish_flg = 2 where id= :P3203_ID;
+                update workshop set updated_flg = 1 where id = :P3203_WORKSHOP_ID;
+                end;
+                ```
+        }
+        execution {
+            sequence: 50
+        }
+        advanced {
+            executionMappingIdentifier: 21459688007978972355
+        }
+        serverSideCondition {
+            whenButtonPressed: @create
+        }
+    )
+
+    process mark-updated-save (
+        name: Mark Updated - Save
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                declare
+                v_hold number;
+                begin
+                select updated_publish_flg into v_hold from workshop_ll where id= :P3203_ID;
+                if v_hold != 2 then
+                update workshop_ll set updated_publish_flg = 1 where id= :P3203_ID;
+                end if;
+                update workshop set updated_flg = 1 where id = :P3203_WORKSHOP_ID;
+                
+                if :P3203_IS_UPDATED = 'Y' then 
+                    update workshop_ll set updated_on = sysdate where id = :P3203_ID;
+                end if; 
+                end;
+                ```
+        }
+        execution {
+            sequence: 40
+        }
+        advanced {
+            executionMappingIdentifier: 21459687684977972354
+        }
+        serverSideCondition {
+            whenButtonPressed: @save
+        }
+    )
+
+    process populate-gbl-form (
+        name: Populate GBL Form
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                DECLARE
+                    cursor requests is select * from green_button_lite where LL_ID = :P3203_ID;
+                
+                BEGIN    
+                
+                    for request in requests loop
+                        :P3203_ATP := request.ATP;
+                        :P3203_ATP_OCPU := request.ATP_OCPU;
+                        :P3203_ATP_TB := request.ATP_TB;
+                        :P3203_ADW := request.ADW;
+                        :P3203_ADW_OCPU := request.ADW_OCPU;
+                        :P3203_ADW_TB := request.ADW_TB;
+                        :P3203_AJD := request.AJD;
+                        :P3203_AJD_OCPU := request.AJD_OCPU;
+                        :P3203_AJD_TB := request.AJD_TB;
+                        :P3203_COMP_INST := request.COMP_INST;
+                        :P3203_CI_OCPU := request.COMP_INST_OCPU;
+                        :P3203_VCN := request.VCN;
+                        :P3203_OCS := request.OCS;
+                    END LOOP; 
+                
+                
+                END;  
+                
+                
+                
+                ```
+        }
+        execution {
+            sequence: 30
+            point: beforeHeader
+        }
+        advanced {
+            executionMappingIdentifier: 21459689279401972356
+        }
+    )
+
+    process process-form-livelabs-publishing-info (
+        name: Process form LiveLabs Publishing Info
+        type: formAutoRowProcessing
+        formRegion: @livelabs-publishing-info
+        execution {
+            sequence: 20
+        }
+        advanced {
+            executionMappingIdentifier: 21459673720452972320
+        }
+    )
+
+    process process-gbl-request (
+        name: Process GBL Request
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                DECLARE
+                  row_count INTEGER;
+                BEGIN
+                  select count(*) 
+                    into row_count
+                    from Green_Button_Lite
+                   where LL_ID = :P3203_ID;
+                
+                  if row_count = 1 then
+                
+                    UPDATE Green_Button_Lite
+                    SET LL_ID =  :P3203_ID,    
+                        WMS_ID = :P3203_WORKSHOP_ID,
+                        ADW = :P3203_ADW,
+                        ADW_OCPU = :P3203_ADW_OCPU,
+                        ADW_TB = :P3203_ADW_TB,
+                        ATP = :P3203_ATP,
+                        ATP_OCPU = :P3203_ATP_OCPU,
+                        ATP_TB = :P3203_ATP_TB,
+                        AJD = :P3203_AJD,
+                        AJD_OCPU = :P3203_AJD_OCPU,
+                        AJD_TB = :P3203_AJD_TB,
+                        COMP_INST = :P3203_COMP_INST,
+                        COMP_INST_OCPU = :P3203_CI_OCPU,
+                        VCN = :P3203_VCN,
+                        OCS = :P3203_OCS,
+                        UPDATED_FLG = 1
+                    WHERE LL_ID = :P3203_ID;   
+                elsif row_count = 0  then
+                insert into Green_Button_Lite
+                    (
+                        LL_ID,
+                        WMS_ID,
+                        ADW,
+                        ADW_OCPU,
+                        ADW_TB,
+                        ATP,
+                        ATP_OCPU,
+                        ATP_TB,
+                        AJD,
+                        AJD_OCPU,
+                        AJD_TB,
+                        COMP_INST,
+                        COMP_INST_OCPU,
+                        VCN,
+                        OCS,
+                        UPDATED_FLG
+                    )
+                values
+                    (
+                        :P3203_ID,    
+                        :P3203_WORKSHOP_ID,
+                        :P3203_ADW,
+                        :P3203_ADW_OCPU,
+                        :P3203_ADW_TB,
+                        :P3203_ATP,
+                        :P3203_ATP_OCPU,
+                        :P3203_ATP_TB,
+                        :P3203_AJD,
+                        :P3203_AJD_OCPU,
+                        :P3203_AJD_TB,
+                        :P3203_COMP_INST,
+                        :P3203_CI_OCPU,
+                        :P3203_VCN,
+                        :P3203_OCS,
+                        1
+                    );
+                end if;
+                end;
+                ```
+        }
+        execution {
+            sequence: 130
+        }
+        advanced {
+            executionMappingIdentifier: 21459686866477972352
+        }
+        serverSideCondition {
+            type: item=value
+            item: P3203_GREENBUTTON_FLG
+            value: L
+        }
+    )
+
+    process set-can-edit (
+        name: Set CAN_EDIT
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                declare
+                v_hold varchar2(4000);
+                begin
+                if :P3203_WORKSHOP_ID is not null then
+                    -- publishers 
+                    begin
+                    select email into v_hold
+                    from workshop_person_role
+                    where upper(:APP_USER) = upper(email)
+                    and workshop_id is  null
+                    and active_flg = 1;
+                    exception when no_data_found then v_hold := null; end;
+                    if v_hold is not null then :P3203_CAN_EDIT := 'TRUE';return; end if;
+                    v_hold := null;
+                
+                    -- workshop team 
+                    -- begin
+                    -- select b.email into v_hold
+                    -- from workshop a, workshop_person_role b, workshop_role c
+                    -- where a.id = :P320_ID
+                    -- and a.id = b.workshop_id
+                    -- and b.role_id = c.id
+                    -- and  c.name in ('Workshop Team')
+                    -- and upper(:APP_USER) = upper(b.email)
+                    -- and b.active_flg = 1;
+                    -- exception when no_data_found then v_hold := null; end;
+                    -- if v_hold is not null then :P320_CAN_EDIT := 'TRUE'; return; end if;
+                    -- v_hold := null;
+                
+                    -- workshop team
+                    begin
+                    select title into v_hold
+                    from workshop a
+                    where (
+                        upper(workshop_owner_email) = upper(:APP_USER)
+                        or upper(tech_contact_email) = upper(:APP_USER)
+                        or upper(support_contact_email) = upper(:APP_USER)
+                        or upper(manager_email) = upper(:APP_USER)
+                        or upper(observer_email) = upper(:APP_USER)
+                        or upper(ospa_observer_email) = upper(:APP_USER)
+                    ) and id = :P3203_WORKSHOP_ID;
+                    exception when no_data_found then v_hold := null; end;
+                    if v_hold is not null then :P3203_CAN_EDIT := 'TRUE'; return; end if;
+                    v_hold := null;
+                
+                    -- stakeholder
+                    begin
+                    select b.email into v_hold
+                    from workshop a, workshop_person_stakeholder b
+                    where a.id = :P3203_workshop_ID
+                    and a.stakeholder_id = b.stakeholder_id
+                    and upper(:APP_USER) = upper(b.email)
+                    and b.active_flg = 1;
+                    exception when no_data_found then v_hold := null; end;
+                    if v_hold is not null then :P3203_CAN_EDIT := 'TRUE'; return; end if;
+                
+                    -- not authorized
+                    :P3203_CAN_EDIT := 'FALSE';
+                else 
+                    :P3203_CAN_EDIT := 'NULL';
+                end if;
+                end;
+                ```
+        }
+        execution {
+            sequence: 20
+            point: beforeHeader
+        }
+        advanced {
+            executionMappingIdentifier: 21459687229894972353
+        }
+    )
+
+    process set-updated-fields-create (
+        name: Set Updated Fields - Create
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                begin
+                update workshop set last_update_person = lower(:APP_USER), last_update_time = sysdate where id= :P3203_WORKSHOP_ID;
+                end;
+                ```
+        }
+        execution {
+            sequence: 60
+        }
+        advanced {
+            executionMappingIdentifier: 21459688475775972355
+        }
+        serverSideCondition {
+            whenButtonPressed: @create
+        }
+    )
+
+    process set-updated-fields-save (
+        name: Set Updated Fields - Save
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                begin
+                update workshop set last_update_person = lower(:APP_USER), last_update_time = sysdate where id= :P3203_WORKSHOP_ID;
+                end;
+                ```
+        }
+        execution {
+            sequence: 70
+        }
+        advanced {
+            executionMappingIdentifier: 21459688802041972356
+        }
+        serverSideCondition {
+            whenButtonPressed: @save
+        }
+    )
+
+    process store-livestack-demo-url (
+        name: LiveStack Demo - Store URL
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                begin
+                    update workshop_ll
+                       set livestack_demo_url = coalesce(
+                               :P3203_LIVESTACK_DEMO_URL,
+                               :P3203_LIVESTACK_DEMO_URL_2,
+                               livestack_demo_url)
+                     where id = :P3203_ID;
+                end;
+                ```
+        }
+        execution {
+            sequence: 100
+        }
+        advanced {
+            executionMappingIdentifier: 5160746242274526901
+        }
+        serverSideCondition {
+            type: expression
+            language: sql
+            sqlExpression: :P3203_TYPE_ID = (select id from wms_ll_types where name = 'LiveStack Demo')
+        }
+    )
+
+    process store-livestack-instructions-url (
+        name: LiveStack Demo - Store Instructions URL
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                begin
+                    update workshop_ll
+                       set greenbutton_url = :P3203_LIVESTACK_INSTRUCTIONS_URL
+                     where id = :P3203_ID;
+                end;
+                ```
+        }
+        execution {
+            sequence: 85
+        }
+        advanced {
+            executionMappingIdentifier: 5160746242274526902
+        }
+        serverSideCondition {
+            type: expression
+            language: sql
+            sqlExpression: :P3203_TYPE_ID = (select id from wms_ll_types where name = 'LiveStack Demo')
+        }
+    )
+
+    process sync-asset-create (
+        name: LiveStack Demo -  Sync  LS Demo Asset
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                declare
+                    v_asset_id number;
+                begin
+                    wms_pkg_ords.createAsset(:P3203_LIVESTACK_ASSET_ID);
+                end;
+                ```
+        }
+        execution {
+            sequence: 120
+        }
+        advanced {
+            executionMappingIdentifier: 5160746832877526907
+        }
+        serverSideCondition {
+            whenButtonPressed: @save
+            type: expression
+            language: sql
+            sqlExpression:
+                ```sql
+                
+                :P3203_TYPE_ID_SELECTION = (select id from wms_ll_types where name = 'LiveStack Demo')
+                and (:P3203_PUBLISH_STATUS in ('Publish Approved', 'Published'))
+                and :P3203_LIVESTACK_SOURCE = 'ZIP'
+                and not exists (
+                    select 1
+                      from workshop_ll
+                     where id = :P3203_ID
+                       and livestack_demo_url is not null
+                )
+                ```
+        }
+    )
+
+    process upload-new-livestack-demo-zip (
+        name: LiveStack Demo -  Upload File to Object Storage
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                declare
+                  l_request_url         varchar2(32767);
+                  l_base_url            varchar2(4000) := 'https://objectstorage.us-ashburn-1.oraclecloud.com/n/c4u02/b/hosted-files';
+                  l_response            clob;
+                  l_exists_response     clob;
+                  v_ll_name             varchar2(1000);
+                  v_editor_emails       varchar2(1000);
+                  v_asset_name          varchar2(1000);
+                  v_filename            varchar2(500);
+                  v_encoded_filename    varchar2(500);
+                  v_asset_link          varchar2(4000);
+                
+                  upload_failed_exception exception;
+                    begin
+                      for file in (
+                        select *
+                        from apex_application_temp_files
+                        where name = :P3203_LIVE_STACK_ZIP
+                      ) loop
+                        if lower(file.filename) not like '%.zip'
+                           or dbms_lob.getlength(file.blob_content) = 0 then
+                          raise_application_error(
+                            -20004,
+                            'Upload a non-empty zip file for the LiveStack demo.'
+                          );
+                        end if;
+                
+                        l_request_url := l_base_url
+                                         || '/o/'
+                                         || utl_url.escape(file.filename);
+                
+                        -- Check whether the object already exists.
+                        apex_web_service.g_request_headers.delete;
+                        l_exists_response := apex_web_service.make_rest_request(
+                          p_url                   => l_request_url,
+                          p_http_method           => 'HEAD',
+                          p_credential_static_id  => 'OCI_API_KEY_C4U02'
+                        );
+                
+                        if apex_web_service.g_status_code = 200 then
+                          raise_application_error(
+                            -20001,
+                            'A file named "' || file.filename || '" already exists in our bucket. If you own that asset, you can edit its settings and overwrite it.'
+                          );
+                        elsif apex_web_service.g_status_code not in (404, 200) then
+                          raise_application_error(
+                            -20002,
+                            'Could not verify whether the file exists. HTTP status: ' || apex_web_service.g_status_code
+                          );
+                        end if;
+                
+                        -- Upload the file.
+                        apex_web_service.g_request_headers.delete;
+                        apex_web_service.g_request_headers(1).name := 'Content-Type';
+                        apex_web_service.g_request_headers(1).value := file.mime_type;
+                
+                        l_response := apex_web_service.make_rest_request(
+                          p_url                  => l_request_url,
+                          p_http_method          => 'PUT',
+                          p_body_blob            => file.blob_content,
+                          p_credential_static_id => 'OCI_API_KEY_C4U02'
+                        );
+                
+                        if apex_web_service.g_status_code not in (200, 201, 204) then
+                          apex_debug.message('PUT url=%s', l_request_url);
+                          apex_debug.message('status=%s reason=%s',
+                                       apex_web_service.g_status_code,
+                                       apex_web_service.g_reason_phrase);
+                          raise_application_error(-20003, 'Upload failed. HTTP status=' || apex_web_service.g_status_code);
+                        end if;
+                      end loop;
+                
+                    -- Add the uploaded file as an asset.
+                    select COALESCE(ll.title_override,(SELECT w.title FROM workshop w WHERE w.id = ll.workshop_id)) into v_ll_name FROM workshop_ll ll WHERE ll.id = :P3203_ID;
+                    
+                    select listagg(email, ',') within group (order by ord)
+                    into v_editor_emails
+                    from (
+                        select 1 ord, workshop_owner_email email from workshop where id = :P3203_WORKSHOP_ID
+                        union all
+                        select 2 ord, tech_contact_email from workshop where id = :P3203_WORKSHOP_ID
+                        union all
+                        select 3 ord, support_contact_email from workshop where id = :P3203_WORKSHOP_ID
+                        union all
+                        select 4 ord, observer_email from workshop where id = :P3203_WORKSHOP_ID
+                        union all
+                        select 5 ord, manager_email from workshop where id = :P3203_WORKSHOP_ID
+                    )
+                    where email is not null;
+                
+                    select filename,
+                           utl_url.escape(filename)
+                      into v_filename,
+                           v_encoded_filename
+                    from apex_application_temp_files
+                    where name = :P3203_LIVE_STACK_ZIP;
+                   
+                
+                
+                   select value || v_encoded_filename
+                     into v_asset_link
+                     from wms_system_parameters
+                    where name = 'HOSTED_FILES_BUCKET_PAR';
+                
+                   insert into wms_assets (name, editor_emails, created_by, created_on, link, type_id, upload_type, description) values
+                    (v_filename,
+                    v_editor_emails,
+                    v('APP_USER'),
+                    sysdate,
+                    v_asset_link,
+                    1,
+                    'File',
+                    'Zip file for LiveStack Demo: ' || v_ll_name
+                    ) returning id into :P3203_LIVESTACK_ASSET_ID;
+                
+                   :P3203_LIVESTACK_DEMO_URL := v_asset_link;
+                
+                    update workshop_ll
+                       set livestack_demo_url = v_asset_link
+                     where id = :P3203_ID;
+                
+                    apex_application.g_print_success_message :=
+                        'Your LiveStack demo zip was uploaded as an LiveLabs asset be overwritten and further manage in the <a href="' ||
+                        apex_util.prepare_url('f?p=' || v('APP_ID') || ':55:' || v('APP_SESSION')) ||
+                        '">Self-Service Portal</a>.';
+                    
+                end;
+                ```
+        }
+        execution {
+            sequence: 90
+        }
+        advanced {
+            executionMappingIdentifier: 3357368951223600431
+        }
+        serverSideCondition {
+            type: expression
+            language: sql
+            sqlExpression:
+                ```sql
+                :P3203_TYPE_ID_SELECTION = (select id from wms_ll_types where name = 'LiveStack Demo')
+                and :P3203_LIVESTACK_SOURCE = 'ZIP'
+                and not exists (
+                    select 1
+                      from workshop_ll
+                     where id = :P3203_ID
+                       and livestack_demo_url is not null
+                )
+                ```
+        }
+    )
+
+    branch (
+        name: redirect to view workshop
+        execution {
+            sequence: 20
+        }
+        behavior {
+            target: {
+                page: 320
+                items: {
+                    P320_ID: &P3203_WORKSHOP_ID.
+                }
+            }
+        }
+        serverSideCondition {
+            whenButtonPressed: @cancel
+        }
+    )
+
+    branch (
+        name: redirect to view workshop
+        execution {
+            sequence: 10
+        }
+        behavior {
+            target: {
+                page: &P3203_ORIGIN.
+                items: {
+                    P320_ID: &P3203_WORKSHOP_ID.
+                }
+            }
+        }
+    )
+
+)
+

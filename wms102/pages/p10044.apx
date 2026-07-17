@@ -1,0 +1,480 @@
+page 10044 (
+    name: Feedback
+    title: Feedback
+    pageGroup: @administration
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @modal-dialog
+    }
+    dialog {
+        chained: false
+        resizable: false
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    javaScript {
+        functionAndGlobalVariableDeclaration: var htmldb_delete_message='"DELETE_CONFIRM_MSG"';
+    }
+    css {
+        inline:
+            ```css
+            /* Color feedback rating icons */
+            .feedback-positive { color: #4caf50; }
+            .feedback-neutral { color: #eb9f41; }
+            .feedback-negative { color: #f44336; }
+            ```
+    }
+    security {
+        authorizationScheme: @administration-rights
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+    config {
+        buildOption: @feature-feedback
+    }
+
+    region buttons-region (
+        name: Buttons Region
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: dialogFooter
+        }
+        appearance {
+            template: @buttons-container
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    region form-items-region (
+        name: Form Items Region
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: [
+                #DEFAULT#
+                t-Form--stretchInputs
+            ]
+        }
+    )
+
+    pageItem P10044_ATTACHMENT_DISPLAY (
+        type: displayOnly
+        label {
+            label: Attachment
+            alignment: left
+        }
+        settings {
+            format: htmlUnsafe
+            sendOnPageSubmit: false
+        }
+        layout {
+            sequence: 90
+            region: @form-items-region
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery:
+                ```sql
+                select '<a href="'||apex_util.get_blob_file_src('P10043_ATTACHMENT',id)||'">'||filename||'</a>'
+                  from apex$team_dev_files
+                 where component_id = :P10044_ID
+                   and component_type = 'FEEDBACK'
+                ```
+            used: always
+        }
+        serverSideCondition {
+            type: rowsReturned
+            sqlQuery: select 1 from apex$team_dev_files where component_id = :P10044_ID and component_type = 'FEEDBACK'
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P10044_FEEDBACK (
+        type: displayOnly
+        label {
+            label: Feedback
+            alignment: left
+        }
+        layout {
+            sequence: 50
+            region: @form-items-region
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P10044_FEEDBACK_STATUS (
+        type: selectList
+        label {
+            label: Status
+            alignment: left
+        }
+        lov {
+            type: sharedComponent
+            lov: @feedback-status
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 70
+            region: @form-items-region
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P10044_FILED (
+        type: displayOnly
+        label {
+            label: Filed
+            alignment: left
+        }
+        layout {
+            sequence: 30
+            region: @form-items-region
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P10044_ID (
+        type: hidden
+        layout {
+            sequence: 10
+            region: @form-items-region
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P10044_PAGE_ID (
+        type: displayOnly
+        label {
+            label: Page
+            alignment: left
+        }
+        layout {
+            sequence: 20
+            region: @form-items-region
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P10044_RATING_ICON (
+        type: displayOnly
+        label {
+            label: Rating
+            alignment: left
+        }
+        settings {
+            format: htmlUnsafe
+        }
+        layout {
+            sequence: 40
+            region: @form-items-region
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P10044_RESPONSE (
+        type: textarea
+        label {
+            label: Response
+            alignment: left
+        }
+        layout {
+            sequence: 60
+            region: @form-items-region
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            width: 64
+            height: 4
+        }
+        validation {
+            maxLength: 4000
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P10044_USER_AGENT (
+        type: displayOnly
+        label {
+            label: User Agent
+            alignment: left
+        }
+        layout {
+            sequence: 100
+            region: @form-items-region
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button cancel (
+        buttonName: CANCEL
+        label: Cancel
+        layout {
+            sequence: 20
+            region: @buttons-region
+            slot: edit
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button delete (
+        buttonName: DELETE
+        label: Delete
+        layout {
+            sequence: 30
+            region: @buttons-region
+            slot: edit
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: [
+                #DEFAULT#
+                t-Button--danger
+                t-Button--simple
+            ]
+        }
+        behavior {
+            action: redirectUrl
+            targetUrl: javascript:apex.confirm(htmldb_delete_message,'DELETE');
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: delete
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P10044_ID
+        }
+    )
+
+    button save (
+        buttonName: SAVE
+        label: Apply Changes
+        layout {
+            sequence: 10
+            region: @buttons-region
+            slot: create
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--gapLeft
+            ]
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    dynamicAction cancel-dialog (
+        name: Cancel Dialog
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @cancel
+        }
+
+        action native-dialog-cancel (
+            action: cancelDialog
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    process close-dialog (
+        name: Close Dialog
+        type: closeDialog
+        settings {
+            showSuccessMessages: false
+        }
+        execution {
+            sequence: 50
+        }
+        advanced {
+            executionMappingIdentifier: 62750647121879370014
+        }
+    )
+
+    process delete (
+        name: Delete
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                apex_util.delete_feedback (
+                    p_feedback_id        => :P10044_ID );
+                ```
+        }
+        execution {
+            sequence: 20
+        }
+        successMessage {
+            successMessage: Action Processed.
+        }
+        advanced {
+            executionMappingIdentifier: 62750646314486370013
+        }
+        serverSideCondition {
+            whenButtonPressed: @delete
+        }
+    )
+
+    process e-property-button-action-lov-reset-d (
+        name: E.PROPERTY.BUTTON_ACTION.LOV.RESET.D
+        type: clearSessionState
+        execution {
+            sequence: 40
+        }
+        advanced {
+            executionMappingIdentifier: 62750646705079370014
+        }
+        serverSideCondition {
+            whenButtonPressed: @delete
+        }
+    )
+
+    process load-data (
+        name: Load Data
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                for c1 in (
+                   select page_id,
+                          page_name,
+                          case feedback_rating
+                                when 1 then '<span class="fa fa-frown-o feedback-negative" aria-hidden="true" title="Negative"></span>' 
+                                when 2 then '<span class="fa fa-emoji-neutral feedback-neutral" aria-hidden="true" title="Neutral"></span>'  
+                                when 3 then '<span class="fa fa-smile-o feedback-positive" aria-hidden="true" title="Positive"></span>' 
+                                end rating_icon,
+                          lower(created_by) || ' - ' || apex_util.get_since(created_on) filed,
+                          feedback,
+                          public_response,
+                          feedback_status,
+                          http_user_agent
+                     from apex_team_feedback
+                    where feedback_id = :P10044_ID
+                ) loop
+                   :P10044_PAGE_ID := c1.page_id||'. '||c1.page_name;
+                   :P10044_FILED := c1.filed;
+                   :P10044_RATING_ICON := c1.rating_icon;
+                   :P10044_FEEDBACK := c1.feedback;
+                   :P10044_RESPONSE := c1.public_response;
+                   :P10044_FEEDBACK_STATUS := c1.feedback_status;
+                   :P10044_USER_AGENT := c1.http_user_agent;
+                end loop;
+                ```
+        }
+        execution {
+            sequence: 10
+            point: afterHeader
+        }
+        advanced {
+            executionMappingIdentifier: 62750645568595370012
+        }
+    )
+
+    process update (
+        name: Update
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                apex_util.reply_to_feedback (
+                    p_feedback_id        => :P10044_ID,
+                    p_status             => :P10044_FEEDBACK_STATUS,
+                    p_public_response    => :P10044_RESPONSE );
+                ```
+        }
+        execution {
+            sequence: 10
+        }
+        successMessage {
+            successMessage: Action Processed.
+        }
+        advanced {
+            executionMappingIdentifier: 62750645888334370013
+        }
+        serverSideCondition {
+            whenButtonPressed: @save
+        }
+    )
+
+)
+

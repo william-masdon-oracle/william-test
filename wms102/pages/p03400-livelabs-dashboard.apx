@@ -1,0 +1,2924 @@
+page 3400 (
+    name: LiveLabs Dashboard
+    alias: LIVELABS-DASHBOARD
+    title: LiveLabs Dashboard
+    appearance {
+        pageTemplate: @standard-custom
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+        warnOnUnsavedChanges: false
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region freesql (
+        name: FreeSQL
+        type: staticContent
+        layout {
+            sequence: 50
+            parentRegion: @region-selector
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--stacked
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region freesql-by-council (
+        name: FreeSQL by Council
+        title: FreeSQL by Council
+        type: chart
+        layout {
+            sequence: 80
+            parentRegion: @freesql
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        security {
+            escapeSpecialChars: false
+        }
+        chart {
+            type: pie
+        }
+        chartLayout {
+            height: 400
+        }
+        value {
+            format: decimal
+            decimalPlaces: 0
+        }
+
+        series series (
+            name: Series 1
+            execution {
+                sequence: 10
+            }
+            source {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select 
+                        wc.name council, 
+                        count(*) value 
+                    from livelabs_sandbox_dashboard_vw sd
+                        left join WORKSHOP_COUNCIL wc on wc.id = sd.council_id
+                    where sd.livesql_flg = 'Y' 
+                    group by wc.name
+                    ```
+            }
+            columnMapping {
+                label: COUNCIL
+                value: VALUE
+            }
+            label {
+                show: true
+            }
+            performance {
+                maxRowsToProcess: 20
+            }
+        )
+
+    )
+
+    region freesql-by-publish-type (
+        name: FreeSQL by Publish Type
+        title: FreeSQL by Publish Type
+        type: chart
+        layout {
+            sequence: 100
+            parentRegion: @freesql
+            slot: subRegions
+            startNewRow: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        security {
+            escapeSpecialChars: false
+        }
+        chart {
+            type: pie
+        }
+        chartLayout {
+            height: 400
+        }
+        value {
+            format: decimal
+            decimalPlaces: 0
+        }
+
+        series series (
+            name: Series 1
+            execution {
+                sequence: 10
+            }
+            source {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select 
+                        publish_type, 
+                        count(*) value 
+                    from livelabs_sandbox_dashboard_vw 
+                    where livesql_flg = 'Y' 
+                    group by publish_type
+                    ```
+            }
+            columnMapping {
+                label: PUBLISH_TYPE
+                value: VALUE
+            }
+            label {
+                show: true
+            }
+            performance {
+                maxRowsToProcess: 20
+            }
+        )
+
+    )
+
+    region freesql-by-stakeholder (
+        name: FreeSQL by Stakeholder
+        title: FreeSQL by Stakeholder
+        type: chart
+        layout {
+            sequence: 60
+            parentRegion: @freesql
+            slot: subRegions
+            startNewRow: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        security {
+            escapeSpecialChars: false
+        }
+        chart {
+            type: pie
+        }
+        chartLayout {
+            height: 400
+        }
+        value {
+            format: decimal
+            decimalPlaces: 0
+        }
+
+        series series (
+            name: Series 1
+            execution {
+                sequence: 10
+            }
+            source {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select 
+                        st.name stakeholder, 
+                        count(*) value 
+                    from livelabs_sandbox_dashboard_vw sd
+                        left join workshop_stakeholder st on st.id = sd.stakeholder_id
+                    where sd.livesql_flg = 'Y' 
+                    group by st.name
+                    ```
+            }
+            columnMapping {
+                label: STAKEHOLDER
+                value: VALUE
+            }
+            label {
+                show: true
+            }
+            performance {
+                maxRowsToProcess: 20
+            }
+        )
+
+    )
+
+    region livelabs-sandbox-report (
+        name: LiveLabs Sandbox Report
+        title: LiveLabs Sandbox Report
+        type: interactiveReport
+        source {
+            location: localDatabase
+            tableName: LIVELABS_SANDBOX_DASHBOARD_VW
+        }
+        layout {
+            sequence: 10
+            parentRegion: @livelabs-workshop-report
+            slot: subRegions
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        pagination {
+            type: rowRangesXToY
+        }
+        performance {
+            maxRowsToProcess: 1000000
+        }
+        advanced {
+            savedReportMappingIdentifier: 3035609552182481015
+        }
+
+        column COMPLETION_DATE (
+            type: plainText
+            heading {
+                heading: Completion Date
+            }
+            layout {
+                sequence: 140
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: N
+            }
+        )
+
+        column COUNCIL_ID (
+            type: plainTextBasedOnLov
+            heading {
+                heading: Council
+            }
+            lov {
+                lov: @workshop-council-id
+            }
+            layout {
+                sequence: 180
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: R
+            }
+        )
+
+        column DESC_LONG (
+            type: plainText
+            heading {
+                heading: Long Description
+            }
+            layout {
+                sequence: 50
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: E
+            }
+        )
+
+        column DESC_SHORT (
+            type: plainText
+            heading {
+                heading: Short Description
+            }
+            layout {
+                sequence: 40
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: D
+            }
+        )
+
+        column DESKTOPAPP1_URL (
+            type: plainText
+            heading {
+                heading: Desktop App 1 URL
+            }
+            layout {
+                sequence: 310
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AE
+            }
+        )
+
+        column DESKTOPAPP2_URL (
+            type: plainText
+            heading {
+                heading: Desktop App 2 URL
+            }
+            layout {
+                sequence: 320
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AF
+            }
+        )
+
+        column DESKTOPGUIDE_URL (
+            type: plainText
+            heading {
+                heading: Desktop Guide URL
+            }
+            layout {
+                sequence: 300
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AD
+            }
+        )
+
+        column LAST_QA_DATE (
+            type: plainText
+            heading {
+                heading: Last Qa Date
+            }
+            layout {
+                sequence: 150
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: O
+            }
+        )
+
+        column LAST_QA_UPDATE_PERSON (
+            type: plainText
+            heading {
+                heading: Last Qa Update Person
+            }
+            layout {
+                sequence: 160
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: P
+            }
+        )
+
+        column LAST_UPDATE_PERSON (
+            type: plainText
+            heading {
+                heading: Last Update Person
+            }
+            layout {
+                sequence: 130
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: M
+            }
+        )
+
+        column LAST_UPDATE_TIME (
+            type: plainText
+            heading {
+                heading: Last Update Time
+            }
+            layout {
+                sequence: 120
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: L
+            }
+        )
+
+        column LIVELABS_ID (
+            type: plainText
+            heading {
+                heading: LiveLabs ID
+                alignment: end
+            }
+            layout {
+                sequence: 20
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: B
+            }
+        )
+
+        column LIVESQL_FLG (
+            type: plainText
+            heading {
+                heading: FreeSQL Flag
+            }
+            layout {
+                sequence: 280
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AB
+            }
+        )
+
+        column LIVESQL_URL (
+            type: plainText
+            heading {
+                heading: FreeSQL URL
+            }
+            layout {
+                sequence: 270
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AA
+            }
+        )
+
+        column NOVNC_ENABLED_FLG (
+            type: plainText
+            heading {
+                heading: NoVNC Enabled Flag
+            }
+            layout {
+                sequence: 290
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AC
+            }
+        )
+
+        column OUTLINE (
+            type: plainText
+            heading {
+                heading: Outline
+            }
+            layout {
+                sequence: 60
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: F
+            }
+        )
+
+        column PAGE_VIEWS (
+            type: plainText
+            heading {
+                heading: Page Views
+                alignment: end
+            }
+            layout {
+                sequence: 330
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: AH
+            }
+        )
+
+        column PREREQS (
+            type: plainText
+            heading {
+                heading: Prereqs
+            }
+            layout {
+                sequence: 70
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: G
+            }
+        )
+
+        column PRODUCTION_URL (
+            type: plainText
+            heading {
+                heading: Production URL
+            }
+            layout {
+                sequence: 110
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: K
+            }
+        )
+
+        column PUBLISH_STATUS (
+            type: plainText
+            heading {
+                heading: Publish Status
+            }
+            layout {
+                sequence: 90
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: I
+            }
+        )
+
+        column PUBLISH_TYPE (
+            type: plainText
+            heading {
+                heading: Publish Type
+            }
+            layout {
+                sequence: 100
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: J
+            }
+        )
+
+        column SANDBOX_FLG (
+            type: plainText
+            heading {
+                heading: Sandbox Flag
+            }
+            layout {
+                sequence: 240
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: X
+            }
+        )
+
+        column SANDBOX_URL (
+            type: plainText
+            heading {
+                heading: Sandbox URL
+            }
+            layout {
+                sequence: 230
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: W
+            }
+        )
+
+        column SPRINT_FLG (
+            type: plainText
+            heading {
+                heading: Sprint Flag
+            }
+            layout {
+                sequence: 260
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: Z
+            }
+        )
+
+        column SPRINT_URL (
+            type: plainText
+            heading {
+                heading: Sprint URL
+            }
+            layout {
+                sequence: 250
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: Y
+            }
+        )
+
+        column STAKEHOLDER_ID (
+            type: plainTextBasedOnLov
+            heading {
+                heading: Stakeholder
+            }
+            lov {
+                lov: @workshop-stakeholder-id
+            }
+            layout {
+                sequence: 170
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: Q
+            }
+        )
+
+        column TENANCY_FLG (
+            type: plainText
+            heading {
+                heading: Tenancy Flag
+            }
+            layout {
+                sequence: 220
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: V
+            }
+        )
+
+        column TENANCY_URL (
+            type: plainText
+            heading {
+                heading: Tenancy URL
+            }
+            layout {
+                sequence: 210
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: U
+            }
+        )
+
+        column TITLE (
+            type: plainText
+            heading {
+                heading: Title
+            }
+            layout {
+                sequence: 30
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: C
+            }
+        )
+
+        column WMS_ID (
+            type: link
+            heading {
+                heading: WMS ID
+                alignment: end
+            }
+            layout {
+                sequence: 10
+                columnAlignment: end
+            }
+            link {
+                target: {
+                    page: 320
+                    items: {
+                        P320_ID: #WMS_ID#
+                    }
+                }
+                linkText: #WMS_ID#
+                linkAttributes: target="_blank"
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: A
+            }
+        )
+
+        column WORKSHOP_OWNER_GROUP (
+            type: plainText
+            heading {
+                heading: Owner Group
+            }
+            layout {
+                sequence: 190
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: S
+            }
+        )
+
+        column WORKSHOP_STATUS (
+            type: plainText
+            heading {
+                heading: Workshop Status
+            }
+            layout {
+                sequence: 80
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: H
+            }
+        )
+
+        column WORKSHOP_TEAM (
+            type: plainText
+            heading {
+                heading: Workshop Team
+            }
+            layout {
+                sequence: 200
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: T
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: LiveLabs Sandbox Report
+        }
+
+        savedReport 326194575 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn COUNCIL_ID (
+                sequence: 8
+            )
+
+            displayColumn LIVELABS_ID (
+                sequence: 2
+            )
+
+            displayColumn LIVESQL_FLG (
+                sequence: 18
+            )
+
+            displayColumn LIVESQL_URL (
+                sequence: 17
+            )
+
+            displayColumn PUBLISH_STATUS (
+                sequence: 5
+            )
+
+            displayColumn PUBLISH_TYPE (
+                sequence: 6
+            )
+
+            displayColumn SANDBOX_FLG (
+                sequence: 14
+            )
+
+            displayColumn SANDBOX_URL (
+                sequence: 13
+            )
+
+            displayColumn SPRINT_FLG (
+                sequence: 16
+            )
+
+            displayColumn SPRINT_URL (
+                sequence: 15
+            )
+
+            displayColumn STAKEHOLDER_ID (
+                sequence: 7
+            )
+
+            displayColumn TENANCY_FLG (
+                sequence: 12
+            )
+
+            displayColumn TENANCY_URL (
+                sequence: 11
+            )
+
+            displayColumn TITLE (
+                sequence: 3
+            )
+
+            displayColumn WMS_ID (
+                sequence: 1
+            )
+
+            displayColumn WORKSHOP_OWNER_GROUP (
+                sequence: 9
+            )
+
+            displayColumn WORKSHOP_STATUS (
+                sequence: 4
+            )
+
+            displayColumn WORKSHOP_TEAM (
+                sequence: 10
+            )
+
+        )
+
+    )
+
+    region livelabs-workshop-report (
+        name: LiveLabs Workshop Report
+        type: staticContent
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    region overall (
+        name: Overall
+        type: staticContent
+        layout {
+            sequence: 10
+            parentRegion: @region-selector
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--stacked
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region overall-freesql-adoption (
+        name: Overall FreeSQL Adoption
+        title: Overall FreeSQL Adoption
+        type: chart
+        layout {
+            sequence: 40
+            parentRegion: @freesql
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        security {
+            escapeSpecialChars: false
+        }
+        chart {
+            type: pie
+        }
+        value {
+            format: decimal
+            decimalPlaces: 0
+        }
+        legend {
+            show: false
+        }
+        messages {
+            whenNoDataFound: "No workshops match this Stakeholder/Council combination. "
+        }
+
+        series disabled (
+            name: Disabled
+            execution {
+                sequence: 20
+            }
+            source {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select
+                        'Disabled' name,
+                        count(*) value 
+                    from livelabs_sandbox_dashboard_vw
+                    where 1=1 
+                        and (
+                            (:P3400_FREESQL_STAKEHOLDER is null)
+                            or
+                            (:P3400_FREESQL_STAKEHOLDER is not null and :P3400_FREESQL_STAKEHOLDER = stakeholder_id)
+                        )
+                        and (
+                            (:P3400_FREESQL_COUNCIL is null)
+                            or
+                            (:P3400_FREESQL_COUNCIL is not null and :P3400_FREESQL_COUNCIL = council_id)
+                        )
+                        and livesql_flg = 'N'
+                    ```
+                pageItemsToSubmit: [
+                    P3400_FREESQL_STAKEHOLDER
+                    P3400_FREESQL_COUNCIL
+                ]
+            }
+            columnMapping {
+                label: NAME
+                value: VALUE
+            }
+            appearance {
+                color: #e3513c
+            }
+            label {
+                show: true
+            }
+            performance {
+                maxRowsToProcess: 20
+            }
+        )
+
+        series enabled (
+            name: Enabled
+            execution {
+                sequence: 10
+            }
+            source {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select
+                        'Enabled' name,
+                        count(*) value 
+                    from livelabs_sandbox_dashboard_vw
+                    where 1=1 
+                        and (
+                            (:P3400_FREESQL_STAKEHOLDER is null)
+                            or
+                            (:P3400_FREESQL_STAKEHOLDER is not null and :P3400_FREESQL_STAKEHOLDER = stakeholder_id)
+                        )
+                        and (
+                            (:P3400_FREESQL_COUNCIL is null)
+                            or
+                            (:P3400_FREESQL_COUNCIL is not null and :P3400_FREESQL_COUNCIL = council_id)
+                        )
+                        and livesql_flg = 'Y'
+                    ```
+                pageItemsToSubmit: [
+                    P3400_FREESQL_STAKEHOLDER
+                    P3400_FREESQL_COUNCIL
+                ]
+            }
+            columnMapping {
+                label: NAME
+                value: VALUE
+            }
+            appearance {
+                color: #759c6c
+            }
+            label {
+                show: true
+            }
+            performance {
+                maxRowsToProcess: 20
+            }
+        )
+
+    )
+
+    region overall-sandbox-adoption (
+        name: Overall Sandbox Adoption
+        title: Overall Sandbox Adoption
+        type: chart
+        layout {
+            sequence: 10
+            parentRegion: @sandbox
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        security {
+            escapeSpecialChars: false
+        }
+        chart {
+            type: pie
+        }
+        value {
+            format: decimal
+            decimalPlaces: 0
+        }
+        legend {
+            show: false
+        }
+        messages {
+            whenNoDataFound: "No workshops match this Stakeholder/Council combination. "
+        }
+
+        series disabled (
+            name: Disabled
+            execution {
+                sequence: 20
+            }
+            source {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select
+                        'Disabled' name,
+                        count(*) value 
+                    from livelabs_sandbox_dashboard_vw
+                    where 1=1 
+                        and (
+                            (:P3400_SANDBOX_STAKEHOLDER is null)
+                            or
+                            (:P3400_SANDBOX_STAKEHOLDER is not null and :P3400_SANDBOX_STAKEHOLDER = stakeholder_id)
+                        )
+                        and (
+                            (:P3400_SANDBOX_COUNCIL is null)
+                            or
+                            (:P3400_SANDBOX_COUNCIL is not null and :P3400_SANDBOX_COUNCIL = council_id)
+                        )
+                        and sandbox_flg = 'N'
+                    ```
+                pageItemsToSubmit: [
+                    P3400_SANDBOX_STAKEHOLDER
+                    P3400_SANDBOX_COUNCIL
+                ]
+            }
+            columnMapping {
+                label: NAME
+                value: VALUE
+            }
+            appearance {
+                color: #e3513c
+            }
+            label {
+                show: true
+            }
+            performance {
+                maxRowsToProcess: 20
+            }
+        )
+
+        series enabled (
+            name: Enabled
+            execution {
+                sequence: 10
+            }
+            source {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select
+                        'Enabled' name,
+                        count(*) value 
+                    from livelabs_sandbox_dashboard_vw
+                    where 1=1 
+                        and (
+                            (:P3400_SANDBOX_STAKEHOLDER is null)
+                            or
+                            (:P3400_SANDBOX_STAKEHOLDER is not null and :P3400_SANDBOX_STAKEHOLDER = stakeholder_id)
+                        )
+                        and (
+                            (:P3400_SANDBOX_COUNCIL is null)
+                            or
+                            (:P3400_SANDBOX_COUNCIL is not null and :P3400_SANDBOX_COUNCIL = council_id)
+                        )
+                        and sandbox_flg = 'Y'
+                    ```
+                pageItemsToSubmit: [
+                    P3400_SANDBOX_STAKEHOLDER
+                    P3400_SANDBOX_COUNCIL
+                ]
+            }
+            columnMapping {
+                label: NAME
+                value: VALUE
+            }
+            appearance {
+                color: #759c6c
+            }
+            label {
+                show: true
+            }
+            performance {
+                maxRowsToProcess: 20
+            }
+        )
+
+    )
+
+    region overall-sprint-adoption (
+        name: Overall Sprint Adoption
+        title: Overall Sprint Adoption
+        type: chart
+        layout {
+            sequence: 30
+            parentRegion: @sprints
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        security {
+            escapeSpecialChars: false
+        }
+        chart {
+            type: pie
+        }
+        value {
+            format: decimal
+            pattern: 0
+        }
+        legend {
+            show: false
+        }
+        messages {
+            whenNoDataFound: "No workshops match this Stakeholder/Council combination. "
+        }
+
+        series disabled (
+            name: Disabled
+            execution {
+                sequence: 20
+            }
+            source {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select
+                        'Disabled' name,
+                        count(*) value 
+                    from livelabs_sandbox_dashboard_vw
+                    where 1=1 
+                        and (
+                            (:P3400_SPRINT_STAKEHOLDER is null)
+                            or
+                            (:P3400_SPRINT_STAKEHOLDER is not null and :P3400_SPRINT_STAKEHOLDER = stakeholder_id)
+                        )
+                        and (
+                            (:P3400_SPRINT_COUNCIL is null)
+                            or
+                            (:P3400_SPRINT_COUNCIL is not null and :P3400_SPRINT_COUNCIL = council_id)
+                        )
+                        and sprint_flg = 'N'
+                    ```
+                pageItemsToSubmit: [
+                    P3400_SPRINT_STAKEHOLDER
+                    P3400_SPRINT_COUNCIL
+                ]
+            }
+            columnMapping {
+                label: NAME
+                value: VALUE
+            }
+            appearance {
+                color: #e3513c
+            }
+            label {
+                show: true
+            }
+            performance {
+                maxRowsToProcess: 20
+            }
+        )
+
+        series enabled (
+            name: Enabled
+            execution {
+                sequence: 10
+            }
+            source {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select
+                        'Enabled' name,
+                        count(*) value 
+                    from livelabs_sandbox_dashboard_vw
+                    where 1=1 
+                        and (
+                            (:P3400_SPRINT_STAKEHOLDER is null)
+                            or
+                            (:P3400_SPRINT_STAKEHOLDER is not null and :P3400_SPRINT_STAKEHOLDER = stakeholder_id)
+                        )
+                        and (
+                            (:P3400_SPRINT_COUNCIL is null)
+                            or
+                            (:P3400_SPRINT_COUNCIL is not null and :P3400_SPRINT_COUNCIL = council_id)
+                        )
+                        and sprint_flg = 'Y'
+                    ```
+                pageItemsToSubmit: [
+                    P3400_SPRINT_STAKEHOLDER
+                    P3400_SPRINT_COUNCIL
+                ]
+            }
+            columnMapping {
+                label: NAME
+                value: VALUE
+            }
+            appearance {
+                color: #759c6c
+            }
+            label {
+                show: true
+            }
+            performance {
+                maxRowsToProcess: 20
+            }
+        )
+
+    )
+
+    region overall-tenancy-adoption (
+        name: Overall Tenancy Adoption
+        title: Overall Tenancy Adoption
+        type: chart
+        layout {
+            sequence: 20
+            parentRegion: @tenancy
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        security {
+            escapeSpecialChars: false
+        }
+        chart {
+            type: pie
+        }
+        value {
+            format: decimal
+            decimalPlaces: 0
+        }
+        legend {
+            show: false
+        }
+        messages {
+            whenNoDataFound: "No workshops match this Stakeholder/Council combination. "
+        }
+
+        series disabled (
+            name: Disabled
+            execution {
+                sequence: 20
+            }
+            source {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select
+                        'Disabled' name,
+                        count(*) value 
+                    from livelabs_sandbox_dashboard_vw
+                    where 1=1 
+                        and (
+                            (:P3400_TENANCY_STAKEHOLDER is null)
+                            or
+                            (:P3400_TENANCY_STAKEHOLDER is not null and :P3400_TENANCY_STAKEHOLDER = stakeholder_id)
+                        )
+                        and (
+                            (:P3400_TENANCY_COUNCIL is null)
+                            or
+                            (:P3400_TENANCY_COUNCIL is not null and :P3400_TENANCY_COUNCIL = council_id)
+                        )
+                        and tenancy_flg = 'N'
+                    ```
+                pageItemsToSubmit: [
+                    P3400_TENANCY_STAKEHOLDER
+                    P3400_TENANCY_COUNCIL
+                ]
+            }
+            columnMapping {
+                label: NAME
+                value: VALUE
+            }
+            appearance {
+                color: #e3513c
+            }
+            label {
+                show: true
+            }
+            performance {
+                maxRowsToProcess: 20
+            }
+        )
+
+        series enabled (
+            name: Enabled
+            execution {
+                sequence: 10
+            }
+            source {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select
+                        'Enabled' name,
+                        count(*) value 
+                    from livelabs_sandbox_dashboard_vw
+                    where 1=1 
+                        and (
+                            (:P3400_TENANCY_STAKEHOLDER is null)
+                            or
+                            (:P3400_TENANCY_STAKEHOLDER is not null and :P3400_TENANCY_STAKEHOLDER = stakeholder_id)
+                        )
+                        and (
+                            (:P3400_TENANCY_COUNCIL is null)
+                            or
+                            (:P3400_TENANCY_COUNCIL is not null and :P3400_TENANCY_COUNCIL = council_id)
+                        )
+                        and tenancy_flg = 'Y'
+                    ```
+                pageItemsToSubmit: [
+                    P3400_TENANCY_STAKEHOLDER
+                    P3400_TENANCY_COUNCIL
+                ]
+            }
+            columnMapping {
+                label: NAME
+                value: VALUE
+            }
+            appearance {
+                color: #759c6c
+            }
+            label {
+                show: true
+            }
+            performance {
+                maxRowsToProcess: 20
+            }
+        )
+
+    )
+
+    region page-views-by-workshop-type (
+        name: Page Views by Workshop Type
+        type: chart
+        layout {
+            sequence: 30
+            parentRegion: @overall
+            slot: subRegions
+            startNewRow: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        security {
+            escapeSpecialChars: false
+        }
+        chartLayout {
+            height: 400
+        }
+        legend {
+            show: false
+        }
+        messages {
+            whenNoDataFound: "No workshops match this Stakeholder/Council combination. "
+        }
+
+        series page-views (
+            name: Page Views
+            execution {
+                sequence: 10
+            }
+            source {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    with workshop_types as (
+                        select 'Sandbox' name, page_views, stakeholder_id, council_id, workshop_owner_group, workshop_status from livelabs_sandbox_dashboard_vw where sandbox_flg = 'Y'
+                        union all
+                        select 'Tenancy' name, page_views, stakeholder_id, council_id, workshop_owner_group, workshop_status from livelabs_sandbox_dashboard_vw where tenancy_flg = 'Y'
+                        union all
+                        select 'Sprint' name, page_views, stakeholder_id, council_id, workshop_owner_group, workshop_status from livelabs_sandbox_dashboard_vw where sprint_flg = 'Y'
+                        union all
+                        select 'FreeSQL' name, page_views, stakeholder_id, council_id, workshop_owner_group, workshop_status from livelabs_sandbox_dashboard_vw where livesql_flg = 'Y'
+                    )
+                    select 
+                        name,
+                        sum(page_views) value
+                    from workshop_types
+                    where 1=1 
+                        and (
+                            (:P3400_OVERALL_STAKEHOLDER is null)
+                            or
+                            (:P3400_OVERALL_STAKEHOLDER is not null and :P3400_OVERALL_STAKEHOLDER = stakeholder_id)
+                        )
+                        and (
+                            (:P3400_OVERALL_COUNCIL is null)
+                            or
+                            (:P3400_OVERALL_COUNCIL is not null and :P3400_OVERALL_COUNCIL = council_id)
+                        )
+                        and (
+                            (:P3400_OVERALL_OWNER is null)
+                            or
+                            (:P3400_OVERALL_OWNER is not null and :P3400_OVERALL_OWNER = workshop_owner_group)
+                        )
+                        and (
+                            (:P3400_OVERALL_STATUS is null)
+                            or
+                            (:P3400_OVERALL_STATUS is not null and instr(:P3400_OVERALL_STATUS, workshop_status) > 0)
+                        )
+                    group by name
+                    ```
+                pageItemsToSubmit: [
+                    P3400_OVERALL_STAKEHOLDER
+                    P3400_OVERALL_COUNCIL
+                    P3400_OVERALL_OWNER
+                    P3400_OVERALL_STATUS
+                ]
+            }
+            columnMapping {
+                label: NAME
+                value: VALUE
+            }
+            label {
+                show: true
+            }
+            performance {
+                maxRowsToProcess: 20
+            }
+        )
+
+        axis x (
+            name: x
+            minorTicks {
+                show: false
+            }
+        )
+
+        axis y (
+            name: y
+            value {
+                format: decimal
+                decimalPlaces: 0
+                formatScaling: none
+            }
+            minorTicks {
+                show: false
+            }
+        )
+
+    )
+
+    region region-selector (
+        name: Region Selector
+        type: regionDisplaySelector
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--hideHeader
+                t-Region--scrollBody
+            ]
+        }
+        settings {
+            includeShowAll: false
+        }
+    )
+
+    region sandbox (
+        name: Sandbox
+        type: staticContent
+        layout {
+            sequence: 20
+            parentRegion: @region-selector
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--stacked
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region sandboxes-by-council (
+        name: Sandboxes by Council
+        title: Sandboxes by Council
+        type: chart
+        layout {
+            sequence: 40
+            parentRegion: @sandbox
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        security {
+            escapeSpecialChars: false
+        }
+        chart {
+            type: pie
+        }
+        chartLayout {
+            height: 400
+        }
+        value {
+            format: decimal
+            decimalPlaces: 0
+        }
+
+        series series (
+            name: Series 1
+            execution {
+                sequence: 10
+            }
+            source {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select 
+                        wc.name council, 
+                        count(*) value 
+                    from livelabs_sandbox_dashboard_vw sd
+                        left join WORKSHOP_COUNCIL wc on wc.id = sd.council_id
+                    where sd.sandbox_flg = 'Y' 
+                    group by wc.name
+                    ```
+            }
+            columnMapping {
+                label: COUNCIL
+                value: VALUE
+            }
+            label {
+                show: true
+            }
+            performance {
+                maxRowsToProcess: 20
+            }
+        )
+
+    )
+
+    region sandboxes-by-publish-type (
+        name: Sandboxes by Publish Type
+        title: Sandboxes by Publish Type
+        type: chart
+        layout {
+            sequence: 50
+            parentRegion: @sandbox
+            slot: subRegions
+            startNewRow: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        security {
+            escapeSpecialChars: false
+        }
+        chart {
+            type: pie
+        }
+        chartLayout {
+            height: 400
+        }
+        value {
+            format: decimal
+            decimalPlaces: 0
+        }
+
+        series series (
+            name: Series 1
+            execution {
+                sequence: 10
+            }
+            source {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select 
+                        publish_type, 
+                        count(*) value 
+                    from livelabs_sandbox_dashboard_vw 
+                    where sandbox_flg = 'Y' 
+                    group by publish_type
+                    ```
+            }
+            columnMapping {
+                label: PUBLISH_TYPE
+                value: VALUE
+            }
+            label {
+                show: true
+            }
+            performance {
+                maxRowsToProcess: 20
+            }
+        )
+
+    )
+
+    region sandboxes-by-stakeholder (
+        name: Sandboxes by Stakeholder
+        title: Sandboxes by Stakeholder
+        type: chart
+        layout {
+            sequence: 30
+            parentRegion: @sandbox
+            slot: subRegions
+            startNewRow: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        security {
+            escapeSpecialChars: false
+        }
+        chart {
+            type: pie
+        }
+        chartLayout {
+            height: 400
+        }
+        value {
+            format: decimal
+            decimalPlaces: 0
+        }
+
+        series series (
+            name: Series 1
+            execution {
+                sequence: 10
+            }
+            source {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select 
+                        st.name stakeholder, 
+                        count(*) value 
+                    from livelabs_sandbox_dashboard_vw sd
+                        left join workshop_stakeholder st on st.id = sd.stakeholder_id
+                    where sd.sandbox_flg = 'Y' 
+                    group by st.name
+                    ```
+            }
+            columnMapping {
+                label: STAKEHOLDER
+                value: VALUE
+            }
+            label {
+                show: true
+            }
+            performance {
+                maxRowsToProcess: 20
+            }
+        )
+
+    )
+
+    region sprint-by-council (
+        name: Sprint by Council
+        title: Sprint by Council
+        type: chart
+        layout {
+            sequence: 70
+            parentRegion: @sprints
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        security {
+            escapeSpecialChars: false
+        }
+        chart {
+            type: pie
+        }
+        chartLayout {
+            height: 400
+        }
+        value {
+            format: decimal
+            decimalPlaces: 0
+        }
+
+        series series (
+            name: Series 1
+            execution {
+                sequence: 10
+            }
+            source {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select 
+                        wc.name council, 
+                        count(*) value 
+                    from livelabs_sandbox_dashboard_vw sd
+                        left join WORKSHOP_COUNCIL wc on wc.id = sd.council_id
+                    where sd.sprint_flg = 'Y' 
+                    group by wc.name
+                    ```
+            }
+            columnMapping {
+                label: COUNCIL
+                value: VALUE
+            }
+            label {
+                show: true
+            }
+            performance {
+                maxRowsToProcess: 20
+            }
+        )
+
+    )
+
+    region sprint-by-publish-type (
+        name: Sprint by Publish Type
+        title: Sprint by Publish Type
+        type: chart
+        layout {
+            sequence: 90
+            parentRegion: @sprints
+            slot: subRegions
+            startNewRow: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        security {
+            escapeSpecialChars: false
+        }
+        chart {
+            type: pie
+        }
+        chartLayout {
+            height: 400
+        }
+        value {
+            format: decimal
+            decimalPlaces: 0
+        }
+
+        series series (
+            name: Series 1
+            execution {
+                sequence: 10
+            }
+            source {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select 
+                        publish_type, 
+                        count(*) value 
+                    from livelabs_sandbox_dashboard_vw 
+                    where sprint_flg = 'Y' 
+                    group by publish_type
+                    ```
+            }
+            columnMapping {
+                label: PUBLISH_TYPE
+                value: VALUE
+            }
+            label {
+                show: true
+            }
+            performance {
+                maxRowsToProcess: 20
+            }
+        )
+
+    )
+
+    region sprint-by-stakeholder (
+        name: Sprint by Stakeholder
+        title: Sprint by Stakeholder
+        type: chart
+        layout {
+            sequence: 50
+            parentRegion: @sprints
+            slot: subRegions
+            startNewRow: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        security {
+            escapeSpecialChars: false
+        }
+        chart {
+            type: pie
+        }
+        chartLayout {
+            height: 400
+        }
+        value {
+            format: decimal
+            decimalPlaces: 0
+        }
+
+        series series (
+            name: Series 1
+            execution {
+                sequence: 10
+            }
+            source {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select 
+                        st.name stakeholder, 
+                        count(*) value 
+                    from livelabs_sandbox_dashboard_vw sd
+                        left join workshop_stakeholder st on st.id = sd.stakeholder_id
+                    where sd.sprint_flg = 'Y' 
+                    group by st.name
+                    ```
+            }
+            columnMapping {
+                label: STAKEHOLDER
+                value: VALUE
+            }
+            label {
+                show: true
+            }
+            performance {
+                maxRowsToProcess: 20
+            }
+        )
+
+    )
+
+    region sprints (
+        name: Sprints
+        type: staticContent
+        layout {
+            sequence: 40
+            parentRegion: @region-selector
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--stacked
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region tenancy (
+        name: Tenancy
+        type: staticContent
+        layout {
+            sequence: 30
+            parentRegion: @region-selector
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--stacked
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region tenancy-by-council (
+        name: Tenancy by Council
+        title: Tenancy by Council
+        type: chart
+        layout {
+            sequence: 60
+            parentRegion: @tenancy
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        security {
+            escapeSpecialChars: false
+        }
+        chart {
+            type: pie
+        }
+        chartLayout {
+            height: 400
+        }
+        value {
+            format: decimal
+            decimalPlaces: 0
+        }
+
+        series series (
+            name: Series 1
+            execution {
+                sequence: 10
+            }
+            source {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select 
+                        wc.name council, 
+                        count(*) value 
+                    from livelabs_sandbox_dashboard_vw sd
+                        left join WORKSHOP_COUNCIL wc on wc.id = sd.council_id
+                    where sd.tenancy_flg = 'Y' 
+                    group by wc.name
+                    ```
+            }
+            columnMapping {
+                label: COUNCIL
+                value: VALUE
+            }
+            label {
+                show: true
+            }
+            performance {
+                maxRowsToProcess: 20
+            }
+        )
+
+    )
+
+    region tenancy-by-publish-type (
+        name: Tenancy by Publish Type
+        title: Tenancy by Publish Type
+        type: chart
+        layout {
+            sequence: 80
+            parentRegion: @tenancy
+            slot: subRegions
+            startNewRow: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        security {
+            escapeSpecialChars: false
+        }
+        chart {
+            type: pie
+        }
+        chartLayout {
+            height: 400
+        }
+        value {
+            format: decimal
+            decimalPlaces: 0
+        }
+
+        series series (
+            name: Series 1
+            execution {
+                sequence: 10
+            }
+            source {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select 
+                        publish_type, 
+                        count(*) value 
+                    from livelabs_sandbox_dashboard_vw 
+                    where tenancy_flg = 'Y' 
+                    group by publish_type
+                    ```
+            }
+            columnMapping {
+                label: PUBLISH_TYPE
+                value: VALUE
+            }
+            label {
+                show: true
+            }
+            performance {
+                maxRowsToProcess: 20
+            }
+        )
+
+    )
+
+    region tenancy-by-stakeholder (
+        name: Tenancy by Stakeholder
+        title: Tenancy by Stakeholder
+        type: chart
+        layout {
+            sequence: 40
+            parentRegion: @tenancy
+            slot: subRegions
+            startNewRow: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        security {
+            escapeSpecialChars: false
+        }
+        chart {
+            type: pie
+        }
+        chartLayout {
+            height: 400
+        }
+        value {
+            format: decimal
+            decimalPlaces: 0
+        }
+
+        series series (
+            name: Series 1
+            execution {
+                sequence: 10
+            }
+            source {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select 
+                        st.name stakeholder, 
+                        count(*) value 
+                    from livelabs_sandbox_dashboard_vw sd
+                        left join workshop_stakeholder st on st.id = sd.stakeholder_id
+                    where sd.tenancy_flg = 'Y' 
+                    group by st.name
+                    ```
+            }
+            columnMapping {
+                label: STAKEHOLDER
+                value: VALUE
+            }
+            label {
+                show: true
+            }
+            performance {
+                maxRowsToProcess: 20
+            }
+        )
+
+    )
+
+    region workshop-types-adoption (
+        name: Workshop Types Adoption
+        type: chart
+        layout {
+            sequence: 20
+            parentRegion: @overall
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        security {
+            escapeSpecialChars: false
+        }
+        chartAppearance {
+            stack: true
+        }
+        chartLayout {
+            height: 400
+        }
+        messages {
+            whenNoDataFound: "No workshops match this Stakeholder/Council combination. "
+        }
+
+        series disabled (
+            name: Disabled
+            execution {
+                sequence: 20
+            }
+            source {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    with workshop_types as (
+                        select 'Sandbox' name, stakeholder_id, council_id, workshop_owner_group, workshop_status from livelabs_sandbox_dashboard_vw where sandbox_flg = 'N'
+                        union all
+                        select 'Tenancy' name, stakeholder_id, council_id, workshop_owner_group, workshop_status from livelabs_sandbox_dashboard_vw where tenancy_flg = 'N'
+                        union all
+                        select 'Sprint' name, stakeholder_id, council_id, workshop_owner_group, workshop_status from livelabs_sandbox_dashboard_vw where sprint_flg = 'N'
+                        union all
+                        select 'FreeSQL' name, stakeholder_id, council_id, workshop_owner_group, workshop_status from livelabs_sandbox_dashboard_vw where livesql_flg = 'N'
+                    )
+                    select 
+                        name,
+                        count(*) value
+                    from workshop_types
+                    where 1=1 
+                        and (
+                            (:P3400_OVERALL_STAKEHOLDER is null)
+                            or
+                            (:P3400_OVERALL_STAKEHOLDER is not null and :P3400_OVERALL_STAKEHOLDER = stakeholder_id)
+                        )
+                        and (
+                            (:P3400_OVERALL_COUNCIL is null)
+                            or
+                            (:P3400_OVERALL_COUNCIL is not null and :P3400_OVERALL_COUNCIL = council_id)
+                        )
+                        and (
+                            (:P3400_OVERALL_OWNER is null)
+                            or
+                            (:P3400_OVERALL_OWNER is not null and :P3400_OVERALL_OWNER = workshop_owner_group)
+                        )
+                        and (
+                            (:P3400_OVERALL_STATUS is null)
+                            or
+                            (:P3400_OVERALL_STATUS is not null and instr(:P3400_OVERALL_STATUS, workshop_status) > 0)
+                        )
+                    group by name
+                    ```
+                pageItemsToSubmit: [
+                    P3400_OVERALL_STAKEHOLDER
+                    P3400_OVERALL_COUNCIL
+                    P3400_OVERALL_OWNER
+                    P3400_OVERALL_STATUS
+                ]
+            }
+            columnMapping {
+                label: NAME
+                value: VALUE
+            }
+            appearance {
+                color: #e3513c
+            }
+            label {
+                show: true
+            }
+            performance {
+                maxRowsToProcess: 20
+            }
+        )
+
+        series enabled (
+            name: Enabled
+            execution {
+                sequence: 10
+            }
+            source {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    with workshop_types as (
+                        select 'Sandbox' name, stakeholder_id, council_id, workshop_owner_group, workshop_status from livelabs_sandbox_dashboard_vw where sandbox_flg = 'Y'
+                        union all
+                        select 'Tenancy' name, stakeholder_id, council_id, workshop_owner_group, workshop_status from livelabs_sandbox_dashboard_vw where tenancy_flg = 'Y'
+                        union all
+                        select 'Sprint' name, stakeholder_id, council_id, workshop_owner_group, workshop_status from livelabs_sandbox_dashboard_vw where sprint_flg = 'Y'
+                        union all
+                        select 'FreeSQL' name, stakeholder_id, council_id, workshop_owner_group, workshop_status from livelabs_sandbox_dashboard_vw where livesql_flg = 'Y'
+                    )
+                    select 
+                        name,
+                        count(*) value
+                    from workshop_types
+                    where 1=1 
+                        and (
+                            (:P3400_OVERALL_STAKEHOLDER is null)
+                            or
+                            (:P3400_OVERALL_STAKEHOLDER is not null and :P3400_OVERALL_STAKEHOLDER = stakeholder_id)
+                        )
+                        and (
+                            (:P3400_OVERALL_COUNCIL is null)
+                            or
+                            (:P3400_OVERALL_COUNCIL is not null and :P3400_OVERALL_COUNCIL = council_id)
+                        )
+                        and (
+                            (:P3400_OVERALL_OWNER is null)
+                            or
+                            (:P3400_OVERALL_OWNER is not null and :P3400_OVERALL_OWNER = workshop_owner_group)
+                        )
+                        and (
+                            (:P3400_OVERALL_STATUS is null)
+                            or
+                            (:P3400_OVERALL_STATUS is not null and instr(:P3400_OVERALL_STATUS, workshop_status) > 0)
+                        )
+                    group by name
+                    ```
+                pageItemsToSubmit: [
+                    P3400_OVERALL_STAKEHOLDER
+                    P3400_OVERALL_COUNCIL
+                    P3400_OVERALL_OWNER
+                    P3400_OVERALL_STATUS
+                ]
+            }
+            columnMapping {
+                label: NAME
+                value: VALUE
+            }
+            appearance {
+                color: #759c6c
+            }
+            label {
+                show: true
+            }
+            performance {
+                maxRowsToProcess: 20
+            }
+        )
+
+        axis x (
+            name: x
+            minorTicks {
+                show: false
+            }
+        )
+
+        axis y (
+            name: y
+            value {
+                format: decimal
+                decimalPlaces: 0
+                formatScaling: none
+            }
+            minorTicks {
+                show: false
+            }
+        )
+
+    )
+
+    pageItem P3400_FREESQL_COUNCIL (
+        type: popupLov
+        label {
+            label: Council
+            alignment: left
+        }
+        settings {
+            fetchOnSearch: true
+        }
+        lov {
+            type: sharedComponent
+            lov: @workshop-council-id
+            displayExtraValues: false
+            nullDisplayValue: All Councils
+        }
+        layout {
+            sequence: 60
+            region: @overall-freesql-adoption
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+            valuePlaceholder: All Councils
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+    )
+
+    pageItem P3400_FREESQL_STAKEHOLDER (
+        type: popupLov
+        label {
+            label: Stakeholder
+            alignment: left
+        }
+        settings {
+            fetchOnSearch: true
+        }
+        lov {
+            type: sharedComponent
+            lov: @workshop-stakeholder-id
+            displayExtraValues: false
+            nullDisplayValue: All Stakeholders
+        }
+        layout {
+            sequence: 40
+            region: @overall-freesql-adoption
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+            valuePlaceholder: All Stakeholders
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+    )
+
+    pageItem P3400_OVERALL_COUNCIL (
+        type: popupLov
+        label {
+            label: Council
+            alignment: left
+        }
+        settings {
+            fetchOnSearch: true
+        }
+        lov {
+            type: sharedComponent
+            lov: @workshop-council-id
+            displayExtraValues: false
+            nullDisplayValue: All Councils
+        }
+        layout {
+            sequence: 10
+            region: @overall
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+            valuePlaceholder: All Councils
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+    )
+
+    pageItem P3400_OVERALL_OWNER (
+        type: popupLov
+        label {
+            label: Owner Group
+            alignment: left
+        }
+        settings {
+            fetchOnSearch: true
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery: select distinct workshop_owner_group, workshop_owner_group as returnValue from workshop
+            displayExtraValues: false
+            nullDisplayValue: All Owner Groups
+        }
+        layout {
+            sequence: 20
+            region: @overall
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+            valuePlaceholder: All Owner Groups
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+    )
+
+    pageItem P3400_OVERALL_STAKEHOLDER (
+        type: popupLov
+        label {
+            label: Stakeholder
+            alignment: left
+        }
+        settings {
+            fetchOnSearch: true
+        }
+        lov {
+            type: sharedComponent
+            lov: @workshop-stakeholder-id
+            displayExtraValues: false
+            nullDisplayValue: All Stakeholders
+        }
+        layout {
+            sequence: 10
+            region: @overall
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+            valuePlaceholder: All Stakeholders
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+    )
+
+    pageItem P3400_OVERALL_STATUS (
+        type: selectMany
+        label {
+            label: Workshop Status
+            alignment: left
+        }
+        settings {
+            infiniteScroll: false
+            fetchOnSearch: true
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery: select distinct workshop_status, workshop_status as returnValue from workshop
+        }
+        layout {
+            sequence: 30
+            region: @overall
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            width: 30
+            valuePlaceholder: All Statuses
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+    )
+
+    pageItem P3400_SANDBOX_COUNCIL (
+        type: popupLov
+        label {
+            label: Council
+            alignment: left
+        }
+        settings {
+            fetchOnSearch: true
+        }
+        lov {
+            type: sharedComponent
+            lov: @workshop-council-id
+            displayExtraValues: false
+            nullDisplayValue: All Councils
+        }
+        layout {
+            sequence: 30
+            region: @overall-sandbox-adoption
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+            valuePlaceholder: All Councils
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+    )
+
+    pageItem P3400_SANDBOX_STAKEHOLDER (
+        type: popupLov
+        label {
+            label: Stakeholder
+            alignment: left
+        }
+        settings {
+            fetchOnSearch: true
+        }
+        lov {
+            type: sharedComponent
+            lov: @workshop-stakeholder-id
+            displayExtraValues: false
+            nullDisplayValue: All Stakeholders
+        }
+        layout {
+            sequence: 10
+            region: @overall-sandbox-adoption
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+            valuePlaceholder: All Stakeholders
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+    )
+
+    pageItem P3400_SPRINT_COUNCIL (
+        type: popupLov
+        label {
+            label: Council
+            alignment: left
+        }
+        settings {
+            fetchOnSearch: true
+        }
+        lov {
+            type: sharedComponent
+            lov: @workshop-council-id
+            displayExtraValues: false
+            nullDisplayValue: All Councils
+        }
+        layout {
+            sequence: 50
+            region: @overall-sprint-adoption
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+            valuePlaceholder: All Councils
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+    )
+
+    pageItem P3400_SPRINT_STAKEHOLDER (
+        type: popupLov
+        label {
+            label: Stakeholder
+            alignment: left
+        }
+        settings {
+            fetchOnSearch: true
+        }
+        lov {
+            type: sharedComponent
+            lov: @workshop-stakeholder-id
+            displayExtraValues: false
+            nullDisplayValue: All Stakeholders
+        }
+        layout {
+            sequence: 30
+            region: @overall-sprint-adoption
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+            valuePlaceholder: All Stakeholders
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+    )
+
+    pageItem P3400_TENANCY_COUNCIL (
+        type: popupLov
+        label {
+            label: Council
+            alignment: left
+        }
+        settings {
+            fetchOnSearch: true
+        }
+        lov {
+            type: sharedComponent
+            lov: @workshop-council-id
+            displayExtraValues: false
+            nullDisplayValue: All Councils
+        }
+        layout {
+            sequence: 40
+            region: @overall-tenancy-adoption
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+            valuePlaceholder: All Councils
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+    )
+
+    pageItem P3400_TENANCY_STAKEHOLDER (
+        type: popupLov
+        label {
+            label: Stakeholder
+            alignment: left
+        }
+        settings {
+            fetchOnSearch: true
+        }
+        lov {
+            type: sharedComponent
+            lov: @workshop-stakeholder-id
+            displayExtraValues: false
+            nullDisplayValue: All Stakeholders
+        }
+        layout {
+            sequence: 20
+            region: @overall-tenancy-adoption
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+            valuePlaceholder: All Stakeholders
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+    )
+
+    dynamicAction refresh-overall-freesql-adoption (
+        name: Refresh Overall FreeSQL Adoption
+        execution {
+            sequence: 50
+        }
+        when {
+            selectionType: items
+            items: [
+                P3400_FREESQL_STAKEHOLDER
+                P3400_FREESQL_COUNCIL
+            ]
+        }
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @overall-sprint-adoption
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction refresh-overall-sandbox-adoption (
+        name: Refresh Overall Sandbox Adoption
+        execution {
+            sequence: 10
+        }
+        when {
+            selectionType: items
+            items: [
+                P3400_SANDBOX_STAKEHOLDER
+                P3400_SANDBOX_COUNCIL
+            ]
+        }
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @overall-sandbox-adoption
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction refresh-overall-sprint-adoption (
+        name: Refresh Overall Sprint Adoption
+        execution {
+            sequence: 40
+        }
+        when {
+            selectionType: items
+            items: [
+                P3400_SPRINT_STAKEHOLDER
+                P3400_SPRINT_COUNCIL
+            ]
+        }
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @overall-sprint-adoption
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction refresh-overall-tenancy-adoption (
+        name: Refresh Overall Tenancy Adoption
+        execution {
+            sequence: 30
+        }
+        when {
+            selectionType: items
+            items: [
+                P3400_TENANCY_STAKEHOLDER
+                P3400_TENANCY_COUNCIL
+            ]
+        }
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @overall-tenancy-adoption
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction refresh-workshop-types (
+        name: Refresh Workshop Types
+        execution {
+            sequence: 20
+        }
+        when {
+            selectionType: items
+            items: [
+                P3400_OVERALL_STAKEHOLDER
+                P3400_OVERALL_COUNCIL
+                P3400_OVERALL_OWNER
+                P3400_OVERALL_STATUS
+            ]
+        }
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @workshop-types-adoption
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+        action native-refresh-2 (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @page-views-by-workshop-type
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+    )
+
+)
+

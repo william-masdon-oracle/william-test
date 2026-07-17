@@ -1,0 +1,7 @@
+restDataSourceServer rddainsuh6u1okc_llreport_adb_us_ashburn_1_oraclecloudapps_com_ords_admin (
+    name: rddainsuh6u1okc-llreport-adb-us-ashburn-1-oraclecloudapps-com-ords-admin
+    endpointUrl {
+        url: https://rddainsuh6u1okc-llreport.adb.us-ashburn-1.oraclecloudapps.com/ords/admin/
+    }
+)
+

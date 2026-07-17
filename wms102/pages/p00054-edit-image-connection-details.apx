@@ -1,0 +1,251 @@
+page 54 (
+    name: Edit Image Connection Details
+    alias: EDIT-IMAGE-CONNECTION-DETAILS
+    title: Connect an Image
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @modal-dialog
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region image-connection-details (
+        name: Image Connection Details
+        title: Connect an Image
+        type: form
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select id,
+                       LIVELABS_ID,
+                       IMAGE_ID,
+                       ACTIVE_FLG
+                  from WMS_LL_IMAGES
+                 where id = :P54_ID
+                ```
+        }
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+        edit {
+            enabled: true
+            allowedOperations: [
+                add
+                update
+                delete
+            ]
+        }
+    )
+
+    pageItem P54_ACTIVE_FLG (
+        type: hidden
+        layout {
+            sequence: 50
+            region: @image-connection-details
+            slot: regionBody
+        }
+        source {
+            formRegion: @image-connection-details
+            column: ACTIVE_FLG
+            dataType: varchar2
+        }
+    )
+
+    pageItem P54_ID (
+        type: hidden
+        layout {
+            sequence: 60
+            region: @image-connection-details
+            slot: regionBody
+        }
+        source {
+            formRegion: @image-connection-details
+            column: ID
+            dataType: number
+            primaryKey: true
+        }
+        security {
+            sessionStateProtection: checksumRequiredSessionLevel
+        }
+    )
+
+    pageItem P54_IMAGE_ID (
+        type: popupLov
+        label {
+            label: Merketplace Image
+            alignment: left
+        }
+        lov {
+            type: sharedComponent
+            lov: @user-images
+        }
+        layout {
+            sequence: 30
+            region: @image-connection-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        source {
+            formRegion: @image-connection-details
+            column: IMAGE_ID
+            dataType: number
+        }
+        security {
+            sessionStateProtection: checksumRequiredSessionLevel
+        }
+        help {
+            helpText: Images shown in the drop-down are either created by you or have you as a support contact on the listing.
+        }
+    )
+
+    pageItem P54_LIVELABS_ID (
+        type: hidden
+        layout {
+            sequence: 20
+            region: @image-connection-details
+            slot: regionBody
+        }
+        source {
+            formRegion: @image-connection-details
+            column: LIVELABS_ID
+            dataType: number
+        }
+        security {
+            sessionStateProtection: checksumRequiredSessionLevel
+        }
+    )
+
+    button delete (
+        buttonName: Delete
+        label: Delete
+        layout {
+            sequence: 80
+            region: @image-connection-details
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            showProcessing: true
+            warnOnUnsavedChanges: doNotCheck
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P54_IMAGE_ID
+        }
+    )
+
+    button save (
+        buttonName: Save
+        label: Save
+        layout {
+            sequence: 60
+            region: @image-connection-details
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            showProcessing: true
+            warnOnUnsavedChanges: doNotCheck
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P54_IMAGE_ID
+        }
+    )
+
+    process close-dialog (
+        name: Close Dialog
+        type: closeDialog
+        execution {
+            sequence: 30
+        }
+        advanced {
+            executionMappingIdentifier: 34130224545141456120
+        }
+    )
+
+    process initialize-form-edit-image-connection-details (
+        name: Initialize form Edit Image Connection Details
+        type: formInitialization
+        formRegion: @image-connection-details
+        execution {
+            sequence: 10
+            point: beforeHeader
+        }
+        advanced {
+            executionMappingIdentifier: 33972894902125936732
+        }
+    )
+
+    process process-form-delete (
+        name: Process Form - Delete
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                begin
+                   wms_pkg_ords.deleteImageConnection(:P54_ID);
+                end;
+                ```
+        }
+        execution {
+            sequence: 20
+        }
+        advanced {
+            executionMappingIdentifier: 35255862608686507701
+        }
+        serverSideCondition {
+            whenButtonPressed: @delete
+        }
+    )
+
+    process process-form-save (
+        name: Process Form - Save
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                begin
+                   wms_pkg_ords.updateImageConnection(:P54_ID, :P54_IMAGE_ID);
+                end;
+                ```
+        }
+        execution {
+            sequence: 10
+        }
+        advanced {
+            executionMappingIdentifier: 33972895753132936740
+        }
+        serverSideCondition {
+            whenButtonPressed: @save
+        }
+    )
+
+)
+

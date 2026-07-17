@@ -1,0 +1,475 @@
+page 67 (
+    name: Event Ready Checklist
+    alias: EVENT-READY-CHECKLIST
+    title: Event Ready Checklist
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @modal-dialog
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    css {
+        inline:
+            ```css
+            .event-ready-checklist {
+              display: grid;
+              grid-template-columns: repeat(2, minmax(0, 1fr));
+              gap: 18px 28px;
+              padding: 18px 20px 24px;
+            }
+            
+            .event-ready-section h3 {
+              margin: 0 0 10px;
+              padding-bottom: 8px;
+              border-bottom: 3px solid #f6b333;
+              color: #3f3f3f;
+              font-size: 13px;
+              font-weight: 700;
+              line-height: 1.2;
+              text-transform: uppercase;
+            }
+            
+            .event-ready-item {
+              display: flex;
+              align-items: flex-start;
+              gap: 8px;
+              margin: 7px 0;
+              color: #444;
+              font-size: 13px;
+              line-height: 1.3;
+            }
+            
+            .event-ready-check {
+              flex: 0 0 auto;
+              margin-top: 2px;
+            }
+            
+            .event-ready-item span {
+              display: block;
+            }
+            
+            @media (max-width: 700px) {
+              .event-ready-checklist {
+                grid-template-columns: 1fr;
+              }
+            }
+            ```
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region buttons (
+        name: Buttons
+        type: staticContent
+        layout {
+            sequence: 70
+            slot: contentBody
+        }
+        appearance {
+            template: @buttons-container
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    region event-ready-checklist (
+        name: Event Ready Checklist
+        type: dynamicContent
+        source {
+            plsqlFunctionBody:
+                ```plsql
+                declare
+                    l_html    clob;
+                    l_section varchar2(100);
+                begin
+                    l_html := '<div class="event-ready-checklist">';
+                
+                    for r in (
+                        select i.id,
+                               i.section,
+                               i.item,
+                               case
+                                   when exists (
+                                       select 1
+                                         from workshop_event_ready wer,
+                                              json_table(
+                                                  wer.checklist_json,
+                                                  '$.checkedItems[*]'
+                                                  columns item_id number path '$'
+                                              ) jt
+                                        where wer.livelab_id = :P67_ID
+                                          and jt.item_id = i.id
+                                   )
+                                   then ' checked'
+                               end as checked_attr
+                          from wms_event_ready_items i
+                         where i.active_yn = 'Y'
+                         order by
+                               case i.section
+                                   when 'Session Definition' then 1
+                                   when 'Content Completion' then 2
+                                   when 'Environment and Access' then 3
+                                   when 'Event Setup' then 4
+                                   when 'End-to-End Testing' then 5
+                                   when 'Delivery Readiness' then 6
+                                   when 'Recording and Backup Assets' then 7
+                                   else 99
+                               end,
+                               i.id
+                    ) loop
+                        if l_section is null or l_section <> r.section then
+                            if l_section is not null then
+                                l_html := l_html || '</div>';
+                            end if;
+                
+                            l_section := r.section;
+                
+                            l_html := l_html ||
+                                '<div class="event-ready-section">' ||
+                                '<h3>' || apex_escape.html(r.section) || '</h3>';
+                        end if;
+                
+                        l_html := l_html ||
+                            '<label class="event-ready-item" for="er_item_' || r.id || '">' ||
+                                '<input type="checkbox" ' ||
+                                    'id="er_item_' || r.id || '" ' ||
+                                    'name="f01" ' ||
+                                    'class="event-ready-check" ' ||
+                                    'value="' || r.id || '"' ||
+                                    r.checked_attr || '>' ||
+                                '<span>' || apex_escape.html(r.item) || '</span>' ||
+                            '</label>';
+                    end loop;
+                
+                    if l_section is not null then
+                        l_html := l_html || '</div>';
+                    end if;
+                
+                    l_html := l_html || '</div>';
+                
+                    return l_html;
+                end;
+                ```
+        }
+        layout {
+            sequence: 30
+            slot: contentBody
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+        headerAndFooter {
+            headerText:
+                ```html
+                <h6>Marking this LiveLab as <b>Event Ready</b> signals to event organizers that it is a strong candidate to present in upcoming conferences, training sessions, and customer meetings.</h6>
+                
+                ```
+            footerText:
+                ```html
+                <h6><b>Note:</b> LiveLabs published as <i>Private</i> will not be shared as Event Ready, regardless of this checklist status.</h6>
+                
+                ```
+        }
+    )
+
+    pageItem P67_CHECK_ALL (
+        type: switch
+        label {
+            label: Check All
+            alignment: left
+        }
+        settings {
+            useDefaults: false
+            onValue: Y
+            onLabel: Check All Items
+            offValue: N
+            offLabel: Off
+        }
+        layout {
+            sequence: 10
+            region: @buttons
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            authorizationScheme: @administration-rights
+        }
+    )
+
+    pageItem P67_EVENT_READY_STATUS_TEXT (
+        type: displayOnly
+        label {
+            alignment: left
+        }
+        layout {
+            sequence: 60
+            slot: contentBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery:
+                ```sql
+                select 'LiveLabs #' || :P67_ID ||
+                       case nvl(wer.event_ready_flg, 'N')
+                            when 'Y' then ' is currently Event Ready.'
+                            else ' is not currently Event Ready.'
+                       end
+                from dual
+                left join workshop_event_ready wer
+                  on wer.livelab_id = :P67_ID
+                ```
+            used: always
+        }
+        sessionState {
+            storage: request
+        }
+    )
+
+    pageItem P67_ID (
+        type: hidden
+        layout {
+            sequence: 40
+            slot: contentBody
+        }
+    )
+
+    pageItem P67_WORKSHOP_ID (
+        type: hidden
+        layout {
+            sequence: 50
+            slot: contentBody
+        }
+    )
+
+    button cancel (
+        buttonName: CANCEL
+        label: Cancel
+        layout {
+            sequence: 10
+            region: @buttons
+            slot: close
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: triggerAction
+        }
+
+        triggerAction native-dialog-cancel (
+            action: cancelDialog
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    button notready (
+        buttonName: NOTREADY
+        label: Not Ready
+        layout {
+            sequence: 10
+            region: @buttons
+            slot: delete
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: [
+                #DEFAULT#
+                t-Button--danger
+            ]
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button save (
+        buttonName: SAVE
+        label: Save
+        layout {
+            sequence: 30
+            region: @buttons
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: update
+        }
+    )
+
+    dynamicAction check-all (
+        name: Check All
+        execution {
+            sequence: 10
+        }
+        when {
+            selectionType: items
+            items: P67_CHECK_ALL
+        }
+        clientSideCondition {
+            type: item=value
+            item: P67_CHECK_ALL
+            value: Y
+        }
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    document
+                      .querySelectorAll('.event-ready-check')
+                      .forEach(function (checkbox) {
+                        checkbox.checked = true;
+                      });
+                    ```
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+        action native-javascript-code_1 (
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    document
+                      .querySelectorAll('.event-ready-check')
+                      .forEach(function (checkbox) {
+                        checkbox.checked = false;
+                      });
+                    ```
+            }
+            execution {
+                sequence: 10
+                fireWhenEventResultIs: false
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    process apply-changes (
+        name: "Save Checklist "
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                declare
+                    l_required_count number;
+                    l_checked_count  number := 0;
+                    l_items_json     clob := '[';
+                    l_json           clob;
+                    l_event_ready    varchar2(1) := 'N';
+                begin
+                    select count(*)
+                      into l_required_count
+                      from wms_event_ready_items
+                     where active_yn = 'Y';
+                
+                    for i in 1 .. apex_application.g_f01.count loop
+                        if i > 1 then
+                            l_items_json := l_items_json || ',';
+                        end if;
+                
+                        l_items_json := l_items_json || to_char(to_number(apex_application.g_f01(i)));
+                        l_checked_count := l_checked_count + 1;
+                    end loop;
+                
+                    l_items_json := l_items_json || ']';
+                
+                    if :REQUEST = 'SAVE'
+                       and l_required_count > 0
+                       and l_checked_count = l_required_count then
+                        l_event_ready := 'Y';
+                    else
+                        l_event_ready := 'N';
+                    end if;
+                
+                    l_json :=
+                        '{' ||
+                        '"checkedItems":' || l_items_json || ',' ||
+                        '"eventReady":"' || l_event_ready || '",' ||
+                        '"savedAt":"' || to_char(systimestamp, 'YYYY-MM-DD"T"HH24:MI:SSTZH:TZM') || '"' ||
+                        '}';
+                
+                    merge into workshop_event_ready tgt
+                    using (
+                        select :P67_ID as livelab_id,
+                               l_json as checklist_json,
+                               l_event_ready as event_ready_flg
+                          from dual
+                    ) src
+                    on (tgt.livelab_id = src.livelab_id)
+                    when matched then
+                        update set tgt.checklist_json = src.checklist_json,
+                                   tgt.event_ready_flg = src.event_ready_flg
+                    when not matched then
+                        insert (livelab_id, checklist_json, event_ready_flg)
+                        values (src.livelab_id, src.checklist_json, src.event_ready_flg);
+                
+                    if l_event_ready = 'Y' then
+                        apex_application.g_print_success_message :=
+                            'This workshop is now marked as Event Ready';
+                    else
+                        apex_application.g_print_success_message :=
+                            'Save successful';
+                    end if;
+                end;
+                ```
+        }
+        execution {
+            sequence: 10
+        }
+        advanced {
+            executionMappingIdentifier: 16907560288586992239
+        }
+        serverSideCondition {
+            type: expression
+            plsqlExpression: :REQUEST in ('SAVE', 'NOTREADY')
+        }
+    )
+
+    process close-dialog (
+        name: Close Dialog
+        type: closeDialog
+        execution {
+            sequence: 30
+        }
+        advanced {
+            executionMappingIdentifier: 16907560676832992241
+        }
+        serverSideCondition {
+            type: requestIsContainedInValue
+            value: CANCEL,SAVE,NOTREADY
+        }
+    )
+
+)
+

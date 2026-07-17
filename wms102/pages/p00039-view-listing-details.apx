@@ -1,0 +1,907 @@
+page 39 (
+    name: View Listing Info
+    alias: VIEW-LISTING-DETAILS
+    title: View Listing Information
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @modal-dialog
+        templateOptions: #DEFAULT#
+    }
+    dialog {
+        width: 960
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region listing-details (
+        name: Listing Details
+        type: form
+        source {
+            location: localDatabase
+            tableName: OMP_LISTINGS
+            whereClause: ID = :P39_ID
+        }
+        layout {
+            sequence: 30
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--accent1
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    region listing-images (
+        name: Listing Images
+        type: staticContent
+        layout {
+            sequence: 40
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--accent1
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    region view-all-listing-images (
+        name: View All Listing Images
+        type: interactiveReport
+        source {
+            location: localDatabase
+            tableName: OMP_IMAGES
+            whereClause: LISTING_ID = :P39_ID
+        }
+        layout {
+            sequence: 10
+            parentRegion: @listing-images
+            slot: subRegions
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        link {
+            linkColumn: customTarget
+            target: {
+                page: 36
+                items: {
+                    P36_ID: #ID#
+                }
+            }
+            linkIcon: <span role="img" aria-label="Edit" class="fa fa-edit" title="Edit"></span>
+        }
+        pagination {
+            type: rowRangesXToY
+        }
+        performance {
+            maxRowsToProcess: 1000000
+        }
+        advanced {
+            savedReportMappingIdentifier: 33976967742236782532
+        }
+
+        column ACTIVE_FLG (
+            type: hidden
+            heading {
+                heading: Active Flg
+            }
+            layout {
+                sequence: 170
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: P
+            }
+        )
+
+        column ADDED_BY (
+            type: plainText
+            heading {
+                heading: Added By
+            }
+            layout {
+                sequence: 80
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: N
+            }
+        )
+
+        column ADDED_ON (
+            type: plainText
+            heading {
+                heading: Added On
+            }
+            layout {
+                sequence: 70
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: K
+            }
+        )
+
+        column DATABASE_VERSION (
+            type: plainText
+            heading {
+                heading: Database Version
+            }
+            layout {
+                sequence: 50
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: F
+            }
+        )
+
+        column ID (
+            type: plainText
+            heading {
+                heading: ID
+                alignment: end
+            }
+            layout {
+                sequence: 10
+                columnAlignment: end
+            }
+            source {
+                primaryKey: true
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: A
+            }
+        )
+
+        column IMAGE_OCID (
+            type: plainText
+            heading {
+                heading: Image OCID
+            }
+            layout {
+                sequence: 20
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: I
+            }
+        )
+
+        column IMAGE_REQ (
+            type: hidden
+            heading {
+                heading: Image Req
+            }
+            layout {
+                sequence: 140
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: M
+            }
+        )
+
+        column INSTANCE_PREFIX (
+            type: hidden
+            heading {
+                heading: Instance Prefix
+            }
+            layout {
+                sequence: 190
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: R
+            }
+        )
+
+        column LISTING_ID (
+            type: hidden
+            heading {
+                heading: Listing Id
+            }
+            layout {
+                sequence: 130
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: L
+            }
+        )
+
+        column NOVNC_ENABLED (
+            type: plainText
+            heading {
+                heading: NoVNC Enabled
+            }
+            layout {
+                sequence: 40
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: E
+            }
+        )
+
+        column OCPU_REQUIRED (
+            type: hidden
+            heading {
+                heading: Ocpu Required
+            }
+            layout {
+                sequence: 90
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: B
+            }
+        )
+
+        column PUBKEY_REQ (
+            type: hidden
+            heading {
+                heading: Pubkey Req
+            }
+            layout {
+                sequence: 110
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: D
+            }
+        )
+
+        column REGION_ID (
+            type: hidden
+            heading {
+                heading: Region Id
+            }
+            layout {
+                sequence: 210
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: T
+            }
+        )
+
+        column REMARKS (
+            type: hidden
+            heading {
+                heading: Remarks
+            }
+            layout {
+                sequence: 180
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: Q
+            }
+        )
+
+        column RESOURCE_ID (
+            type: hidden
+            heading {
+                heading: Resource Id
+            }
+            layout {
+                sequence: 160
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: O
+            }
+        )
+
+        column SECLIST_REQ (
+            type: hidden
+            heading {
+                heading: Seclist Req
+            }
+            layout {
+                sequence: 100
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: C
+            }
+        )
+
+        column TENANCY_ID (
+            type: hidden
+            heading {
+                heading: Tenancy Id
+            }
+            layout {
+                sequence: 200
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: S
+            }
+        )
+
+        column UPDATED_FLG (
+            type: hidden
+            heading {
+                heading: Updated Flg
+            }
+            layout {
+                sequence: 120
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: J
+            }
+        )
+
+        column VERSION (
+            type: plainText
+            heading {
+                heading: Version
+            }
+            layout {
+                sequence: 30
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: H
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+
+        savedReport 340360272 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn ADDED_BY (
+                sequence: 7
+            )
+
+            displayColumn ADDED_ON (
+                sequence: 6
+            )
+
+            displayColumn DATABASE_VERSION (
+                sequence: 5
+            )
+
+            displayColumn ID (
+                sequence: 1
+            )
+
+            displayColumn IMAGE_OCID (
+                sequence: 2
+            )
+
+            displayColumn NOVNC_ENABLED (
+                sequence: 4
+            )
+
+            displayColumn VERSION (
+                sequence: 3
+            )
+
+            sort (
+                column: VERSION
+                sort {
+                    sequence: 1
+                }
+            )
+
+        )
+
+    )
+
+    pageItem P39_ADDED_BY (
+        type: displayOnly
+        label {
+            label: Added By
+            alignment: left
+        }
+        layout {
+            sequence: 80
+            region: @listing-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            newColumn: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @listing-details
+            column: ADDED_BY
+            dataType: varchar2
+        }
+    )
+
+    pageItem P39_ADDED_ON (
+        type: displayOnly
+        label {
+            label: Added On
+            alignment: left
+        }
+        layout {
+            sequence: 90
+            region: @listing-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @listing-details
+            column: ADDED_ON
+            dataType: timestamp
+        }
+    )
+
+    pageItem P39_APP_CATALOG_OCID (
+        type: textarea
+        label {
+            label: App Catalog OCID
+            alignment: left
+        }
+        layout {
+            sequence: 60
+            region: @listing-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+            height: 2
+        }
+        validation {
+            valueRequired: true
+            maxLength: 4000
+        }
+        source {
+            formRegion: @listing-details
+            column: APP_CATALOG_OCID
+            dataType: varchar2
+        }
+    )
+
+    pageItem P39_ID (
+        type: hidden
+        layout {
+            sequence: 30
+            region: @listing-details
+            slot: regionBody
+        }
+        source {
+            formRegion: @listing-details
+            column: ID
+            dataType: number
+            primaryKey: true
+        }
+        security {
+            sessionStateProtection: checksumRequiredSessionLevel
+        }
+    )
+
+    pageItem P39_LISTING_NAME (
+        type: textarea
+        label {
+            label: Listing Name
+            alignment: left
+        }
+        layout {
+            sequence: 40
+            region: @listing-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required-floating
+            templateOptions: #DEFAULT#
+            width: 30
+            height: 1
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            formRegion: @listing-details
+            column: LISTING_NAME
+            dataType: varchar2
+        }
+    )
+
+    pageItem P39_LISTING_OCID (
+        type: textarea
+        label {
+            label: Listing OCID
+            alignment: left
+        }
+        layout {
+            sequence: 50
+            region: @listing-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+            height: 2
+        }
+        validation {
+            valueRequired: true
+            maxLength: 4000
+        }
+        source {
+            formRegion: @listing-details
+            column: LISTING_OCID
+            dataType: varchar2
+        }
+    )
+
+    pageItem P39_SUPPORT_CONTACTS (
+        type: textarea
+        label {
+            label: Support Contacts
+            alignment: left
+        }
+        layout {
+            sequence: 70
+            region: @listing-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+            height: 3
+        }
+        validation {
+            valueRequired: true
+            maxLength: 4000
+        }
+        source {
+            formRegion: @listing-details
+            column: SUPPORT_CONTACTS
+            dataType: varchar2
+        }
+    )
+
+    pageItem P39_UPDATED_FLG (
+        type: hidden
+        layout {
+            sequence: 100
+            region: @listing-details
+            slot: regionBody
+        }
+        source {
+            formRegion: @listing-details
+            column: UPDATED_FLG
+            dataType: number
+        }
+    )
+
+    button create (
+        buttonName: Create
+        label: Create
+        layout {
+            sequence: 10
+            region: @listing-details
+            slot: create
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            showProcessing: true
+            warnOnUnsavedChanges: doNotCheck
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P39_ID
+        }
+        security {
+            authorizationScheme: @administration-rights
+        }
+    )
+
+    button delete (
+        buttonName: Delete
+        label: Delete
+        layout {
+            sequence: 110
+            region: @listing-details
+            slot: delete
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            showProcessing: true
+            warnOnUnsavedChanges: doNotCheck
+            requiresConfirmation: true
+        }
+        confirmation {
+            message: Are you sure you want to delete this listing?
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P39_ID
+        }
+        security {
+            authorizationScheme: @administration-rights
+        }
+    )
+
+    button save (
+        buttonName: Save
+        label: Save
+        layout {
+            sequence: 100
+            region: @listing-details
+            slot: change
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            showProcessing: true
+            warnOnUnsavedChanges: doNotCheck
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P39_ID
+        }
+    )
+
+    process close-dialog (
+        name: Close Dialog
+        type: closeDialog
+        execution {
+            sequence: 50
+        }
+        advanced {
+            executionMappingIdentifier: 35255865811258507733
+        }
+    )
+
+    process initialize-form-view-all-listing-images (
+        name: Initialize form View All Listing Images
+        type: formInitialization
+        formRegion: @listing-details
+        execution {
+            sequence: 10
+            point: beforeHeader
+        }
+        advanced {
+            executionMappingIdentifier: 32820535047687744150
+        }
+    )
+
+    process sync-listing-to-ll-create (
+        name: Sync Listing to LL - Create
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                DECLARE
+                    v_errm clob;
+                BEGIN
+                    INSERT INTO OMP_LISTINGS (
+                        LISTING_NAME,
+                        LISTING_OCID,
+                        ADDED_BY,
+                        ADDED_ON,
+                        APP_CATALOG_OCID,
+                        SUPPORT_CONTACTS,
+                        UPDATED_FLG
+                    ) VALUES (
+                        :P39_LISTING_NAME,
+                        :P39_LISTING_OCID,
+                        :APP_USER,
+                        SYSTIMESTAMP,
+                        :P39_APP_CATALOG_OCID,
+                        :P39_SUPPORT_CONTACTS,
+                        :P39_UPDATED_FLG
+                    )
+                    RETURNING ID INTO :P39_ID;
+                
+                    -- Call your sync job by passing the newly created listing ID
+                    wms_pkg_ords.createListing(:P39_ID);
+                
+                    -- Log success
+                    insert into ords_log(priority, error_message) values (9,'Added new listing with id = ' || :P39_ID);
+                
+                EXCEPTION
+                    WHEN OTHERS THEN
+                        v_errm := SQLERRM;
+                        insert into ords_log(priority, error_message) values (9, 'Error during listing insert or sync: ' || v_errm);
+                        apex_error.add_error(
+                            p_message          => 'Error during listing insert or sync: ' || SQLERRM,
+                            p_display_location => 'ON_PAGE'
+                        );
+                        RAISE;
+                END;
+                ```
+        }
+        execution {
+            sequence: 40
+        }
+        advanced {
+            executionMappingIdentifier: 35255865726243507732
+        }
+        serverSideCondition {
+            whenButtonPressed: @create
+        }
+    )
+
+    process sync-listing-to-ll-delete (
+        name: Sync Listing to LL - Delete
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                DECLARE
+                    v_errm CLOB;
+                BEGIN
+                    DELETE FROM OMP_LISTINGS WHERE ID = :P39_ID;
+                
+                    wms_pkg_ords.deleteListing(:P39_ID);
+                
+                    INSERT INTO ords_log (priority, error_message)
+                        VALUES (9, 'Successfully deleted listing: ID=' || :P39_ID);
+                
+                EXCEPTION
+                    WHEN OTHERS THEN
+                        v_errm := SQLERRM;
+                        INSERT INTO ords_log (priority, error_message)
+                            VALUES (9, 'Delete error for listing ID=' || :P39_ID || ': ' || v_errm);
+                        apex_error.add_error(
+                            p_message          => 'Error during listing deletion: ' || v_errm,
+                            p_display_location => 'ON_PAGE'
+                        );
+                        RAISE;
+                END;
+                ```
+        }
+        execution {
+            sequence: 30
+        }
+        advanced {
+            executionMappingIdentifier: 34130227321092456148
+        }
+        serverSideCondition {
+            whenButtonPressed: @delete
+        }
+    )
+
+    process sync-listing-to-ll-update (
+        name: Sync Listing to LL - Update
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                DECLARE
+                    v_errm clob;
+                BEGIN
+                    UPDATE OMP_LISTINGS
+                    SET
+                        LISTING_NAME      = :P39_LISTING_NAME,
+                        LISTING_OCID      = :P39_LISTING_OCID,
+                        APP_CATALOG_OCID  = :P39_APP_CATALOG_OCID,
+                        SUPPORT_CONTACTS  = :P39_SUPPORT_CONTACTS,
+                        UPDATED_FLG       = :P39_UPDATED_FLG
+                    WHERE
+                        ID = :P39_ID;
+                
+                    IF SQL%ROWCOUNT = 0 THEN
+                        insert into ords_log(priority, error_message) values (9, 'Update attempt: No listing found for ID=' || :P39_ID);
+                        apex_error.add_error(
+                            p_message          => 'No listing record found to update.',
+                            p_display_location => 'ON_PAGE'
+                        );
+                        RETURN;
+                    END IF;
+                
+                    -- Call your sync job by passing the updated listing ID
+                    wms_pkg_ords.updateListing(:P39_ID);
+                
+                    -- Log success
+                    insert into ords_log(priority, error_message) values (9, 'Successfully updated listing: ID=' || :P39_ID || ', NAME=' || :P39_LISTING_NAME);
+                
+                EXCEPTION
+                    WHEN OTHERS THEN
+                        v_errm := SQLERRM;
+                        insert into ords_log(priority, error_message) values (9, 'Update error for listing ID=' || :P39_ID || ', NAME=' || :P39_LISTING_NAME || ': ' || v_errm);
+                        apex_error.add_error(
+                            p_message          => 'Error during listing update or sync: ' || v_errm,
+                            p_display_location => 'ON_PAGE'
+                        );
+                        RAISE;
+                END;
+                ```
+        }
+        execution {
+            sequence: 20
+        }
+        advanced {
+            executionMappingIdentifier: 34130227039078456145
+        }
+        serverSideCondition {
+            whenButtonPressed: @save
+        }
+    )
+
+)
+

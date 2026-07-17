@@ -1,0 +1,41 @@
+page 10050 (
+    name: About
+    alias: HELP
+    title: About
+    pageGroup: @administration
+    appearance {
+        pageTemplate: @standard-custom
+    }
+    security {
+        formAutoComplete: false
+    }
+    help {
+        helpText: All application help text can be accessed from this page. The links in the "Documentation" region give a much more in-depth explanation of the application's features and functionality.
+    }
+    config {
+        buildOption: @feature-about-page
+    }
+
+    region about-page (
+        name: About Page
+        type: staticContent
+        source {
+            htmlCode: Text about this application can be placed here.
+        }
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @content-block
+            templateOptions: [
+                #DEFAULT#
+                t-ContentBlock--padded
+                t-ContentBlock--h1
+                t-ContentBlock--lightBG
+            ]
+        }
+    )
+
+)
+

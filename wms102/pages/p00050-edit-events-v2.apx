@@ -1,0 +1,1068 @@
+page 50 (
+    name: Edit Events
+    alias: EDIT_EVENTS_V2
+    title: Edit Events
+    appearance {
+        pageTemplate: @standard-custom
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region comments (
+        name: Comments
+        type: staticContent
+        layout {
+            sequence: 40
+            parentRegion: @manage-all-events
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    region comments-section (
+        name: Comments Section
+        type: reflowReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select to_char(commentdate,'DD-MON-YYYY HH24:MI')||' | '||lower(EMAIL_CREATOR) ||'  said: '||THE_COMMENT||'' as comments from LL_COMMENTS
+                where event_id=:P50_WHICHEVENT order by COMMENTDATE desc;
+                ```
+            pageItemsToSubmit: P50_WHICHEVENT
+        }
+        layout {
+            sequence: 50
+            parentRegion: @manage-all-events
+            slot: subRegions
+            startNewRow: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        settings {
+            layoutOptions: [
+                stripes
+                stroke
+            ]
+        }
+
+        column COMMENTS (
+            source {
+                dataType: VARCHAR2
+            }
+            heading {
+                heading: Comments
+            }
+            layout {
+                sequence: 10
+            }
+        )
+
+    )
+
+    region edit-events (
+        name: "Edit Events "
+        type: interactiveGrid
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select ID,
+                      EMAIL_CREATOR ,
+                      EMAIL_REQUESTOR, 
+                      EMAIL_REQUESTOR_2,
+                      REASON ,
+                      VALID_FROM,
+                      VALID_TO ,
+                      WORKSHOP_ID ,   
+                      STATUS,
+                      PROD_ID ,
+                      CREATION_DATE,
+                      ORGANIZATION, 
+                      CODE,
+                      ALTERNATE_CODE
+                 from LL_VOUCHERS ;
+                ```
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        edit {
+            enabled: true
+            allowedOperations: [
+                add
+                update
+                delete
+            ]
+        }
+        toolbar {
+            controls: [
+                searchCol
+                searchField
+                actionsMenu
+                resetButton
+                saveButton
+            ]
+        }
+        download {
+            formats: [
+                csv
+                html
+                pdf
+            ]
+        }
+        advanced {
+            savedReportMappingIdentifier: 15002009436096554726
+        }
+
+        savedReport 14176712 (
+            visibility: primary
+            view {
+                default: grid
+            }
+            singleRowView {
+                displayedColumns: true
+            }
+
+            displayColumn (
+                column: @CREATION_DATE
+                layout {
+                    sequence: 11
+                }
+            )
+
+            displayColumn (
+                column: @ORGANIZATION
+                layout {
+                    sequence: 12
+                }
+            )
+
+            displayColumn (
+                column: @CODE
+                layout {
+                    sequence: 13
+                }
+            )
+
+            displayColumn (
+                column: @ALTERNATE_CODE
+                layout {
+                    sequence: 14
+                }
+            )
+
+            displayColumn (
+                column: @PROD_ID
+                layout {
+                    sequence: 3
+                }
+            )
+
+            displayColumn (
+                column: @ID
+                layout {
+                    sequence: 1
+                }
+            )
+
+            displayColumn (
+                column: @EMAIL_CREATOR
+                layout {
+                    sequence: 6
+                }
+            )
+
+            displayColumn (
+                column: @EMAIL_REQUESTOR
+                layout {
+                    sequence: 9
+                }
+            )
+
+            displayColumn (
+                column: @EMAIL_REQUESTOR_2
+                layout {
+                    sequence: 10
+                }
+            )
+
+            displayColumn (
+                column: @REASON
+                layout {
+                    sequence: 5
+                }
+            )
+
+            displayColumn (
+                column: @VALID_FROM
+                layout {
+                    sequence: 7
+                }
+            )
+
+            displayColumn (
+                column: @VALID_TO
+                layout {
+                    sequence: 8
+                }
+            )
+
+            displayColumn (
+                column: @WORKSHOP_ID
+                layout {
+                    sequence: 2
+                }
+            )
+
+            displayColumn (
+                column: @STATUS
+                layout {
+                    sequence: 4
+                }
+            )
+
+            displayColumn (
+                column: @APEX$ROW_ACTION
+                layout {
+                    frozen: true
+                    sequence: 0
+                }
+            )
+
+        )
+
+        savedReport 14178997 (
+            visibility: alternative
+            name: BASIC REPORT
+            view {
+                default: grid
+            }
+            singleRowView {
+                displayedColumns: true
+            }
+
+            displayColumn (
+                column: @PROD_ID
+                layout {
+                    sequence: 3
+                }
+            )
+
+            displayColumn (
+                column: @ID
+                layout {
+                    sequence: 2
+                }
+            )
+
+            displayColumn (
+                column: @EMAIL_CREATOR
+                layout {
+                    sequence: 6
+                }
+            )
+
+            displayColumn (
+                column: @EMAIL_REQUESTOR
+                layout {
+                    sequence: 7
+                }
+            )
+
+            displayColumn (
+                column: @EMAIL_REQUESTOR_2
+                layout {
+                    sequence: 8
+                }
+            )
+
+            displayColumn (
+                column: @REASON
+                layout {
+                    sequence: 5
+                }
+            )
+
+            displayColumn (
+                column: @VALID_FROM
+                layout {
+                    sequence: 9
+                }
+            )
+
+            displayColumn (
+                column: @VALID_TO
+                layout {
+                    sequence: 10
+                }
+            )
+
+            displayColumn (
+                column: @WORKSHOP_ID
+                layout {
+                    sequence: 2
+                }
+            )
+
+            displayColumn (
+                column: @STATUS
+                layout {
+                    sequence: 4
+                }
+            )
+
+            displayColumn (
+                column: @APEX$ROW_ACTION
+                layout {
+                    frozen: true
+                    sequence: 0
+                }
+            )
+
+            sort (
+                column: @ID
+                sort {
+                    direction: desc
+                    nulls: first
+                    sequence: 1
+                }
+            )
+
+        )
+
+        column ALTERNATE_CODE (
+            type: textField
+            heading {
+                heading: Marketing Code
+            }
+            layout {
+                sequence: 160
+            }
+            validation {
+                maxLength: 4000
+            }
+            source {
+                databaseColumn: ALTERNATE_CODE
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+        )
+
+        column APEX$ROW_ACTION (
+            type: actionsMenu
+            layout {
+                sequence: 20
+            }
+        )
+
+        column APEX$ROW_SELECTOR (
+            type: rowSelector
+            layout {
+                sequence: 10
+            }
+        )
+
+        column CODE (
+            type: textField
+            heading {
+                heading: Sales Cloud Code
+            }
+            layout {
+                sequence: 150
+            }
+            validation {
+                maxLength: 100
+            }
+            source {
+                databaseColumn: CODE
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+        )
+
+        column CREATION_DATE (
+            type: datePicker
+            heading {
+                heading: Creation Date
+                alignment: center
+            }
+            layout {
+                sequence: 130
+                columnAlignment: center
+            }
+            source {
+                databaseColumn: CREATION_DATE
+                dataType: date
+                queryOnly: true
+            }
+        )
+
+        column EMAIL_CREATOR (
+            type: textField
+            heading {
+                heading: Email Creator
+            }
+            layout {
+                sequence: 50
+            }
+            validation {
+                maxLength: 50
+            }
+            source {
+                databaseColumn: EMAIL_CREATOR
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column EMAIL_REQUESTOR (
+            type: textField
+            heading {
+                heading: Email Requestor
+            }
+            layout {
+                sequence: 60
+            }
+            validation {
+                maxLength: 50
+            }
+            source {
+                databaseColumn: EMAIL_REQUESTOR
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column EMAIL_REQUESTOR_2 (
+            type: textField
+            heading {
+                heading: Email Requestor 2
+            }
+            layout {
+                sequence: 70
+            }
+            validation {
+                maxLength: 50
+            }
+            source {
+                databaseColumn: EMAIL_REQUESTOR_2
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column ID (
+            type: link
+            heading {
+                heading: Id
+                alignment: end
+            }
+            layout {
+                sequence: 30
+                columnAlignment: end
+            }
+            link {
+                target: {
+                    page: 46
+                    items: {
+                        P46_ID: &ID.
+                    }
+                    clearCache: 46
+                    action: clearRegions
+                }
+                linkText: &ID.
+            }
+            source {
+                databaseColumn: ID
+                dataType: number
+                primaryKey: true
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column ORGANIZATION (
+            type: textField
+            heading {
+                heading: Organization
+            }
+            layout {
+                sequence: 140
+            }
+            source {
+                databaseColumn: ORGANIZATION
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column PROD_ID (
+            type: textField
+            heading {
+                heading: Prod Id
+            }
+            layout {
+                sequence: 40
+            }
+            source {
+                databaseColumn: PROD_ID
+                dataType: number
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column REASON (
+            type: textarea
+            heading {
+                heading: Event Title
+            }
+            layout {
+                sequence: 80
+            }
+            validation {
+                maxLength: 4000
+            }
+            source {
+                databaseColumn: REASON
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column STATUS (
+            type: selectList
+            heading {
+                heading: Status
+            }
+            lov {
+                type: sharedComponent
+                lov: @event-status
+            }
+            layout {
+                sequence: 120
+            }
+            source {
+                databaseColumn: STATUS
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: useLov
+            }
+        )
+
+        column VALID_FROM (
+            type: datePickerJquery
+            heading {
+                heading: Valid From
+                alignment: center
+            }
+            layout {
+                sequence: 90
+                columnAlignment: center
+            }
+            source {
+                databaseColumn: VALID_FROM
+                dataType: date
+            }
+        )
+
+        column VALID_TO (
+            type: datePickerJquery
+            heading {
+                heading: Valid To
+                alignment: center
+            }
+            layout {
+                sequence: 100
+                columnAlignment: center
+            }
+            source {
+                databaseColumn: VALID_TO
+                dataType: date
+            }
+        )
+
+        column WORKSHOP_ID (
+            type: link
+            heading {
+                heading: Workshop Id
+                alignment: end
+            }
+            layout {
+                sequence: 110
+                columnAlignment: end
+            }
+            link {
+                target: {
+                    page: 105
+                    items: {
+                        P105_WORKSHOP_ID: &WORKSHOP_ID.
+                    }
+                }
+                linkText: &WORKSHOP_ID.
+            }
+            source {
+                databaseColumn: WORKSHOP_ID
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: "Edit Events "
+        }
+    )
+
+    region manage-all-events (
+        name: Manage All Events
+        type: staticContent
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    region new (
+        name: New
+        type: plSqlDynamicContent
+        source {
+            plsqlCode:
+                ```plsql
+                Declare
+                
+                   Cursor C_LL_VOUCHERS Is
+                      Select ID
+                            ,STATUS 
+                            ,REASON
+                            ,QR_IMAGE 
+                            ,QR_LINK
+                            ,'<img src=''' || apex_util.get_blob_file_src('P46_QR_IMAGE', ID) || ''' height="200px" width="200px"/>' image1
+                      From   LL_VOUCHERS where  ID=:P50_WHICHEVENT;
+                
+                Begin
+                   --
+                   For row_1 In C_LL_VOUCHERS Loop
+                      Htp.p(  '<table border=0 cellspacing=2 cellpadding=2 height=100%>' );
+                       Htp.p(  '<tr>' );
+                        Htp.p(  '<td width="100%" colspan="3"> <b> Event Title : </b> ' );
+                            Htp.p(  row_1.REASON  );
+                        Htp.p(  ' <hr/> </td>' ); 
+                      Htp.p(  '</tr>' );
+                       Htp.p(  '<tr>' );
+                        Htp.p(  '<th width="33%"> <b> Status </b> ' );
+                        Htp.p(  '</th>' );
+                        Htp.p(  '<th width="33%"> <b> Qr Link </b>' );
+                        Htp.p(  '</th>' );
+                        Htp.p(  '<th width="33%"> <b> Qr Code  </b> ' );
+                        Htp.p(  '</th>' );
+                      Htp.p(  '</tr>' );
+                      Htp.p(  '<tr>' );
+                        Htp.p(  '<td width="33%">   ' );
+                            Htp.p(  row_1.STATUS  );
+                        Htp.p(  '</td>' );
+                        Htp.p(  '<td width="33%">' );
+                            Htp.p( '<a href='||row_1.QR_LINK||' target=_new> '||row_1.QR_LINK||' </a>'  );
+                        Htp.p(  '</td>' );
+                        
+                        Htp.p(  '<td width="33%">' );
+                         --  Htp.p(  row_1.image1  );
+                         
+                         IF dbms_lob.getlength(row_1.QR_IMAGE) > 0 THEN
+                                 Htp.p(  row_1.image1  );
+                        ELSE
+                                Htp.p(  '   Coming Soon ! '  ); 
+                        END IF;
+                         
+                        Htp.p(  '</td>' );
+                        
+                      Htp.p(  '</tr>' );
+                     
+                    Htp.p(  '</table>' );
+                    End Loop;
+                
+                End;
+                ```
+        }
+        layout {
+            sequence: 20
+            parentRegion: @manage-all-events
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    pageItem P50_COMMENT (
+        type: textarea
+        label {
+            label: <strong>Reply to comments/questions/discuss with Lab Creators below</strong>
+            alignment: left
+        }
+        layout {
+            sequence: 20
+            region: @comments
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            width: 800
+            height: 3
+        }
+        validation {
+            maxLength: 4000
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P50_WHICHEVENT (
+        type: selectList
+        label {
+            label: Select workshop
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery: select  w.id||' - '||l.reason||' (--Workshop: '||w.name||'  --Workshop ID: '||w.prod_id|| ') Creator: '||l.EMAIL_CREATOR||'' as d,   l.id as v from ll_vouchers l , workshops w where  w.id = l.workshop_id order by l.id desc;
+        }
+        layout {
+            sequence: 10
+            region: @new
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button send (
+        buttonName: Send
+        label: Send
+        layout {
+            sequence: 10
+            region: @comments
+            slot: belowBox
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    dynamicAction new (
+        name: New
+        execution {
+            sequence: 20
+        }
+        when {
+            selectionType: items
+            items: P50_WHICHEVENT
+        }
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode: apex.item( "P50_COMMENT" ).setValue("")
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+        action native-submit-page (
+            action: submitPage
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction sendcomment (
+        name: sendcomment
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @send
+        }
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    begin 
+                    
+                    insert into LL_COMMENTS (EMAIL_CREATOR, THE_COMMENT, EVENT_ID, COMMENTDATE) 
+                    values ( lower(:APP_USER), :P50_COMMENT,   :P50_WHICHEVENT, CURRENT_TIMESTAMP);
+                    
+                    end;
+                    ```
+                itemsToSubmit: [
+                    P50_WHICHEVENT
+                    P50_COMMENT
+                ]
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+        action native-execute-plsql-code-2 (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    DECLARE
+                    l_body      CLOB;
+                    l_body_warning    varchar2(100);
+                    l_body_html CLOB;
+                    l_body_html2 CLOB;
+                    l_to_email     varchar2(400);
+                    l_comments_page varchar2(1000) := 'https://apex.oraclecorp.com/pls/apex/f?p=24885:44:';
+                    
+                    l_subject VARCHAR2(100) ;
+                    -- l_sender_email VARCHAR2(100) := 'livelabs-admin_us@oracle.com';
+                    l_sender_email VARCHAR2(100) := lower(:APP_USER);
+                    l_replyto_email VARCHAR2(100) := 'livelabs-admin_us@oracle.com';
+                    l_reason VARCHAR2(4000) := '';
+                    l_msg VARCHAR2(4000) := :P50_COMMENT;
+                    --l_messagefrom := lower(:APP_USER);
+                    l_sysdate VARCHAR2(100) := to_char(sysdate,'DD-MON-YYYY') ;
+                    
+                    
+                    Cursor C_WS Is
+                       Select   DECODE(EMAIL_CREATOR, NULL, '', '' || EMAIL_CREATOR) ||','||
+                                DECODE(EMAIL_REQUESTOR, NULL, '', '' || EMAIL_REQUESTOR) ||','||
+                                DECODE(EMAIL_REQUESTOR_2, NULL, '', '' || EMAIL_REQUESTOR_2)
+                            as to_list   , workshop_id , reason , id
+                       From   LL_VOUCHERS
+                       WHERE  ID = :P50_WHICHEVENT;
+                    
+                    BEGIN
+                    
+                    
+                      l_body := 'To view the content of this messageuse an HTML enabled mail client.'||utl_tcp.crlf;
+                      l_body_html := '<html>';
+                     -- l_body_html := l_body_html || 'Announcement.      <br>';
+                    
+                    
+                     For row_1 In C_WS Loop
+                              l_to_email := 'livelabs-admin_us@oracle.com,'||row_1.to_list;
+                              l_subject :=  'COMMENT - ECID#'||row_1.id||' : '||row_1.reason  ;
+                              --l_body_html := l_body_html || '<b> Title:  </b> '||row_1.reason||' ' ||utl_tcp.crlf;
+                              l_body_html := l_body_html || '<b> Message:  </b> '||l_msg|| ' ' ||utl_tcp.crlf;
+                              l_body_html := l_body_html || '<br/><b> From:  </b> '||l_sender_email|| ' ' ||utl_tcp.crlf;
+                              l_body_html := l_body_html || '<br/><b> Date:  </b> '||l_sysdate|| ' ' ||utl_tcp.crlf;
+                             -- l_body_html := l_body_html || '<br/><br/>  Feel free to reply all   '  ||utl_tcp.crlf;
+                     end loop;
+                    
+                    
+                        l_to_email := rtrim( l_to_email, ',' );
+                        l_to_email := ltrim( l_to_email, ',' );
+                    
+                    	l_body_html := l_body_html ||'<br><br>Sincerely,<br><br>';
+                        l_body_html := l_body_html ||'<a href="https://apex.oraclecorp.com/pls/apex/f?p=24885:44">Reply to this comment</a> <br><br>';
+                        
+                        --l_body_html := l_body_html ||'Comments Link<br><a href="https://apex.oraclecorp.com/pls/apex/f?p=24885:44:">LiveLabs Comment</a><br><br>';
+                        l_body_html := l_body_html ||'LiveLabs Platform Team<br><a href="https://bit.ly/golivelabs">LiveLabs</a><br><a href="https://apex.oraclecorp.com/pls/apex/f?p=LIVELABS">LiveLabs Workshop Management System</a><br><a href="https://bit.ly/livelabsinfopage">LiveLabs Information Page</a><br><br><br>';
+                        l_body_html := l_body_html || '</html><br>';
+                    
+                      -- apex_mail.send( p_to   => l_to_email ,p_bcc => l_sender_email, p_from => l_sender_email, p_body  => l_body, p_body_html => l_body_html, p_subj => l_subject  );
+                    
+                      -- usr mailtolargelist in case we have too many people To in send mail ..
+                      --  insert into LL_MAILJOBS ( MAILFROM, MAILTOLARGELIST, MAILBODY, MAILTYPE , REPLYTO ) values   ( l_sender_email, l_to_email , l_body_html, 'Workshop Mail' , l_replyto_email ) ;
+                      -- insert into LL_MAILJOBS ( MAILFROM, MAILTO, MAILBODY, MAILTYPE , REPLYTO , MAILDATE ) values   ( l_sender_email, l_to_email , l_body_html, 'Workshop Mail' , l_replyto_email , sysdate) ;
+                      --  l_sender_email := 'madhusudhan.rao@oracle.com';
+                      -- l_to_email := 'madhusudhan.rao@oracle.com';
+                      -- insert into LL_MAILJOBS ( MAILFROM, MAILTO, MAILBODY, MAILTYPE , REPLYTO , MAILDATE ) values   ( l_sender_email, l_to_email , l_body_html, 'Workshop Mail' , l_replyto_email , sysdate) ;
+                      apex_mail.send( p_to   => l_to_email , p_from => l_sender_email, p_body  => l_body, p_body_html => l_body_html, p_subj => l_subject  );
+                    
+                    
+                    END;
+                    
+                    ```
+                itemsToSubmit: [
+                    P50_WHICHEVENT
+                    P50_COMMENT
+                ]
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode: apex.item( "P50_COMMENT" ).setValue("")
+            }
+            execution {
+                sequence: 40
+                fireOnInit: false
+            }
+        )
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @comments-section
+            }
+            execution {
+                sequence: 30
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    process events-grid-save-interactive-grid-data (
+        name: Events grid - Save Interactive Grid Data
+        type: interactiveGridAutoRowProcessing
+        editableRegion: @edit-events
+        execution {
+            sequence: 10
+        }
+        advanced {
+            executionMappingIdentifier: 69553628679428495612
+        }
+    )
+
+)
+

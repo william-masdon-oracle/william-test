@@ -1,0 +1,5 @@
+authentication single-sign-on-sso (
+    name: Single Sign On (SSO)
+    type: samlSignIn
+)
+

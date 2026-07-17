@@ -1,0 +1,591 @@
+page 3204 (
+    name: OHC Publishing Information
+    alias: OHC-PUBLISHING-INFORMATION
+    title: OHC Publishing Information
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @modal-dialog
+        templateOptions: #DEFAULT#
+    }
+    dialog {
+        resizable: false
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+    advanced {
+        enableDuplicatePageSubmissions: false
+    }
+
+    region ohc-publishing-info (
+        name: OHC Publishing Info
+        type: form
+        source {
+            location: localDatabase
+            tableName: WORKSHOP_OHC
+        }
+        layout {
+            sequence: 40
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        readOnly {
+            type: item!=value
+            item: P3204_CAN_EDIT
+            value: TRUE
+        }
+        edit {
+            enabled: true
+            allowedOperations: [
+                add
+                update
+            ]
+        }
+    )
+
+    pageItem P3204_CAN_EDIT (
+        type: hidden
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+    )
+
+    pageItem P3204_ID (
+        type: hidden
+        layout {
+            sequence: 10
+            region: @ohc-publishing-info
+            slot: regionBody
+        }
+        source {
+            formRegion: @ohc-publishing-info
+            column: ID
+            dataType: number
+            primaryKey: true
+        }
+        security {
+            sessionStateProtection: checksumRequiredSessionLevel
+        }
+    )
+
+    pageItem P3204_ID_SHOW (
+        type: displayOnly
+        label {
+            label: OHC ID
+            alignment: left
+        }
+        settings {
+            sendOnPageSubmit: false
+        }
+        layout {
+            sequence: 20
+            region: @ohc-publishing-info
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        security {
+            sessionStateProtection: checksumRequiredSessionLevel
+        }
+    )
+
+    pageItem P3204_PRODUCTION_URL (
+        type: textField
+        label {
+            label: Production URL
+            alignment: left
+        }
+        settings {
+            subtype: url
+        }
+        layout {
+            sequence: 100
+            region: @ohc-publishing-info
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            maxLength: 1000
+        }
+        source {
+            formRegion: @ohc-publishing-info
+            column: PRODUCTION_URL
+            dataType: varchar2
+        }
+    )
+
+    pageItem P3204_PUBLISH_STATUS (
+        type: selectList
+        label {
+            label: Publish Status
+            alignment: left
+        }
+        lov {
+            type: sharedComponent
+            lov: @publish-status
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 60
+            region: @ohc-publishing-info
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            formRegion: @ohc-publishing-info
+            column: PUBLISH_STATUS
+            dataType: varchar2
+        }
+        default {
+            type: static
+            staticValue: Publish Requested
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P3204_ID
+        }
+        help {
+            helpText:
+                ```html
+                <strong>Publish Requested</strong> - Initial state. Also used to signify requested changes have been implemented<br>
+                <strong>Publish Approved</strong> - The workshop has been approved and will be moved to production within 24 hours (LiveLabs Only)<br>
+                <strong>Changes Requested</strong> - The Publishing team will be in contact to request changes to the workshop before publishing<br>
+                <strong>Published</strong> - The workshop has been published and is available as specified by the Publish Type
+                ```
+        }
+    )
+
+    pageItem P3204_PUBLISH_TYPE (
+        type: selectList
+        label {
+            label: Publish Type
+            alignment: left
+        }
+        lov {
+            type: sharedComponent
+            lov: @publish-type
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 70
+            region: @ohc-publishing-info
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            formRegion: @ohc-publishing-info
+            column: PUBLISH_TYPE
+            dataType: varchar2
+        }
+        help {
+            helpText:
+                ```html
+                <strong>Public</strong> - Available to the public through search and links<br>
+                <strong>Event</strong> - Available only through events (LiveLabs only)<br>
+                <strong>Private</strong> - Available only through links<br>
+                <strong>Disabled</strong> - Unavailable to anyone except platform administrators
+                ```
+        }
+    )
+
+    pageItem P3204_TITLE_OVERRIDE (
+        type: textField
+        label {
+            label: Title Override
+            alignment: left
+        }
+        layout {
+            sequence: 80
+            region: @ohc-publishing-info
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            maxLength: 200
+        }
+        source {
+            formRegion: @ohc-publishing-info
+            column: TITLE_OVERRIDE
+            dataType: varchar2
+        }
+    )
+
+    pageItem P3204_TRANSLATE_FLG (
+        type: switch
+        label {
+            label: Should this Workshop be translated?
+            alignment: left
+        }
+        settings {
+            useDefaults: false
+            onValue: Y
+            onLabel: Yes
+            offValue: N
+            offLabel: No
+        }
+        layout {
+            sequence: 90
+            region: @ohc-publishing-info
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @ohc-publishing-info
+            column: TRANSLATE_FLG
+            dataType: varchar2
+        }
+    )
+
+    pageItem P3204_VIEW_STATUS (
+        type: displayOnly
+        label {
+            label: Current Publish Status
+            alignment: left
+        }
+        settings {
+            sendOnPageSubmit: false
+        }
+        lov {
+            type: sharedComponent
+            lov: @publish-status
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 50
+            region: @ohc-publishing-info
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        default {
+            type: expression
+            plsqlExpression: case when :P3204_PUBLISH_STATUS is null then 'Publish Requested' else :P3204_PUBLISH_STATUS end
+        }
+    )
+
+    pageItem P3204_WORKSHOP_ID (
+        type: displayOnly
+        label {
+            label: WSM ID
+            alignment: left
+        }
+        layout {
+            sequence: 30
+            region: @ohc-publishing-info
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @ohc-publishing-info
+            column: WORKSHOP_ID
+            dataType: number
+        }
+    )
+
+    button cancel (
+        buttonName: Cancel
+        label: Cancel
+        layout {
+            sequence: 10
+            region: @ohc-publishing-info
+            slot: close
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button create (
+        buttonName: Create
+        label: Create
+        layout {
+            sequence: 40
+            region: @ohc-publishing-info
+            slot: create
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: insert
+        }
+        serverSideCondition {
+            type: expression
+            plsqlExpression: (:P3204_CAN_EDIT = 'TRUE' and :P3204_ID is null)
+        }
+    )
+
+    button save (
+        buttonName: Save
+        label: Save
+        layout {
+            sequence: 30
+            region: @ohc-publishing-info
+            slot: create
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: update
+        }
+        serverSideCondition {
+            type: expression
+            plsqlExpression: (:P3204_CAN_EDIT = 'TRUE' and :P3204_ID is not null)
+        }
+    )
+
+    dynamicAction cancel-dialog-ll (
+        name: Cancel Dialog LL
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @cancel
+        }
+
+        action native-dialog-cancel (
+            action: cancelDialog
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction set-id-show (
+        name: set ID SHOW
+        execution {
+            sequence: 20
+        }
+        when {
+            event: ready
+        }
+
+        action native-set-value (
+            action: setValue
+            settings {
+                value: To be assigned
+            }
+            affectedElements {
+                selectionType: items
+                items: P3204_ID_SHOW
+            }
+            execution {
+                sequence: 10
+            }
+            clientSideCondition {
+                type: itemIsNull
+                item: P3204_ID
+            }
+        )
+
+        action native-set-value-2 (
+            action: setValue
+            settings {
+                value: &P3204_ID.
+            }
+            affectedElements {
+                selectionType: items
+                items: P3204_ID_SHOW
+            }
+            execution {
+                sequence: 20
+            }
+            clientSideCondition {
+                type: itemIsNotNull
+                item: P3204_ID
+            }
+        )
+
+    )
+
+    process initialize-form-publish-information (
+        name: Initialize form Publish Information
+        type: formInitialization
+        formRegion: @ohc-publishing-info
+        execution {
+            sequence: 10
+            point: beforeHeader
+        }
+        advanced {
+            executionMappingIdentifier: 51747650764593498675
+        }
+    )
+
+    process process-form-ohc-publishing-info (
+        name: Process form OHC Publishing Info
+        type: formAutoRowProcessing
+        formRegion: @ohc-publishing-info
+        execution {
+            sequence: 10
+        }
+        advanced {
+            executionMappingIdentifier: 51747651190325498676
+        }
+    )
+
+    process set-can-edit (
+        name: Set CAN_EDIT
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                declare
+                v_hold varchar2(4000);
+                begin
+                if :P3204_WORKSHOP_ID is not null then
+                    -- publishers 
+                    begin
+                    select email into v_hold
+                    from workshop_person_role
+                    where upper(:APP_USER) = upper(email)
+                    and workshop_id is  null
+                    and active_flg = 1;
+                    exception when no_data_found then v_hold := null; end;
+                    if v_hold is not null then :P3204_CAN_EDIT := 'TRUE';return; end if;
+                    v_hold := null;
+                
+                    -- workshop team 
+                    -- begin
+                    -- select b.email into v_hold
+                    -- from workshop a, workshop_person_role b, workshop_role c
+                    -- where a.id = :P320_ID
+                    -- and a.id = b.workshop_id
+                    -- and b.role_id = c.id
+                    -- and  c.name in ('Workshop Team')
+                    -- and upper(:APP_USER) = upper(b.email)
+                    -- and b.active_flg = 1;
+                    -- exception when no_data_found then v_hold := null; end;
+                    -- if v_hold is not null then :P320_CAN_EDIT := 'TRUE'; return; end if;
+                    -- v_hold := null;
+                
+                    -- workshop team
+                    begin
+                    select title into v_hold
+                    from workshop a
+                    where (
+                        upper(workshop_owner_email) = upper(:APP_USER)
+                        or upper(tech_contact_email) = upper(:APP_USER)
+                        or upper(support_contact_email) = upper(:APP_USER)
+                        or upper(manager_email) = upper(:APP_USER)
+                        or upper(observer_email) = upper(:APP_USER)
+                        or upper(ospa_observer_email) = upper(:APP_USER)
+                    ) and id = :P3204_WORKSHOP_ID;
+                    exception when no_data_found then v_hold := null; end;
+                    if v_hold is not null then :P3204_CAN_EDIT := 'TRUE'; return; end if;
+                    v_hold := null;
+                
+                    -- stakeholder
+                    begin
+                    select b.email into v_hold
+                    from workshop a, workshop_person_stakeholder b
+                    where a.id = :P3204_workshop_ID
+                    and a.stakeholder_id = b.stakeholder_id
+                    and upper(:APP_USER) = upper(b.email)
+                    and b.active_flg = 1;
+                    exception when no_data_found then v_hold := null; end;
+                    if v_hold is not null then :P3204_CAN_EDIT := 'TRUE'; return; end if;
+                
+                    -- not authorized
+                    :P3204_CAN_EDIT := 'FALSE';
+                else 
+                    :P3204_CAN_EDIT := 'NULL';
+                end if;
+                end;
+                ```
+        }
+        execution {
+            sequence: 20
+            point: beforeHeader
+        }
+        advanced {
+            executionMappingIdentifier: 51747651963546498690
+        }
+    )
+
+    branch (
+        name: redirect to view workshop
+        execution {
+            sequence: 10
+        }
+        behavior {
+            target: {
+                page: 320
+                items: {
+                    P320_ID: &P3204_WORKSHOP_ID.
+                }
+            }
+        }
+    )
+
+)
+

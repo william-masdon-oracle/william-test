@@ -1,0 +1,42 @@
+page 602 (
+    name: Thank you
+    alias: THANK-YOU
+    title: Thank you
+    appearance {
+        pageTemplate: @standard-custom
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region thank-you-for-requesting-a-multiple-participant-workshop (
+        name: Thank you for requesting a multiple participant workshop!
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <p>Thank you for requesting a new workshop!</p>
+                <p>Your request is being processed. You will receive email confirmation of your request and further instructions if approved.</p>
+                 
+                <p>If you have any questions, please post them to the <a hef="https://app.slack.com/client/T6TKLDJDC/CTUPZQ5HA">#livelabs-help</a> Slack channel.</p>
+                ```
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+)
+

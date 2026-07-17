@@ -1,0 +1,40 @@
+file Sortable.js (
+    mimeType: text/javascript
+    charSet: utf-8
+)
+
+file Sortable.min.js (
+    mimeType: text/javascript
+    charSet: utf-8
+)
+
+file favicon.ico (
+    mimeType: image/vnd.microsoft.icon
+    charSet: utf-8
+)
+
+file "js/livelabs.js" (
+    mimeType: text/javascript
+    charSet: utf-8
+)
+
+file livelabs.js (
+    mimeType: text/javascript
+    charSet: utf-8
+)
+
+file livelabs.min.js (
+    mimeType: text/javascript
+    charSet: utf-8
+)
+
+file ssw_icon.png (
+    mimeType: image/png
+    charSet: utf-8
+)
+
+file wms_mailhead.png (
+    mimeType: image/png
+    charSet: utf-8
+)
+

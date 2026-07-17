@@ -1,0 +1,193 @@
+page 315 (
+    name: Workshop Contributors Reportt
+    alias: WORKSHOP-CONTRIBUTORS-REPORT
+    title: Workshop Contributors Report
+    appearance {
+        pageTemplate: @standard-custom
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region span-style-font-size-1-8em-font-weight-700-workshop-contributors-span (
+        name: <span style="font-size: 1.8em; font-weight: 700">Workshop Contributors</span>
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <table><tr><td width="120px">
+                <img src="#WORKSPACE_IMAGES#ssworkshop_icon_big.png" width="100px">
+                </td><td>
+                <p>To view the top contributors to LiveLabs, preview the report below.</p></td></tr></table>
+                ```
+        }
+        layout {
+            sequence: 20
+            slot: beforeContentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region workshop-contributors-report (
+        name: Workshop Contributors Report
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select email,contribution_count,case 
+                when contribution_count <= 5 then 'BRONZE' 
+                when contribution_count > 5 and contribution_count < 10 then 'SILVER' 
+                when contribution_count >= 10 and contribution_count < 20 then 'GOLD'
+                when contribution_count >= 20 then 'PLATINUM' 
+                end as contributor_level
+                from contributors_vw
+                ```
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        pagination {
+            type: rowRangesXToY
+        }
+        messages {
+            whenNoDataFound: No data found.
+            whenMoreDataFound: The maximum row count for this report is #MAX_ROW_COUNT# rows.  Please apply a filter to reduce the number of records in your query.
+        }
+        actionsMenu {
+            subscription: false
+        }
+        advanced {
+            savedReportMappingIdentifier: 6759462127763249154
+        }
+
+        column CONTRIBUTION_COUNT (
+            type: plainText
+            heading {
+                heading: # of LiveLabs Contributions
+                alignment: center
+            }
+            layout {
+                sequence: 2
+                columnAlignment: center
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: B
+            }
+        )
+
+        column CONTRIBUTOR_LEVEL (
+            type: plainText
+            heading {
+                heading: Contributor Level
+                alignment: center
+            }
+            layout {
+                sequence: 12
+                columnAlignment: center
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: C
+            }
+        )
+
+        column EMAIL (
+            type: plainText
+            heading {
+                heading: Contributor Email
+                alignment: center
+            }
+            layout {
+                sequence: 1
+                columnAlignment: center
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: A
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: Workshop Contributors Report
+        }
+
+        savedReport 67622071 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn CONTRIBUTION_COUNT (
+                sequence: 2
+            )
+
+            displayColumn CONTRIBUTOR_LEVEL (
+                sequence: 3
+            )
+
+            displayColumn EMAIL (
+                sequence: 1
+            )
+
+        )
+
+    )
+
+    button announcement (
+        buttonName: Announcement
+        label: Email
+        layout {
+            sequence: 10
+            region: @workshop-contributors-report
+            slot: aboveBox
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 61
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+        security {
+            authorizationScheme: @administration-rights
+        }
+    )
+
+)
+

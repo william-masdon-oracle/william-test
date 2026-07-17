@@ -1,0 +1,338 @@
+page 61 (
+    name: LiveStack
+    alias: LIVESTACK
+    title: LiveStack
+    appearance {
+        pageTemplate: @standard-custom
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+        warnOnUnsavedChanges: false
+    }
+    css {
+        inline:
+            ```css
+            #P61_INFOGRAPHIC {
+              border: 10px solid #fbf9f8;
+              border-radius: 12px;
+              padding: 10px;
+              background-color: #fbf9f8;
+              width: 70%;
+              height: auto;
+              margin: 15px auto;
+              box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.08);
+            }
+            
+            #P61_FILLER_IMAGE {
+                width: 70%;
+                height: auto;
+                margin: 0 auto 0 10%;
+            }
+            
+            h1 {
+              font-size: 4.0rem;
+              font-weight: 700;
+              color: #1f2937; /* dark gray */
+              line-height: 1.3;
+              margin: 0;
+            }
+            
+            p {
+              line-height: 1.5;
+              font-size: 1.8rem;    
+            }
+            
+            @media (max-width: 1630px) {
+              #livestack-header .container .row > .col.col-4,
+              #livestack-header .container .row > .col.col-3 {
+                flex: 0 0 auto !important;
+                width: auto !important;
+                max-width: none !important;
+              }
+            }
+            ```
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region filler-image (
+        name: Filler Image
+        type: staticContent
+        layout {
+            sequence: 20
+            slot: contentBody
+            startNewRow: false
+            columnSpan: 7
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    region header (
+        name: Header
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: [
+                #DEFAULT#
+                margin-top-md
+                margin-bottom-lg
+                margin-left-md
+            ]
+        }
+        advanced {
+            htmlDomId: livestack-header
+        }
+        headerAndFooter {
+            headerText:
+                ```html
+                <h1>Envision. Embed. Scale.</h1>
+                <h1 style="color:#759c6c; margin-bottom: 7px;">With LiveStack</h1>
+                <p>LiveLabs LiveStack standardizes demos and hands-on experiences with curated, industry-specific assets, a consistent container packaging model that runs on hyperscalers, on-premises, and managed sandboxes to cut setup time. Built-in governance (via Workshop Management System) for versioning, security, and updates ensures predictable quality and gives customers a simple path to explore solutions with their own data.</p>
+                ```
+        }
+    )
+
+    region inforgraphic (
+        name: Infographic
+        type: staticContent
+        layout {
+            sequence: 30
+            slot: contentBody
+            columnAttributes: [
+                style="background-color:
+                #eef1ea;"
+            ]
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: [
+                #DEFAULT#
+                margin-top-lg
+            ]
+        }
+    )
+
+    pageItem P61_FILLER_IMAGE (
+        type: displayImage
+        label {
+            alignment: left
+        }
+        settings {
+            basedOn: url
+        }
+        layout {
+            sequence: 10
+            region: @filler-image
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        source {
+            type: staticValue
+            staticValue: #APP_FILES#livestack-filler-image.png
+        }
+    )
+
+    pageItem P61_INFOGRAPHIC (
+        type: displayImage
+        label {
+            alignment: left
+        }
+        settings {
+            basedOn: url
+        }
+        layout {
+            sequence: 10
+            region: @inforgraphic
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: [
+                #DEFAULT#
+                margin-bottom-md
+            ]
+        }
+        source {
+            type: staticValue
+            staticValue: #APP_FILES#live-stack-infographic.png
+            used: always
+        }
+    )
+
+    button get-started (
+        buttonName: create-livestack
+        label: Create a LiveStack
+        layout {
+            sequence: 20
+            region: @header
+            slot: regionBody
+            columnSpan: 4
+            columnCssClasses: action-col
+        }
+        appearance {
+            buttonTemplate: @text-with-icon
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--large
+                t-Button--iconRight
+                t-Button--padRight
+                t-Button--gapTop
+                t-Button--gapBottom
+            ]
+            icon: fa-plus-square-o
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 1
+            }
+        }
+        advanced {
+            customAttributes: style = "border: 2px solid  #759c6c;"
+        }
+    )
+
+    button learn-more (
+        buttonName: try-it
+        label: Try It Now
+        layout {
+            sequence: 30
+            region: @header
+            slot: regionBody
+            startNewRow: false
+            columnSpan: 3
+            columnCssClasses: action-col
+        }
+        appearance {
+            buttonTemplate: @text-with-icon
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--large
+                t-Button--iconRight
+                t-Button--padLeft
+                t-Button--gapRight
+                t-Button--gapTop
+                t-Button--gapBottom
+            ]
+            icon: fa-external-link
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+        advanced {
+            customAttributes: style = "border: 2px solid  #759c6c; background-color: #f5f5f5; color: #1f2937;"
+        }
+    )
+
+    dynamicAction on-click (
+        name: on click
+        execution {
+            sequence: 20
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @learn-more
+        }
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode: javascript:void(window.open('https://livelabs.oracle.com/ords/r/dbpm/livelabs/livestack-landing-page?p400_id=41', '_blank'));
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    process close-dialog (
+        name: Close Dialog
+        type: closeDialog
+        execution {
+            sequence: 50
+        }
+        advanced {
+            executionMappingIdentifier: 717267118446777756
+        }
+        serverSideCondition {
+            type: requestIsContainedInValue
+            value: CREATE,SAVE,DELETE
+        }
+    )
+
+    process set-ll-to-sandbox-requested (
+        name: Set Green Button Flag
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                begin
+                    if :P61_TYPE != 'Lite' then
+                        update workshop_ll set greenbutton_flg = 'Y' where id = :P61_LL_ID;
+                    else 
+                        update workshop_ll set greenbutton_flg = 'L' where id = :P61_LL_ID;
+                    end if;
+                end;
+                ```
+        }
+        execution {
+            sequence: 30
+        }
+        advanced {
+            executionMappingIdentifier: 717267913670777757
+        }
+    )
+
+    process update-terraform-values (
+        name: Update Terraform Values
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                declare
+                    v_listing_id number;
+                begin
+                    if :P61_TYPE = 'LiveStack' then
+                        select listing_id into v_listing_id from omp_images where id = :P61_LIVE_STACK_IMAGE_ID;
+                
+                        update workshop_ll set
+                        terraform_values_json = json_object(
+                            'liveStackURL'            value :P61_LIVE_STACK_URL,
+                            'liveStackAppCatalogOCID' value (select app_catalog_ocid from omp_listings where id = v_listing_id),
+                            'liveStackImageOCID'      value (select image_ocid from omp_images where id = :P61_LIVE_STACK_IMAGE_ID),
+                            'liveStackImageVersion'   value (select version from omp_images where id = :P61_LIVE_STACK_IMAGE_ID)
+                        );
+                    end if;
+                end;
+                ```
+        }
+        execution {
+            sequence: 20
+        }
+        advanced {
+            executionMappingIdentifier: 717267538680777757
+        }
+    )
+
+)
+

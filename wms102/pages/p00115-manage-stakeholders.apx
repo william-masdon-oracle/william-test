@@ -1,0 +1,532 @@
+page 115 (
+    name: Manage Stakeholders
+    alias: MANAGE-STAKEHOLDERS
+    title: Manage Stakeholders
+    appearance {
+        pageTemplate: @standard-custom
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        authorizationScheme: @administration-rights
+        formAutoComplete: false
+    }
+
+    region edit-stakeholders (
+        name: Edit Stakeholders
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <table><tr><td width="120px">
+                <img src="#APP_FILES#ssw_icon.png" width="100px">
+                </td><td>
+                <p>Stakeholders are groups that manage their own set of workshops.  They must have a support email that all their workshops are mapped to.  Contact livelabs-help_us@oracle.com for instructions on how to request a group exchange email account.</p></td></tr></table>
+                ```
+        }
+        layout {
+            sequence: 10
+            slot: beforeContentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region edit-stakeholders-2 (
+        name: Edit Stakeholders
+        type: interactiveGrid
+        source {
+            location: localDatabase
+            tableName: WORKSHOP_PERSON_STAKEHOLDER
+            includeRowidColumn: true
+        }
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        security {
+            authorizationScheme: @administration-rights
+        }
+        edit {
+            enabled: true
+            allowedOperations: [
+                add
+                update
+                delete
+            ]
+        }
+        toolbar {
+            controls: [
+                searchCol
+                searchField
+                actionsMenu
+                resetButton
+                saveButton
+            ]
+        }
+        download {
+            formats: [
+                csv
+                html
+                pdf
+            ]
+        }
+        advanced {
+            savedReportMappingIdentifier: 17847503198244729740
+        }
+
+        savedReport 10950057 (
+            visibility: primary
+            view {
+                default: grid
+            }
+            singleRowView {
+                displayedColumns: true
+            }
+
+            displayColumn (
+                column: @STAKEHOLDER_ID
+                layout {
+                    sequence: 49
+                }
+            )
+
+            displayColumn (
+                column: @DESC
+                layout {
+                    sequence: 50
+                }
+            )
+
+            displayColumn (
+                column: @EMAIL
+                layout {
+                    sequence: 43
+                }
+            )
+
+            displayColumn (
+                column: @CREATE_DTM
+                layout {
+                    sequence: 45
+                }
+            )
+
+            displayColumn (
+                column: @CREATE_BY
+                layout {
+                    sequence: 46
+                }
+            )
+
+            displayColumn (
+                column: @UPDATE_DTM
+                layout {
+                    sequence: 47
+                }
+            )
+
+            displayColumn (
+                column: @UPDATE_BY
+                layout {
+                    sequence: 48
+                }
+            )
+
+            displayColumn (
+                column: @APEX$ROW_ACTION
+                layout {
+                    frozen: true
+                    sequence: 0
+                }
+            )
+
+            displayColumn (
+                column: @ROWID
+                layout {
+                    sequence: 1
+                }
+            )
+
+            displayColumn (
+                column: @ACTIVE_FLG
+                layout {
+                    sequence: 5
+                }
+            )
+
+            displayColumn (
+                column: @ID
+                layout {
+                    sequence: 2
+                }
+            )
+
+        )
+
+        savedReport 61865469 (
+            visibility: alternative
+            name: Primary Report
+            view {
+                default: grid
+            }
+            singleRowView {
+                displayedColumns: true
+            }
+            security {
+                authorizationScheme: mustNotBePublicUser
+            }
+
+            displayColumn (
+                column: @EMAIL
+                layout {
+                    sequence: 4
+                }
+            )
+
+            displayColumn (
+                column: @CREATE_DTM
+                layout {
+                    show: false
+                    sequence: 6
+                }
+            )
+
+            displayColumn (
+                column: @CREATE_BY
+                layout {
+                    show: false
+                    sequence: 7
+                }
+            )
+
+            displayColumn (
+                column: @UPDATE_DTM
+                layout {
+                    sequence: 8
+                }
+            )
+
+            displayColumn (
+                column: @UPDATE_BY
+                layout {
+                    sequence: 9
+                }
+            )
+
+            displayColumn (
+                column: @APEX$ROW_ACTION
+                layout {
+                    frozen: true
+                    width: 70
+                    sequence: 0
+                }
+            )
+
+            displayColumn (
+                column: @ROWID
+                layout {
+                    sequence: 1
+                }
+            )
+
+            displayColumn (
+                column: @ACTIVE_FLG
+                layout {
+                    sequence: 5
+                }
+            )
+
+            displayColumn (
+                column: @ID
+                layout {
+                    width: 82
+                    sequence: 2
+                }
+            )
+
+        )
+
+        column ACTIVE_FLG (
+            type: numberField
+            heading {
+                heading: Active Flg
+                alignment: end
+            }
+            settings {
+                numberAlignment: end
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 70
+                columnAlignment: end
+            }
+            source {
+                databaseColumn: ACTIVE_FLG
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column APEX$ROW_ACTION (
+            type: actionsMenu
+            layout {
+                sequence: 20
+            }
+        )
+
+        column APEX$ROW_SELECTOR (
+            type: rowSelector
+            layout {
+                sequence: 10
+            }
+        )
+
+        column CREATE_BY (
+            type: displayOnly
+            heading {
+                heading: Create By
+            }
+            layout {
+                sequence: 210
+            }
+            source {
+                databaseColumn: CREATE_BY
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column CREATE_DTM (
+            type: displayOnly
+            heading {
+                heading: Create Dtm
+            }
+            layout {
+                sequence: 200
+            }
+            source {
+                databaseColumn: CREATE_DTM
+                dataType: date
+            }
+        )
+
+        column DESC (
+            type: textarea
+            heading {
+                heading: Desc
+            }
+            layout {
+                sequence: 250
+            }
+            validation {
+                maxLength: 1000
+            }
+            source {
+                databaseColumn: DESC
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column EMAIL (
+            type: textarea
+            heading {
+                heading: Stakeholder Email
+            }
+            layout {
+                sequence: 180
+            }
+            validation {
+                valueRequired: true
+                maxLength: 100
+            }
+            source {
+                databaseColumn: EMAIL
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column ID (
+            type: displayOnly
+            heading {
+                heading: Stakeholder #
+            }
+            layout {
+                sequence: 160
+            }
+            source {
+                databaseColumn: ID
+                dataType: number
+            }
+            default {
+                duplicateCopiesExistingValue: false
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column ROWID (
+            type: hidden
+            layout {
+                sequence: 30
+            }
+            source {
+                databaseColumn: ROWID
+                dataType: rowid
+                primaryKey: true
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column STAKEHOLDER_ID (
+            type: selectList
+            heading {
+                heading: Stakeholder Name
+            }
+            lov {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select name,id from workshop_stakeholder
+                    where active_flg=1
+                    order by name
+                    ```
+            }
+            layout {
+                sequence: 240
+            }
+            validation {
+                valueRequired: true
+            }
+            source {
+                databaseColumn: STAKEHOLDER_ID
+                dataType: number
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: useLov
+            }
+        )
+
+        column UPDATE_BY (
+            type: displayOnly
+            heading {
+                heading: Update By
+            }
+            layout {
+                sequence: 230
+            }
+            source {
+                databaseColumn: UPDATE_BY
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column UPDATE_DTM (
+            type: displayOnly
+            heading {
+                heading: Update Dtm
+            }
+            layout {
+                sequence: 220
+            }
+            source {
+                databaseColumn: UPDATE_DTM
+                dataType: date
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: Manage All Workshops
+        }
+    )
+
+    process manage-all-workshops-save-interactive-grid-data (
+        name: Manage All Workshops - Save Interactive Grid Data
+        type: interactiveGridAutoRowProcessing
+        editableRegion: @edit-stakeholders-2
+        execution {
+            sequence: 10
+        }
+        advanced {
+            executionMappingIdentifier: 60738239200282529492
+        }
+    )
+
+)
+

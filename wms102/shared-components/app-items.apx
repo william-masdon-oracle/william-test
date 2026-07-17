@@ -1,0 +1,17 @@
+appItem MEDIA_STORAGE_FILENAME (
+    security {
+        sessionStateProtection: unrestricted
+    }
+)
+
+appItem WMS_ACCESS (
+    scope: global
+)
+
+appItem WMS_STAKEHOLDER_GROUP (
+    scope: global
+)
+
+appItem WORKSHOP_ROLE (
+)
+

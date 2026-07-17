@@ -1,0 +1,730 @@
+page 700 (
+    name: LiveLabs - Request Page (with workshop info)
+    alias: LIVELABS-REQUEST-PAGE-WITH-WORKSHOP-INFO
+    title: LiveLabs - Request Page (with workshop info)
+    appearance {
+        pageTemplate: @standard-custom
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    javaScript {
+        functionAndGlobalVariableDeclaration: var htmldb_delete_message='"DELETE_CONFIRM_MSG"';
+    }
+    css {
+        inline:
+            ```css
+            #P700_WORKSHOP_DESCRIPTION {
+                font-size: 0.85em;
+                font-weight: normal;
+                line-height: 1.2;
+            }
+            ```
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region environment-registration (
+        name: Environment Registration
+        type: staticContent
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        headerAndFooter {
+            footerText: Site design by Jon Russell & Kay Malcolm, DB Product Management
+        }
+        settings {
+            outputAs: text
+        }
+    )
+
+    region register-for-a-workshop (
+        name: Register for a Workshop
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <p>To provision a LiveLabs workshop in the Database PM Cloud Tenancy, please enter your information here and choose one of our workshops.</p>
+                <p><strong>Note:</strong> Once you hit Submit you will be sent your registration with your environment access and lab instructions. Your environment will be available for the amount of time indicated on your registration. For additional time, please request it on our Slack channel  <a hef="https://app.slack.com/client/T6TKLDJDC/CTUPZQ5HA">#livelabs-help</a> </p>
+                ```
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noBorder
+                t-Region--hiddenOverflow
+            ]
+        }
+    )
+
+    pageItem P700_COUNTRY (
+        type: selectList
+        label {
+            label: Country
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery: select name, code from countries;
+        }
+        layout {
+            sequence: 150
+            region: @environment-registration
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: COUNTRY
+            used: always
+        }
+        default {
+            type: static
+            staticValue: United States
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P700_EMAIL (
+        type: textField
+        label {
+            label: E-Mail Address
+            alignment: left
+        }
+        settings {
+            subtype: email
+            trimSpaces: none
+        }
+        layout {
+            sequence: 80
+            region: @environment-registration
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            valueRequired: true
+            maxLength: 50
+        }
+        advanced {
+            cssClasses: u-textLower
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: EMAIL
+            used: always
+        }
+        default {
+            type: static
+            staticValue: &APP_USER.
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            inlineHelpText: Only valid Oracle email addresses permitted at this time.
+        }
+    )
+
+    pageItem P700_FOCUSAREA (
+        type: textField
+        label {
+            label: Focus Area
+            alignment: left
+        }
+        settings {
+            trimSpaces: none
+        }
+        layout {
+            sequence: 180
+            region: @environment-registration
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: FOCUS_AREA
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P700_GIVEN_NAME (
+        type: textField
+        label {
+            label: First Name
+            alignment: left
+        }
+        settings {
+            trimSpaces: none
+        }
+        layout {
+            sequence: 60
+            region: @environment-registration
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            valueRequired: true
+            maxLength: 30
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: GIVEN_NAME
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P700_ID (
+        type: hidden
+        layout {
+            sequence: 30
+            region: @environment-registration
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: ID
+            used: always
+        }
+        default {
+            type: expression
+            plsqlExpression: NOMINATIONS_SEQ3.NEXTVAL
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P700_MANAGERS_EMAIL (
+        type: textField
+        label {
+            label: Manager's E-Mail
+            alignment: left
+        }
+        settings {
+            subtype: email
+            trimSpaces: none
+        }
+        layout {
+            sequence: 120
+            region: @environment-registration
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            valueRequired: true
+            maxLength: 50
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: MANAGERS_EMAIL
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            inlineHelpText: Your manager will NOT be contacted.  This is for reporting purposes only.
+        }
+    )
+
+    pageItem P700_MOBILE_PHONE (
+        type: textField
+        label {
+            label: Mobile Phone
+            alignment: left
+        }
+        settings {
+            subtype: phone
+            trimSpaces: none
+        }
+        layout {
+            sequence: 110
+            region: @environment-registration
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 30
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: MOBILE_PHONE
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            inlineHelpText: Include country code with mobile phone number
+        }
+    )
+
+    pageItem P700_REGION (
+        type: textField
+        label {
+            label: Region
+            alignment: left
+        }
+        layout {
+            sequence: 140
+            region: @environment-registration
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: REGION
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P700_ROWID (
+        type: hidden
+        layout {
+            sequence: 20
+            region: @environment-registration
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: ROWID
+            used: always
+        }
+        security {
+            sessionStateProtection: checksumRequiredSessionLevel
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P700_SURNAME (
+        type: textField
+        label {
+            label: Last Name
+            alignment: left
+        }
+        settings {
+            trimSpaces: none
+        }
+        layout {
+            sequence: 70
+            region: @environment-registration
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            valueRequired: true
+            maxLength: 30
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: SURNAME
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P700_TITLE (
+        type: textField
+        label {
+            label: Job Title
+            alignment: left
+        }
+        settings {
+            trimSpaces: none
+        }
+        layout {
+            sequence: 100
+            region: @environment-registration
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            maxLength: 50
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: TITLE
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P700_WORKSHOP (
+        type: selectList
+        label {
+            label: Workshop
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery: select name as workshopname, id as id from workshops where active_flg = 1 order by 1;
+            nullDisplayValue: - Select one -
+        }
+        layout {
+            sequence: 190
+            region: @environment-registration
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: WORKSHOP_ID
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P700_WORKSHOP_CODE (
+        type: textField
+        label {
+            label: Workshop Code
+            alignment: left
+        }
+        settings {
+            disabled: true
+        }
+        layout {
+            sequence: 210
+            region: @environment-registration
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: WORKSHOP_CODE
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            inlineHelpText: Some workshops require a code to register.<br>If you were given a code for the selected workshop, please enter it here.
+        }
+    )
+
+    pageItem P700_WORKSHOP_DESCRIPTION (
+        type: displayOnly
+        label {
+            alignment: left
+        }
+        settings {
+            showLineBreaks: false
+            sendOnPageSubmit: false
+        }
+        layout {
+            sequence: 200
+            region: @environment-registration
+            slot: regionBody
+            alignment: left
+            columnSpan: 6
+        }
+        appearance {
+            template: @optional
+        }
+        source {
+            type: staticValue
+            staticValue: -
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button submit-registration (
+        buttonName: Submit_Registration
+        label: Submit Registration
+        layout {
+            sequence: 10
+            region: @environment-registration
+            slot: belowBox
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: insert
+        }
+    )
+
+    dynamicAction enable-code-on-workshop-change (
+        name: Enable code on workshop change
+        execution {
+            sequence: 30
+        }
+        when {
+            selectionType: items
+            items: P700_WORKSHOP
+        }
+        serverSideCondition {
+            type: rowsReturned
+            sqlQuery:
+                ```sql
+                select *
+                from WORKSHOPS
+                where :P700_WORKSHOP = ID
+                and
+                WORKSHOP_CODE IS NOT NULL;
+                ```
+        }
+
+        action native-enable (
+            action: enable
+            affectedElements {
+                selectionType: items
+                items: P700_WORKSHOP_CODE
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    dynamicAction enable-workshop-code-on-load (
+        name: Enable workshop code on load
+        execution {
+            sequence: 20
+        }
+        when {
+            event: ready
+        }
+        serverSideCondition {
+            type: rowsReturned
+            sqlQuery:
+                ```sql
+                select *
+                from WORKSHOPS
+                where :P700_WORKSHOP = ID
+                and
+                WORKSHOP_CODE IS NOT NULL;
+                ```
+        }
+
+        action native-enable (
+            action: enable
+            affectedElements {
+                selectionType: items
+                items: P700_WORKSHOP_CODE
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    dynamicAction new (
+        name: New
+        execution {
+            sequence: 10
+        }
+        when {
+            selectionType: items
+            items: P700_WORKSHOP
+        }
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    select DESCRIPTION 
+                    into :P700_WORKSHOP_DESCRIPTION 
+                    from WORKSHOPS
+                    where id = :P700_WORKSHOP;
+                    ```
+                itemsToSubmit: P700_WORKSHOP
+                itemsToReturn: P700_WORKSHOP_DESCRIPTION
+                showProcessing: true
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    validation check-workshop-code (
+        name: Check workshop code
+        execution {
+            sequence: 10
+        }
+        validation {
+            type: rowsReturned
+            sqlQuery:
+                ```sql
+                select 1 from WORKSHOPS w
+                where
+                w.ID = :P700_WORKSHOP
+                and
+                (w.WORKSHOP_CODE is NULL
+                or
+                upper(w.WORKSHOP_CODE) = upper(:P700_WORKSHOP_CODE));
+                ```
+        }
+        error {
+            errorMessage: The selected workshop requires a code to register. The code entered is not correct for the selected workshop. Please check you have the correct code and try again. Alternatively, contact your workshop organizer to get a workshop code.
+            associatedItem: @P700_WORKSHOP_CODE
+        }
+    )
+
+    process fetch-row-from-registrations (
+        name: Fetch Row from REGISTRATIONS
+        type: autoRowFetch
+        source {
+            tableName: REGISTRATIONS
+            pkColumn: ROWID
+            pkItem: P700_ROWID
+        }
+        execution {
+            sequence: 10
+            point: afterHeader
+        }
+        advanced {
+            executionMappingIdentifier: 57150522004028070525
+        }
+    )
+
+    process process-row-of-registrations (
+        name: Process Row of REGISTRATIONS
+        type: autoRowProcessing
+        target {
+            tableName: REGISTRATIONS
+            pkColumn: ID
+            pkItem: P700_ID
+        }
+        execution {
+            sequence: 30
+        }
+        successMessage {
+            successMessage: Action Processed.
+        }
+        advanced {
+            executionMappingIdentifier: 57150522458039070526
+        }
+    )
+
+    process reset-page (
+        name: reset page
+        type: clearSessionState
+        execution {
+            sequence: 40
+        }
+        advanced {
+            executionMappingIdentifier: 57150522868007070526
+        }
+    )
+
+    branch (
+        name: Go To Page 4
+        execution {
+            sequence: 1
+        }
+        behavior {
+            target: {
+                page: 4
+            }
+        }
+    )
+
+)
+

@@ -1,0 +1,1541 @@
+page 95 (
+    name: Workshops w/ Green Button Status
+    alias: WORKSHOPS-W-GREEN-BUTTON-STATUS
+    title: Workshops w/ Green Button Status
+    appearance {
+        pageTemplate: @standard-custom
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+        warnOnUnsavedChanges: false
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region bottom (
+        name: BOTTOM
+        type: staticContent
+        layout {
+            sequence: 100
+            parentRegion: @choose-workshop-tags
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--scrollBody
+                t-Form--noPadding
+                margin-top-none
+                margin-bottom-none
+                margin-left-none
+                margin-right-none
+            ]
+        }
+    )
+
+    region choose-workshop-tags (
+        name: Choose workshop tags
+        type: staticContent
+        layout {
+            sequence: 20
+            slot: contentBody
+            startNewRow: false
+            columnSpan: 3
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region current-workshops (
+        name: Current workshops
+        type: classicReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select "NAME"||' (#'||id||')' CARD_TITLE,
+                  'Green Button status: ' || "GREEN_BTN_STATUS" CARD_SUBTITLE,
+                  "DESCRIPTION" CARD_TEXT,
+                  ' ' CARD_SUBTEXT,
+                  apex_string.get_initials("WORKSHOP_STATUS") CARD_INITIALS, 
+                  APEX_PAGE.GET_URL (
+                      p_page   => 72,
+                      p_items  => 'P72_WORKSHOP_ID',
+                      p_values => ID ) as CARD_LINK,  
+                  null CARD_MODIFIERS,
+                  null CARD_COLOR,
+                  '#WORKSPACE_IMAGES#ssw_icon_wht.png' CARD_IMAGE,
+                  "ACTIVE_FLG",
+                  "APPROVED_FLG",
+                  "TIME_IN_HOURS",
+                  "WORKSHOP_TIME"
+                  "NAME",
+                  "DESCRIPTION",
+                  "LEVEL_TAG",
+                  "DEPLOYMENT_TAG",
+                  "ROLE_TAG",
+                  "SALESPLAY_TAG",
+                  "FOCUS_TAG",
+                  "PRODUCT_TAG",
+                  "GREEN_BTN_STATUS"
+                from "WORKSHOPS"
+                where green_btn_status is not null
+                /*
+                and(:P59_ROLE is null
+                        or
+                        :P59_ROLE in (select role_tag from table(apex_string.split(workshops.role_tag, ':' )))
+                       )
+                */
+                and(
+                        :P59_LEVEL is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => LEVEL_TAG, p_filter => :P59_LEVEL) = 'Y'
+                        )
+                and(
+                        :P59_ROLE is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => ROLE_TAG, p_filter => :P59_ROLE) = 'Y'
+                        )
+                and(
+                        :P59_SALES_PLAY is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => SALESPLAY_TAG, p_filter => :P59_SALES_PLAY) = 'Y'
+                    )
+                and(
+                        :P59_FOCUS_AREA is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => FOCUS_TAG, p_filter => :P59_FOCUS_AREA) = 'Y'
+                    )
+                and(
+                        :P59_PRODUCT is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => PRODUCT_TAG, p_filter => :P59_PRODUCT) = 'Y'
+                    )
+                and(
+                        :P59_DEPLOYMENT is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => DEPLOYMENT_TAG, p_filter => :P59_DEPLOYMENT) = 'Y'
+                        )  
+                ;
+                
+                ```
+            pageItemsToSubmit: [
+                P95_ROLE
+                P95_DEPLOYMENT
+                P95_SALES_PLAY
+                P95_FOCUS_AREA
+                P95_PRODUCT
+                P95_LEVEL
+            ]
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @blank-with-attributes-no-grid
+            templateOptions: #DEFAULT#
+            icon: fa-flask
+        }
+        reportLayout {
+            numberOfRows: 50
+        }
+        componentAppearance {
+            template: @cards
+            templateOptions: [
+                #DEFAULT#
+                u-colors
+                t-Cards--displaySubtitle
+                t-Cards--compact
+                t-Cards--displayInitials
+                t-Cards--3cols
+                t-Cards--desc-3ln
+                t-Cards--iconsRounded
+                t-Cards--animColorFill
+                t-Report--hideNoPagination
+            ]
+        }
+        pagination {
+            type: nextAndPreviousLinks
+        }
+        performance {
+            maxRowsToProcess: 500
+        }
+        messages {
+            whenNoDataFound: No workshops match your criteria. Select <b>Clear Filters</b> or enter a different term in the <strong>Search</strong> field and try again.
+        }
+
+        column ACTIVE_FLG (
+            reportColumnQueryId: 10
+            derivedColumn: N
+            heading {
+                heading: Active Flg
+                alignment: center
+            }
+            layout {
+                sequence: 16
+            }
+        )
+
+        column APPROVED_FLG (
+            reportColumnQueryId: 11
+            derivedColumn: N
+            heading {
+                heading: Approved Flg
+                alignment: center
+            }
+            layout {
+                sequence: 20
+            }
+        )
+
+        column CARD_COLOR (
+            reportColumnQueryId: 8
+            derivedColumn: N
+            heading {
+                heading: CARD_COLOR
+                alignment: center
+            }
+            layout {
+                sequence: 7
+            }
+            sorting {
+                sortable: false
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column CARD_IMAGE (
+            reportColumnQueryId: 9
+            derivedColumn: N
+            heading {
+                heading: Card Image
+                alignment: center
+            }
+            layout {
+                sequence: 8
+            }
+        )
+
+        column CARD_INITIALS (
+            reportColumnQueryId: 5
+            derivedColumn: N
+            heading {
+                heading: CARD_INITIALS
+                alignment: center
+            }
+            layout {
+                sequence: 4
+            }
+            sorting {
+                sortable: false
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column CARD_LINK (
+            reportColumnQueryId: 6
+            derivedColumn: N
+            heading {
+                heading: CARD_LINK
+                alignment: center
+            }
+            layout {
+                sequence: 5
+            }
+            sorting {
+                sortable: false
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column CARD_MODIFIERS (
+            reportColumnQueryId: 7
+            derivedColumn: N
+            heading {
+                heading: CARD_MODIFIERS
+                alignment: center
+            }
+            layout {
+                sequence: 6
+            }
+            sorting {
+                sortable: false
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column CARD_SUBTEXT (
+            reportColumnQueryId: 4
+            derivedColumn: N
+            heading {
+                heading: CARD_SUBTEXT
+                alignment: end
+            }
+            layout {
+                sequence: 3
+                columnAlignment: end
+            }
+            appearance {
+                formatMask: 999G999G999G999G999G999G999G999G999G990
+            }
+        )
+
+        column CARD_SUBTITLE (
+            reportColumnQueryId: 2
+            derivedColumn: N
+            heading {
+                heading: Card Subtitle
+                alignment: center
+            }
+            layout {
+                sequence: 15
+            }
+        )
+
+        column CARD_TEXT (
+            reportColumnQueryId: 3
+            derivedColumn: N
+            heading {
+                heading: CARD_TEXT
+            }
+            layout {
+                sequence: 2
+            }
+        )
+
+        column CARD_TITLE (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            heading {
+                heading: CARD_TITLE
+            }
+            layout {
+                sequence: 1
+            }
+        )
+
+        column DEPLOYMENT_TAG (
+            reportColumnQueryId: 16
+            derivedColumn: N
+            heading {
+                heading: Deployment Tag
+                alignment: center
+            }
+            layout {
+                sequence: 10
+            }
+        )
+
+        column DESCRIPTION (
+            reportColumnQueryId: 14
+            derivedColumn: N
+            heading {
+                heading: Description
+                alignment: center
+            }
+            layout {
+                sequence: 19
+            }
+        )
+
+        column FOCUS_TAG (
+            reportColumnQueryId: 19
+            derivedColumn: N
+            heading {
+                heading: Focus Tag
+                alignment: center
+            }
+            layout {
+                sequence: 14
+            }
+        )
+
+        column GREEN_BTN_STATUS (
+            reportColumnQueryId: 21
+            derivedColumn: N
+            heading {
+                heading: Green Btn Status
+                alignment: center
+            }
+            layout {
+                sequence: 30
+            }
+        )
+
+        column LEVEL_TAG (
+            reportColumnQueryId: 15
+            derivedColumn: N
+            heading {
+                heading: Level Tag
+                alignment: center
+            }
+            layout {
+                sequence: 11
+            }
+        )
+
+        column NAME (
+            reportColumnQueryId: 13
+            derivedColumn: N
+            heading {
+                heading: Name
+                alignment: center
+            }
+            layout {
+                sequence: 18
+            }
+        )
+
+        column PRODUCT_TAG (
+            reportColumnQueryId: 20
+            derivedColumn: N
+            heading {
+                heading: Product Tag
+                alignment: center
+            }
+            layout {
+                sequence: 12
+            }
+        )
+
+        column ROLE_TAG (
+            reportColumnQueryId: 17
+            derivedColumn: N
+            heading {
+                heading: Role Tag
+                alignment: center
+            }
+            layout {
+                sequence: 9
+            }
+        )
+
+        column SALESPLAY_TAG (
+            reportColumnQueryId: 18
+            derivedColumn: N
+            heading {
+                heading: Salesplay Tag
+                alignment: center
+            }
+            layout {
+                sequence: 13
+            }
+        )
+
+        column TIME_IN_HOURS (
+            reportColumnQueryId: 12
+            derivedColumn: N
+            heading {
+                heading: Time In Hours
+                alignment: center
+            }
+            layout {
+                sequence: 17
+            }
+        )
+
+    )
+
+    region deployment (
+        name: Deployment
+        type: staticContent
+        layout {
+            sequence: 20
+            parentRegion: @choose-workshop-tags
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--noUI
+                t-Region--scrollBody
+                t-Form--noPadding
+                margin-top-none
+                margin-bottom-none
+                margin-left-none
+                margin-right-none
+            ]
+        }
+    )
+
+    region focus-area (
+        name: Focus Area
+        type: staticContent
+        layout {
+            sequence: 40
+            parentRegion: @choose-workshop-tags
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--noUI
+                t-Region--scrollBody
+                t-Form--noPadding
+                margin-top-none
+                margin-bottom-none
+                margin-left-none
+                margin-right-none
+            ]
+        }
+        headerAndFooter {
+            headerText: <div style="max-height: 150px;">
+            footerText: </div>
+        }
+    )
+
+    region gb-testing (
+        name: GB (Testing)
+        type: staticContent
+        layout {
+            sequence: 80
+            parentRegion: @choose-workshop-tags
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--noUI
+                t-Region--scrollBody
+                t-Form--noPadding
+                margin-top-none
+                margin-bottom-none
+                margin-left-none
+                margin-right-none
+            ]
+        }
+        headerAndFooter {
+            headerText: <div style="min-height: 100px; max-height: 100px;">
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    region level (
+        name: Level
+        type: staticContent
+        layout {
+            sequence: 70
+            parentRegion: @choose-workshop-tags
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--noUI
+                t-Region--scrollBody
+                t-Form--noPadding
+                margin-top-none
+                margin-bottom-none
+                margin-left-none
+                margin-right-none
+            ]
+        }
+        headerAndFooter {
+            headerText: <div style="min-height: 100px; max-height: 100px;">
+        }
+    )
+
+    region product (
+        name: Product
+        type: staticContent
+        layout {
+            sequence: 60
+            parentRegion: @choose-workshop-tags
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--noUI
+                t-Region--scrollBody
+                t-Form--noPadding
+                margin-top-none
+                margin-bottom-none
+                margin-left-none
+                margin-right-none
+            ]
+        }
+        headerAndFooter {
+            headerText: <div style="max-height: 150px;">
+            footerText: </div>
+        }
+    )
+
+    region role (
+        name: Role
+        type: staticContent
+        layout {
+            sequence: 30
+            parentRegion: @choose-workshop-tags
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--noUI
+                t-Region--scrollBody
+                t-Form--noPadding
+                margin-top-none
+                margin-bottom-none
+                margin-left-none
+                margin-right-none
+            ]
+        }
+        headerAndFooter {
+            headerText: <div style="max-height: 150px;">
+            footerText: </div>
+        }
+    )
+
+    region sales-play (
+        name: Sales Play
+        type: staticContent
+        layout {
+            sequence: 50
+            parentRegion: @choose-workshop-tags
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--noUI
+                t-Region--scrollBody
+                t-Form--noPadding
+                margin-top-none
+                margin-bottom-none
+                margin-left-none
+                margin-right-none
+            ]
+        }
+        headerAndFooter {
+            headerText: <div style="max-height: 150px;">
+            footerText: </div>
+        }
+    )
+
+    region span-style-font-size-1-8em-font-weight-700-workshops-w-a-green-button-status-span (
+        name: <span style="font-size: 1.8em; font-weight: 700">Workshops w/a Green Button Status</span>
+        type: staticContent
+        source {
+            htmlCode: This is the at-a-glance page for Green Button workshops.  These are workshops that run on a tenancy managed by LiveLabs.
+        }
+        layout {
+            sequence: 10
+            slot: beforeContentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region top (
+        name: TOP
+        type: staticContent
+        layout {
+            sequence: 10
+            parentRegion: @choose-workshop-tags
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--hiddenOverflow
+                t-Form--noPadding
+                margin-top-none
+                margin-bottom-none
+                margin-left-none
+                margin-right-none
+            ]
+        }
+    )
+
+    region wizard (
+        name: Wizard
+        type: staticContent
+        layout {
+            sequence: 110
+            parentRegion: @choose-workshop-tags
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--scrollBody
+                t-Form--noPadding
+                margin-top-none
+                margin-bottom-none
+                margin-left-none
+                margin-right-none
+            ]
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    pageItem 95_66_15_SEARCH (
+        type: hidden
+        layout {
+            sequence: 10
+            region: @span-style-font-size-1-8em-font-weight-700-workshops-w-a-green-button-status-span
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P95_DEPLOYMENT (
+        type: checkboxGroup
+        label {
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select subcategory||' ('||sum(case COMPARE_CATEGORY_IDS(p_string => DEPLOYMENT_TAG, p_filter => category_id) when 'Y' then 1 else 0 end)||')' as subcategory , category_id
+                from workshop_categories, workshops 
+                where category = 'Deployment'
+                and APPROVED_FLG=0
+                and(
+                        :P95_LEVEL is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => LEVEL_TAG, p_filter => :P95_LEVEL) = 'Y'
+                        )
+                and(
+                        :P95_ROLE is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => ROLE_TAG, p_filter => :P95_ROLE) = 'Y'
+                        )
+                and(
+                        :P95_SALES_PLAY is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => SALESPLAY_TAG, p_filter => :P95_SALES_PLAY) = 'Y'
+                    )
+                and(
+                        :P95_FOCUS is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => FOCUS_TAG, p_filter => :P95_FOCUS) = 'Y'
+                    )
+                and(
+                        :P95_PRODUCT is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => PRODUCT_TAG, p_filter => :P95_PRODUCT) = 'Y'
+                    )
+                and(
+                        :P95_DEPLOYMENT is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => DEPLOYMENT_TAG, p_filter => :P95_DEPLOYMENT) = 'Y'
+                        )
+                group by subcategory, category_id 
+                having sum(case COMPARE_CATEGORY_IDS(p_string => DEPLOYMENT_TAG, p_filter => category_id) when 'Y' then 1 else 0 end) > 0
+                
+                ```
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 10
+            region: @deployment
+            slot: regionBody
+            alignment: left
+            column: 1
+            labelColumnSpan: 0
+        }
+        appearance {
+            template: @optional
+            templateOptions: [
+                #DEFAULT#
+                margin-top-none
+                margin-bottom-none
+                margin-left-none
+                margin-right-none
+            ]
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P95_FOCUS_AREA (
+        type: checkboxGroup
+        label {
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select item||' ('||sum(case COMPARE_CATEGORY_IDS(p_string => FOCUS_TAG, p_filter => category_id) when 'Y' then 1 else 0 end)||')' as item , category_id
+                from workshop_categories, workshops 
+                where category = 'Focus'
+                and APPROVED_FLG=0
+                and(
+                        :P95_LEVEL is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => LEVEL_TAG, p_filter => :P95_LEVEL) = 'Y'
+                        )
+                and(
+                        :P95_ROLE is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => ROLE_TAG, p_filter => :P95_ROLE) = 'Y'
+                        )
+                and(
+                        :P95_SALES_PLAY is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => SALESPLAY_TAG, p_filter => :P95_SALES_PLAY) = 'Y'
+                    )
+                and(
+                        :P95_FOCUS_AREA is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => FOCUS_TAG, p_filter => :P95_FOCUS_AREA) = 'Y'
+                    )
+                and(
+                        :P95_PRODUCT is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => PRODUCT_TAG, p_filter => :P95_PRODUCT) = 'Y'
+                    )
+                and(
+                        :P95_DEPLOYMENT is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => DEPLOYMENT_TAG, p_filter => :P95_DEPLOYMENT) = 'Y'
+                        )
+                group by item, category_id 
+                having sum(case COMPARE_CATEGORY_IDS(p_string => FOCUS_TAG, p_filter => category_id) when 'Y' then 1 else 0 end) > 0 order by item
+                
+                ```
+            displayExtraValues: false
+        }
+        cascadingLov {
+            parentItems: P95_ROLE
+            itemsToSubmit: P95_ROLE
+            parentRequired: false
+        }
+        layout {
+            sequence: 10
+            region: @focus-area
+            slot: regionBody
+            alignment: left
+            column: 1
+            labelColumnSpan: 0
+        }
+        appearance {
+            template: @hidden
+            templateOptions: [
+                #DEFAULT#
+                margin-top-none
+                margin-bottom-none
+                margin-left-none
+                margin-right-none
+            ]
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P95_GREEN_BTN_STATUS (
+        type: checkboxGroup
+        label {
+            alignment: left
+        }
+        lov {
+            type: sharedComponent
+            lov: @green-btn-status
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 10
+            region: @gb-testing
+            slot: regionBody
+            alignment: left
+            labelColumnSpan: 0
+        }
+        appearance {
+            template: @optional
+            templateOptions: [
+                #DEFAULT#
+                margin-top-none
+                margin-bottom-none
+                margin-left-sm
+                margin-right-none
+            ]
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P95_LEVEL (
+        type: checkboxGroup
+        label {
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select subcategory||' ('||sum(case COMPARE_CATEGORY_IDS(p_string => LEVEL_TAG, p_filter => category_id) when 'Y' then 1 else 0 end)||')' as subcategory , category_id
+                from workshop_categories, workshops 
+                where category = 'Level'
+                and APPROVED_FLG=0
+                and(
+                        :P95_LEVEL is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => LEVEL_TAG, p_filter => :P95_LEVEL) = 'Y'
+                        )
+                and(
+                        :P95_ROLE is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => ROLE_TAG, p_filter => :P95_ROLE) = 'Y'
+                        )
+                and(
+                        :P95_SALES_PLAY is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => SALESPLAY_TAG, p_filter => :P95_SALES_PLAY) = 'Y'
+                    )
+                and(
+                        :P95_FOCUS is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => FOCUS_TAG, p_filter => :P95_FOCUS) = 'Y'
+                    )
+                and(
+                        :P95_PRODUCT is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => PRODUCT_TAG, p_filter => :P95_PRODUCT) = 'Y'
+                    )
+                and(
+                        :P95_DEPLOYMENT is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => DEPLOYMENT_TAG, p_filter => :P95_DEPLOYMENT) = 'Y'
+                        )
+                group by subcategory, category_id 
+                having sum(case COMPARE_CATEGORY_IDS(p_string => LEVEL_TAG, p_filter => category_id) when 'Y' then 1 else 0 end) > 0
+                
+                ```
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 10
+            region: @level
+            slot: regionBody
+            alignment: left
+            column: 1
+            labelColumnSpan: 0
+        }
+        appearance {
+            template: @optional
+            templateOptions: [
+                #DEFAULT#
+                margin-top-none
+                margin-bottom-none
+                margin-left-sm
+                margin-right-none
+            ]
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P95_PRODUCT (
+        type: checkboxGroup
+        label {
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select item||' ('||sum(case COMPARE_CATEGORY_IDS(p_string => PRODUCT_TAG, p_filter => category_id) when 'Y' then 1 else 0 end)||')' as item , category_id
+                from workshop_categories, workshops 
+                where category = 'Product'
+                and APPROVED_FLG=0
+                and(
+                        :P95_LEVEL is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => LEVEL_TAG, p_filter => :P95_LEVEL) = 'Y'
+                        )
+                and(
+                        :P95_ROLE is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => ROLE_TAG, p_filter => :P95_ROLE) = 'Y'
+                        )
+                and(
+                        :P95_SALES_PLAY is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => SALESPLAY_TAG, p_filter => :P95_SALES_PLAY) = 'Y'
+                    )
+                and(
+                        :P95_FOCUS is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => FOCUS_TAG, p_filter => :P95_FOCUS) = 'Y'
+                    )
+                and(
+                        :P95_PRODUCT is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => PRODUCT_TAG, p_filter => :P95_PRODUCT) = 'Y'
+                    )
+                and(
+                        :P95_DEPLOYMENT is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => DEPLOYMENT_TAG, p_filter => :P95_DEPLOYMENT) = 'Y'
+                        )
+                group by item, category_id 
+                having sum(case COMPARE_CATEGORY_IDS(p_string => PRODUCT_TAG, p_filter => category_id) when 'Y' then 1 else 0 end) > 0 order by item
+                
+                ```
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 20
+            region: @product
+            slot: regionBody
+            alignment: left
+            column: 1
+            labelColumnSpan: 0
+        }
+        appearance {
+            template: @hidden
+            templateOptions: [
+                #DEFAULT#
+                margin-left-none
+                margin-right-none
+            ]
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P95_ROLE (
+        type: checkboxGroup
+        label {
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select subcategory||' ('||sum(case COMPARE_CATEGORY_IDS(p_string => ROLE_TAG, p_filter => category_id) when 'Y' then 1 else 0 end)||')' as subcategory , category_id
+                from workshop_categories, workshops 
+                where category = 'Role'
+                and APPROVED_FLG=0
+                and(
+                        :P95_LEVEL is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => LEVEL_TAG, p_filter => :P95_LEVEL) = 'Y'
+                        )
+                and(
+                        :P95_ROLE is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => ROLE_TAG, p_filter => :P95_ROLE) = 'Y'
+                        )
+                and(
+                        :P95_SALES_PLAY is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => SALESPLAY_TAG, p_filter => :P95_SALES_PLAY) = 'Y'
+                    )
+                and(
+                        :P95_FOCUS is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => FOCUS_TAG, p_filter => :P95_FOCUS) = 'Y'
+                    )
+                and(
+                        :P95_PRODUCT is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => PRODUCT_TAG, p_filter => :P95_PRODUCT) = 'Y'
+                    )
+                and(
+                        :P95_DEPLOYMENT is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => DEPLOYMENT_TAG, p_filter => :P95_DEPLOYMENT) = 'Y'
+                        )
+                group by subcategory, category_id 
+                having sum(case COMPARE_CATEGORY_IDS(p_string => ROLE_TAG, p_filter => category_id) when 'Y' then 1 else 0 end) > 0 order by subcategory
+                
+                ```
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 10
+            region: @role
+            slot: regionBody
+            alignment: left
+            column: 1
+            labelColumnSpan: 0
+        }
+        appearance {
+            template: @hidden
+            templateOptions: [
+                #DEFAULT#
+                margin-top-none
+                margin-bottom-none
+                margin-left-none
+                margin-right-none
+            ]
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P95_SALES_PLAY (
+        type: checkboxGroup
+        label {
+            label: <strong>Sales Play</strong>
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select subcategory||' ('||sum(case COMPARE_CATEGORY_IDS(p_string => SALESPLAY_TAG, p_filter => category_id) when 'Y' then 1 else 0 end)||')' as subcategory , category_id
+                from workshop_categories, workshops 
+                where category = 'Sales Play'
+                and APPROVED_FLG=0
+                and(
+                        :P95_LEVEL is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => LEVEL_TAG, p_filter => :P95_LEVEL) = 'Y'
+                        )
+                and(
+                        :P95_ROLE is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => ROLE_TAG, p_filter => :P95_ROLE) = 'Y'
+                        )
+                and(
+                        :P95_SALES_PLAY is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => SALESPLAY_TAG, p_filter => :P95_SALES_PLAY) = 'Y'
+                    )
+                and(
+                        :P95_FOCUS is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => FOCUS_TAG, p_filter => :P95_FOCUS) = 'Y'
+                    )
+                and(
+                        :P95_PRODUCT is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => PRODUCT_TAG, p_filter => :P95_PRODUCT) = 'Y'
+                    )
+                and(
+                        :P95_DEPLOYMENT is null
+                        or
+                        COMPARE_CATEGORY_IDS(p_string => DEPLOYMENT_TAG, p_filter => :P95_DEPLOYMENT) = 'Y'
+                        )
+                group by subcategory, category_id 
+                having sum(case COMPARE_CATEGORY_IDS(p_string => SALESPLAY_TAG, p_filter => category_id) when 'Y' then 1 else 0 end) > 0 order by subcategory
+                
+                ```
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 10
+            region: @sales-play
+            slot: regionBody
+            alignment: left
+            column: 1
+            labelColumnSpan: 0
+        }
+        appearance {
+            template: @hidden
+            templateOptions: [
+                #DEFAULT#
+                margin-top-none
+                margin-bottom-none
+                margin-left-none
+                margin-right-none
+            ]
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button clear-filters-bottom (
+        buttonName: CLEAR_FILTERS_BOTTOM
+        label: Clear Filters
+        layout {
+            sequence: 20
+            region: @bottom
+            slot: regionBody
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--link
+                t-Button--stretch
+            ]
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button clear-filters-top (
+        buttonName: CLEAR_FILTERS_TOP
+        label: Clear Filters
+        layout {
+            sequence: 20
+            region: @top
+            slot: regionBody
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--link
+                t-Button--stretch
+            ]
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button wizard (
+        buttonName: Wizard
+        label: Wizard
+        layout {
+            sequence: 10
+            region: @bottom
+            slot: regionBody
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 98
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    dynamicAction clear-filters-bottom (
+        name: Clear_Filters_bottom
+        execution {
+            sequence: 80
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @clear-filters-bottom
+        }
+
+        action native-clear (
+            action: clear
+            affectedElements {
+                selectionType: items
+                items: [
+                    P95_DEPLOYMENT
+                    P95_ROLE
+                    P95_SALES_PLAY
+                    P95_FOCUS_AREA
+                    P95_PRODUCT
+                    P95_LEVEL
+                ]
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @current-workshops
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction clear-filters-top (
+        name: Clear_Filters_top
+        execution {
+            sequence: 70
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @clear-filters-top
+        }
+
+        action native-clear (
+            action: clear
+            affectedElements {
+                selectionType: items
+                items: [
+                    P95_DEPLOYMENT
+                    P95_ROLE
+                    P95_SALES_PLAY
+                    P95_FOCUS_AREA
+                    P95_PRODUCT
+                    P95_LEVEL
+                ]
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @current-workshops
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction refresh-on-deployment-check (
+        name: refresh_on_deployment_check
+        execution {
+            sequence: 20
+        }
+        when {
+            selectionType: items
+            items: P95_DEPLOYMENT
+        }
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @current-workshops
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction refresh-on-focus-check (
+        name: refresh_on_focus_check
+        execution {
+            sequence: 40
+        }
+        when {
+            selectionType: items
+            items: P95_FOCUS_AREA
+        }
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @current-workshops
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction refresh-on-gb-check (
+        name: refresh_on_gb_check
+        execution {
+            sequence: 90
+        }
+        when {
+            selectionType: items
+            items: P95_GREEN_BTN_STATUS
+        }
+
+        action native-alert (
+            action: alert
+            settings {
+                message: test
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @current-workshops
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction refresh-on-level-check (
+        name: refresh_on_level_check
+        execution {
+            sequence: 60
+        }
+        when {
+            selectionType: items
+            items: P95_LEVEL
+        }
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @current-workshops
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction refresh-on-product-check (
+        name: refresh_on_product_check
+        execution {
+            sequence: 50
+        }
+        when {
+            selectionType: items
+            items: P95_PRODUCT
+        }
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @current-workshops
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction refresh-on-role-check (
+        name: refresh_on_role_check
+        execution {
+            sequence: 10
+        }
+        when {
+            selectionType: items
+            items: P95_ROLE
+        }
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @current-workshops
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction refresh-on-sales-play-check (
+        name: refresh_on_sales_play_check
+        execution {
+            sequence: 30
+        }
+        when {
+            selectionType: items
+            items: P95_SALES_PLAY
+        }
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @current-workshops
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+)
+

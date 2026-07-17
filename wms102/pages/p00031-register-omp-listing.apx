@@ -1,0 +1,501 @@
+page 31 (
+    name: Register an  OMP Listing
+    alias: REGISTER-OMP-LISTING
+    title: Register an  OMP Listing
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @modal-dialog
+        templateOptions: #DEFAULT#
+    }
+    dialog {
+        width: 960
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region buttons (
+        name: Buttons
+        type: staticContent
+        layout {
+            sequence: 20
+            slot: dialogFooter
+        }
+        appearance {
+            template: @buttons-container
+            templateOptions: #DEFAULT#
+        }
+        settings {
+            outputAs: text
+        }
+    )
+
+    region can-t-find-the-values (
+        name: Can't find the values?
+        type: staticContent
+        layout {
+            sequence: 50
+            parentRegion: @new-listing
+            slot: regionBody
+        }
+        appearance {
+            template: @collapsible
+            templateOptions: [
+                #DEFAULT#
+                is-collapsed
+                t-Region--noUI
+                t-Region--scrollBody
+                margin-top-md
+            ]
+        }
+    )
+
+    region new-listing (
+        name: New Listing
+        type: form
+        source {
+            location: localDatabase
+            tableName: OMP_LISTINGS
+        }
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    pageItem P31_ADDED_BY (
+        type: hidden
+        layout {
+            sequence: 60
+            region: @new-listing
+            slot: regionBody
+        }
+        source {
+            formRegion: @new-listing
+            column: ADDED_BY
+            dataType: varchar2
+        }
+        default {
+            type: expression
+            plsqlExpression: v('APP_USER')
+        }
+    )
+
+    pageItem P31_ADDED_ON (
+        type: hidden
+        layout {
+            sequence: 70
+            region: @new-listing
+            slot: regionBody
+        }
+        source {
+            formRegion: @new-listing
+            column: ADDED_ON
+            dataType: timestamp
+        }
+        default {
+            type: expression
+            plsqlExpression: sysdate
+        }
+    )
+
+    pageItem P31_APP_CATALOG_OCID (
+        type: textField
+        label {
+            label: App Catalog OCID
+            alignment: left
+        }
+        layout {
+            sequence: 40
+            region: @new-listing
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            valueRequired: true
+            maxLength: 4000
+        }
+        source {
+            formRegion: @new-listing
+            column: APP_CATALOG_OCID
+            dataType: varchar2
+        }
+    )
+
+    pageItem P31_ID (
+        type: hidden
+        layout {
+            sequence: 10
+            region: @new-listing
+            slot: regionBody
+        }
+        source {
+            formRegion: @new-listing
+            column: ID
+            dataType: number
+            queryOnly: true
+            primaryKey: true
+        }
+        security {
+            sessionStateProtection: checksumRequiredSessionLevel
+        }
+    )
+
+    pageItem P31_LISTING_DETAILS_GUIDE (
+        type: displayImage
+        label {
+            alignment: left
+        }
+        settings {
+            basedOn: url
+        }
+        layout {
+            sequence: 10
+            region: @can-t-find-the-values
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            customAttributes: style = "height:500px;"
+        }
+        default {
+            type: static
+            staticValue: #APP_FILES#get-listing-details-for-registration.svg
+        }
+    )
+
+    pageItem P31_LISTING_NAME (
+        type: textarea
+        label {
+            label: Listing Name
+            alignment: left
+        }
+        layout {
+            sequence: 20
+            region: @new-listing
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required-floating
+            templateOptions: #DEFAULT#
+            width: 30
+            height: 1
+        }
+        validation {
+            valueRequired: true
+            maxLength: 4000
+        }
+        source {
+            formRegion: @new-listing
+            column: LISTING_NAME
+            dataType: varchar2
+        }
+        help {
+            inlineHelpText: Please use the same name as what is in OMP.
+        }
+    )
+
+    pageItem P31_LISTING_OCID (
+        type: textarea
+        label {
+            label: Listing OCID
+            alignment: left
+        }
+        settings {
+            resizable: false
+        }
+        layout {
+            sequence: 30
+            region: @new-listing
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+            height: 1
+        }
+        validation {
+            valueRequired: true
+            maxLength: 4000
+        }
+        source {
+            formRegion: @new-listing
+            column: LISTING_OCID
+            dataType: varchar2
+        }
+    )
+
+    pageItem P31_SUPPORT_CONTACTS (
+        type: textarea
+        label {
+            label: Support Contacts (comma separated emails)
+            alignment: left
+        }
+        layout {
+            sequence: 90
+            region: @new-listing
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+            height: 5
+        }
+        validation {
+            valueRequired: true
+            maxLength: 4000
+        }
+        source {
+            formRegion: @new-listing
+            column: SUPPORT_CONTACTS
+            dataType: varchar2
+        }
+        default {
+            type: expression
+            plsqlExpression: v('APP_USER')
+        }
+    )
+
+    button cancel (
+        buttonName: CANCEL
+        label: Cancel
+        layout {
+            sequence: 10
+            region: @buttons
+            slot: close
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button create (
+        buttonName: CREATE
+        label: Create
+        layout {
+            sequence: 40
+            region: @buttons
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: insert
+        }
+    )
+
+    button delete (
+        buttonName: DELETE
+        label: Delete
+        layout {
+            sequence: 20
+            region: @buttons
+            slot: delete
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            executeValidations: false
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: delete
+            requiresConfirmation: true
+        }
+        confirmation {
+            message: &APP_TEXT$DELETE_MSG!RAW.
+            style: danger
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P31_ID
+        }
+    )
+
+    button save (
+        buttonName: SAVE
+        label: Apply Changes
+        layout {
+            sequence: 30
+            region: @buttons
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: update
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P31_ID
+        }
+    )
+
+    dynamicAction cancel-dialog (
+        name: Cancel Dialog
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @cancel
+        }
+
+        action native-dialog-cancel (
+            action: cancelDialog
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    validation ocid-check-app-catalog (
+        name: " OCID Check - App Catalog"
+        execution {
+            sequence: 20
+        }
+        validation {
+            plsqlExpression: instr(LOWER(:P31_APP_CATALOG_OCID),'appcataloglisting') > 0
+            alwaysExecute: true
+        }
+        error {
+            errorMessage: This App Catalog OCID should contain the value: appcataloglisting.
+            associatedItem: @P31_APP_CATALOG_OCID
+        }
+    )
+
+    validation ocid-check-listing (
+        name: OCID Check - Listing
+        execution {
+            sequence: 10
+        }
+        validation {
+            plsqlExpression: INSTR(UPPER(:P31_LISTING_OCID_1), UPPER('MKTPUBLISTING')) > 0
+            alwaysExecute: true
+        }
+        error {
+            errorMessage: This OCID should contain the value: mktpublisting.
+            associatedItem: @P31_LISTING_OCID
+        }
+    )
+
+    process close-dialog (
+        name: Close Dialog
+        type: closeDialog
+        execution {
+            sequence: 50
+        }
+        advanced {
+            executionMappingIdentifier: 29802410352772255203
+        }
+        serverSideCondition {
+            type: requestIsContainedInValue
+            value: CREATE,SAVE,DELETE
+        }
+    )
+
+    process initialize-form-new-omp-listing-version (
+        name: Initialize form New OMP Listing Version
+        type: formInitialization
+        formRegion: @new-listing
+        execution {
+            sequence: 20
+            point: beforeHeader
+        }
+        advanced {
+            executionMappingIdentifier: 31096099968445164505
+        }
+    )
+
+    process process-form-new-marketplace-image (
+        name: Process form New Marketplace Image
+        type: formAutoRowProcessing
+        formRegion: @new-listing
+        execution {
+            sequence: 10
+        }
+        advanced {
+            executionMappingIdentifier: 29802409929873255203
+        }
+    )
+
+    process sync-listing-to-ll-create (
+        name: Sync Listing to LL - Create
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                begin
+                    wms_pkg_ords.createListing(:P31_ID);
+                end;
+                ```
+        }
+        execution {
+            sequence: 20
+        }
+        advanced {
+            executionMappingIdentifier: 34130226790659456142
+        }
+        serverSideCondition {
+            whenButtonPressed: @create
+        }
+    )
+
+    process update-image-set-the-updated-flag (
+        name: Update Image - Set the updated flag
+        type: executeCode
+        source {
+            plsqlCode: update wms_images set updated_flg = 1 where id = :P31_ID;
+        }
+        execution {
+            sequence: 70
+            point: afterSubmit
+        }
+        advanced {
+            executionMappingIdentifier: 30252457449565455011
+        }
+        serverSideCondition {
+            whenButtonPressed: @save
+            type: never
+        }
+    )
+
+)
+

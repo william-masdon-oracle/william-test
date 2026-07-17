@@ -1,0 +1,906 @@
+page 26 (
+    name: Costing Data
+    alias: COSTING-DATA
+    title: Costing Data
+    appearance {
+        pageTemplate: @standard-custom
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        authorizationScheme: @administration-rights
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region breadcrumb (
+        name: Breadcrumb
+        type: breadcrumb
+        source {
+            breadcrumb: @breadcrumb
+        }
+        layout {
+            sequence: 10
+            slot: breadcrumbBar
+        }
+        appearance {
+            template: @title-bar
+            templateOptions: [
+                #DEFAULT#
+                t-BreadcrumbRegion--useBreadcrumbTitle
+            ]
+        }
+        componentAppearance {
+            breadcrumbTemplate: @breadcrumb
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    region costs-by-month (
+        name: Costs by Month
+        type: chart
+        source {
+            location: restSource
+            restSource: @daily_costs
+        }
+        restSynchronization {
+            useLocalTable: true
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                js-showMaximizeButton
+                t-Region--accent1
+                t-Region--scrollBody
+            ]
+        }
+        security {
+            escapeSpecialChars: false
+        }
+        chart {
+            type: lineWithArea
+        }
+        chartLayout {
+            height: 400
+        }
+        legend {
+            show: false
+        }
+
+        series series (
+            name: Series 1
+            execution {
+                sequence: 10
+            }
+            source {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                      select to_char(start_date, 'Month') || ' ' || extract(Year from start_date) as month_year,
+                           extract(Month from start_date) as month,
+                           extract(Year from start_date) as year,
+                           sum(TOTAL_COST) as cost
+                      from COSTING_DATE_DATA
+                      group by to_char(start_date, 'Month') || ' ' || extract(Year from start_date),
+                           extract(Month from start_date) ,
+                           extract(Year from start_date)
+                      order by year asc, month asc
+                    ```
+            }
+            columnMapping {
+                label: MONTH_YEAR
+                value: COST
+            }
+            performance {
+                maxRowsToProcess: 60
+            }
+        )
+
+        axis x (
+            name: x
+            majorTicks {
+                show: auto
+            }
+            minorTicks {
+                show: false
+            }
+        )
+
+        axis y (
+            name: y
+            majorTicks {
+                show: auto
+            }
+        )
+
+    )
+
+    region council-areas (
+        name: Council Areas
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select COUNCIL_AREA,
+                       ROUND(SUM(COST),2) as COST
+                  from COSTING_DATA
+                  GROUP BY COUNCIL_AREA
+                  ORDER BY COST DESC
+                ```
+        }
+        layout {
+            sequence: 70
+            slot: contentBody
+            startNewRow: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--accent1
+                t-Region--scrollBody
+            ]
+        }
+        headerAndFooter {
+            headerText:
+                ```html
+                <div style="height: 500px;overflow: auto;">
+                
+                ```
+            footerText: </div>
+        }
+        pagination {
+            type: rowRangesXToY
+        }
+        performance {
+            maxRowsToProcess: 1000000
+        }
+        advanced {
+            savedReportMappingIdentifier: 4919375651045729532
+        }
+
+        column COST (
+            type: plainText
+            heading {
+                heading: Cost
+                alignment: end
+            }
+            layout {
+                sequence: 20
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: B
+            }
+        )
+
+        column COUNCIL_AREA (
+            type: plainText
+            heading {
+                heading: Council Area
+            }
+            layout {
+                sequence: 10
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: A
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: Council Areas
+        }
+
+        savedReport 49202115 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 100000
+            }
+
+            displayColumn COST (
+                sequence: 2
+            )
+
+            displayColumn COUNCIL_AREA (
+                sequence: 1
+            )
+
+        )
+
+    )
+
+    region events (
+        name: Events
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select LIVELABS_EVENTID,
+                       EVENT_TITLE,
+                       ROUND(SUM(COST),2) as COST
+                  from COSTING_DATA 
+                  GROUP BY LIVELABS_EVENTID,
+                       EVENT_TITLE
+                  ORDER BY COST DESC
+                ```
+        }
+        layout {
+            sequence: 90
+            slot: contentBody
+            startNewRow: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--accent1
+                t-Region--scrollBody
+            ]
+        }
+        headerAndFooter {
+            headerText:
+                ```html
+                <div style="height: 500px;overflow: auto;">
+                
+                ```
+            footerText: </div>
+        }
+        pagination {
+            type: rowRangesXToY
+        }
+        performance {
+            maxRowsToProcess: 1000000
+        }
+        advanced {
+            savedReportMappingIdentifier: 4919373836186729514
+        }
+
+        column COST (
+            type: plainText
+            heading {
+                heading: Cost
+                alignment: end
+            }
+            layout {
+                sequence: 30
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: C
+            }
+        )
+
+        column EVENT_TITLE (
+            type: plainText
+            heading {
+                heading: Event Title
+            }
+            layout {
+                sequence: 20
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: B
+            }
+        )
+
+        column LIVELABS_EVENTID (
+            type: plainText
+            heading {
+                heading: Livelabs Event ID
+            }
+            layout {
+                sequence: 10
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: A
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: Events
+        }
+
+        savedReport 49198424 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 100000
+            }
+
+            displayColumn COST (
+                sequence: 3
+            )
+
+            displayColumn EVENT_TITLE (
+                sequence: 2
+            )
+
+            displayColumn LIVELABS_EVENTID (
+                sequence: 1
+            )
+
+            aggregate (
+                column: COST
+            )
+
+        )
+
+    )
+
+    region livelabs-infrastructure-costs-rolling-60-days (
+        name: LiveLabs Infrastructure Costs - Rolling 60 Days
+        type: chart
+        source {
+            location: restSource
+            restSource: @daily_costs
+        }
+        restSynchronization {
+            useLocalTable: true
+        }
+        layout {
+            sequence: 100
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--accent1
+                t-Region--scrollBody
+            ]
+        }
+        headerAndFooter {
+            headerText:
+                ```html
+                <div style="overflow: auto;">
+                
+                ```
+            footerText: </div>
+        }
+        security {
+            escapeSpecialChars: false
+        }
+        chart {
+            type: lineWithArea
+        }
+        chartLayout {
+            height: 400
+        }
+        legend {
+            show: false
+        }
+
+        series series (
+            name: Series 1
+            execution {
+                sequence: 10
+            }
+            source {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                      select to_char(start_date, 'Month') || ' ' || extract(Day from start_date) as month_year,
+                           extract(Day from start_date) as day,
+                           extract(Month from start_date) as month,
+                           sum(LIVELABS_INFRASTRUCTURE_COST) as cost
+                      from COSTING_DATE_DATA
+                      where start_date > sysdate - 60
+                      group by to_char(start_date, 'Month') || ' ' || extract(Day from start_date),
+                           extract(Day from start_date) ,
+                           extract(Month from start_date)
+                      order by month asc, day asc
+                    ```
+            }
+            columnMapping {
+                label: MONTH_YEAR
+                value: COST
+            }
+            performance {
+                maxRowsToProcess: 60
+            }
+        )
+
+        axis x (
+            name: x
+            majorTicks {
+                show: auto
+            }
+            minorTicks {
+                show: false
+            }
+        )
+
+        axis y (
+            name: y
+            majorTicks {
+                show: auto
+            }
+        )
+
+    )
+
+    region resources (
+        name: Resources
+        type: chart
+        source {
+            location: restSource
+            restSource: @costing_data
+        }
+        restSynchronization {
+            useLocalTable: true
+        }
+        layout {
+            sequence: 40
+            slot: contentBody
+            startNewRow: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                js-showMaximizeButton
+                t-Region--accent1
+                t-Region--scrollBody
+            ]
+        }
+        security {
+            escapeSpecialChars: false
+        }
+        chart {
+            type: pie
+        }
+        chartLayout {
+            height: 400
+        }
+        value {
+            format: decimal
+            decimalPlaces: 0
+            formatScaling: none
+        }
+
+        series series (
+            name: Series 1
+            execution {
+                sequence: 10
+            }
+            source {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                      select u_resource, sum(cost) as cost
+                      from costing_data
+                      group by u_resource
+                    ```
+            }
+            columnMapping {
+                label: U_RESOURCE
+                value: COST
+            }
+            label {
+                show: true
+                displayAs: labelPercentage
+            }
+            performance {
+                maxRowsToProcess: 100
+            }
+        )
+
+    )
+
+    region services (
+        name: Services
+        type: chart
+        source {
+            location: restSource
+            restSource: @costing_data
+        }
+        restSynchronization {
+            useLocalTable: true
+        }
+        layout {
+            sequence: 30
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                js-showMaximizeButton
+                t-Region--accent1
+                t-Region--scrollBody
+            ]
+        }
+        security {
+            escapeSpecialChars: false
+        }
+        chart {
+            type: pie
+        }
+        chartLayout {
+            height: 400
+        }
+        value {
+            format: decimal
+            decimalPlaces: 0
+            formatScaling: none
+        }
+
+        series series (
+            name: Series 1
+            execution {
+                sequence: 10
+            }
+            source {
+                location: regionSource
+            }
+            columnMapping {
+                label: SERVICE
+                valueAggregation: sum
+                value: COST
+            }
+            label {
+                show: true
+                displayAs: labelPercentage
+            }
+            performance {
+                maxRowsToProcess: 20
+            }
+        )
+
+    )
+
+    region tenancies (
+        name: Tenancies
+        type: chart
+        source {
+            location: restSource
+            restSource: @costing_data
+        }
+        restSynchronization {
+            useLocalTable: true
+        }
+        layout {
+            sequence: 50
+            slot: contentBody
+            startNewRow: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                js-showMaximizeButton
+                t-Region--accent1
+                t-Region--scrollBody
+            ]
+        }
+        security {
+            escapeSpecialChars: false
+        }
+        chart {
+            type: pie
+        }
+        chartLayout {
+            height: 400
+        }
+        value {
+            format: decimal
+            decimalPlaces: 0
+            formatScaling: none
+        }
+
+        series series (
+            name: Series 1
+            execution {
+                sequence: 10
+            }
+            source {
+                location: regionSource
+            }
+            columnMapping {
+                label: TENANCY_NAME
+                valueAggregation: sum
+                value: COST
+            }
+            label {
+                show: true
+                displayAs: labelPercentage
+            }
+            performance {
+                maxRowsToProcess: 20
+            }
+        )
+
+    )
+
+    region workshop-groups (
+        name: Workshop Groups
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select WORKSHOP_OWNER_GROUP,
+                       ROUND(SUM(COST),2) as COST
+                  from COSTING_DATA
+                  GROUP BY WORKSHOP_OWNER_GROUP
+                  ORDER BY COST DESC
+                ```
+        }
+        layout {
+            sequence: 60
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--accent1
+                t-Region--scrollBody
+            ]
+        }
+        headerAndFooter {
+            headerText:
+                ```html
+                <div style="height: 500px;overflow: auto;">
+                
+                ```
+            footerText:
+                ```html
+                </div>
+                
+                ```
+        }
+        pagination {
+            type: rowRangesXToY
+        }
+        performance {
+            maxRowsToProcess: 1000000
+        }
+        advanced {
+            savedReportMappingIdentifier: 4919375313140729529
+        }
+
+        column COST (
+            type: plainText
+            heading {
+                heading: Cost
+                alignment: end
+            }
+            layout {
+                sequence: 20
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: B
+            }
+        )
+
+        column WORKSHOP_OWNER_GROUP (
+            type: plainText
+            heading {
+                heading: Workshop Owner Group
+            }
+            layout {
+                sequence: 10
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: A
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: Workshop Groups
+        }
+
+        savedReport 49202109 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 100000
+            }
+
+            displayColumn COST (
+                sequence: 2
+            )
+
+            displayColumn WORKSHOP_OWNER_GROUP (
+                sequence: 1
+            )
+
+        )
+
+    )
+
+    region workshops (
+        name: Workshops
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select LIVELABS_WORKSHOPID,
+                       w.workshop_id as WMS_WORKSHOP_ID,
+                       WORKSHOP_NAME,
+                       ROUND(SUM(COST),2) as COST
+                  from COSTING_DATA c, workshop_ll w
+                  WHERE w.id = c.LIVELABS_WORKSHOPID
+                  GROUP BY LIVELABS_WORKSHOPID, w.workshop_id,WORKSHOP_NAME
+                  ORDER BY COST DESC
+                ```
+        }
+        layout {
+            sequence: 80
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--accent1
+                t-Region--scrollBody
+            ]
+        }
+        headerAndFooter {
+            headerText:
+                ```html
+                <div style="height: 500px;overflow: auto;">
+                
+                ```
+            footerText: </div>
+        }
+        pagination {
+            type: rowRangesXToY
+        }
+        performance {
+            maxRowsToProcess: 1000000
+        }
+        advanced {
+            savedReportMappingIdentifier: 4919376172744729537
+        }
+
+        column COST (
+            type: plainText
+            heading {
+                heading: Cost
+                alignment: end
+            }
+            layout {
+                sequence: 40
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: D
+            }
+        )
+
+        column LIVELABS_WORKSHOPID (
+            type: plainText
+            heading {
+                heading: Livelabs Workshop ID
+            }
+            layout {
+                sequence: 10
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: A
+            }
+        )
+
+        column WMS_WORKSHOP_ID (
+            type: plainText
+            heading {
+                heading: WMS Workshop Id
+            }
+            layout {
+                sequence: 20
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: B
+            }
+        )
+
+        column WORKSHOP_NAME (
+            type: plainText
+            heading {
+                heading: Workshop Name
+            }
+            layout {
+                sequence: 30
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: C
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: Workshops
+        }
+
+        savedReport 49209255 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 100000
+            }
+
+            displayColumn COST (
+                sequence: 4
+            )
+
+            displayColumn LIVELABS_WORKSHOPID (
+                sequence: 1
+            )
+
+            displayColumn WMS_WORKSHOP_ID (
+                sequence: 2
+            )
+
+            displayColumn WORKSHOP_NAME (
+                sequence: 3
+            )
+
+        )
+
+    )
+
+)
+

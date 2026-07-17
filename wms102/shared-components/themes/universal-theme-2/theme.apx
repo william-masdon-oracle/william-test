@@ -1,0 +1,121 @@
+theme universal-theme-2 (
+    name: Universal Theme
+    themeNumber: 142
+    version: 1.4
+    style {
+        currentThemeStyle: @vita
+    }
+    javaScript {
+        fileUrls: [
+            #IMAGE_PREFIX#libraries/apex/#MIN_DIRECTORY#widget.stickyWidget#MIN#.js?v=#APEX_VERSION#
+            #THEME_IMAGES#js/theme42#MIN#.js?v=#APEX_VERSION#
+        ]
+    }
+    css {
+        fileUrls: #THEME_IMAGES#css/Core#MIN#.css?v=#APEX_VERSION#
+    }
+    componentDefaults {
+        page: @standard
+        navigationMenuListPosition: side
+        navigationMenuListTop: @top-navigation-menu
+        navigationMenuListSide: @side-navigation-menu
+        loginPage: @login
+        errorPage: @login
+        printerFriendlyPage: @standard
+        breadcrumb: @breadcrumb
+        button: @text
+        defaultLabel: @optional
+        optionalLabel: @optional
+        requiredLabel: @required
+        list: @links-list
+        region: @standard
+        classicReport: @standard
+        headerToolbar: @blank-with-attributes
+        footerToolbar: @blank-with-attributes
+    }
+    regionDefaults {
+        breadcrumbs: @title-bar
+        charts: @standard
+        forms: @standard
+        lists: @standard
+        reports: @standard
+        wizards: @standard
+        interactiveReports: @interactive-report
+    }
+    dialogDefaults {
+        dialogContentRegion: @blank-with-attributes
+        dialogButtonRegion: @buttons-container
+        dialogPage: @modal-dialog
+    }
+    icons {
+        library: fontApex
+    }
+    advanced {
+        filePrefix: #IMAGE_PREFIX#themes/theme_42/1.4/
+        identifier: UNIVERSAL_THEME
+    }
+
+    style vista (
+        name: Vista
+        css {
+            fileUrls: #THEME_IMAGES#css/Vista#MIN#.css?v=#APEX_VERSION#
+        }
+        themeRollerAttributes {
+            readOnly: true
+        }
+        advanced {
+            endUserCanPick: true
+        }
+    )
+
+    style vita (
+        name: Vita
+        themeRollerAttributes {
+            readOnly: true
+            inputParameterFileUrls: #THEME_IMAGES#less/theme/Vita.less
+            outputCssFileUrl: #THEME_IMAGES#css/Vita#MIN#.css?v=#APEX_VERSION#
+        }
+        advanced {
+            endUserCanPick: true
+            accessibilityTested: true
+        }
+    )
+
+    style vita-dark (
+        name: Vita - Dark
+        themeRollerAttributes {
+            readOnly: true
+            inputParameterFileUrls: #THEME_IMAGES#less/theme/Vita-Dark.less
+            outputCssFileUrl: #THEME_IMAGES#css/Vita-Dark#MIN#.css?v=#APEX_VERSION#
+        }
+        advanced {
+            endUserCanPick: true
+        }
+    )
+
+    style vita-red (
+        name: Vita - Red
+        themeRollerAttributes {
+            readOnly: true
+            inputParameterFileUrls: #THEME_IMAGES#less/theme/Vita-Red.less
+            outputCssFileUrl: #THEME_IMAGES#css/Vita-Red#MIN#.css?v=#APEX_VERSION#
+        }
+        advanced {
+            endUserCanPick: true
+        }
+    )
+
+    style vita-slate (
+        name: Vita - Slate
+        themeRollerAttributes {
+            readOnly: true
+            inputParameterFileUrls: #THEME_IMAGES#less/theme/Vita-Slate.less
+            outputCssFileUrl: #THEME_IMAGES#css/Vita-Slate#MIN#.css?v=#APEX_VERSION#
+        }
+        advanced {
+            endUserCanPick: true
+        }
+    )
+
+)
+

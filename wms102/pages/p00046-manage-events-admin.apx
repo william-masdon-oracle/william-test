@@ -1,0 +1,1267 @@
+page 46 (
+    name: Manage Events - Admin
+    alias: MANAGE-EVENTS-ADMIN
+    title: Manage Events - Admin
+    appearance {
+        pageTemplate: @standard-custom
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    javaScript {
+        functionAndGlobalVariableDeclaration: var htmldb_delete_message='"DELETE_CONFIRM_MSG"';
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region manage-event-administration (
+        name: Manage Event - Administration
+        type: form
+        source {
+            location: localDatabase
+            tableName: LL_VOUCHERS
+        }
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        edit {
+            enabled: true
+            allowedOperations: [
+                add
+                update
+                delete
+            ]
+        }
+    )
+
+    region workshop-details (
+        name: Workshop Details
+        type: reflowReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select l.ID,  
+                       l.WORKSHOP_ID,
+                       w.name,
+                       w.prod_id
+                  from LL_VOUCHERS l ,
+                       WORKSHOPS w
+                  where l.workshop_id = w.id
+                       AND l.ID = :P46_ID;
+                ```
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        settings {
+            layoutOptions: [
+                stripes
+                stroke
+            ]
+        }
+
+        column ID (
+            show: false
+            source {
+                dataType: NUMBER
+            }
+            layout {
+                sequence: 10
+            }
+        )
+
+        column NAME (
+            source {
+                dataType: VARCHAR2
+            }
+            heading {
+                heading: Workshop Name
+            }
+            layout {
+                sequence: 30
+            }
+        )
+
+        column PROD_ID (
+            source {
+                dataType: VARCHAR2
+            }
+            heading {
+                heading: Production Id
+            }
+            layout {
+                sequence: 40
+            }
+        )
+
+        column WORKSHOP_ID (
+            source {
+                dataType: NUMBER
+            }
+            heading {
+                heading: Workshop Id
+                alignment: end
+            }
+            layout {
+                sequence: 20
+                columnAlignment: end
+            }
+        )
+
+    )
+
+    pageItem P46_ACTIVE_FLG (
+        type: selectList
+        label {
+            label: Active Flg
+            alignment: left
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC:Yes;1,No;0
+            displayNullValue: false
+        }
+        layout {
+            sequence: 190
+            region: @manage-event-administration
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            formRegion: @manage-event-administration
+            column: ACTIVE_FLG
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P46_ALT_DESC_LONG (
+        type: textarea
+        label {
+            label: Alt Desc Long
+            alignment: left
+        }
+        layout {
+            sequence: 130
+            region: @manage-event-administration
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            width: 60
+            height: 5
+        }
+        validation {
+            maxLength: 4000
+        }
+        source {
+            formRegion: @manage-event-administration
+            column: ALT_DESC_LONG
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P46_ALT_DESC_OUTCOME (
+        type: hidden
+        layout {
+            sequence: 170
+            region: @manage-event-administration
+            slot: regionBody
+        }
+        source {
+            formRegion: @manage-event-administration
+            column: ALT_DESC_OUTCOME
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P46_ALT_DESC_OUTLINE (
+        type: richTextEditor
+        label {
+            label: Alt Desc Outline
+            alignment: left
+        }
+        settings {
+            format: html
+            toolbarStyle: multiline
+            minHeight: 180
+            allowCustomHtml: true
+        }
+        layout {
+            sequence: 150
+            region: @manage-event-administration
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @manage-event-administration
+            column: ALT_DESC_OUTLINE
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P46_ALT_DESC_PREREQUISITES (
+        type: richTextEditor
+        label {
+            label: Alt Desc Prerequisites
+            alignment: left
+        }
+        settings {
+            format: html
+            toolbarStyle: multiline
+            minHeight: 180
+            allowCustomHtml: true
+        }
+        layout {
+            sequence: 160
+            region: @manage-event-administration
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @manage-event-administration
+            column: ALT_DESC_PREREQUISITES
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P46_ALT_DESC_SHORT (
+        type: textarea
+        label {
+            label: Alt Desc Short
+            alignment: left
+        }
+        layout {
+            sequence: 140
+            region: @manage-event-administration
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            width: 60
+            height: 4
+        }
+        validation {
+            maxLength: 4000
+        }
+        source {
+            formRegion: @manage-event-administration
+            column: ALT_DESC_SHORT
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P46_ALT_TIME_AVAILABLE (
+        type: selectList
+        label {
+            label: Alt Time Available
+            alignment: left
+        }
+        lov {
+            type: sharedComponent
+            lov: @hours
+        }
+        layout {
+            sequence: 310
+            region: @manage-event-administration
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            formRegion: @manage-event-administration
+            column: ALT_TIME_AVAILABLE
+            dataType: number
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P46_ALT_TIME_HOURS (
+        type: selectList
+        label {
+            label: Alt Time Hours
+            alignment: left
+        }
+        lov {
+            type: sharedComponent
+            lov: @hours
+        }
+        layout {
+            sequence: 300
+            region: @manage-event-administration
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            formRegion: @manage-event-administration
+            column: ALT_TIME_HOURS
+            dataType: number
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P46_ALT_URL (
+        type: textField
+        label {
+            label: Alternative URL
+            alignment: left
+        }
+        settings {
+            subtype: url
+        }
+        layout {
+            sequence: 320
+            region: @manage-event-administration
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            width: 60
+        }
+        validation {
+            maxLength: 4000
+        }
+        source {
+            formRegion: @manage-event-administration
+            column: ALT_URL
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P46_ALWAYS_FREE (
+        type: selectList
+        label {
+            label: Always Free
+            alignment: left
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC:On;1,Off;0
+        }
+        layout {
+            sequence: 200
+            region: @manage-event-administration
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            formRegion: @manage-event-administration
+            column: ALWAYS_FREE
+            dataType: number
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P46_DISPLAYIMAGE (
+        type: displayImage
+        label {
+            label: Uploaded QR Image
+            alignment: left
+        }
+        layout {
+            sequence: 330
+            region: @manage-event-administration
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @manage-event-administration
+            column: QR_IMAGE
+            dataType: blob
+        }
+    )
+
+    pageItem P46_DISPLAY_TAGS (
+        type: selectList
+        label {
+            label: Display Tags
+            alignment: left
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC2:Yes;1,No;0
+        }
+        layout {
+            sequence: 180
+            region: @manage-event-administration
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            formRegion: @manage-event-administration
+            column: DISPLAY_TAGS
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P46_EMAIL_CREATOR (
+        type: textField
+        label {
+            label: Event Contact 1
+            alignment: left
+        }
+        settings {
+            trimSpaces: none
+        }
+        layout {
+            sequence: 60
+            region: @manage-event-administration
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required-above
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 50
+        }
+        source {
+            formRegion: @manage-event-administration
+            column: EMAIL_CREATOR
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P46_EMAIL_REQUESTOR (
+        type: textField
+        label {
+            label: Event Contact 2
+            alignment: left
+        }
+        settings {
+            trimSpaces: none
+        }
+        layout {
+            sequence: 70
+            region: @manage-event-administration
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 50
+        }
+        source {
+            formRegion: @manage-event-administration
+            column: EMAIL_REQUESTOR
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P46_EMAIL_REQUESTOR_1 (
+        type: textField
+        label {
+            label: Event Contact 3
+            alignment: left
+        }
+        settings {
+            trimSpaces: none
+        }
+        layout {
+            sequence: 80
+            region: @manage-event-administration
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 50
+        }
+        source {
+            formRegion: @manage-event-administration
+            column: EMAIL_REQUESTOR_2
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P46_EVENT_NAME (
+        type: textField
+        label {
+            label: Event Name
+            alignment: left
+        }
+        layout {
+            sequence: 10
+            region: @manage-event-administration
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            width: 60
+        }
+        validation {
+            maxLength: 4000
+        }
+        source {
+            formRegion: @manage-event-administration
+            column: REASON
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P46_FREETIER (
+        type: selectList
+        label {
+            label: Freetier
+            alignment: left
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC:Off;0,On;1
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 210
+            region: @manage-event-administration
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            formRegion: @manage-event-administration
+            column: FREETIER
+            dataType: number
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P46_ID (
+        type: hidden
+        layout {
+            sequence: 50
+            region: @manage-event-administration
+            slot: regionBody
+        }
+        source {
+            formRegion: @manage-event-administration
+            column: ID
+            dataType: number
+            primaryKey: true
+        }
+        security {
+            sessionStateProtection: checksumRequiredSessionLevel
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P46_LIVELABS (
+        type: selectList
+        label {
+            label: Livelabs
+            alignment: left
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC2:Off;0,On;1
+        }
+        layout {
+            sequence: 230
+            region: @manage-event-administration
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            formRegion: @manage-event-administration
+            column: LIVELABS
+            dataType: number
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P46_LIVELABS_TENANCY (
+        type: textField
+        label {
+            label: Livelabs Tenancy
+            alignment: left
+        }
+        settings {
+            trimSpaces: none
+        }
+        layout {
+            sequence: 270
+            region: @manage-event-administration
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 50
+        }
+        source {
+            formRegion: @manage-event-administration
+            column: LIVELABS_TENANCY
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P46_PAID (
+        type: selectList
+        label {
+            label: Paid
+            alignment: left
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC:Off;0,On;1
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 220
+            region: @manage-event-administration
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            formRegion: @manage-event-administration
+            column: PAID
+            dataType: number
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P46_PROD (
+        type: hidden
+        layout {
+            sequence: 40
+            region: @manage-event-administration
+            slot: regionBody
+        }
+        source {
+            formRegion: @manage-event-administration
+            column: WORKSHOP_ID
+            dataType: number
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P46_QR_IMAGE (
+        type: fileUpload
+        label {
+            label: <strong>UPLOAD</strong> Qr Image
+            alignment: left
+        }
+        layout {
+            sequence: 260
+            region: @manage-event-administration
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            width: 60
+        }
+        validation {
+            maxLength: 255
+        }
+        source {
+            formRegion: @manage-event-administration
+            column: QR_IMAGE
+            dataType: blob
+        }
+    )
+
+    pageItem P46_QR_LINK (
+        type: textField
+        label {
+            label: Qr Link
+            alignment: left
+        }
+        settings {
+            subtype: url
+        }
+        layout {
+            sequence: 250
+            region: @manage-event-administration
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            width: 80
+        }
+        validation {
+            maxLength: 4000
+        }
+        source {
+            formRegion: @manage-event-administration
+            column: QR_LINK
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P46_STATUS (
+        type: selectList
+        label {
+            label: Status
+            alignment: left
+        }
+        lov {
+            type: sharedComponent
+            lov: @event-status
+        }
+        layout {
+            sequence: 90
+            region: @manage-event-administration
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            formRegion: @manage-event-administration
+            column: STATUS
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P46_USERS_CONCURRENT (
+        type: numberField
+        label {
+            label: Users Concurrent
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 290
+            region: @manage-event-administration
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 255
+        }
+        source {
+            formRegion: @manage-event-administration
+            column: USERS_CONCURRENT
+            dataType: number
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P46_USERS_MAXIMUM (
+        type: numberField
+        label {
+            label: Users Maximum
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 280
+            region: @manage-event-administration
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 255
+        }
+        source {
+            formRegion: @manage-event-administration
+            column: USERS_MAXIMUM
+            dataType: number
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P46_VALID_FROM (
+        type: datePickerJquery
+        label {
+            label: Valid From
+            alignment: left
+        }
+        layout {
+            sequence: 100
+            region: @manage-event-administration
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 255
+        }
+        source {
+            formRegion: @manage-event-administration
+            column: VALID_FROM
+            dataType: date
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P46_VALID_TIMEZONE (
+        type: selectList
+        label {
+            label: Valid Timezone
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery: select KEY_VALUE_LONG||' '||KEY_VALUE, KEY_VALUE from keys where key_type='TZ' order by key_id
+        }
+        layout {
+            sequence: 120
+            region: @manage-event-administration
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            formRegion: @manage-event-administration
+            column: VALID_TIMEZONE
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P46_VALID_TO (
+        type: datePickerJquery
+        label {
+            label: Valid To
+            alignment: left
+        }
+        layout {
+            sequence: 110
+            region: @manage-event-administration
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 255
+        }
+        source {
+            formRegion: @manage-event-administration
+            column: VALID_TO
+            dataType: date
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P46_VOUCHER_CODE (
+        type: textField
+        label {
+            label: Voucher Code
+            alignment: left
+        }
+        settings {
+            trimSpaces: none
+        }
+        layout {
+            sequence: 240
+            region: @manage-event-administration
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 50
+        }
+        source {
+            formRegion: @manage-event-administration
+            column: VOUCHER_CODE
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P46_WORKSHOP_ID (
+        type: selectList
+        label {
+            label: Workshop Id
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery: select  name||'  (Prod ID: '||prod_id||'/Workshop ID: '||id||')' as d, id as v from WORKSHOPS where active_flg=1 order by name;
+        }
+        layout {
+            sequence: 30
+            region: @manage-event-administration
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            formRegion: @manage-event-administration
+            column: WORKSHOP_ID
+            dataType: number
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P46_WORKSHOP_NAME (
+        type: hidden
+        layout {
+            sequence: 20
+            region: @manage-event-administration
+            slot: regionBody
+        }
+        source {
+            formRegion: @manage-event-administration
+            column: WORKSHOP_ID
+            dataType: number
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button cancel (
+        buttonName: CANCEL
+        label: Cancel
+        layout {
+            sequence: 10
+            region: @manage-event-administration
+            slot: close
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 50
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button create (
+        buttonName: CREATE
+        label: Create
+        layout {
+            sequence: 40
+            region: @manage-event-administration
+            slot: create
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: insert
+        }
+        serverSideCondition {
+            type: itemIsNull
+            item: P46_ID
+        }
+    )
+
+    button delete (
+        buttonName: DELETE
+        label: Delete
+        layout {
+            sequence: 20
+            region: @manage-event-administration
+            slot: delete
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectUrl
+            targetUrl: javascript:apex.confirm(htmldb_delete_message,'DELETE');
+            executeValidations: false
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: delete
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P46_ID
+        }
+    )
+
+    button save (
+        buttonName: SAVE
+        label: Apply Changes
+        layout {
+            sequence: 30
+            region: @manage-event-administration
+            slot: change
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: update
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P46_ID
+        }
+    )
+
+    process initialize-form-all-events-data-update (
+        name: Initialize form All Events Data Update
+        type: formInitialization
+        formRegion: @manage-event-administration
+        execution {
+            sequence: 10
+            point: beforeHeader
+        }
+        advanced {
+            executionMappingIdentifier: 68519734139197054181
+        }
+    )
+
+    process process-form-all-events-data-update (
+        name: Process form All Events Data Update
+        type: formAutoRowProcessing
+        formRegion: @manage-event-administration
+        execution {
+            sequence: 10
+        }
+        advanced {
+            executionMappingIdentifier: 68519734581426054182
+        }
+    )
+
+    branch (
+        name: Go To Page 50
+        execution {
+            sequence: 1
+        }
+        behavior {
+            target: {
+                page: 50
+            }
+        }
+    )
+
+)
+

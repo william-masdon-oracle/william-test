@@ -1,0 +1,134 @@
+page 38 (
+    name: select-sandbox-method
+    alias: SELECT-SANDBOX-METHOD
+    title: Select a Sandbox Method
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @modal-dialog
+        templateOptions: #DEFAULT#
+    }
+    dialog {
+        height: 450
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    css {
+        inline:
+            ```css
+            .t-Region-headerItems--title {
+                justify-content: center;
+            }
+            /* 
+            .sandbox-options {
+                height:220px;
+            }
+             */
+            
+            ```
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region lite (
+        name: Lite
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <div style="display:flex; flex-direction:column; height:100%; font-size:16px; line-height:1.5;">
+                    <p>
+                        Automatically configure your Sandbox Environment with Sandbox Lite. This option is great for simple environments.
+                    </p>
+                    </br>
+                     <i class= "fa fa-clock-o" style="margin-top:auto;"> &nbsp&nbsp&nbsp1 business day</i>
+                </div>
+                
+                
+                ```
+        }
+        layout {
+            sequence: 30
+            slot: contentBody
+            startNewRow: false
+            columnCssClasses: sandbox-options
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--showIcon
+                i-h240
+                t-Region--accent4
+                t-Region--scrollBody
+                t-Form--noPadding
+                margin-top-md
+                margin-bottom-lg
+            ]
+            icon: fa-lg fa-bolt
+        }
+    )
+
+    region traditional (
+        name: Traditional
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <div style="display:flex; flex-direction:column; height:100%; font-size:16px; line-height:1.5;">
+                    <p>
+                        Get your Sandbox Environment manually configured by the LiveLabs team. This option is great for environments that require a customized setup (e.g custom images, terraform scripts, etc.). 
+                    </p>
+                    </br>
+                    <i class= "fa fa-clock-o" style="margin-top:auto;">&nbsp&nbsp&nbsp1-3 weeks</i>
+                
+                </div>
+                
+                ```
+        }
+        layout {
+            sequence: 20
+            slot: contentBody
+            columnCssClasses: sandbox-options
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--showIcon
+                i-h240
+                t-Region--accent1
+                t-Region--scrollBody
+                t-Form--noPadding
+                margin-top-md
+                margin-bottom-lg
+            ]
+            icon: fa-lg fa-tools
+        }
+    )
+
+    dynamicAction on-click (
+        name: On Click
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: region
+            region: @traditional
+        }
+
+        action native-dialog-close (
+            action: closeDialog
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+)
+

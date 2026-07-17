@@ -1,0 +1,693 @@
+page 127 (
+    name: Manage Event Admin
+    alias: MANAGE-EVENT-ADMIN
+    title: Manage Event Admin
+    appearance {
+        pageTemplate: @standard-custom
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        authorizationScheme: @administration-rights
+        formAutoComplete: false
+    }
+
+    region manage-event-admin (
+        name: Manage Event Admin
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <table><tr><td width="120px">
+                <img src="#APP_FILES#ssw_icon.png" width="100px">
+                </td><td>
+                <p>Event Admin have access to select a tenancy for Event Requests.</p></td></tr></table>
+                ```
+        }
+        layout {
+            sequence: 10
+            slot: beforeContentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region manage-event-admin-2 (
+        name: Manage Event Admin
+        type: interactiveGrid
+        source {
+            location: localDatabase
+            tableName: WORKSHOP_PERSON_EVENT_ADMIN
+            includeRowidColumn: true
+            orderByClause: email
+        }
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        headerAndFooter {
+            headerText: Event Admins
+        }
+        serverSideCondition {
+            type: rowsReturned
+            sqlQuery:
+                ```sql
+                select * from
+                workshop_person_role 
+                where upper(:APP_USER)=upper(email)
+                and workshop_id is null
+                and active_flg=1
+                ```
+        }
+        security {
+            authorizationScheme: @administration-rights
+        }
+        edit {
+            enabled: true
+            allowedOperations: [
+                add
+                update
+                delete
+            ]
+        }
+        editAuthorization {
+            delete: @administration-rights
+        }
+        toolbar {
+            controls: [
+                searchCol
+                searchField
+                actionsMenu
+                resetButton
+                saveButton
+            ]
+        }
+        download {
+            formats: [
+                csv
+                html
+                pdf
+            ]
+        }
+        advanced {
+            savedReportMappingIdentifier: 93568506042025415053
+        }
+
+        savedReport 10950057 (
+            visibility: primary
+            view {
+                default: grid
+            }
+            singleRowView {
+                displayedColumns: true
+            }
+
+            displayColumn (
+                column: @EMAIL
+                layout {
+                    width: 230
+                    sequence: 3
+                }
+            )
+
+            displayColumn (
+                column: @CREATE_DTM
+                layout {
+                    sequence: 8
+                }
+            )
+
+            displayColumn (
+                column: @CREATE_BY
+                layout {
+                    sequence: 9
+                }
+            )
+
+            displayColumn (
+                column: @UPDATE_DTM
+                layout {
+                    sequence: 10
+                }
+            )
+
+            displayColumn (
+                column: @UPDATE_BY
+                layout {
+                    sequence: 11
+                }
+            )
+
+            displayColumn (
+                column: @APEX$ROW_ACTION
+                layout {
+                    frozen: true
+                    sequence: 0
+                }
+            )
+
+            displayColumn (
+                column: @ROWID
+                layout {
+                    sequence: 1
+                }
+            )
+
+            displayColumn (
+                column: @ACTIVE_FLG
+                layout {
+                    sequence: 7
+                }
+            )
+
+            displayColumn (
+                column: @ID
+                layout {
+                    sequence: 2
+                }
+            )
+
+        )
+
+        column ACTIVE_FLG (
+            type: numberField
+            heading {
+                heading: Active Flg
+            }
+            settings {
+                numberAlignment: end
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 70
+                columnAlignment: end
+            }
+            source {
+                databaseColumn: ACTIVE_FLG
+                dataType: number
+            }
+            default {
+                type: static
+                staticValue: 1
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column APEX$ROW_ACTION (
+            type: actionsMenu
+            layout {
+                sequence: 20
+            }
+        )
+
+        column APEX$ROW_SELECTOR (
+            type: rowSelector
+            layout {
+                sequence: 10
+            }
+        )
+
+        column CREATE_BY (
+            type: displayOnly
+            heading {
+                heading: Create By
+            }
+            layout {
+                sequence: 140
+            }
+            source {
+                databaseColumn: CREATE_BY
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column CREATE_DTM (
+            type: displayOnly
+            heading {
+                heading: Create Dtm
+            }
+            layout {
+                sequence: 130
+            }
+            source {
+                databaseColumn: CREATE_DTM
+                dataType: date
+            }
+        )
+
+        column EMAIL (
+            type: textarea
+            heading {
+                heading: Email
+            }
+            layout {
+                sequence: 120
+            }
+            validation {
+                valueRequired: true
+                maxLength: 100
+            }
+            source {
+                databaseColumn: EMAIL
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column ID (
+            type: displayOnly
+            heading {
+                heading: ID
+            }
+            layout {
+                sequence: 110
+            }
+            source {
+                databaseColumn: ID
+                dataType: number
+            }
+            default {
+                duplicateCopiesExistingValue: false
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column ROWID (
+            type: hidden
+            layout {
+                sequence: 30
+            }
+            source {
+                databaseColumn: ROWID
+                dataType: rowid
+                primaryKey: true
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column UPDATE_BY (
+            type: displayOnly
+            heading {
+                heading: Update By
+            }
+            layout {
+                sequence: 160
+            }
+            source {
+                databaseColumn: UPDATE_BY
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column UPDATE_DTM (
+            type: displayOnly
+            heading {
+                heading: Update Dtm
+            }
+            layout {
+                sequence: 150
+            }
+            source {
+                databaseColumn: UPDATE_DTM
+                dataType: date
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: Manage All Workshops
+        }
+    )
+
+    region readiness-checklist-items (
+        name: "Readiness Checklist Items "
+        type: interactiveGrid
+        source {
+            location: localDatabase
+            tableName: WMS_EVENT_READY_ITEMS
+        }
+        layout {
+            sequence: 30
+            slot: contentBody
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        headerAndFooter {
+            headerText: Event Readiness Checklist Items
+        }
+        edit {
+            enabled: true
+            allowedOperations: [
+                add
+                update
+                delete
+            ]
+        }
+        toolbar {
+            controls: [
+                searchCol
+                searchField
+                actionsMenu
+                resetButton
+                saveButton
+            ]
+        }
+        download {
+            formats: [
+                csv
+                html
+                excel
+                pdf
+            ]
+        }
+        advanced {
+            savedReportMappingIdentifier: 16886606069321250613
+        }
+
+        savedReport primary (
+            visibility: primary
+            view {
+                default: grid
+            }
+            singleRowView {
+                displayedColumns: true
+            }
+
+            displayColumn (
+                column: @ID
+                layout {
+                    sequence: 13
+                }
+            )
+
+            displayColumn (
+                column: @SECTION
+                layout {
+                    sequence: 14
+                }
+            )
+
+            displayColumn (
+                column: @ITEM
+                layout {
+                    sequence: 15
+                }
+            )
+
+            displayColumn (
+                column: @ACTIVE_YN
+                layout {
+                    sequence: 16
+                }
+            )
+
+            displayColumn (
+                column: @UPDATED_BY
+                layout {
+                    sequence: 17
+                }
+            )
+
+            displayColumn (
+                column: @UPDATED_DATE
+                layout {
+                    sequence: 18
+                }
+            )
+
+            displayColumn (
+                column: @APEX$ROW_ACTION
+                layout {
+                    sequence: 0
+                }
+            )
+
+        )
+
+        column ACTIVE_YN (
+            type: checkbox
+            heading {
+                heading: Active?
+                alignment: center
+            }
+            settings {
+                useDefaults: false
+                checkedValue: Y
+                uncheckedValue: N
+            }
+            layout {
+                sequence: 60
+                columnAlignment: center
+            }
+            validation {
+                valueRequired: true
+            }
+            source {
+                databaseColumn: ACTIVE_YN
+                dataType: varchar2
+            }
+            default {
+                type: static
+                staticValue: Y
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column APEX$ROW_ACTION (
+            type: actionsMenu
+            layout {
+                sequence: 20
+            }
+        )
+
+        column APEX$ROW_SELECTOR (
+            type: rowSelector
+            layout {
+                sequence: 10
+            }
+        )
+
+        column ID (
+            type: hidden
+            layout {
+                sequence: 30
+            }
+            source {
+                databaseColumn: ID
+                dataType: number
+                queryOnly: true
+                primaryKey: true
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column ITEM (
+            type: textarea
+            heading {
+                heading: Item
+            }
+            layout {
+                sequence: 50
+            }
+            validation {
+                valueRequired: true
+                maxLength: 1000
+            }
+            source {
+                databaseColumn: ITEM
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column SECTION (
+            type: popupLov
+            heading {
+                heading: Section
+            }
+            settings {
+                manualEntry: true
+                fetchOnSearch: true
+            }
+            lov {
+                type: staticValues
+                staticValues: STATIC:Session Definition;Session Definition,Content Completion;Content Completion,Environment and Access;Environment and Access,Event Setup;Event Setup,End-to-End Testing;End-to-End Testing,Delivery Readiness;Delivery Readiness,Recording and Backup Assets;Recording and Backup Assets
+            }
+            layout {
+                sequence: 40
+            }
+            validation {
+                valueRequired: true
+                maxLength: 100
+            }
+            source {
+                databaseColumn: SECTION
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: useLov
+            }
+        )
+
+        column UPDATED_BY (
+            type: displayOnly
+            heading {
+                heading: Updated By
+            }
+            layout {
+                sequence: 70
+            }
+            source {
+                databaseColumn: UPDATED_BY
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column UPDATED_DATE (
+            type: displayOnly
+            heading {
+                heading: Updated Date
+            }
+            layout {
+                sequence: 80
+            }
+            source {
+                databaseColumn: UPDATED_DATE
+                dataType: timestamp
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+    )
+
+    process manage-all-workshops-save-interactive-grid-data (
+        name: Manage All Workshops - Save Interactive Grid Data
+        type: interactiveGridAutoRowProcessing
+        editableRegion: @manage-event-admin-2
+        execution {
+            sequence: 10
+        }
+        advanced {
+            executionMappingIdentifier: 6567641715269655175
+        }
+    )
+
+    process readiness-checklist-items-save-interactive-grid-data (
+        name: Readiness Checklist Items  - Save Interactive Grid Data
+        type: interactiveGridAutoRowProcessing
+        editableRegion: @readiness-checklist-items
+        execution {
+            sequence: 20
+        }
+        advanced {
+            executionMappingIdentifier: 16886608167646250634
+        }
+    )
+
+)
+

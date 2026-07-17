@@ -1,0 +1,244 @@
+page 13 (
+    name: Welcome to LiveLabs
+    alias: WELCOME-TO-LIVELABS
+    title: Welcome to LiveLabs
+    appearance {
+        pageTemplate: @standard-custom
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region current-workshops (
+        name: Current workshops
+        type: classicReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select
+                  "NAME" CARD_TITLE,
+                  "DESCRIPTION"|| '    Reservation Time: '||"TIME_IN_HOURS"||' hours' CARD_TEXT,
+                  'Workshop Time: '||"WORKSHOP_TIME"||' '||"WORKSHOP_TIME_UNIT" CARD_SUBTEXT,
+                  apex_string.get_initials("NAME") CARD_INITIALS,
+                  APEX_PAGE.GET_URL (
+                      p_page   => 11,
+                      p_items  => 'P11_WORKSHOP',
+                      p_values => ID ) as CARD_LINK,    
+                  null CARD_MODIFIERS,
+                  null CARD_COLOR,
+                  '#WORKSPACE_IMAGES#ssw_icon_wht.png' CARD_IMAGE,
+                  '#WORKSPACE_IMAGES#ssw_icon_wht.png' CARD_ICON
+                from  "WORKSHOPS"
+                where ACTIVE_FLG=1;
+                ```
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @blank-with-attributes-no-grid
+            templateOptions: #DEFAULT#
+            icon: fa-flask
+        }
+        reportLayout {
+            numberOfRows: 50
+        }
+        componentAppearance {
+            template: @cards
+            templateOptions: [
+                #DEFAULT#
+                u-colors
+                t-Cards--basic
+                t-Cards--displayInitials
+                t-Cards--3cols
+                t-Cards--animColorFill
+                t-Report--hideNoPagination
+            ]
+        }
+        pagination {
+            type: nextAndPreviousLinks
+        }
+        performance {
+            maxRowsToProcess: 500
+        }
+        messages {
+            whenNoDataFound: no data found
+        }
+
+        column CARD_COLOR (
+            reportColumnQueryId: 7
+            derivedColumn: N
+            heading {
+                heading: CARD_COLOR
+                alignment: center
+            }
+            layout {
+                sequence: 7
+            }
+            sorting {
+                sortable: false
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column CARD_ICON (
+            reportColumnQueryId: 9
+            derivedColumn: N
+            heading {
+                heading: Card Icon
+                alignment: center
+            }
+            layout {
+                sequence: 8
+            }
+        )
+
+        column CARD_IMAGE (
+            reportColumnQueryId: 8
+            derivedColumn: N
+            heading {
+                heading: Card Image
+                alignment: center
+            }
+            layout {
+                sequence: 9
+            }
+        )
+
+        column CARD_INITIALS (
+            reportColumnQueryId: 4
+            derivedColumn: N
+            heading {
+                heading: CARD_INITIALS
+                alignment: center
+            }
+            layout {
+                sequence: 4
+            }
+            sorting {
+                sortable: false
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column CARD_LINK (
+            reportColumnQueryId: 5
+            derivedColumn: N
+            heading {
+                heading: CARD_LINK
+                alignment: center
+            }
+            layout {
+                sequence: 5
+            }
+            sorting {
+                sortable: false
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column CARD_MODIFIERS (
+            reportColumnQueryId: 6
+            derivedColumn: N
+            heading {
+                heading: CARD_MODIFIERS
+                alignment: center
+            }
+            layout {
+                sequence: 6
+            }
+            sorting {
+                sortable: false
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column CARD_SUBTEXT (
+            reportColumnQueryId: 3
+            derivedColumn: N
+            heading {
+                heading: CARD_SUBTEXT
+                alignment: end
+            }
+            layout {
+                sequence: 3
+                columnAlignment: end
+            }
+            appearance {
+                formatMask: 999G999G999G999G999G999G999G999G999G990
+            }
+        )
+
+        column CARD_TEXT (
+            reportColumnQueryId: 2
+            derivedColumn: N
+            heading {
+                heading: CARD_TEXT
+            }
+            layout {
+                sequence: 2
+            }
+        )
+
+        column CARD_TITLE (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            heading {
+                heading: CARD_TITLE
+            }
+            layout {
+                sequence: 1
+            }
+        )
+
+    )
+
+    region span-style-font-size-1-8em-font-weight-700-welcome-to-livelabs-span (
+        name: <span style="font-size: 1.8em; font-weight: 700">Welcome to LiveLabs</span>
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <table><tr><td width="120px">
+                <img src="#WORKSPACE_IMAGES#ssworkshop_icon_big.png" width="100px">
+                </td><td>
+                <p>All the LiveLabs workshops are run in a pre-provisioned Cloud Tenancy. Currently active workshops are listed below.</p>
+                <p><span style="font-size:1.3em; font-weight:600; color:#C74634">Click a tile below to begin.</span></p>
+                <p><strong>Note:</strong> Once you submit your registration for a workshop you will be sent instructions to access the lab. You have a one week window to complete the workshop.  Your access will be available for the Reservation time indicated for the workshop you select. <br><br>Need help?  Join our Slack channel<a hef="https://app.slack.com/client/T6TKLDJDC/CTUPZQ5HA"> #livelabs-help</a>.  Know of a workshop that should be added?  Click <a href="mailto:kay.malcolm@oracle.com?&cc=tom.mcginn@oracle.com&subject=Workshop%20Submission">here</a>. </p>
+                </td></tr></table>
+                ```
+        }
+        layout {
+            sequence: 10
+            slot: beforeContentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+)
+

@@ -1,0 +1,341 @@
+page 311 (
+    name: Edit My Workshop
+    alias: EDIT-MY-WORKSHOP
+    title: Edit My Workshop
+    appearance {
+        pageTemplate: @standard-custom
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region span-style-font-size-1-8em-font-weight-700-edit-my-workshop-s-span (
+        name: <span style="font-size: 1.8em; font-weight: 700">Edit My Workshop(s)</span>
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <table><tr><td width="120px">
+                <img src="#WORKSPACE_IMAGES#ssworkshop_icon_big.png" width="100px">
+                </td><td>
+                <p>Any non-production workshops that you are listed as the Workshop Owner, Technical Contact or Modernizer Resource will be listed here.  Please email <a href="mailto:livelabs_us@oracle.com?subject=Edit-Workshop">livelabs_us@oracle.com</a> to change workshops already in LiveLabs Production.</p></td></tr></table>
+                ```
+        }
+        layout {
+            sequence: 10
+            slot: beforeContentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region workshop-owner (
+        name: Workshop Owner
+        type: interactiveReport
+        source {
+            location: localDatabase
+            tableName: WORKSHOPS
+            includeRowidColumn: true
+            whereClause: active_flg=0 and workshop_status != 'Cancelled' and (upper(modernizer_resource)=:APP_USER or upper(email_from_address)=:APP_USER or upper(key_oracle_contact_1)=:APP_USER or upper(key_oracle_contact_2)=:APP_USER) or upper(manager_contact)=:APP_USER or upper(support_contact)=:APP_USER or upper(other_contact)=:APP_USER
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        link {
+            linkColumn: customTarget
+            target: {
+                page: 320
+                items: {
+                    P320_ROWID: #ROWID#
+                }
+            }
+            linkIcon: <span aria-label="Edit"><span class="fa fa-edit" aria-hidden="true" title="Edit"></span></span>
+        }
+        pagination {
+            type: rowRangesXToY
+        }
+        performance {
+            maxRowsToProcess: 1000000
+        }
+        advanced {
+            savedReportMappingIdentifier: 5741923573942961809
+        }
+
+        column DESCRIPTION (
+            type: plainText
+            heading {
+                heading: Description
+                alignment: center
+            }
+            layout {
+                sequence: 50
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: C
+            }
+        )
+
+        column EMAIL_FROM_ADDRESS (
+            type: plainText
+            heading {
+                heading: Workshop Owner
+                alignment: center
+            }
+            layout {
+                sequence: 100
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: N
+            }
+            help {
+                helpText: Owner/Key Contact for the workshop.  This person will handle or quarterback questions or issues regarding the workshop
+            }
+        )
+
+        column FREETIER_URL (
+            type: plainText
+            heading {
+                heading: Freetier Url
+                alignment: center
+            }
+            layout {
+                sequence: 140
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AS
+            }
+        )
+
+        column GENERAL_NOTES (
+            type: removeHtml
+            heading {
+                heading: General Notes
+                alignment: center
+            }
+            layout {
+                sequence: 90
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AP
+            }
+        )
+
+        column ID (
+            type: plainText
+            heading {
+                heading: Workshop ID
+                alignment: center
+            }
+            layout {
+                sequence: 20
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: W
+            }
+        )
+
+        column KEY_ORACLE_CONTACT_1 (
+            type: plainText
+            heading {
+                heading: Technical Contact 1
+                alignment: center
+            }
+            layout {
+                sequence: 110
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AQ
+            }
+        )
+
+        column KEY_ORACLE_CONTACT_2 (
+            type: plainText
+            heading {
+                heading: Technical Contact 2
+                alignment: center
+            }
+            layout {
+                sequence: 120
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AR
+            }
+        )
+
+        column MODERNIZER_RESOURCE (
+            type: plainText
+            heading {
+                heading: Workshop Modernizer
+                alignment: center
+            }
+            layout {
+                sequence: 130
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AT
+            }
+            help {
+                helpText: Person responsible for moving workshop from the source to the destination location in GitHub
+            }
+        )
+
+        column NAME (
+            type: plainText
+            heading {
+                heading: Name
+                alignment: center
+            }
+            layout {
+                sequence: 30
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: B
+            }
+        )
+
+        column ROWID (
+            type: hidden
+            heading {
+                heading: Rowid
+            }
+            layout {
+                sequence: 10
+            }
+            source {
+                dataType: OTHER
+            }
+            advanced {
+                endUserAlias: A
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column WORKSHOP_STATUS (
+            type: plainText
+            heading {
+                heading: Workshop Status
+                alignment: center
+            }
+            layout {
+                sequence: 40
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AJ
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: Workshop Owner
+        }
+
+        savedReport 57462168 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn DESCRIPTION (
+                sequence: 3
+            )
+
+            displayColumn EMAIL_FROM_ADDRESS (
+                sequence: 4
+            )
+
+            displayColumn FREETIER_URL (
+                sequence: 10
+            )
+
+            displayColumn GENERAL_NOTES (
+                sequence: 7
+            )
+
+            displayColumn ID (
+                sequence: 5
+            )
+
+            displayColumn KEY_ORACLE_CONTACT_1 (
+                sequence: 8
+            )
+
+            displayColumn KEY_ORACLE_CONTACT_2 (
+                sequence: 9
+            )
+
+            displayColumn MODERNIZER_RESOURCE (
+                sequence: 11
+            )
+
+            displayColumn NAME (
+                sequence: 2
+            )
+
+            displayColumn ROWID (
+                sequence: 1
+            )
+
+            displayColumn WORKSHOP_STATUS (
+                sequence: 6
+            )
+
+        )
+
+    )
+
+)
+

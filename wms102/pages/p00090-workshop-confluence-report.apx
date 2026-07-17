@@ -1,0 +1,474 @@
+page 90 (
+    name: Workshop Confluence Report
+    alias: WORKSHOP-CONFLUENCE-REPORT
+    title: Workshop Confluence Report
+    appearance {
+        pageTemplate: @standard-custom
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region workshop-confluence-report (
+        name: Workshop Confluence Report
+        type: interactiveReport
+        source {
+            location: localDatabase
+            tableName: WORKSHOPS
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        pagination {
+            type: rowRangesXToY
+        }
+        messages {
+            whenNoDataFound: No data found.
+            whenMoreDataFound: The maximum row count for this report is #MAX_ROW_COUNT# rows.  Please apply a filter to reduce the number of records in your query.
+        }
+        actionsMenu {
+            subscription: false
+        }
+        advanced {
+            savedReportMappingIdentifier: 5434605700541382128
+        }
+
+        column ACTIVE_FLG (
+            type: plainText
+            heading {
+                heading: Active Flg
+                alignment: end
+            }
+            layout {
+                sequence: 4
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: D
+            }
+        )
+
+        column APPROVED_FLG (
+            type: plainText
+            heading {
+                heading: Approved Flg
+                alignment: end
+            }
+            layout {
+                sequence: 25
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: J
+            }
+        )
+
+        column AUTHOR_NAME (
+            type: plainText
+            heading {
+                heading: Author Name
+            }
+            layout {
+                sequence: 12
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: E
+            }
+        )
+
+        column DESCRIPTION (
+            type: plainText
+            heading {
+                heading: Description
+            }
+            layout {
+                sequence: 2
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: B
+            }
+        )
+
+        column EMAIL_FROM_ADDRESS (
+            type: plainText
+            heading {
+                heading: Email From Address
+            }
+            layout {
+                sequence: 13
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: F
+            }
+        )
+
+        column FREETIER_URL (
+            type: plainText
+            heading {
+                heading: Freetier Url
+            }
+            layout {
+                sequence: 44
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: T
+            }
+        )
+
+        column GENERAL_NOTES (
+            type: plainText
+            heading {
+                heading: General Notes
+            }
+            layout {
+                sequence: 41
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: R
+            }
+        )
+
+        column GITHUB_ADDRESS (
+            type: plainText
+            heading {
+                heading: Github Address
+            }
+            layout {
+                sequence: 3
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: C
+            }
+        )
+
+        column ID (
+            type: plainText
+            heading {
+                heading: Id
+                alignment: end
+            }
+            layout {
+                sequence: 22
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: G
+            }
+        )
+
+        column KEY_ORACLE_CONTACT_1 (
+            type: plainText
+            heading {
+                heading: Key Oracle Contact 1
+            }
+            layout {
+                sequence: 42
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: S
+            }
+        )
+
+        column MODERNIZER_RESOURCE (
+            type: plainText
+            heading {
+                heading: Maintained By
+            }
+            layout {
+                sequence: 36
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: N
+            }
+        )
+
+        column MULTI_WORKSHOP_FLG (
+            type: plainText
+            heading {
+                heading: Multi Workshop Flg
+                alignment: end
+            }
+            layout {
+                sequence: 23
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: H
+            }
+        )
+
+        column NAME (
+            type: plainText
+            heading {
+                heading: Name
+            }
+            layout {
+                sequence: 1
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: A
+            }
+        )
+
+        column OBJECTIVES (
+            type: plainText
+            heading {
+                heading: Objectives
+            }
+            layout {
+                sequence: 26
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: K
+            }
+        )
+
+        column QA1_RESOURCE (
+            type: plainText
+            heading {
+                heading: Qa1 Resource
+            }
+            layout {
+                sequence: 38
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: O
+            }
+        )
+
+        column QA2_RESOURCE (
+            type: plainText
+            heading {
+                heading: Qa2 Resource
+            }
+            layout {
+                sequence: 39
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: P
+            }
+        )
+
+        column QA_NOTES (
+            type: plainText
+            heading {
+                heading: Qa Notes
+            }
+            layout {
+                sequence: 40
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: Q
+            }
+        )
+
+        column SINGLE_WORKSHOP_FLG (
+            type: plainText
+            heading {
+                heading: Single Workshop Flg
+                alignment: end
+            }
+            layout {
+                sequence: 24
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: I
+            }
+        )
+
+        column SOURCE_LINKS (
+            type: plainText
+            heading {
+                heading: Source Links
+            }
+            layout {
+                sequence: 34
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: L
+            }
+        )
+
+        column WORKSHOP_STATUS (
+            type: plainText
+            heading {
+                heading: Workshop Status
+            }
+            layout {
+                sequence: 35
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: M
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: Workshop Confluence Report
+        }
+
+        savedReport 54347070 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn ACTIVE_FLG (
+                sequence: 4
+            )
+
+            displayColumn APPROVED_FLG (
+                sequence: 10
+            )
+
+            displayColumn AUTHOR_NAME (
+                sequence: 5
+            )
+
+            displayColumn DESCRIPTION (
+                sequence: 2
+            )
+
+            displayColumn EMAIL_FROM_ADDRESS (
+                sequence: 6
+            )
+
+            displayColumn FREETIER_URL (
+                sequence: 20
+            )
+
+            displayColumn GENERAL_NOTES (
+                sequence: 18
+            )
+
+            displayColumn GITHUB_ADDRESS (
+                sequence: 3
+            )
+
+            displayColumn ID (
+                sequence: 7
+            )
+
+            displayColumn KEY_ORACLE_CONTACT_1 (
+                sequence: 19
+            )
+
+            displayColumn MODERNIZER_RESOURCE (
+                sequence: 14
+            )
+
+            displayColumn MULTI_WORKSHOP_FLG (
+                sequence: 8
+            )
+
+            displayColumn NAME (
+                sequence: 1
+            )
+
+            displayColumn OBJECTIVES (
+                sequence: 11
+            )
+
+            displayColumn QA1_RESOURCE (
+                sequence: 15
+            )
+
+            displayColumn QA2_RESOURCE (
+                sequence: 16
+            )
+
+            displayColumn QA_NOTES (
+                sequence: 17
+            )
+
+            displayColumn SINGLE_WORKSHOP_FLG (
+                sequence: 9
+            )
+
+            displayColumn SOURCE_LINKS (
+                sequence: 12
+            )
+
+            displayColumn WORKSHOP_STATUS (
+                sequence: 13
+            )
+
+        )
+
+    )
+
+)
+

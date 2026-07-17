@@ -1,0 +1,1982 @@
+list access-control (
+    name: Access Control
+    config {
+        buildOption: @feature-access-control
+    }
+
+    entry access-control (
+        label: Access Control
+        icon {
+            imageIconCssClasses: fa-key
+        }
+        layout {
+            sequence: 20
+        }
+        link {
+            target: {
+                page: 10030
+            }
+        }
+        userDefinedAttributes {
+            1: Set level of access for authenticated users of this application
+        }
+    )
+
+    entry users (
+        label: Users
+        icon {
+            imageIconCssClasses: fa-users
+        }
+        layout {
+            sequence: 10
+        }
+        link {
+            target: {
+                page: 10031
+                action: resetPagination
+            }
+        }
+        userDefinedAttributes {
+            1: Change access control settings and disable access control
+        }
+    )
+
+)
+
+list activity-reports (
+    name: Activity Reports
+    config {
+        buildOption: @feature-activity-reporting
+    }
+
+    entry application-error-log (
+        label: Application Error Log
+        icon {
+            imageIconCssClasses: fa-exclamation
+        }
+        layout {
+            sequence: 30
+        }
+        link {
+            target: {
+                page: 10022
+                clearCache: 10022
+            }
+        }
+        userDefinedAttributes {
+            1: Report of errors logged by this application
+        }
+    )
+
+    entry dashboard (
+        label: Dashboard
+        icon {
+            imageIconCssClasses: fa-area-chart
+        }
+        layout {
+            sequence: 10
+        }
+        link {
+            target: {
+                page: 10020
+                clearCache: 10020
+            }
+        }
+        userDefinedAttributes {
+            1: View application activity metrics
+        }
+    )
+
+    entry page-performance (
+        label: Page Performance
+        icon {
+            imageIconCssClasses: fa-file-chart
+        }
+        layout {
+            sequence: 40
+        }
+        link {
+            target: {
+                page: 10023
+                clearCache: 10023
+            }
+        }
+        userDefinedAttributes {
+            1: Report of activity and performance by application page
+        }
+    )
+
+    entry page-views (
+        label: Page Views
+        icon {
+            imageIconCssClasses: fa-file-search
+        }
+        layout {
+            sequence: 50
+        }
+        link {
+            target: {
+                page: 10024
+                clearCache: [
+                    RIR
+                    10024
+                ]
+            }
+        }
+        userDefinedAttributes {
+            1: Report of each page view by user including date of access and elapsed time
+        }
+    )
+
+    entry top-users (
+        label: Top Users
+        icon {
+            imageIconCssClasses: fa-user-chart
+        }
+        layout {
+            sequence: 20
+        }
+        link {
+            target: {
+                page: 10021
+                clearCache: 10021
+            }
+        }
+        userDefinedAttributes {
+            1: Report of page views aggregated by user
+        }
+    )
+
+)
+
+list application-configuration (
+    name: Application Configuration
+    config {
+        buildOption: @feature-configuration-options
+    }
+
+    entry configuration-options (
+        label: Configuration Options
+        icon {
+            imageIconCssClasses: fa-sliders
+        }
+        layout {
+            sequence: 10
+        }
+        link {
+            target: {
+                page: 10010
+                clearCache: 10010
+            }
+        }
+        userDefinedAttributes {
+            1: Enable or disable application features
+        }
+        config {
+            buildOption: @feature-configuration-options
+        }
+    )
+
+)
+
+list checklistoptions (
+    name: checklistoptions
+
+    entry i-know-github-already (
+        label: I know GitHub already
+        icon {
+            imageIconCssClasses: fa-clipboard-check
+        }
+        layout {
+            sequence: 10
+        }
+        link {
+            target: {
+                page: 23
+            }
+        }
+    )
+
+    entry i-m-new-to-github (
+        label: I'm new to GitHub
+        icon {
+            imageIconCssClasses: fa-file-clock
+        }
+        layout {
+            sequence: 20
+        }
+        link {
+            target: {
+                page: 24
+            }
+        }
+    )
+
+)
+
+list desktop-navigation-bar (
+    name: Desktop Navigation Bar
+
+    entry about (
+        label: About
+        icon {
+            imageIconCssClasses: fa-question-circle-o
+        }
+        layout {
+            sequence: 20
+        }
+        userDefinedAttributes {
+            2: icon-only
+        }
+        config {
+            buildOption: @feature-about-page
+        }
+    )
+
+    entry about-page (
+        label: About Page
+        icon {
+            imageIconCssClasses: fa-info-circle-o
+        }
+        layout {
+            sequence: 50
+            parentEntry: @about
+        }
+        link {
+            target: {
+                page: 10050
+                clearCache: 10050
+            }
+        }
+        config {
+            buildOption: @feature-about-page
+        }
+    )
+
+    entry app-user (
+        label: &APP_USER.
+        icon {
+            imageIconCssClasses: fa-user
+        }
+        layout {
+            sequence: 60
+        }
+        link {
+            target: {
+                type: url
+                url: #
+            }
+        }
+        userDefinedAttributes {
+            2: has-username
+        }
+    )
+
+    entry list_item (
+        label: ---
+        layout {
+            sequence: 40
+            parentEntry: @about
+        }
+        link {
+            target: {
+                type: url
+                url: separator
+            }
+        }
+    )
+
+    entry list_item-2 (
+        label: ---
+        layout {
+            sequence: 70
+            parentEntry: @app-user
+        }
+        link {
+            target: {
+                type: url
+                url: separator
+            }
+        }
+    )
+
+    entry page-help (
+        label: Page Help
+        icon {
+            imageIconCssClasses: fa-question-circle-o
+        }
+        layout {
+            sequence: 30
+            parentEntry: @about
+        }
+        link {
+            target: {
+                page: 10051
+                items: {
+                    P10051_PAGE_ID: &APP_PAGE_ID.
+                }
+            }
+        }
+        userDefinedAttributes {
+            2: icon-only
+        }
+        config {
+            buildOption: @feature-about-page
+        }
+    )
+
+    entry search (
+        label: Search
+        icon {
+            imageIconCssClasses: fa-search
+        }
+        layout {
+            sequence: 5
+        }
+        link {
+            target: {
+                type: url
+                url: #
+            }
+        }
+        userDefinedAttributes {
+            2: icon-only header-search-item
+        }
+    )
+
+    entry sign-out (
+        label: Sign Out
+        icon {
+            imageIconCssClasses: fa-sign-out
+        }
+        layout {
+            sequence: 80
+            parentEntry: @app-user
+        }
+        link {
+            target: {
+                type: url
+                url: &LOGOUT_URL.
+            }
+        }
+    )
+
+    entry submit-feedback (
+        label: Submit Feedback
+        layout {
+            sequence: 15
+        }
+        link {
+            target: {
+                page: 10040
+                items: {
+                    P10040_PAGE_ID: &APP_PAGE_ID.
+                }
+                clearCache: 10040
+                action: resetPagination
+            }
+        }
+    )
+
+)
+
+list desktop-navigation-menu (
+    name: Desktop Navigation Menu
+
+    entry administration (
+        label: Administration
+        icon {
+            imageIconCssClasses: fa-tools
+        }
+        layout {
+            sequence: 19000
+        }
+        link {
+            target: {
+                page: 10000
+            }
+        }
+        security {
+            authorizationScheme: @contribution-rights
+        }
+    )
+
+    entry all-published-livelabs-workshops (
+        label: All - Published LiveLabs Workshops
+        icon {
+            imageIconCssClasses: fa-clipboard-list
+        }
+        layout {
+            sequence: 53
+            parentEntry: @reports
+        }
+        link {
+            target: {
+                page: 18
+            }
+        }
+    )
+
+    entry all-workshops-sprints (
+        label: All Workshops & Sprints
+        icon {
+            imageIconCssClasses: fa-clipboard-list
+        }
+        layout {
+            sequence: 55
+            parentEntry: @reports
+        }
+        isCurrent {
+            type: pages
+            pages: 7
+        }
+        link {
+            target: {
+                page: 7
+            }
+        }
+    )
+
+    entry assets (
+        label: Assets
+        icon {
+            imageIconCssClasses: fa-files-o
+        }
+        layout {
+            sequence: 10000135
+            parentEntry: @self-services
+        }
+        link {
+            target: {
+                page: 55
+            }
+        }
+    )
+
+    entry audit-workshops (
+        label: Audit Workshops
+        icon {
+            imageIconCssClasses: fa-history
+        }
+        layout {
+            sequence: 9129
+            parentEntry: @administration
+        }
+        isCurrent {
+            type: pages
+            pages: 9000
+        }
+        link {
+            target: {
+                page: 9000
+            }
+        }
+        security {
+            authorizationScheme: @administration-rights
+        }
+    )
+
+    entry building-blocks (
+        label: Building Blocks
+        icon {
+            imageIconCssClasses: fa-building-o
+        }
+        layout {
+            sequence: 10000059
+            parentEntry: @how-to-create-workshop-guides
+        }
+        link {
+            target: {
+                type: url
+                url: https://oracle-livelabs.github.io/common/building-blocks/how-to-author-with-blocks/workshop/index.html
+            }
+        }
+    )
+
+    entry building-blocks-2 (
+        label: Building Blocks
+        icon {
+            imageIconCssClasses: fa-play
+        }
+        layout {
+            sequence: 10000069
+            parentEntry: @workshop-development-github
+        }
+        link {
+            target: {
+                type: url
+                url: https://otube.oracle.com/media/LiveLabs+Building+Blocks+Overview/1_2gpp0ari
+            }
+        }
+    )
+
+    entry compute-images (
+        label: Compute Images
+        icon {
+            imageIconCssClasses: fa-camera
+        }
+        layout {
+            sequence: 9123
+            parentEntry: @administration
+        }
+        link {
+            target: {
+                page: 34
+            }
+        }
+    )
+
+    entry compute-images-2 (
+        label: Compute Images
+        icon {
+            imageIconCssClasses: fa-camera
+        }
+        layout {
+            sequence: 10000139
+            parentEntry: @self-services
+        }
+        link {
+            target: {
+                page: 30
+            }
+        }
+    )
+
+    entry costing-data (
+        label: Costing Data
+        icon {
+            imageIconCssClasses: fa-dashboard
+        }
+        layout {
+            sequence: 9159
+            parentEntry: @reports
+        }
+        isCurrent {
+            type: pages
+            pages: 26
+        }
+        link {
+            target: {
+                page: 26
+            }
+        }
+    )
+
+    entry create-a-livestack-new (
+        label: "Create a LiveStack [NEW]"
+        icon {
+            imageIconCssClasses: fa-layers
+        }
+        layout {
+            sequence: 2
+        }
+        link {
+            target: {
+                page: 61
+                items: {
+                    P60_TYPE: LiveStack
+                }
+            }
+        }
+        security {
+            authorizationScheme: @administration-rights
+        }
+    )
+
+    entry delete-cloned-and-forked-repos (
+        label: Delete Cloned and Forked Repos
+        icon {
+            imageIconCssClasses: fa-play
+        }
+        layout {
+            sequence: 10000029
+            parentEntry: @workshop-development-github
+        }
+        link {
+            target: {
+                type: url
+                url: https://otube.oracle.com/media/Delete%20Cloned%20and%20Forked%20Repositories/1_tuohniun
+            }
+        }
+    )
+
+    entry edit-my-workshops (
+        label: My Workshops
+        icon {
+            imageIconCssClasses: fa-clipboard-edit
+        }
+        layout {
+            sequence: 6
+        }
+        link {
+            target: {
+                page: 32
+            }
+        }
+        serverSideCondition {
+            type: rowsReturned
+            sqlQuery:
+                ```sql
+                select a.*
+                from workshop a, workshop_person_role b, workshop_role c
+                where a.id=b.workshop_id
+                and b.role_id=c.id
+                and c.name in ('Workshop Team')
+                and upper(:APP_USER)=upper(b.email)
+                and b.active_flg=1
+                union all 
+                /*FOR SUPER USERS FOR ALL STATUSES
+                Superusers are in the workshop_person_role table with workshop_id null*/
+                select *
+                from workshop
+                where (upper(:APP_USER) in (select upper(email) from workshop_person_role where workshop_id is null and active_flg=1))
+                union all
+                /*FOR STAKEHOLDERS NON PRODUCTION*/
+                select a.*
+                from workshop a, workshop_person_stakeholder b
+                where  a.stakeholder_id=b.stakeholder_id
+                and upper(:APP_USER)=upper(b.email)
+                and b.active_flg=1
+                union all
+                /* FOR APPROVAL COUNCIL NON PRODUCTION */
+                select a.*
+                from workshop a, workshop_person_council b
+                where  a.council_id=b.council_id
+                and upper(:APP_USER)=upper(b.email)
+                and b.active_flg=1
+                ```
+        }
+    )
+
+    entry event-and-promotion (
+        label: Event and Promotion
+        icon {
+            imageIconCssClasses: fa-play
+        }
+        layout {
+            sequence: 10000109
+            parentEntry: @help-videos
+        }
+    )
+
+    entry event-ready-workshops (
+        label: "[NEW] Event Ready Workshops"
+        icon {
+            imageIconCssClasses: fa-calendar-check-o
+        }
+        layout {
+            sequence: 9199
+            parentEntry: @reports
+        }
+        isCurrent {
+            type: pages
+            pages: 607
+        }
+        link {
+            target: {
+                page: 607
+            }
+        }
+    )
+
+    entry events (
+        label: Events
+        icon {
+            imageIconCssClasses: fa-calendar
+        }
+        layout {
+            sequence: 60
+        }
+    )
+
+    entry faq (
+        label: FAQ
+        icon {
+            imageIconCssClasses: fa-question
+        }
+        layout {
+            sequence: 10000049
+            parentEntry: @administration
+        }
+        link {
+            target: {
+                page: 21
+            }
+        }
+    )
+
+    entry faq-2 (
+        label: FAQ
+        icon {
+            imageIconCssClasses: fa-question
+        }
+        layout {
+            sequence: 4
+        }
+        link {
+            target: {
+                page: 17
+            }
+        }
+    )
+
+    entry fork-and-clone-repo (
+        label: Fork and Clone Repo
+        icon {
+            imageIconCssClasses: fa-play
+        }
+        layout {
+            sequence: 10000009
+            parentEntry: @workshop-development-github
+        }
+        link {
+            target: {
+                type: url
+                url: https://otube.oracle.com/media/Fork%20and%20Clone%20an%20oracle-livelabs%20Repository/1_5i73l958
+            }
+        }
+    )
+
+    entry go-to-market-and-social-in-wms (
+        label: Go to Market and Social in WMS
+        icon {
+            imageIconCssClasses: fa-play
+        }
+        layout {
+            sequence: 2039
+            parentEntry: @event-and-promotion
+        }
+        link {
+            target: {
+                type: url
+                url: https://otube.oracle.com/media/LiveLabsA+Go+to+Market+-+Social+Tab+in+WMS./1_hr3dmmwx
+            }
+        }
+    )
+
+    entry green-button-lite-and-process (
+        label: Green Button Lite and Process
+        icon {
+            imageIconCssClasses: fa-play
+        }
+        layout {
+            sequence: 2000
+            parentEntry: @publication-and-qa
+        }
+        link {
+            target: {
+                type: url
+                url: https://otube.oracle.com/media/LiveLabsA+Green+Button+Lite/1_85wokrec
+            }
+        }
+    )
+
+    entry help-videos (
+        label: Help Videos
+        icon {
+            imageIconCssClasses: fa-play
+        }
+        layout {
+            sequence: 4
+            parentEntry: @i-need-help
+        }
+    )
+
+    entry home (
+        label: Home
+        icon {
+            imageIconCssClasses: fa-home
+        }
+        layout {
+            sequence: 1
+        }
+        link {
+            target: {
+                page: 51
+            }
+        }
+    )
+
+    entry how-to-create-a-workshop-step-by-step (
+        label: How to Create a Workshop (Step-by-Step)
+        icon {
+            imageIconCssClasses: fa-clipboard-list
+        }
+        layout {
+            sequence: 3
+            parentEntry: @how-to-create-workshop-guides
+        }
+        link {
+            target: {
+                type: url
+                url: javascript:apex.navigation.openInNewWindow('https://oracle-livelabs.github.io/common/sample-livelabs-templates/create-labs/labs/workshops/livelabs/');
+            }
+        }
+    )
+
+    entry how-to-create-list-of-workshops-to-follow-this-one-learning-path (
+        label: How to create list of workshops to follow this one (learning path)
+        icon {
+            imageIconCssClasses: fa-play
+        }
+        layout {
+            sequence: 10000039
+            parentEntry: @workshop-development-github
+        }
+        link {
+            target: {
+                type: url
+                url: https://otube.oracle.com/playlist/dedicated/201649953/1_23j991jo/1_s1x5l7bp
+            }
+        }
+    )
+
+    entry how-to-create-workshop-guides (
+        label: How to Create Workshop Guides
+        icon {
+            imageIconCssClasses: fa-clipboard-check-alt
+        }
+        layout {
+            sequence: 8
+        }
+    )
+
+    entry how-to-do-self-qa (
+        label: How to do Self QA
+        icon {
+            imageIconCssClasses: fa-play
+        }
+        layout {
+            sequence: 19190
+            parentEntry: @publication-and-qa
+        }
+        link {
+            target: {
+                type: url
+                url: https://www.youtube.com/watch?v=8tirP-hibsk&t=842s
+            }
+        }
+    )
+
+    entry how-to-request-an-event-code (
+        label: How to request an Event Code
+        icon {
+            imageIconCssClasses: fa-play
+        }
+        layout {
+            sequence: 19220
+            parentEntry: @event-and-promotion
+        }
+        link {
+            target: {
+                type: url
+                url: https://otube.oracle.com/playlist/dedicated/201649953/1_23j991jo/1_k93ffnwb
+            }
+        }
+    )
+
+    entry how-to-request-publishing (
+        label: How to request Publishing
+        icon {
+            imageIconCssClasses: fa-play
+        }
+        layout {
+            sequence: 19210
+            parentEntry: @publication-and-qa
+        }
+        link {
+            target: {
+                type: url
+                url: https://otube.oracle.com/playlist/dedicated/201649953/1_23j991jo/1_97hh00t6
+            }
+        }
+    )
+
+    entry how-to-submit-a-workshop-request (
+        label: How to Submit a Workshop Request
+        icon {
+            imageIconCssClasses: fa-play
+        }
+        layout {
+            sequence: 19160
+            parentEntry: @livelabs-and-wms-overview
+        }
+        link {
+            target: {
+                type: url
+                url: https://otube.oracle.com/media/How%20to%20submit%20a%20LiveLabs%20workshop%20in%20WMS%20-%20LiveLabs%20Office%20Hours%20-%2002-04-2022/1_6v8qdkzp
+            }
+        }
+    )
+
+    entry how-to-use-the-wms-dashboard (
+        label: How to use the WMS Dashboard
+        icon {
+            imageIconCssClasses: fa-play
+        }
+        layout {
+            sequence: 19200
+            parentEntry: @stakeholders-and-council
+        }
+        link {
+            target: {
+                type: url
+                url: https://otube.oracle.com/media/Introducing%20LiveLabs%20Dashboard%20-%20LiveLabs%20Office%20Hours%20-%2002-08-2022/1_ebeuqq95
+            }
+        }
+    )
+
+    entry i-need-help (
+        label: I Need Help!
+        icon {
+            imageIconCssClasses: fa-question-circle-o
+        }
+        layout {
+            sequence: 11
+        }
+    )
+
+    entry lab-markdown-and-folders (
+        label: Lab Markdown and Folders
+        icon {
+            imageIconCssClasses: fa-play
+        }
+        layout {
+            sequence: 19080
+            parentEntry: @workshop-development-github
+        }
+        link {
+            target: {
+                type: url
+                url: https://otube.oracle.com/playlist/dedicated/201649953/1_23j991jo/1_y976yb5m
+            }
+        }
+    )
+
+    entry last-30-days-published-workshops (
+        label: Last 30 Days - Published Workshops
+        icon {
+            imageIconCssClasses: fa-clipboard-list
+        }
+        layout {
+            sequence: 54
+            parentEntry: @reports
+        }
+        isCurrent {
+            type: pages
+            pages: 6
+        }
+        link {
+            target: {
+                page: 6
+            }
+        }
+    )
+
+    entry livelabs-and-wms-overview (
+        label: LiveLabs and WMS Overview
+        icon {
+            imageIconCssClasses: fa-play
+        }
+        layout {
+            sequence: 10000079
+            parentEntry: @help-videos
+        }
+    )
+
+    entry livelabs-dashboard (
+        label: LiveLabs Dashboard
+        icon {
+            imageIconCssClasses: fa-dashboard
+        }
+        layout {
+            sequence: 9131
+            parentEntry: @administration
+        }
+        link {
+            target: {
+                page: 3400
+            }
+        }
+    )
+
+    entry livelabs-office-hours-otube (
+        label: LiveLabs Office Hours OTube
+        icon {
+            imageIconCssClasses: fa-alarm-check
+        }
+        layout {
+            sequence: 19110
+            parentEntry: @i-need-help
+        }
+        link {
+            target: {
+                type: url
+                url: javascript:apex.navigation.openInNewWindow('https://otube.oracle.com/channel/Technology%2BWebcast%2BProgram/201649953')
+            }
+        }
+    )
+
+    entry livelabs-overview (
+        label: LiveLabs Overview
+        icon {
+            imageIconCssClasses: fa-play
+        }
+        layout {
+            sequence: 19150
+            parentEntry: @livelabs-and-wms-overview
+        }
+        link {
+            target: {
+                type: url
+                url: https://www.youtube.com/watch?v=lHriX403Oz4
+            }
+        }
+    )
+
+    entry livelabs-overview-2 (
+        label: LiveLabs Overview
+        icon {
+            imageIconCssClasses: fa-play
+        }
+        layout {
+            sequence: 4
+            parentEntry: @new-to-wms-and-livelabs
+        }
+        link {
+            target: {
+                type: url
+                url: https://www.youtube.com/watch?v=lHriX403Oz4
+            }
+        }
+    )
+
+    entry livestack-demos (
+        label: LiveStack Demos
+        icon {
+            imageIconCssClasses: fa-ai-innovation-lightbulb
+        }
+        layout {
+            sequence: 9179
+            parentEntry: @administration
+        }
+        isCurrent {
+            type: pages
+            pages: 63
+        }
+        link {
+            target: {
+                page: 63
+            }
+        }
+    )
+
+    entry livestacks (
+        label: LiveStacks
+        icon {
+            imageIconCssClasses: fa-layers
+        }
+        layout {
+            sequence: 9189
+            parentEntry: @administration
+        }
+        isCurrent {
+            type: pages
+            pages: 64
+        }
+        link {
+            target: {
+                page: 64
+            }
+        }
+    )
+
+    entry manage-event-admin (
+        label: Manage Event Admin
+        icon {
+            imageIconCssClasses: fa-lock
+        }
+        layout {
+            sequence: 9120
+            parentEntry: @administration
+        }
+        isCurrent {
+            type: pages
+            pages: 127
+        }
+        link {
+            target: {
+                page: 127
+            }
+        }
+    )
+
+    entry manage-featured-workshops (
+        label: Manage Featured Workshops
+        icon {
+            imageIconCssClasses: fa-badge-check
+        }
+        layout {
+            sequence: 9130
+            parentEntry: @administration
+        }
+        link {
+            target: {
+                page: 27
+            }
+        }
+        security {
+            authorizationScheme: @administration-rights
+        }
+    )
+
+    entry manage-my-event-codes (
+        label: Manage My Event Codes
+        icon {
+            imageIconCssClasses: fa-calendar-wrench
+        }
+        layout {
+            sequence: 38
+            parentEntry: @events
+        }
+        link {
+            target: {
+                page: 44
+                clearCache: 44
+            }
+        }
+    )
+
+    entry manage-publishers (
+        label: Manage Publishers
+        icon {
+            imageIconCssClasses: fa-lock
+        }
+        layout {
+            sequence: 9119
+            parentEntry: @administration
+        }
+        link {
+            target: {
+                page: 118
+            }
+        }
+        security {
+            authorizationScheme: @administration-rights
+        }
+    )
+
+    entry manage-stakeholders (
+        label: Manage Stakeholders
+        icon {
+            imageIconCssClasses: fa-lock
+        }
+        layout {
+            sequence: 9111
+            parentEntry: @administration
+        }
+        isCurrent {
+            type: pages
+            pages: 115
+        }
+        link {
+            target: {
+                page: 115
+            }
+        }
+        security {
+            authorizationScheme: @administration-rights
+        }
+    )
+
+    entry manage-workshop-council (
+        label: Manage Workshop Council
+        icon {
+            imageIconCssClasses: fa-lock
+        }
+        layout {
+            sequence: 9115
+            parentEntry: @administration
+        }
+        link {
+            target: {
+                page: 114
+            }
+        }
+        security {
+            authorizationScheme: @administration-rights
+        }
+    )
+
+    entry markdown-cheatsheet (
+        label: Markdown-Cheatsheet
+        icon {
+            imageIconCssClasses: fa-clipboard-check-alt
+        }
+        layout {
+            sequence: 19130
+            parentEntry: @i-need-help
+        }
+        link {
+            target: {
+                type: url
+                url: https://c4u04.objectstorage.us-ashburn-1.oci.customer-oci.com/p/EcTjWk2IuZPZeNnD_fYMcgUhdNDIDA6rt9gaFj_WZMiL7VvxPBNMY60837hu5hga/n/c4u04/b/livelabsfiles/o/LiveLabs_MD_Cheat_Sheet.pdf
+            }
+        }
+    )
+
+    entry marketplace-listings (
+        label: Marketplace Listings
+        icon {
+            imageIconCssClasses: fa-users-alt
+        }
+        layout {
+            sequence: 9122
+            parentEntry: @administration
+        }
+        link {
+            target: {
+                page: 45
+            }
+        }
+    )
+
+    entry my-livestacks (
+        label: My LiveStacks
+        icon {
+            imageIconCssClasses: fa-layers
+        }
+        layout {
+            sequence: 7
+        }
+        isCurrent {
+            type: pages
+            pages: 68
+        }
+        link {
+            target: {
+                page: 68
+            }
+        }
+    )
+
+    entry new-author-start-here-video (
+        label: New Author - Start Here Video
+        icon {
+            imageIconCssClasses: fa-play
+        }
+        layout {
+            sequence: 4
+            parentEntry: @new-to-wms-and-livelabs
+        }
+        link {
+            target: {
+                type: url
+                url: https://objectstorage.us-ashburn-1.oraclecloud.com/p/j3SybJCyPRI39xvUtypOR5aDyovFW4842gMdCuIifiWaTSNTmg_jxX66I6BpQ2mC/n/c4u04/b/logos/o/WMS_Get_Started_video.mp4
+            }
+        }
+    )
+
+    entry new-to-wms-and-livelabs (
+        label: New to WMS and LiveLabs?
+        icon {
+            imageIconCssClasses: fa-emoji-big-eyes-smile
+        }
+        layout {
+            sequence: 10
+        }
+    )
+
+    entry ords-log (
+        label: ORDS Log
+        icon {
+            imageIconCssClasses: fa-bug
+        }
+        layout {
+            sequence: 19090
+            parentEntry: @administration
+        }
+        isCurrent {
+            type: pages
+            pages: 900
+        }
+        link {
+            target: {
+                page: 900
+            }
+        }
+    )
+
+    entry ospa-ohc-publish-edit (
+        label: OSPA/OHC Publish Edit
+        icon {
+            imageIconCssClasses: fa-edit
+        }
+        layout {
+            sequence: 1
+            parentEntry: @administration
+        }
+        isCurrent {
+            type: pages
+            pages: 8000
+        }
+        link {
+            target: {
+                page: 8000
+            }
+        }
+        serverSideCondition {
+            type: rowsReturned
+            sqlQuery: select * from workshop_person_role where workshop_id is null and (luna_publisher_flg = 1 or ohc_publisher_flg = 1) and upper(email) = upper(:APP_USER)
+        }
+        security {
+            authorizationScheme: @administration-rights
+        }
+    )
+
+    entry people-role-reports (
+        label: People & Role Reports
+        icon {
+            imageIconCssClasses: fa-users-alt
+        }
+        layout {
+            sequence: 70
+        }
+    )
+
+    entry publication-and-qa (
+        label: Publication and QA
+        icon {
+            imageIconCssClasses: fa-play
+        }
+        layout {
+            sequence: 10000099
+            parentEntry: @help-videos
+        }
+    )
+
+    entry refresh-merge-your-repos (
+        label: Refresh (Merge) Your Repos
+        icon {
+            imageIconCssClasses: fa-play
+        }
+        layout {
+            sequence: 10000019
+            parentEntry: @workshop-development-github
+        }
+        link {
+            target: {
+                type: url
+                url: https://otube.oracle.com/media/Refresh%20(Merge)%20your%20Cloned%20%26%20Forked%20Repos%20from%20the%20Production%20Repo/1_1z81238e
+            }
+        }
+    )
+
+    entry reports (
+        label: Reports
+        layout {
+            sequence: 50
+        }
+    )
+
+    entry request-an-event-code (
+        label: Request an Event Code
+        icon {
+            imageIconCssClasses: fa-calendar-plus-o
+        }
+        layout {
+            sequence: 33
+            parentEntry: @events
+        }
+        link {
+            target: {
+                page: 35
+                clearCache: 35
+            }
+        }
+    )
+
+    entry roles-and-responsibilities (
+        label: Roles and Responsibilities
+        icon {
+            imageIconCssClasses: fa-play
+        }
+        layout {
+            sequence: 19180
+            parentEntry: @livelabs-and-wms-overview
+        }
+        link {
+            target: {
+                type: url
+                url: https://otube.oracle.com/media/Know%20about%20Roles%20and%20Responsibilities%20in%20LiveLabs%20Workshop%20Management%20System%202.0%20-%20LiveLabs%20Office%20Hours%20-%2001-28-2022/1_hrkwddhr
+            }
+        }
+    )
+
+    entry self-services (
+        label: Self Services
+        icon {
+            imageIconCssClasses: fa-clipboard-pointer
+        }
+        layout {
+            sequence: 10000129
+        }
+    )
+
+    entry stakeholders-and-council (
+        label: Stakeholders and Council
+        icon {
+            imageIconCssClasses: fa-play
+        }
+        layout {
+            sequence: 10000119
+            parentEntry: @help-videos
+        }
+    )
+
+    entry status-report (
+        label: Status Report
+        icon {
+            imageIconCssClasses: fa-clipboard-list
+        }
+        layout {
+            sequence: 9149
+            parentEntry: @reports
+        }
+        isCurrent {
+            type: pages
+            pages: 33
+        }
+        link {
+            target: {
+                page: 33
+            }
+        }
+    )
+
+    entry submit-a-new-workshop-request (
+        label: Submit a New Workshop Request
+        icon {
+            imageIconCssClasses: fa-clipboard-plus
+        }
+        layout {
+            sequence: 3
+        }
+        link {
+            target: {
+                page: 320
+            }
+        }
+    )
+
+    entry tags (
+        label: Tags
+        icon {
+            imageIconCssClasses: fa-table-pointer
+        }
+        layout {
+            sequence: 80
+            parentEntry: @reports
+        }
+        isCurrent {
+            type: pages
+            pages: 22
+        }
+        link {
+            target: {
+                page: 22
+            }
+        }
+    )
+
+    entry view-workshop-workflow (
+        label: View Workshop Workflow
+        icon {
+            imageIconCssClasses: fa-breadcrumb
+        }
+        layout {
+            sequence: 9999999
+        }
+        link {
+            target: {
+                type: url
+                url: javascript:apex.navigation.openInNewWindow('#APP_FILES#wms-swimlane3.png');
+            }
+        }
+    )
+
+    entry visit-help-center-ohc-learn (
+        label: Visit Help Center (OHC) Learn
+        icon {
+            imageIconCssClasses: fa-star
+        }
+        layout {
+            sequence: 9999998
+        }
+        link {
+            target: {
+                type: url
+                url: javascript:apex.navigation.openInNewWindow('https://docs.oracle.com/learn/');
+            }
+        }
+    )
+
+    entry visit-livelabs (
+        label: Visit LiveLabs
+        icon {
+            imageIconCssClasses: fa-star
+        }
+        layout {
+            sequence: 9999997
+        }
+        link {
+            target: {
+                type: url
+                url: javascript:apex.navigation.openInNewWindow('https://livelabs.oracle.com/');
+            }
+        }
+    )
+
+    entry wms-parameters (
+        label: WMS Parameters
+        icon {
+            imageIconCssClasses: fa-table-pointer
+        }
+        layout {
+            sequence: 29149
+            parentEntry: @administration
+        }
+        isCurrent {
+            type: pages
+            pages: 25
+        }
+        link {
+            target: {
+                page: 25
+            }
+        }
+        security {
+            authorizationScheme: @administration-rights
+        }
+    )
+
+    entry workshop-authors-help-slack-channel (
+        label: Workshop Authors Help - Slack Channel
+        icon {
+            imageIconCssClasses: fa-clipboard-check-alt
+        }
+        layout {
+            sequence: 19000
+            parentEntry: @i-need-help
+        }
+        link {
+            target: {
+                type: url
+                url: javascript:apex.navigation.openInNewWindow('https://oracle-one.slack.com/archives/CTUPZQ5HA');
+            }
+        }
+    )
+
+    entry workshop-council-members (
+        label: Workshop Council Members
+        icon {
+            imageIconCssClasses: fa-user-check
+        }
+        layout {
+            sequence: 9091
+            parentEntry: @people-role-reports
+        }
+        isCurrent {
+            type: pages
+            pages: 2
+        }
+        link {
+            target: {
+                page: 2
+            }
+        }
+    )
+
+    entry workshop-dashboard (
+        label: Workshop Dashboard
+        icon {
+            imageIconCssClasses: fa-dashboard
+        }
+        layout {
+            sequence: 5
+        }
+        link {
+            target: {
+                page: 3
+            }
+        }
+        serverSideCondition {
+            type: rowsReturned
+            sqlQuery:
+                ```sql
+                select email from workshop_person_council where upper(email) = upper(:APP_USER) 
+                union
+                select email from workshop_person_stakeholder where upper(email) = upper(:APP_USER)
+                union
+                select email from workshop_person_role where upper(email) = upper(:APP_USER) and workshop_id is null
+                ```
+        }
+    )
+
+    entry workshop-development-github (
+        label: Workshop Development & GitHub
+        icon {
+            imageIconCssClasses: fa-play
+        }
+        layout {
+            sequence: 10000089
+            parentEntry: @help-videos
+        }
+    )
+
+    entry workshop-icons (
+        label: Workshop Icons
+        icon {
+            imageIconCssClasses: fa-table
+        }
+        layout {
+            sequence: 19120
+            parentEntry: @administration
+        }
+        isCurrent {
+            type: pages
+            pages: [
+                12
+                15
+            ]
+        }
+        link {
+            target: {
+                page: 12
+            }
+        }
+        security {
+            authorizationScheme: @administration-rights
+        }
+    )
+
+    entry workshop-publishers (
+        label: Workshop Publishers
+        icon {
+            imageIconCssClasses: fa-user-lock
+        }
+        layout {
+            sequence: 9101
+            parentEntry: @people-role-reports
+        }
+        isCurrent {
+            type: pages
+            pages: 113
+        }
+        link {
+            target: {
+                page: 113
+            }
+        }
+    )
+
+    entry workshop-stakeholders (
+        label: Workshop Stakeholders
+        icon {
+            imageIconCssClasses: fa-user-wrench
+        }
+        layout {
+            sequence: 9081
+            parentEntry: @people-role-reports
+        }
+        isCurrent {
+            type: pages
+            pages: 111
+        }
+        link {
+            target: {
+                page: 111
+            }
+        }
+    )
+
+    entry workshop-team-members (
+        label: Workshop Team Members
+        icon {
+            imageIconCssClasses: fa-user-edit
+        }
+        layout {
+            sequence: 9071
+            parentEntry: @people-role-reports
+        }
+        isCurrent {
+            type: pages
+            pages: 97
+        }
+        link {
+            target: {
+                page: 97
+            }
+        }
+    )
+
+    entry workshop-workflow-statuses (
+        label: Workshop Workflow - Statuses
+        icon {
+            imageIconCssClasses: fa-play
+        }
+        layout {
+            sequence: 19170
+            parentEntry: @livelabs-and-wms-overview
+        }
+        link {
+            target: {
+                type: url
+                url: https://otube.oracle.com/media/LiveLabs%20Workshops%20Workflow%20WMS%202.0%20-%20LiveLabs%20-%20Office%20Hours%20-%2002-01-2022/1_nc5xgue2
+            }
+        }
+    )
+
+    entry workshops-by-tags-product-focus-role (
+        label: Workshops by Tags (Product, Focus, Role)
+        icon {
+            imageIconCssClasses: fa-clipboard-list
+        }
+        layout {
+            sequence: 19100
+            parentEntry: @reports
+        }
+        link {
+            target: {
+                page: 10
+            }
+        }
+    )
+
+)
+
+list event-wizard (
+    name: Event Wizard
+
+    entry customize-my-event-code-workshop-page (
+        label: Customize my Event Code Workshop Page
+        layout {
+            sequence: 20
+        }
+        link {
+            target: {
+                page: 36
+            }
+        }
+    )
+
+    entry manage-my-event-code-request (
+        label: Manage my Event Code Request
+        layout {
+            sequence: 30
+        }
+        link {
+            target: {
+                page: 41
+                clearCache: 41
+            }
+        }
+    )
+
+    entry request-my-event-code (
+        label: Request My Event Code
+        layout {
+            sequence: 10
+        }
+        link {
+            target: {
+                page: 35
+                clearCache: 35
+            }
+        }
+    )
+
+)
+
+list feedback (
+    name: Feedback
+    config {
+        buildOption: @feature-feedback
+    }
+
+    entry feedback-settings (
+        label: Feedback Settings
+        icon {
+            imageIconCssClasses: fa-envelope-user
+        }
+        layout {
+            sequence: 10
+        }
+        link {
+            target: {
+                page: 10042
+                clearCache: 10042
+            }
+        }
+        userDefinedAttributes {
+            1: Manage if attachments should be allowed.
+        }
+    )
+
+    entry user-feedback (
+        label: User Feedback
+        icon {
+            imageIconCssClasses: fa-comment-o
+        }
+        layout {
+            sequence: 20
+        }
+        link {
+            target: {
+                page: 10043
+                clearCache: 10043
+            }
+        }
+        userDefinedAttributes {
+            1: Report of all feedback submitted by application users
+        }
+    )
+
+)
+
+list gb-progress-list (
+    name: GB Progress List
+
+    entry completed-on-hold (
+        label: Completed / On-Hold
+        layout {
+            sequence: 50
+        }
+        link {
+            target: {
+                page: 102
+            }
+        }
+    )
+
+    entry deliver (
+        label: Deliver
+        layout {
+            sequence: 40
+        }
+        link {
+            target: {
+                page: 101
+            }
+        }
+    )
+
+    entry develop (
+        label: Develop
+        icon {
+            imageIconCssClasses: fa-number-2
+        }
+        layout {
+            sequence: 20
+        }
+        link {
+            target: {
+                page: 99
+            }
+        }
+    )
+
+    entry discuss (
+        label: Discuss
+        icon {
+            imageIconCssClasses: fa-number-1
+        }
+        layout {
+            sequence: 10
+        }
+        link {
+            target: {
+                page: 98
+            }
+        }
+    )
+
+    entry document (
+        label: Document
+        layout {
+            sequence: 30
+        }
+        link {
+            target: {
+                page: 100
+            }
+        }
+    )
+
+)
+
+list workshop-wizard (
+    name: workshop wizard
+
+    entry moving-to-production (
+        label: Moving to Production
+        icon {
+            imageIconCssClasses: fa-number-3
+        }
+        layout {
+            sequence: 30
+        }
+        link {
+            target: {
+                page: 34
+            }
+        }
+    )
+
+    entry send-feedback (
+        label: Send Feedback
+        icon {
+            imageIconCssClasses: fa-check-square
+        }
+        layout {
+            sequence: 40
+        }
+        link {
+            target: {
+                page: 33
+            }
+        }
+    )
+
+    entry setting-up-git-environment (
+        label: Setting up GIT Environment
+        icon {
+            imageIconCssClasses: fa-number-2
+        }
+        layout {
+            sequence: 20
+        }
+        link {
+            target: {
+                page: 30
+            }
+        }
+    )
+
+    entry submit-a-new-workshop (
+        label: Submit a New workshop
+        icon {
+            imageIconCssClasses: fa-number-1
+        }
+        layout {
+            sequence: 10
+        }
+        link {
+            target: {
+                page: 24
+            }
+        }
+    )
+
+)
+

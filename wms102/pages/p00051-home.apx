@@ -1,0 +1,1121 @@
+page 51 (
+    name: Home
+    alias: HOME
+    title: Home
+    appearance {
+        pageTemplate: @standard-custom
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+        warnOnUnsavedChanges: false
+    }
+    css {
+        inline:
+            ```css
+            /* statistics banner */
+            #statistics-banner.carousel-item {
+               display: flex;
+               background-image: url('#APP_FILES#Abstracts-Brown-5.svg');
+               background-repeat: no-repeat;
+               background-size: cover;
+            }
+            .carousel-column {
+                padding-left: 0px;
+                padding-right: 0px;
+                height:250px;
+            }
+            
+            /* welcome banner */
+            #welcome-banner.carousel-item {
+               display: flex;
+               align-items: left;
+               background-image: url('#APP_FILES#Abstracts-Light-Neutral.svg');
+               background-repeat: no-repeat;
+               background-size: cover;
+            }
+            #welcome-banner.carousel-item t-Form-itemWrapper {
+                width:150px;
+            }
+            
+            /* carousel-region */
+            .t-Region--carousel {
+                border-radius: 0px;
+            }
+            .carousel-item {
+                height:250px;
+            }
+            
+            #announcement_carousel {
+                height:250px;
+            }
+            #announcement_carousel .t-Region-bodyWrap, 
+            #announcement_carousel .t-Region-body {
+                height: 100%;
+            }
+            
+            /* Carousel container must be position: relative */
+            #announcements_carousel .t-Region-carouselRegions {
+              position: relative;
+              overflow: hidden;
+            }
+            
+            /* The image fills carousel via absolute positioning */
+            #announcements_carousel .carousel-bg-image img {
+              position: absolute;
+              top: 0; left: 0; right: 0; bottom: 0;
+              width: 100%;
+              height: 100%;
+              object-fit: cover;
+              object-position: center;
+              z-index: 0; /* Ensure it's behind any content you want on top */
+            }
+            .carousel-bg-image .t-Region-body img {
+                width: 100% !important;
+                height: 100%;
+                display: block;
+                border-radius: 0 !important;
+            }
+            
+            
+            /* Statistics banner region. */
+            .stats-banner {
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              gap: 10vw;
+              position: relative;
+              overflow: hidden;
+              margin: 0 auto;
+            }
+            
+            .stats-item {
+              height: 100%; /* Or use the banner's set vh/vw/px value */
+              width: auto;  /* or set as needed */
+              aspect-ratio: 1/1; /* Remove square ratio if present */
+              position: relative;
+              flex: 1 1 180px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              min-width: 170px;          /* Don't get too small on mobile */
+              margin: 1vw 0;
+            }
+            
+            .blob-bg {
+              position: absolute;
+              top: 0; left: 0; right: 0; bottom: 0;
+              width: 100%;      /* or use height/width if you want */
+              height: 100%; 
+              background-position: center;
+              background-repeat: no-repeat;
+              background-size: contain; /* or 'cover', depending on look */
+              z-index: 1;       /* should be behind content */
+              pointer-events: none; /* so it doesn't block clicks */
+            
+            }
+            
+            .stats-content {
+              position: relative;
+              z-index: 2;
+              color: #fff;
+              text-align: left;
+              display: flex;
+              flex-direction: column;
+              align-items: left;
+            }
+            
+            .stats-number {
+              font-weight: 700;
+              font-size: 2.1em;
+              letter-spacing: 0.03em;
+              line-height: 1.1;
+            }
+            
+            .stats-label {
+              margin-top: 0.3em;
+              font-size: 1.05em;
+              font-weight: 400;
+              line-height: 1.3;
+              letter-spacing: .01em;
+            }
+            
+            /* Responsive stacking on very small screens */
+            @media (max-width: 750px) {
+              .stats-banner {
+                flex-direction: column;
+                align-items: center;
+                gap: 5vw;
+              }
+            }
+            #announcements-carousel.t-Region--carousel {
+              min-height: 0 !important; /* prevent inline min-height override */
+              max-height: 40vh !important;
+              overflow: hidden;
+              display: flex;
+              flex-direction: column;
+            }
+            ```
+    }
+    htmlHeader {
+        htmlHeader:
+            ```html
+            <style>
+                #LL_HEAD{
+                    font-color: white;
+                    background: url(#APP_IMAGES#ll_region_bg.png);
+                    min-height: 100%;
+                }
+            </style>
+            ```
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region announcements-carousel (
+        name: announcements_carousel
+        type: staticContent
+        layout {
+            sequence: 80
+            parentRegion: @header
+            slot: regionBody
+            startNewRow: false
+            columnCssClasses: carousel-column
+        }
+        appearance {
+            template: @carousel-container
+            templateOptions: [
+                t-Region--noPadding
+                js-cycle10s
+                t-Region--carouselSlide
+                t-Region--removeHeader
+                t-Region--noBorder
+                t-Region--hiddenOverflow
+                t-Form--noPadding
+                margin-top-none
+                margin-bottom-none
+            ]
+        }
+        advanced {
+            htmlDomId: announcements-carousel
+        }
+    )
+
+    region current-workshops (
+        name: Current Workshops
+        type: cards
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select TITLE,
+                       SHORT_DESC,
+                       ID,
+                       WORKSHOP_STATUS,
+                       WORKSHOP_OWNER_GROUP,
+                       SERIES_TAG,
+                       ROLE_TAG,
+                       FOCUS_TAG,
+                       SALES_TAG,
+                       PRODUCT_TAG,
+                       LEVEL_TAG,
+                       WORKSHOP_OWNER_EMAIL, 
+                       TECH_CONTACT_EMAIL, 
+                       SUPPORT_CONTACT_EMAIL, 
+                       MANAGER_EMAIL, 
+                       OBSERVER_EMAIL, 
+                       STAKEHOLDER_ID, 
+                       COUNCIL_ID,
+                       LL_IDS,
+                       OHC_IDS,
+                       OSPA_IDS,         
+                       case when workshop_status in ('Completed', 'Quarterly QA', 'Quarterly QA Complete') then 
+                        case when workshop_status = 'Quarterly QA' then '#APP_FILES#wms_icons_ll_qa.png' 
+                            when ll_flg is not null and ohc_flg is not null and ospa_flg is not null then '#APP_FILES#wms_icons_ll_luna_ohc.png'
+                            when ll_flg is not null and ohc_flg is not null and ospa_flg is null then '#APP_FILES#wms_icons_ohc_ll.png'
+                            when ll_flg is not null and ohc_flg is null and ospa_flg is not null then '#APP_FILES#wms_icons_luna_ll.png'
+                            when ll_flg is null and ohc_flg is not null and ospa_flg is not null then '#APP_FILES#wms_icons_luna_ohc.png'
+                            when ll_flg is not null and ohc_flg is null and ospa_flg is null then '#APP_FILES#wms_icons_ll.png'
+                            when ll_flg is null and ohc_flg is not null and ospa_flg is null then '#APP_FILES#wms_icons_ohc.png'
+                            when ll_flg is null and ohc_flg is null and ospa_flg is not null then '#APP_FILES#wms_icons_luna.png' 
+                            else '#APP_FILES#wms_icons_working.png' end 
+                        else '#APP_FILES#wms_icons_working.png' end as ICON,
+                        case when workshop_status in ('Completed', 'Quarterly QA', 'Quarterly QA Complete') then 
+                        case when ll_flg is not null and ohc_flg is not null and ospa_flg is not null then 'Published in LiveLabs, Luna, and OHC'
+                            when ll_flg is not null and ohc_flg is not null and ospa_flg is null then 'Published in LiveLabs and OHC'
+                            when ll_flg is not null and ohc_flg is null and ospa_flg is not null then 'Published in LiveLabs and Luna'
+                            when ll_flg is null and ohc_flg is not null and ospa_flg is not null then 'Published in Luna and OHC'
+                            when ll_flg is not null and ohc_flg is null and ospa_flg is null then 'Published in LiveLabs'
+                            when ll_flg is null and ohc_flg is not null and ospa_flg is null then 'Published in Luna'
+                            when ll_flg is null and ohc_flg is null and ospa_flg is not null then 'Published in OHC' 
+                            else 'Workshop in Progress' end 
+                        else 'Workshop in Progress' end as TOOLTIP,
+                        
+                        nvl(ll_flg, '') ||':'|| nvl(ohc_flg, '') || ':' || nvl(ospa_flg, '') as PRODS
+                  from WORKSHOP_HOMEPAGE
+                
+                  where (:SEARCH is null or
+                    (
+                        (upper(title) like '%' || upper(:SEARCH) || '%')
+                        or
+                        (upper(id) like '%' || upper(:SEARCH) || '%')
+                        or
+                        (upper(ll_ids) like '%' || upper(:SEARCH)  || '%') -- ll_ids = '123,456,678'
+                        or
+                        (upper(ohc_ids) like '%' || upper(:SEARCH)  || '%') -- ll_ids = '123,456,678'
+                        or
+                        (upper(ospa_ids) like '%' || upper(:SEARCH)  || '%') -- ll_ids = '123,456,678'
+                    )
+                
+                  )
+                 order by 
+                        case when :P51_SORT = 'NameAsc' then title end asc,
+                        case when :P51_SORT = 'IDDesc' then lpad( "ID",10,'0') end desc,
+                        case when :P51_SORT = 'IDAsc' then lpad( "ID",10,'0') end asc,
+                        case when :P51_SORT = 'NameDesc' then title end desc,
+                        case when :P51_SORT is null then lpad( "ID",10,'0') end desc
+                
+                ;
+                ```
+        }
+        layout {
+            sequence: 30
+            slot: contentBody
+        }
+        appearance {
+            template: @blank-with-attributes-no-grid
+            templateOptions: #DEFAULT#
+        }
+        componentAppearance {
+            gridColumns: 3
+        }
+        card {
+            primaryKeyColumn1: ID
+        }
+        title {
+            advancedFormatting: true
+            htmlExpression:
+                ```html
+                <table style="width:100%">
+                    <tr>
+                        <td>
+                            <strong>&TITLE.</strong><br>
+                            <span style="color:grey;font-size:0.875em">WMS ID: &ID.</span>
+                        </td>
+                        <td style="text-align:right;">
+                            <img src="&ICON." style="" title='&TOOLTIP.'>
+                        </td>
+                    </tr>
+                </table>
+                ```
+        }
+        body {
+            column: SHORT_DESC
+        }
+        secondaryBody {
+            advancedFormatting: true
+            htmlExpression: <strong>&WORKSHOP_STATUS.</strong>
+        }
+        performance {
+            lazyLoading: true
+        }
+        pagination {
+            type: page
+            showTotalCount: true
+            cardsPerPage: 30
+        }
+        messages {
+            whenNoDataFound: No workshops found.
+        }
+
+        action action (
+            label: Share
+            layout {
+                sequence: 60
+            }
+            behavior {
+                target: {
+                    page: 24
+                    items: {
+                        P106_WORKSHOP_ID: &ID.
+                    }
+                }
+            }
+            appearance {
+                displayType: icon
+                icon: fa-share
+            }
+            serverSideCondition {
+                type: functionBody
+                plsqlFunctionBody:
+                    ```plsql
+                    declare
+                    
+                    v_social varchar2(2000);
+                    
+                    begin
+                    select twitter_post||linkedin_post into v_social from workshop_social where id = :P320_ID_1 and :P320_READY_TO_POST = 1;
+                        if v_social is not null then return true; end if;
+                    exception when no_data_found then
+                        v_social := null;
+                      return false;
+                    end;
+                    ```
+            }
+        )
+
+        action action-2 (
+            label: Social
+            layout {
+                sequence: 70
+            }
+            behavior {
+                target: {
+                    page: 21
+                }
+            }
+            appearance {
+                displayType: icon
+                icon: fa-coffee
+            }
+            serverSideCondition {
+                type: never
+            }
+            comments {
+                comments:
+                    ```
+                    declare
+                    
+                    v_social varchar2(200);
+                    
+                    begin
+                    select blog_url into v_social from workshop_social where id =:ID ;
+                        if v_social is not null then return true; end if;
+                    exception when no_data_found then
+                        v_social := null;
+                      return false;
+                    end;
+                    ```
+            }
+        )
+
+        action action-3 (
+            label: View
+            layout {
+                sequence: 40
+            }
+            behavior {
+                target: {
+                    page: 320
+                    items: {
+                        P320_ID: &ID.
+                    }
+                }
+            }
+            appearance {
+                displayType: icon
+                icon: fa-eye
+            }
+        )
+
+        action action-4 (
+            type: fullCard
+            layout {
+                sequence: 10
+            }
+            behavior {
+                target: {
+                    page: 320
+                    items: {
+                        P320_ID: &ID.
+                    }
+                }
+            }
+        )
+
+        action action-5 (
+            label: Edit
+            layout {
+                sequence: 30
+            }
+            behavior {
+                target: {
+                    page: 320
+                    items: {
+                        P320_ID: &ID.
+                    }
+                }
+            }
+            appearance {
+                displayType: icon
+                icon: fa-edit
+            }
+            serverSideCondition {
+                type: functionBody
+                plsqlFunctionBody:
+                    ```plsql
+                    declare
+                    
+                    v_hold varchar2(200);
+                    
+                    begin
+                    
+                    if upper(:APP_USER) = upper(:WORKSHOP_OWNER_EMAIL)
+                        or upper(:APP_USER) = upper(:TECH_CONTACT_EMAIL)
+                        or upper(:APP_USER) = upper(:SUPPORT_CONTACT_EMAIL)
+                        or upper(:APP_USER) = upper(:MANAGER_EMAIL)
+                        or upper(:APP_USER) = upper(:OBSERVER_EMAIL) then
+                            return true;
+                    end if;
+                    
+                    begin
+                    select distinct email into v_hold from workshop_person_stakeholder where stakeholder_id = :STAKEHOLDER_ID and upper(email) = upper(:APP_USER);
+                    exception when no_data_found then
+                        v_hold := null;
+                    end;
+                    if v_hold is not null then return true; end if;
+                    
+                    begin
+                    select distinct email into v_hold from workshop_person_council where council_id = :COUNCIL_ID and upper(email) = upper(:APP_USER);
+                    exception when no_data_found then
+                        v_hold := null;
+                    end;
+                    if v_hold is not null then return true;end if;
+                    
+                    begin
+                    select distinct email into v_hold from workshop_person_role where workshop_id is null and upper(email) = upper(:APP_USER);
+                    exception when no_data_found then
+                        v_hold := null;
+                    end;
+                    if v_hold is not null then return true;end if;
+                    
+                    return false;
+                    
+                    
+                    end;
+                    ```
+            }
+        )
+
+        action action-6 (
+            label: Message
+            layout {
+                sequence: 50
+            }
+            behavior {
+                target: {
+                    page: 106
+                    items: {
+                        P106_WORKSHOP_ID: &ID.
+                    }
+                }
+            }
+            appearance {
+                displayType: icon
+                icon: fa-envelope-edit
+            }
+        )
+
+    )
+
+    region filter (
+        name: Filter
+        type: facetedSearch
+        source {
+            filteredRegion: @current-workshops
+        }
+        layout {
+            sequence: 40
+            slot: contentBody
+            startNewRow: false
+            column: 10
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        settings {
+            compactNosThreshold: 10000
+            showCharts: false
+        }
+
+        facet P51_FOCUS (
+            type: checkboxGroup
+            label {
+                label: Focus Area
+            }
+            lov {
+                type: sharedComponent
+                lov: @focus-tag-lov
+            }
+            layout {
+                sequence: 70
+            }
+            listEntries {
+                zeroCountEntries: showLast
+                showSelectedFirst: true
+                maxDisplayedEntries: 5
+            }
+            actionsMenu {
+                filter: false
+                chart: false
+            }
+            advanced {
+                collapsible: true
+            }
+            source {
+                databaseColumn: FOCUS_TAG
+            }
+            multipleValues {
+                type: delimitedList
+                filterCombination: and
+            }
+        )
+
+        facet P51_LEVEL (
+            type: checkboxGroup
+            label {
+                label: Level
+            }
+            lov {
+                type: sharedComponent
+                lov: @level-tag-lov
+            }
+            layout {
+                sequence: 100
+            }
+            listEntries {
+                zeroCountEntries: showLast
+                showSelectedFirst: true
+                maxDisplayedEntries: 5
+            }
+            actionsMenu {
+                filter: false
+                chart: false
+            }
+            advanced {
+                collapsible: true
+            }
+            source {
+                databaseColumn: LEVEL_TAG
+            }
+            multipleValues {
+                type: delimitedList
+                filterCombination: and
+            }
+        )
+
+        facet P51_OWNER_GROUP_SELECT (
+            type: selectList
+            label {
+                label: Owner Group
+            }
+            lov {
+                type: sharedComponent
+                lov: @workshop-creator-group
+            }
+            layout {
+                sequence: 30
+            }
+            listEntries {
+                zeroCountEntries: showLast
+            }
+            source {
+                databaseColumn: WORKSHOP_OWNER_GROUP
+            }
+        )
+
+        facet P51_PRODUCT (
+            type: checkboxGroup
+            label {
+                label: Product
+            }
+            lov {
+                type: sharedComponent
+                lov: @product-tag-lov
+            }
+            layout {
+                sequence: 90
+            }
+            listEntries {
+                zeroCountEntries: showLast
+                showSelectedFirst: true
+                maxDisplayedEntries: 5
+            }
+            actionsMenu {
+                filter: false
+                chart: false
+            }
+            advanced {
+                collapsible: true
+            }
+            source {
+                databaseColumn: PRODUCT_TAG
+            }
+            multipleValues {
+                type: delimitedList
+                filterCombination: and
+            }
+        )
+
+        facet P51_ROLE (
+            type: checkboxGroup
+            label {
+                label: Role
+            }
+            lov {
+                type: sharedComponent
+                lov: @role-tag-lov
+            }
+            layout {
+                sequence: 60
+            }
+            listEntries {
+                zeroCountEntries: showLast
+                showSelectedFirst: true
+                maxDisplayedEntries: 5
+            }
+            actionsMenu {
+                filter: false
+                chart: false
+            }
+            advanced {
+                collapsible: true
+            }
+            source {
+                databaseColumn: ROLE_TAG
+            }
+            multipleValues {
+                type: delimitedList
+                filterCombination: and
+            }
+        )
+
+        facet P51_SALES (
+            type: checkboxGroup
+            label {
+                label: Sales Play
+            }
+            lov {
+                type: sharedComponent
+                lov: @salesplay-tag-lov
+            }
+            layout {
+                sequence: 80
+            }
+            listEntries {
+                zeroCountEntries: showLast
+                showSelectedFirst: true
+                maxDisplayedEntries: 5
+            }
+            actionsMenu {
+                filter: false
+                chart: false
+            }
+            advanced {
+                collapsible: true
+            }
+            source {
+                databaseColumn: SALES_TAG
+            }
+            multipleValues {
+                type: delimitedList
+                filterCombination: and
+            }
+        )
+
+        facet P51_SERIES (
+            type: checkboxGroup
+            label {
+                label: Workshop Series
+            }
+            lov {
+                type: sharedComponent
+                lov: @series-tag-lov
+            }
+            layout {
+                sequence: 50
+            }
+            listEntries {
+                zeroCountEntries: showLast
+                showSelectedFirst: true
+                maxDisplayedEntries: 5
+            }
+            actionsMenu {
+                filter: false
+                chart: false
+            }
+            advanced {
+                collapsible: true
+            }
+            source {
+                databaseColumn: SERIES_TAG
+            }
+            multipleValues {
+                type: delimitedList
+                filterCombination: and
+            }
+        )
+
+        facet P51_STATUS_SELECT (
+            type: selectList
+            label {
+                label: Workshop Status
+            }
+            lov {
+                type: sharedComponent
+                lov: @workshop-status-test
+            }
+            layout {
+                sequence: 10
+            }
+            listEntries {
+                zeroCountEntries: disable
+            }
+            source {
+                databaseColumn: WORKSHOP_STATUS
+            }
+        )
+
+    )
+
+    region header (
+        name: header
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: beforeContentBody
+            startNewRow: false
+            newColumn: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--scrollBody
+                t-Form--noPadding
+                margin-top-none
+                margin-bottom-none
+            ]
+        }
+        advanced {
+            htmlDomId: LL_HEAD
+        }
+    )
+
+    region livelabs-statistics (
+        name: livelabs-statistics
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <div class="stats-banner">
+                  <div class="stats-item">
+                    <div class="blob-bg" style="background-image: url(#APP_FILES#blue-blob.svg);"></div>
+                    <div class="stats-content">
+                        <div class="stats-number">&P51_PUBLISHED_WORKSHOPS.</div>
+                        <div class="stats-label">available<br>workshops</div>
+                    </div>
+                
+                  </div>
+                  <div class="stats-item">
+                    <div class="blob-bg" style="background-image: url(#APP_FILES#green-blob.svg);"></div>
+                    <div class="stats-content">
+                      <div class="stats-number">&P51_UNIQUE_VISITS.</div>
+                      <div class="stats-label">visits to<br>LiveLabs</div>
+                    </div>
+                  </div>
+                  <div class="stats-item">
+                    <div class="blob-bg" style="background-image: url(#APP_FILES#blue-blob.svg);"></div>
+                    <div class="stats-content">
+                      <div class="stats-number">&P51_EVENTS.</div>
+                      <div class="stats-label">events run<br>on LiveLabs</div>
+                    </div>
+                  </div>
+                </div>
+                ```
+        }
+        layout {
+            sequence: 20
+            parentRegion: @announcements-carousel
+            slot: slides
+        }
+        appearance {
+            template: @carousel-item
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            htmlDomId: statistics-banner
+        }
+    )
+
+    region welcome (
+        name: welcome
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                 <div class="wms-banner">
+                  <div class="wms-banner-inner">
+                    <img src="#APP_FILES#wms_logo.png" class="wms-logo" alt="WMS Logo">
+                    <div class="wms-banner-content">
+                      <h1>Welcome to the Oracle Workshop Management System (WMS)</h1>
+                      <p>Experience Oracle's cloud and on-premises products and technologies. One place to submit workshop content, we will help you publish into LiveLabs.<br>
+                      Advance your cloud and license deals, get training on Oracle products and increase cloud consumption now!</p>
+                      <p><a class="wms-banner-link" href="https://livelabs.oracle.com" target="_blank">Visit LiveLabs</a></p>
+                    </div>
+                  </div>
+                </div>
+                
+                <style>
+                .wms-banner {
+                  overflow: hidden;
+                  width:100%;
+                  align-self: center
+                }
+                .wms-banner-inner {
+                  display: flex;
+                  align-items: flex-start;
+                  gap: 36px;
+                  max-width: 1200px;
+                  border-width: 0px;
+                }
+                .wms-logo {
+                  width: 120px;
+                  height: 10vh;
+                  object-fit: contain;
+                  padding-left: 8px;
+                }
+                .wms-banner-content h1 {
+                  margin: 0 0 16px 0;
+                  font-size: 1.75em;
+                  font-weight: 700;
+                }
+                .wms-banner-content p {
+                  margin: 0 0 10px 0;
+                  font-size: 1.1em;
+                  line-height: 1.5;
+                }
+                .wms-banner-link {
+                  font-weight: bold;
+                  color: #c35008;
+                  text-decoration: none;
+                }
+                .wms-banner-link:hover {
+                  text-decoration: underline;
+                }
+                @media (max-width: 700px) {
+                  .wms-banner-inner { flex-direction: column; align-items: center; text-align: center; }
+                  .wms-logo { padding-left: 0; }
+                }
+                </style>
+                ```
+        }
+        layout {
+            sequence: 10
+            parentRegion: @announcements-carousel
+            slot: slides
+        }
+        appearance {
+            template: @carousel-item
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            htmlDomId: welcome-banner
+        }
+    )
+
+    region wms-swimlanes-workflow (
+        name: WMS Swimlanes/Workflow
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <table><tr><td>
+                <img src="#APP_FILES#wms-swimlane3.png" width="1200px"></td></tr><!--<tr><td><b>Workshop Status Values:</b> Submitted, Approved, Workshop In Development, Moving to Github,Self QA, QA Verification, QA Verification Complete, Production - FREE TIER, Production - HIDDEN, Convert to LiveLabs Tenancy, Production - LIVELABS, Complete, Issue, On Hold</td></tr>--></table>
+                ```
+        }
+        layout {
+            sequence: 10
+            slot: footer
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    pageItem P51_AVG_EVENT_ATTENDEES (
+        type: hidden
+        layout {
+            sequence: 50
+            region: @header
+            slot: regionBody
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery: select value from ll_analytics where name = 'Average Event Attendees';
+            used: always
+        }
+    )
+
+    pageItem P51_AVG_MONTHLY_PG_VIEWS (
+        type: hidden
+        layout {
+            sequence: 20
+            region: @header
+            slot: regionBody
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery: select round(value/1000)||'M' from ll_analytics where name = 'Average Monthly Page Views';
+            used: always
+        }
+    )
+
+    pageItem P51_EVENTS (
+        type: hidden
+        layout {
+            sequence: 40
+            region: @header
+            slot: regionBody
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery: select TO_CHAR(floor(value/10)*10, '999G999G999G999')||'+' from ll_analytics where name = 'Events';
+        }
+    )
+
+    pageItem P51_PUBLISHED_WORKSHOPS (
+        type: hidden
+        layout {
+            sequence: 70
+            region: @header
+            slot: regionBody
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery:
+                ```sql
+                select TO_CHAR(floor(count(*)/100)*100, '999G999G999G999')||'+' 
+                from workshop_ll 
+                where publish_type in ('Public', 'Event')
+                and publish_status in ('Published', 'Publish Approved')
+                ```
+            used: always
+        }
+    )
+
+    pageItem P51_RESERVATIONS_PROVISIONED (
+        type: hidden
+        layout {
+            sequence: 60
+            region: @header
+            slot: regionBody
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery: select value from ll_analytics where name = 'Reservations Provisioned';
+        }
+    )
+
+    pageItem P51_SORT (
+        type: selectList
+        label {
+            label: <div class="a-FS-header a-FS-label">Sort Workshops</div>
+            alignment: left
+        }
+        settings {
+            pageActionOnSelection: submitPage
+            executeValidations: false
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC:Name (A-Z);NameAsc,Name (Z-A);NameDesc,ID Ascending;IDAsc,ID Descending;IDDesc
+            displayExtraValues: false
+            nullDisplayValue: - Select -
+        }
+        layout {
+            sequence: 10
+            region: @filter
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            newColumn: false
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: [
+                #DEFAULT#
+                margin-top-none
+                margin-bottom-none
+                margin-left-sm
+                margin-right-none
+            ]
+            height: 1
+        }
+    )
+
+    pageItem P51_TOTAL_PG_VIEWS (
+        type: hidden
+        layout {
+            sequence: 10
+            region: @header
+            slot: regionBody
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery: select round(value/1000000)||'M' from ll_analytics where name = 'Total Page Views';
+            used: always
+        }
+    )
+
+    pageItem P51_UNIQUE_VISITS (
+        type: hidden
+        layout {
+            sequence: 30
+            region: @header
+            slot: regionBody
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery: select round(value/1000000)||'M' from ll_analytics where name = 'Unique Visits';
+        }
+    )
+
+    pageItem SEARCH (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 10
+            region: @current-workshops
+            slot: body
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+)
+

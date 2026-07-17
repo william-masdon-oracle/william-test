@@ -1,0 +1,80 @@
+restDataSource daily_costs (
+    name: Daily Costs
+    source {
+        type: ords
+        remoteServer: @rddainsuh6u1okc_llreport_adb_us_ashburn_1_oraclecloudapps_com_ords_admin
+        urlPathPrefix: wms_daily_costs_mv/
+    }
+    authentication {
+        credentials: @COSTING_ADB
+        server: @rddainsuh6u1okc_llreport_adb_us_ashburn_1_oraclecloudapps_com_ords_admin_2_
+        urlPathPrefix: oauth/token
+    }
+    synchronization {
+        localTableName: COSTING_DATE_DATA
+        type: fullRefreshDelete
+        schedule: FREQ=WEEKLY;INTERVAL=1;BYDAY=SUN;BYHOUR=0;BYMINUTE=0;BYSECOND=0
+        httpRequestLimit: 100
+    }
+
+    operation get (
+        label: GET
+        operation {
+            urlPattern: .
+            httpMethod: get
+            databaseOperation: fetchRows
+        }
+    )
+
+    operation post (
+        label: POST
+        operation {
+            urlPattern: .
+            httpMethod: post
+            databaseOperation: insert
+        }
+        requestBody {
+            versionNumber: 1
+        }
+    )
+
+    dataProfile {
+        name: Daily Costs
+        rowSelector: items
+    }
+
+    dataProfileColumn livelabs-infrastructure-cost (
+        columnName: LIVELABS_INFRASTRUCTURE_COST
+        source {
+            sequence: 3
+            dataType: number
+        }
+        parsing {
+            pathExpression: livelabs_infrastructure_cost
+        }
+    )
+
+    dataProfileColumn start-date (
+        columnName: START_DATE
+        source {
+            sequence: 1
+            dataType: date
+        }
+        parsing {
+            pathExpression: start_date
+        }
+    )
+
+    dataProfileColumn total-cost (
+        columnName: TOTAL_COST
+        source {
+            sequence: 2
+            dataType: number
+        }
+        parsing {
+            pathExpression: total_cost
+        }
+    )
+
+)
+

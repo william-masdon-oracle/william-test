@@ -1,0 +1,88 @@
+plugin qrCode (
+    name: QR Code
+    staticId: EU.ZTTECH.QRCODE
+    type: item
+    component {
+        standardAttributes: [
+            visibleWidget
+            standardFormElement
+            sessionStateChangeable
+            sourceAttrs
+        ]
+    }
+    source {
+        plsqlCode:
+            ```plsql
+            PROCEDURE render_qrcode(
+                p_item                IN apex_plugin.t_item,
+                p_plugin              IN apex_plugin.t_plugin,
+                p_param               IN apex_plugin.t_item_render_param,
+                p_result              OUT apex_plugin.t_item_render_result) IS
+                
+            BEGIN
+                if p_param.value is null then
+                    htp.p('no data');
+                else
+            
+                    -- Printer Friendly Display
+                    IF p_param.is_printer_friendly THEN
+                        apex_plugin_util.print_display_only(p_item_name        => p_item.name,
+                                                            p_display_value    => p_param.value,
+                                                            p_show_line_breaks => FALSE,
+                                                            p_escape           => TRUE,
+                                                            p_attributes       => p_item.element_attributes);
+                    -- Read Only Display
+                    ELSIF p_param.is_readonly THEN
+                        apex_plugin_util.print_hidden_if_readonly(p_item_name           => p_item.name,
+                                                                  p_value               => p_param.value,
+                                                                  p_is_readonly         => p_param.is_readonly,
+                                                                  p_is_printer_friendly => p_param.is_printer_friendly);
+            
+                    -- Normal Display
+                    ELSE
+                        if p_item.attribute_02 = 'HTML' then
+                            ZT_QR.p_qr_as_html_table(
+                                p_data => p_param.value,
+                                p_error_correction => p_item.attribute_01,
+                                p_module_size_in_px => p_item.attribute_03,
+                                p_margines => (CASE WHEN p_item.attribute_05 = 'Y' THEN true ELSE false END)
+                            );
+                        elsif p_item.attribute_02 = 'BMP' then
+                            ZT_QR.p_qr_as_img_tag_base64(
+                                p_data => p_param.value,
+                                p_error_correction => p_item.attribute_01,
+                                p_image_size_px => p_item.attribute_04,
+                                p_margines => p_item.attribute_05
+                            );
+                        else
+                            htp.prn('Error - unsupported display type.');
+                        end if;
+                        
+                    end if;
+                    
+                end if;
+            
+                p_result.is_navigable := false;
+                
+            END render_qrcode;
+            ```
+    }
+    callbacks {
+        apiInterface: procedureWithLegacyAttributes
+        renderProcedureName: render_qrcode
+    }
+    advanced {
+        substituteAttributeValues: true
+    }
+    information {
+        version: 1.0.0.0
+        aboutUrl: https://github.com/zorantica/plsql-qr-code
+        helpText:
+            ```
+            QR plugin version 1.0.0
+            Usage and details on GitHub
+            https://github.com/zorantica/plsql-qr-code
+            ```
+    }
+)
+

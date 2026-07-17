@@ -1,0 +1,474 @@
+page 400 (
+    name: Registrations Report
+    title: Registrations Report
+    appearance {
+        pageTemplate: @standard-custom
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        authorizationScheme: @administration-rights
+        formAutoComplete: false
+    }
+
+    region report (
+        name: Report 1
+        type: interactiveReport
+        source {
+            location: localDatabase
+            tableName: REGISTRATIONS_VW
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        componentAppearance {
+            showNullValuesAs: -
+        }
+        pagination {
+            type: rowRangesXToY
+        }
+        performance {
+            maxRowsToProcess: 1000000
+        }
+        advanced {
+            savedReportMappingIdentifier: 8283167393954065934
+        }
+
+        column ACCOUNT_AGE_IN_HOURS (
+            type: plainText
+            heading {
+                heading: Account Age In Hours
+                alignment: center
+            }
+            layout {
+                sequence: 60
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: F
+            }
+        )
+
+        column COMPARTMENT_ID (
+            type: plainText
+            heading {
+                heading: Compartment Id
+                alignment: center
+            }
+            layout {
+                sequence: 140
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: N
+            }
+        )
+
+        column EMAIL (
+            type: plainText
+            heading {
+                heading: Email
+                alignment: center
+            }
+            layout {
+                sequence: 50
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: E
+            }
+        )
+
+        column FIRST_NAME (
+            type: plainText
+            heading {
+                heading: First Name
+                alignment: center
+            }
+            layout {
+                sequence: 30
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: C
+            }
+        )
+
+        column GROUP_ID (
+            type: plainText
+            heading {
+                heading: Group Id
+                alignment: center
+            }
+            layout {
+                sequence: 130
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: M
+            }
+        )
+
+        column GROUP_MEMBERSHIP_ID (
+            type: plainText
+            heading {
+                heading: Group Membership Id
+                alignment: center
+            }
+            layout {
+                sequence: 120
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: L
+            }
+        )
+
+        column LAST_NAME (
+            type: plainText
+            heading {
+                heading: Last Name
+                alignment: center
+            }
+            layout {
+                sequence: 40
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: D
+            }
+        )
+
+        column MAX_TIME (
+            type: plainText
+            heading {
+                heading: Max Time
+                alignment: center
+            }
+            layout {
+                sequence: 70
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: G
+            }
+        )
+
+        column NAME (
+            type: plainText
+            heading {
+                heading: Name
+                alignment: center
+            }
+            layout {
+                sequence: 100
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: J
+            }
+        )
+
+        column REGISTRATIONS_ID (
+            type: plainText
+            heading {
+                heading: Registrations Id
+                alignment: center
+            }
+            layout {
+                sequence: 10
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: A
+            }
+        )
+
+        column REGISTRATIONS_OCI_ID (
+            type: plainText
+            heading {
+                heading: Registrations Oci Id
+                alignment: center
+            }
+            layout {
+                sequence: 20
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: B
+            }
+        )
+
+        column TEMP_PASS (
+            type: plainText
+            heading {
+                heading: Temp Pass
+                alignment: center
+            }
+            layout {
+                sequence: 80
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: H
+            }
+        )
+
+        column TENANCY_ID (
+            type: plainText
+            heading {
+                heading: Tenancy Id
+                alignment: center
+            }
+            layout {
+                sequence: 150
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: O
+            }
+        )
+
+        column USER_CREATE_DTM (
+            type: plainText
+            heading {
+                heading: User Create Dtm
+                alignment: center
+            }
+            layout {
+                sequence: 170
+                columnAlignment: center
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: Q
+            }
+        )
+
+        column USER_DELETED_FLG (
+            type: plainText
+            heading {
+                heading: User Deleted Flg
+                alignment: center
+            }
+            layout {
+                sequence: 90
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: I
+            }
+        )
+
+        column USER_ID (
+            type: plainText
+            heading {
+                heading: User Id
+                alignment: center
+            }
+            layout {
+                sequence: 110
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: K
+            }
+        )
+
+        column WORKSHOP_ID (
+            type: plainText
+            heading {
+                heading: Workshop Id
+                alignment: center
+            }
+            layout {
+                sequence: 160
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: P
+            }
+        )
+
+        page {
+            width: 8.5
+            height: 11
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        columnHeadings {
+            fontWeight: normal
+            backgroundColor: #9bafde
+        }
+        columns {
+            backgroundColor: #efefef
+        }
+
+        savedReport 94094522 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn ACCOUNT_AGE_IN_HOURS (
+                sequence: 6
+            )
+
+            displayColumn APXWS_CC_001 (
+                sequence: 8
+            )
+
+            displayColumn COMPARTMENT_ID (
+                sequence: 15
+            )
+
+            displayColumn EMAIL (
+                sequence: 5
+            )
+
+            displayColumn FIRST_NAME (
+                sequence: 3
+            )
+
+            displayColumn GROUP_ID (
+                sequence: 14
+            )
+
+            displayColumn GROUP_MEMBERSHIP_ID (
+                sequence: 13
+            )
+
+            displayColumn LAST_NAME (
+                sequence: 4
+            )
+
+            displayColumn MAX_TIME (
+                sequence: 7
+            )
+
+            displayColumn NAME (
+                sequence: 11
+            )
+
+            displayColumn REGISTRATIONS_ID (
+                sequence: 1
+            )
+
+            displayColumn REGISTRATIONS_OCI_ID (
+                sequence: 2
+            )
+
+            displayColumn TEMP_PASS (
+                sequence: 9
+            )
+
+            displayColumn TENANCY_ID (
+                sequence: 16
+            )
+
+            displayColumn USER_CREATE_DTM (
+                sequence: 18
+            )
+
+            displayColumn USER_DELETED_FLG (
+                sequence: 10
+            )
+
+            displayColumn USER_ID (
+                sequence: 12
+            )
+
+            displayColumn WORKSHOP_ID (
+                sequence: 17
+            )
+
+            computation APXWS_CC_001 (
+                identifier: C01
+                source {
+                    expression: case when G-F>0 then (G-F) else 0 END
+                    dataType: number
+                }
+                label {
+                    column: Remaining Time
+                }
+                appearance {
+                    formatMask: 999G999G999G999G999G999G990
+                }
+            )
+
+            sort (
+                column: APXWS_CC_001
+                sort {
+                    direction: desc
+                    sequence: 1
+                }
+            )
+
+            highlight ir-condition (
+                name: Remaining Time - yellow items have time left
+                condition {
+                    column: APXWS_CC_001
+                    operator: >
+                    value: 0
+                }
+                colors {
+                    background: #FFF5CE
+                }
+                execution {
+                    sequence: 10
+                }
+            )
+
+        )
+
+    )
+
+)
+

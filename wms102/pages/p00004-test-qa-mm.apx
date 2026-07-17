@@ -1,0 +1,470 @@
+page 4 (
+    name: TEST_QA_MM
+    alias: TEST-QA-MM
+    title: TEST_QA_MM
+    appearance {
+        pageTemplate: @standard-custom
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region new (
+        name: New
+        type: classicReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select count(1)
+                  from WORKSHOP_QA_XREF
+                 where  workshop_id=442
+                
+                ```
+        }
+        layout {
+            sequence: 30
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        componentAppearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Report--altRowsDefault
+                t-Report--rowHighlight
+            ]
+        }
+        pagination {
+            type: nextAndPreviousLinks
+        }
+
+        column "COUNT(1)" (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            heading {
+                heading: Count(1)
+                alignment: center
+            }
+            layout {
+                sequence: 10
+            }
+        )
+
+    )
+
+    region test-qa-mm (
+        name: TEST_QA_MM
+        type: interactiveGrid
+        source {
+            location: localDatabase
+            tableName: WORKSHOP_QA_XREF
+            includeRowidColumn: true
+        }
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        edit {
+            enabled: true
+            allowedOperations: [
+                add
+                update
+                delete
+            ]
+        }
+        toolbar {
+            controls: [
+                searchCol
+                searchField
+                actionsMenu
+                resetButton
+                saveButton
+            ]
+        }
+        download {
+            formats: [
+                csv
+                html
+                pdf
+                excel
+            ]
+        }
+        advanced {
+            savedReportMappingIdentifier: 10509917967518667150
+        }
+
+        savedReport 105099184 (
+            visibility: primary
+            view {
+                default: grid
+            }
+            singleRowView {
+                displayedColumns: true
+            }
+
+            displayColumn (
+                column: @APEX$ROW_ACTION
+                layout {
+                    sequence: 0
+                }
+            )
+
+            displayColumn (
+                column: @ROWID
+                layout {
+                    sequence: 1
+                }
+            )
+
+            displayColumn (
+                column: @QA_VALIDATION_ID
+                layout {
+                    sequence: 2
+                }
+            )
+
+            displayColumn (
+                column: @QA_ID
+                layout {
+                    sequence: 3
+                }
+            )
+
+            displayColumn (
+                column: @WORKSHOP_ID
+                layout {
+                    sequence: 4
+                }
+            )
+
+            displayColumn (
+                column: @VALIDATED_DATE
+                layout {
+                    sequence: 5
+                }
+            )
+
+            displayColumn (
+                column: @VALIDATED_OWNER
+                layout {
+                    sequence: 6
+                }
+            )
+
+            displayColumn (
+                column: @PASSFAIL
+                layout {
+                    sequence: 7
+                }
+            )
+
+            displayColumn (
+                column: @QA_DESC
+                layout {
+                    sequence: 8
+                }
+            )
+
+            displayColumn (
+                column: @SECTION_NAME
+                layout {
+                    sequence: 9
+                }
+            )
+
+        )
+
+        column APEX$ROW_ACTION (
+            type: actionsMenu
+            layout {
+                sequence: 20
+            }
+        )
+
+        column APEX$ROW_SELECTOR (
+            type: rowSelector
+            layout {
+                sequence: 10
+            }
+        )
+
+        column PASSFAIL (
+            type: checkbox
+            heading {
+                heading: Passfail
+                alignment: end
+            }
+            settings {
+                useDefaults: false
+                checkedValue: 1
+                uncheckedValue: 0
+            }
+            layout {
+                sequence: 110
+                columnAlignment: end
+            }
+            source {
+                databaseColumn: PASSFAIL
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column QA_DESC (
+            type: displayOnly
+            layout {
+                sequence: 50
+            }
+            source {
+                type: sqlExpression
+                sqlExpression:
+                    ```sql
+                    select section_desc
+                    from workshop_QA_CHECKLIST
+                    where ID=65
+                    ```
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column QA_ID (
+            type: numberField
+            heading {
+                heading: Qa Id
+                alignment: end
+            }
+            settings {
+                numberAlignment: end
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 70
+                columnAlignment: end
+            }
+            source {
+                databaseColumn: QA_ID
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column QA_VALIDATION_ID (
+            type: hidden
+            layout {
+                sequence: 60
+            }
+            source {
+                databaseColumn: QA_VALIDATION_ID
+                dataType: number
+                queryOnly: true
+                primaryKey: true
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column ROWID (
+            type: hidden
+            layout {
+                sequence: 30
+            }
+            source {
+                databaseColumn: ROWID
+                dataType: rowid
+                primaryKey: true
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column SECTION_NAME (
+            type: selectList
+            lov {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select section_name, id value from workshop_QA_CHECKLIST
+                    
+                    ```
+            }
+            layout {
+                sequence: 40
+            }
+            source {
+                type: none
+            }
+        )
+
+        column VALIDATED_DATE (
+            type: datePicker
+            heading {
+                heading: Validated Date
+                alignment: center
+            }
+            layout {
+                sequence: 90
+                columnAlignment: center
+            }
+            source {
+                databaseColumn: VALIDATED_DATE
+                dataType: date
+            }
+        )
+
+        column VALIDATED_OWNER (
+            type: textField
+            heading {
+                heading: Validated Owner
+            }
+            layout {
+                sequence: 100
+            }
+            validation {
+                maxLength: 80
+            }
+            source {
+                databaseColumn: VALIDATED_OWNER
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column WORKSHOP_ID (
+            type: numberField
+            heading {
+                heading: Workshop Id
+                alignment: end
+            }
+            settings {
+                numberAlignment: end
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 80
+                columnAlignment: end
+            }
+            source {
+                databaseColumn: WORKSHOP_ID
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: TEST_QA_MM
+        }
+    )
+
+    pageItem P4_NEW (
+        type: displayOnly
+        label {
+            label: New
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select section_name
+                from workshop_qa_checklist
+                where id=65
+                ```
+        }
+        layout {
+            sequence: 10
+            region: @test-qa-mm
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    dynamicAction new (
+        name: New
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: region
+            region: @test-qa-mm
+        }
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @new
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    process test-qa-mm-save-interactive-grid-data (
+        name: TEST_QA_MM - Save Interactive Grid Data
+        type: interactiveGridAutoRowProcessing
+        editableRegion: @test-qa-mm
+        execution {
+            sequence: 10
+        }
+        advanced {
+            executionMappingIdentifier: 32532720745752952334
+        }
+    )
+
+)
+

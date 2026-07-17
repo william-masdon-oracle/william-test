@@ -1,0 +1,270 @@
+page 420 (
+    name: Utilities
+    alias: UTILITIES
+    title: Utilities
+    appearance {
+        pageTemplate: @standard-custom
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region html-reg (
+        name: HTML Reg
+        type: plSqlDynamicContent
+        source {
+            plsqlCode:
+                ```plsql
+                DECLARE
+                l_body      CLOB;
+                l_body_html CLOB;  
+                l_temp varchar2(100);  
+                 
+                BEGIN
+                
+                l_temp := 'Hi there';
+                 
+                 l_body := '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /> <title>Oracle LWMS</title> <meta name="viewport" content="width=device-width, initial-scale=1.0"/> <style type=3D"text/css"> body { margin: 0; padding: 0 ; min-width: 100%; -webkit-text-size-adjust: none; -ms-text-size-adjust: none; text-size-adjust: none; font-family: ''Oracle Sans'', ''Helvetica Neue'', ''Segoe UI'', Roboto, Helvetica, Arial, sans-serif; mso-line-height-rule: exactly; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; } a { color: #2d7bbb; } table { border: 0; border-spacing: 0; border-collapse: collapse; mso-table-lspace: 0pt; mso-table-rspace: 0pt; } table td, table th { line-height: 1.4; padding: 0; vertical-align: top; border-collapse: collapse; } @media only screen and (max-width: 599px) { .mobile-hide { display: none !important; } .fluid-img { max-width: 100% !important; height: auto !important; } .stack, .stack-left { display: block !important; width: 100% !important; } .stack-left { text-align: left !important; } .hero-text { font-size: 24px !important; } } </style> </head> <body style="margin: 0; padding: 0;"> <table border="0" cellpadding="0" cellspacing="0" width="100%"> <tr> <td style="padding: 10px 0 30px 0;"> <table align="center" border="0" cellpadding="0" cellspacing="0" width="600" style="border: 0px solid #AEA8A1; border-collapse: collapse;"> <tr> <td align="left" valign="bottom" style="; padding: 0px 0px 0px 0px; color: #F0F0F0; font-size: 28px; font-weight: 100; font-family: ''Oracle Sans'', ''Helvetica Neue'', ''Segoe UI'', Roboto, Helvetica, Arial, sans-serif;"> <img src="https://objectstorage.us-ashburn-1.oraclecloud.com/p/V-gk3dmB3kDBghWmRXI7BS2-KSOtV8NxSzfhqImOGiB8hkWrsmb0HumxZKDWmLVH/n/c4u04/b/livelabsfiles/o/wms_mailhead.png" width="100%"> </td> </td> </tr> ';
+                    --Workshop Details line
+                    l_body := l_body ||'<td bgcolor="#F2F1EC" style="padding:10px 0px 10px 30px; color: #153643; font-family: ''Oracle Sans'', ''Helvetica Neue'', ''Segoe UI'', Roboto, Helvetica, -Sans, Arial, sans-serif; font-size: 12px; font-weight: 100">';
+                    l_body := l_body ||'<p><a style="color: #312d2a; text-decoration: none; border-bottom: 0.5px dashed;" href="'||l_temp||'">Message Workshop Team</a> |  View <a style="color: #453f3c; text-decoration: none; border-bottom: 0.5px dashed;" href="'||l_temp||'">Workshop Details</a> (VPN Required)</p>';
+                    l_body := l_body ||'</td></tr>';
+                    l_body := l_body || '<tr><td bgcolor="#F2F1EC" style="padding: 0px 30px 0px 30px;"><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td style="color: #153643; font-family: ''Oracle Sans'', ''Helvetica Neue'', ''Segoe UI'', Roboto, Helvetica, -Sans, Arial, sans-serif; font-size: 18px; font-weight: 100; padding-bottom:10px">';
+                    --Workshop name
+                    l_body := l_body || '<strong>'||:l_temp||'</strong>';
+                    l_body := l_body || '</td></tr>';
+                    l_body := l_body || '<tr><td style="font-family: ''Oracle Sans'', ''Helvetica Neue'', ''Segoe UI'', Roboto, Helvetica, Arial, sans-serif; font-size: 12px; font-weight: 200; padding:0px 0px 10px 0px">';
+                    l_body := l_body || '<p>Comment : <i>'||:l_temp||'</i>, has been '||l_temp||'.  </p>';
+                    l_body := l_body || '<span style="color:orange"><u><strong>What''s Next?</strong></u></span><br>';
+                   -- l_body := l_body || v_whatsnext;
+                  --  l_body := l_body || '<br><span style="color:#3d5a3b"><u><strong>LiveLab Details</strong></u></span><br>';
+                
+                    --l_body := l_body ||'<strong>ID: </strong>'||:l_temp||'<br>';  
+                    --l_body := l_body ||'<strong>Workshop Name:</strong> '||:NEW.name||'<br><br>';
+                    --l_body := l_body ||'<strong>Description:</strong><br> '||nvl(:l_temp,'Description required')||'<br>';   
+                    
+                  --  l_body := l_body ||'<br><strong><span style="color:#3d5a3b"><u>Contacts</u></span></strong><br>';
+                   -- l_body := l_body ||'<strong>Workshop Owner Email:</strong> '||lower(:NEW.email_from_address)||'<br>';
+                    --l_body := l_body ||'<strong>Technical Contacts:</strong> '||nvl(lower(:NEW.key_oracle_contact_1),'None Defined')||'&nbsp;'||lower(:NEW.key_oracle_contact_2)||'<br>';  
+                     
+                   --_body := l_body ||'<br><strong><span style="color:#3d5a3b"><u>Workshop Links</u></span></strong><br>';
+                   --l_body := l_body ||'<strong><span style="color:orange">LiveLabs Workshop Page</span> - SHARE THIS LINK: </strong>'||nvl(:NEW.livelabs_workshop_url,'Not Yet Defined')||'<br>';
+                    --l_body := l_body ||'<strong>GitHub URL - <strong>DO NOT SHARE (Subject to change)</strong>: </strong>'||nvl(:NEW.github_ll_url,'Not Yet Defined')||'<br>';
+                    --l_body := l_body ||'<strong>Source Link 1: </strong>'||nvl(:NEW.source_links,'None Defined')||'<br>';
+                   -- l_body := l_body ||'<strong>Source Link 2: </strong>'||nvl(:NEW.source_link_2,'None Defined')||'<br><br>';
+                
+                
+                    l_body := l_body || '</p></td></tr>';
+                    --What's next section
+                    l_body := l_body || '<tr><td><table bgcolor="#c9c4b9" style="margin-top:0px"><td  valign="top" width="600px" style="font-family: ''Oracle Sans'', ''Helvetica Neue'',''Segoe UI'', Roboto, Helvetica, Arial, sans-serif; font-size: 12px; padding:10px 10px 10px 10px"><p><b style="color: #ffca0e">KEEP YOUR WORKSHOP STATUS UP TO DATE</b></p><p>';
+                    
+                    l_body := l_body || '</td></table></td></tr>';
+                    l_body := l_body || '<tr> <td> <table bgcolor="#453f3c" style="margin-top:20px"> <td width="300px" valign="top" width="400px" style="font-family: ''Oracle Sans'', ''Helvetica Neue'', ''Segoe UI'', Roboto, Helvetica, Arial, sans-serif; font-size: 12px; padding:10px 10px 10px 10px"> <!-- articles --> <p><b style="color: #ffca0e">Links</b></p> <p><a style="color: #cac4b8; text-decoration: none; border-bottom: 0.5px dashed;" href="https://oracle-livelabs.github.io/common/sample-livelabs-templates/create-labs/labs/workshops/livelabs/">LiveLabs Step by Step</a></p> 
+                    <p><a style="color: #cac4b8; text-decoration: none; border-bottom: 0.5px dashed;" href="https://confluence.oraclecorp.com/confluence/display/DCS/LiveLabs+Dashboard">Information Page</a></p> <p><a style="color: #cac4b8; text-decoration: none; border-bottom: 0.5px dashed;" href="https://livelabs.oracle.com/wms">WMS</a></p> </td> <td width="300px" valign="top" width="400px" style="font-family: ''Oracle Sans'', ''Helvetica Neue'', ''Segoe UI'', Roboto, Helvetica, Arial, sans-serif; font-size: 12px; padding:10px 10px 10px 10px"> <!-- articles --> <p><b style="color: #ffca0e">Contact</b></p><p><a style="color: #cac4b8; text-decoration: none; border-bottom: 0.5px dashed;" <b>Slack: </b></a><a style="color: #cac4b8; text-decoration: none; border-bottom: 0.5px dashed;"  href="https://oracle.enterprise.slack.com/archives/CTUPZQ5HA">#livelabs-authors-help</a></p><p><a style="color: #cac4b8; text-decoration: none; border-bottom: 0.5px dashed;" <b>Email: </b> livelabs-help_us@oracle.com </p></a></p></table> </td> </tr> <tr> </tr> <tr> <td bgcolor="#312D2A" style="padding: 10px 10px 10px 10px;">                             <table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td align="center" style="color: #ffffff; font-family: ''Oracle Sans'', ''Helvetica Neue'', ''Segoe UI'', Roboto, Helvetica, Arial, sans-serif; font-size: 10px; font-weight:100" >Copyright © 2026 Oracle and/or its affiliates. All rights reserved. </td></tr> </table> </td> </tr></table></td> </tr></table></body></html>'; 
+                    Htp.p( l_body );
+                   
+                
+                END;
+                ```
+        }
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region test-mail (
+        name: TEST MAIL
+        type: staticContent
+        layout {
+            sequence: 30
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region workshops (
+        name: Workshops
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    pageItem P420_COMMENT (
+        type: textField
+        label {
+            label: Comment
+            alignment: left
+        }
+        layout {
+            sequence: 10
+            region: @test-mail
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P420_WORKSHOPS (
+        type: selectList
+        label {
+            label: Workshops
+            alignment: left
+        }
+        lov {
+            type: sharedComponent
+            lov: @workshop-list
+        }
+        layout {
+            sequence: 10
+            region: @workshops
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P420_WSID (
+        type: textField
+        label {
+            label: Wsid
+            alignment: left
+        }
+        layout {
+            sequence: 20
+            region: @test-mail
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button call-proc (
+        buttonName: Call_Proc
+        label: Call Proc
+        layout {
+            sequence: 30
+            region: @test-mail
+            slot: regionBody
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button new (
+        buttonName: New
+        label: New
+        layout {
+            sequence: 10
+            region: @workshops
+            slot: belowBox
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    dynamicAction new (
+        name: New
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @call-proc
+        }
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    DECLARE
+                    
+                      l_msg      varchar2(1000); 
+                      
+                    BEGIN
+                        mail_utils_pkg.mail_comments_proc( :APP_USER , :P420_WSID, :P420_COMMENT );
+                    END;
+                    ```
+                itemsToSubmit: [
+                    P420_COMMENT
+                    P420_WSID
+                ]
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+)
+

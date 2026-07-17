@@ -1,0 +1,962 @@
+page 601 (
+    name: Workshop Request - Multiple Participants
+    alias: CREATE-USER-WORKSHOP-REQUEST
+    title: Workshop Request - Multiple Participants
+    appearance {
+        pageTemplate: @standard-custom
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    javaScript {
+        functionAndGlobalVariableDeclaration: var htmldb_delete_message='"DELETE_CONFIRM_MSG"';
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region request-a-multi-user-workshop (
+        name: Request a Multi-user Workshop
+        type: staticContent
+        source {
+            htmlCode: Multi-User workshops are no longer supported.  This platform is being upgraded to LiveLabs 2.0.
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    region workshop-request (
+        name: Workshop Request
+        type: form
+        source {
+            location: localDatabase
+            tableName: USER_WORKSHOP_REQUEST
+            includeRowidColumn: true
+        }
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        edit {
+            enabled: true
+            allowedOperations: [
+                add
+                update
+                delete
+            ]
+        }
+    )
+
+    pageItem P601_AT_CUSTOMER_SITE_FLG (
+        type: switch
+        label {
+            label: Is this event at the customer site?
+            alignment: left
+        }
+        settings {
+            useDefaults: false
+            onValue: 1
+            offValue: 0
+        }
+        layout {
+            sequence: 190
+            region: @workshop-request
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 3
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @workshop-request
+            column: AT_CUSTOMER_SITE_FLG
+            dataType: number
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P601_BORDER (
+        type: displayOnly
+        label {
+            label: <strong>Workshop Logistics</strong><hr>
+            alignment: left
+        }
+        settings {
+            showLineBreaks: false
+            sendOnPageSubmit: false
+        }
+        layout {
+            sequence: 100
+            region: @workshop-request
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P601_BORDER_1 (
+        type: displayOnly
+        label {
+            label: <strong>Enter Information For Workshop Lead</strong><hr>
+            alignment: left
+        }
+        settings {
+            showLineBreaks: false
+            sendOnPageSubmit: false
+        }
+        layout {
+            sequence: 10
+            region: @workshop-request
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P601_COUNTRY (
+        type: selectList
+        label {
+            label: Country
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery: select name, code from countries;
+        }
+        layout {
+            sequence: 70
+            region: @workshop-request
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            formRegion: @workshop-request
+            column: COUNTRY_ID
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P601_CUSTOMER_NAME (
+        type: textField
+        label {
+            label: Customer Company Name
+            alignment: left
+        }
+        layout {
+            sequence: 220
+            region: @workshop-request
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 60
+        }
+        validation {
+            maxLength: 100
+        }
+        source {
+            formRegion: @workshop-request
+            column: CUSTOMER_NAME
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            helpText: Company name of the customer.  Please do not enter customer emails.
+        }
+    )
+
+    pageItem P601_CUSTOMER_NAME_2 (
+        type: textField
+        label {
+            label: 2nd Customer Company Name
+            alignment: left
+        }
+        layout {
+            sequence: 230
+            region: @workshop-request
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            newColumn: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 60
+        }
+        validation {
+            maxLength: 100
+        }
+        source {
+            formRegion: @workshop-request
+            column: CUSTOMER_NAME_2
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P601_CUSTOMER_NAME_3 (
+        type: textField
+        label {
+            label: 3rd Customer Company Name
+            alignment: left
+        }
+        layout {
+            sequence: 240
+            region: @workshop-request
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            newColumn: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 60
+        }
+        validation {
+            maxLength: 100
+        }
+        source {
+            formRegion: @workshop-request
+            column: CUSTOMER_NAME_3
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P601_DURATION (
+        type: selectList
+        label {
+            label: Workshop Duration (Hours)
+            alignment: left
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC2:1;1,2;2,3;3,4;4,5;5,6;6,7;7,8;8,9;9,10;10,11;11,12;12,120;120,200;200
+        }
+        layout {
+            sequence: 170
+            region: @workshop-request
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 3
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            formRegion: @workshop-request
+            column: DURATION
+            dataType: number
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            helpText: For longer durations, please put a request on the  #livelabs-help slack channel.
+        }
+    )
+
+    pageItem P601_EXTERNAL_FLG (
+        type: switch
+        label {
+            label: Is this event for a customer (or partner?)
+            alignment: left
+        }
+        settings {
+            useDefaults: false
+            onValue: 1
+            offValue: 0
+        }
+        layout {
+            sequence: 180
+            region: @workshop-request
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @workshop-request
+            column: EXTERNAL_FLG
+            dataType: number
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P601_FOCUS_AREA_ID (
+        type: selectList
+        label {
+            label: Your role?
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery: select key_value as workshopname, key_id as id from keys where key_type='FOCUS' and active_flg = 1 order by 1;
+            nullDisplayValue: - Select One -
+        }
+        layout {
+            sequence: 90
+            region: @workshop-request
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            formRegion: @workshop-request
+            column: FOCUS_AREA_ID
+            dataType: number
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P601_MANAGER_EMAIL (
+        type: textField
+        label {
+            label: Manager Email
+            alignment: left
+        }
+        settings {
+            subtype: email
+            trimSpaces: none
+        }
+        layout {
+            sequence: 60
+            region: @workshop-request
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            valueRequired: true
+            maxLength: 50
+        }
+        source {
+            formRegion: @workshop-request
+            column: MANAGER_EMAIL
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P601_REGION_ID (
+        type: selectList
+        label {
+            label: Your region?
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery: select key_value as workshopname, key_id as id from keys where key_type='REGION' and active_flg = 1 order by 1;
+            nullDisplayValue: - Select one -
+        }
+        layout {
+            sequence: 80
+            region: @workshop-request
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            formRegion: @workshop-request
+            column: REGION_ID
+            dataType: number
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P601_REQUESTOR_EMAIL (
+        type: textField
+        label {
+            label: Email
+            alignment: left
+        }
+        settings {
+            subtype: email
+            trimSpaces: none
+        }
+        layout {
+            sequence: 40
+            region: @workshop-request
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            valueRequired: true
+            maxLength: 50
+        }
+        source {
+            formRegion: @workshop-request
+            column: REQUESTOR_EMAIL
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            inlineHelpText: Oracle emails only
+            helpText: The Workshop Lead requests the workshop for their customers and sends the accounts to each customer (this is necessary for legal reasons)
+        }
+    )
+
+    pageItem P601_REQUESTOR_FIRST_NAME (
+        type: textField
+        label {
+            label: First Name
+            alignment: left
+        }
+        settings {
+            trimSpaces: none
+        }
+        layout {
+            sequence: 20
+            region: @workshop-request
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            valueRequired: true
+            maxLength: 50
+        }
+        source {
+            formRegion: @workshop-request
+            column: REQUESTOR_FIRST_NAME
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P601_REQUESTOR_LAST_NAME (
+        type: textField
+        label {
+            label: Last Name
+            alignment: left
+        }
+        settings {
+            trimSpaces: none
+        }
+        layout {
+            sequence: 30
+            region: @workshop-request
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 50
+        }
+        source {
+            formRegion: @workshop-request
+            column: REQUESTOR_LAST_NAME
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P601_REQUESTOR_MOBILE_PHONE (
+        type: textField
+        label {
+            label: Mobile Phone
+            alignment: left
+        }
+        settings {
+            subtype: phone
+        }
+        layout {
+            sequence: 50
+            region: @workshop-request
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 20
+        }
+        source {
+            formRegion: @workshop-request
+            column: REQUESTOR_MOBILE_PHONE
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            inlineHelpText: Include country code with mobile phone number
+        }
+    )
+
+    pageItem P601_ROWID (
+        type: hidden
+        layout {
+            sequence: 110
+            region: @workshop-request
+            slot: regionBody
+        }
+        source {
+            formRegion: @workshop-request
+            column: ROWID
+            dataType: varchar2
+            primaryKey: true
+        }
+        security {
+            sessionStateProtection: checksumRequiredSessionLevel
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P601_SEATS (
+        type: selectList
+        label {
+            label: Seats Needed
+            alignment: left
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC2:1;1,2;2,3;3,4;4,5;5,6;6,7;7,8;8,9;9,10;10,11;11,12;12,13;13,14;14,15;15,16;16,17;17,18;18,19;19,20;20,21;21,22;22,23;23,24;24,25;25,26;26,27;27,28;28,29;29,30;30
+        }
+        layout {
+            sequence: 160
+            region: @workshop-request
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            formRegion: @workshop-request
+            column: SEATS_NEEDED
+            dataType: number
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            helpText: Max seats permitted - 30.  Please contact Kay Malcolm or Yaisah Granillo for larger requests.
+        }
+    )
+
+    pageItem P601_START_TIME_AMPM (
+        type: hidden
+        layout {
+            sequence: 210
+            region: @workshop-request
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: KEY_ID
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P601_START_TIME_DAY (
+        type: datePickerJquery
+        label {
+            label: What day will the workshop be held?
+            alignment: left
+        }
+        layout {
+            sequence: 130
+            region: @workshop-request
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            width: 20
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            formRegion: @workshop-request
+            column: START_TIME_DAY
+            dataType: timestamp
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P601_START_TIME_HR (
+        type: selectList
+        label {
+            label: Start Time (24H)
+            alignment: left
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC:06:00;06:00,07:00;07:00,08:00;08:00,09:00;09:00,10:00;10:00,11:00;11:00,12:00;12:00,13:00;13:00,14:00;14:00,15:00;15:00,16:00;16:00,17:00;17:00,18:00;18:00,19:00;19:00,20:00;20:00,21:00;21:00,22:00;22:00
+            nullDisplayValue: - Select one -
+        }
+        layout {
+            sequence: 140
+            region: @workshop-request
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            formRegion: @workshop-request
+            column: START_TIME_HR
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P601_START_TIME_MIN (
+        type: hidden
+        layout {
+            sequence: 200
+            region: @workshop-request
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: KEY_ID
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P601_TIMEZONE (
+        type: selectList
+        label {
+            label: Timezone where workshop will be held
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery: select key_value_long||' '||key_value, key_id from keys where key_type='TZ' ;
+        }
+        layout {
+            sequence: 150
+            region: @workshop-request
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            formRegion: @workshop-request
+            column: TIMEZONE_ID
+            dataType: number
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            helpText: This timezone controls when the users will be available and when the objects will be terminated.  Choose carefully.
+        }
+    )
+
+    pageItem P601_WORKSHOP_ID (
+        type: selectList
+        label {
+            label: Choose the Workshop you wish to run
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery: select name as workshopname, id as id from workshops where active_flg = 1 and multi_workshop_flg=1 and approved_flg=1 order by 1;
+            nullDisplayValue: - Select one -
+        }
+        layout {
+            sequence: 120
+            region: @workshop-request
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            formRegion: @workshop-request
+            column: WORKSHOP_ID
+            dataType: number
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            helpText: We are adding additional Single User workshops to this list daily.
+        }
+    )
+
+    button cancel (
+        buttonName: CANCEL
+        label: Cancel
+        layout {
+            sequence: 10
+            region: @workshop-request
+            slot: close
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 600
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button create (
+        buttonName: CREATE
+        label: Create
+        layout {
+            sequence: 40
+            region: @workshop-request
+            slot: create
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: insert
+        }
+    )
+
+    button delete (
+        buttonName: DELETE
+        label: Delete
+        layout {
+            sequence: 20
+            region: @workshop-request
+            slot: delete
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectUrl
+            targetUrl: javascript:apex.confirm(htmldb_delete_message,'DELETE');
+            executeValidations: false
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: delete
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P601_ROWID
+        }
+    )
+
+    button save (
+        buttonName: SAVE
+        label: Apply Changes
+        layout {
+            sequence: 30
+            region: @workshop-request
+            slot: change
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: update
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P601_ROWID
+        }
+    )
+
+    validation p601-start-time-must-be-timestamp (
+        name: P601_START_TIME must be timestamp
+        execution {
+            sequence: 60
+        }
+        validation {
+            type: itemIsAValidTimestamp
+            item: P601_START_TIME_DAY
+        }
+        error {
+            errorMessage: #LABEL# must be a valid timestamp.
+            associatedItem: @P601_START_TIME_DAY
+        }
+    )
+
+    process initialize-form-create-user-workshop-request (
+        name: Initialize form Create User Workshop Request
+        type: formInitialization
+        formRegion: @workshop-request
+        execution {
+            sequence: 10
+            point: beforeHeader
+        }
+        advanced {
+            executionMappingIdentifier: 56317261041386274528
+        }
+    )
+
+    process process-form-create-user-workshop-request (
+        name: Process form Create User Workshop Request
+        type: formAutoRowProcessing
+        formRegion: @workshop-request
+        execution {
+            sequence: 10
+        }
+        advanced {
+            executionMappingIdentifier: 56317261396664274529
+        }
+    )
+
+    branch (
+        name: Go To Page 602
+        execution {
+            sequence: 1
+        }
+        behavior {
+            target: {
+                page: 602
+            }
+        }
+    )
+
+)
+
