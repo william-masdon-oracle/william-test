@@ -32,7 +32,7 @@ page 9166 (
                        lse.valid_from,
                        lse.valid_to,
                        lse.valid_timezone,
-                       lse.title_override,
+                       lse.event_title,
                        (select count(*)
                           from ll_livestack_event_vouchers lsev
                          where lsev.livestack_event_id = lse.id) as mapped_events,
@@ -222,10 +222,10 @@ page 9166 (
             }
         )
 
-        column TITLE_OVERRIDE (
+        column EVENT_TITLE (
             type: plainText
             heading {
-                heading: Title Override
+                heading: Event Title
             }
             layout {
                 sequence: 50
@@ -327,7 +327,7 @@ page 9166 (
                 sequence: 3
             )
 
-            displayColumn TITLE_OVERRIDE (
+            displayColumn EVENT_TITLE (
                 sequence: 4
             )
 

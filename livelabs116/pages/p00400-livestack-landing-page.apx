@@ -1910,7 +1910,7 @@ page 400 (
                 declare
                   l_event_id           ll_livestack_events.id%type;
                   l_livestack_id       ll_livestack_events.livestack_id%type;
-                  l_event_title        ll_livestack_events.title_override%type;
+                  l_event_title        ll_livestack_events.event_title%type;
                   l_event_desc_long    ll_livestack_events.desc_long_override%type;
                   l_event_outline      ll_livestack_events.outline_override%type;
                   l_event_prereqs      ll_livestack_events.prereqs_override%type;
@@ -1932,7 +1932,7 @@ page 400 (
                     begin
                       select id,
                              livestack_id,
-                             title_override,
+                             event_title,
                              desc_long_override,
                              outline_override,
                              prereqs_override,

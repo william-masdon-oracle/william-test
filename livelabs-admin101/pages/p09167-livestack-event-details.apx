@@ -14,34 +14,6 @@ page 9167 (
         formAutoComplete: false
     }
 
-    region livestack-event-details (
-        name: LiveStack Event Details
-        type: form
-        source {
-            location: localDatabase
-            tableName: LL_LIVESTACK_EVENTS
-        }
-        layout {
-            sequence: 10
-            slot: contentBody
-        }
-        appearance {
-            template: @standard
-            templateOptions: [
-                #DEFAULT#
-                t-Region--scrollBody
-            ]
-        }
-        edit {
-            enabled: true
-            allowedOperations: [
-                add
-                update
-                delete
-            ]
-        }
-    )
-
     region associated-workshop-events (
         name: Associated Workshop Events
         type: staticContent
@@ -209,20 +181,6 @@ page 9167 (
 
         )
 
-        column APEX$ROW_ACTION (
-            type: actionsMenu
-            layout {
-                sequence: 20
-            }
-        )
-
-        column APEX$ROW_SELECTOR (
-            type: rowSelector
-            layout {
-                sequence: 10
-            }
-        )
-
         column ACTIVE_FLG (
             type: selectList
             heading {
@@ -250,6 +208,20 @@ page 9167 (
             }
             columnFilter {
                 lovType: useLov
+            }
+        )
+
+        column APEX$ROW_ACTION (
+            type: actionsMenu
+            layout {
+                sequence: 20
+            }
+        )
+
+        column APEX$ROW_SELECTOR (
+            type: rowSelector
+            layout {
+                sequence: 10
             }
         )
 
@@ -676,22 +648,6 @@ page 9167 (
                 rowsPerPage: 50
             }
 
-            displayColumn POSITION (
-                sequence: 1
-            )
-
-            displayColumn ENTRY_TITLE (
-                sequence: 2
-            )
-
-            displayColumn VOUCHER_CODE (
-                sequence: 3
-            )
-
-            displayColumn EVENT_TITLE (
-                sequence: 4
-            )
-
             displayColumn ACTIVE_FLG (
                 sequence: 5
             )
@@ -700,108 +656,51 @@ page 9167 (
                 sequence: 6
             )
 
+            displayColumn ENTRY_TITLE (
+                sequence: 2
+            )
+
+            displayColumn EVENT_TITLE (
+                sequence: 4
+            )
+
+            displayColumn POSITION (
+                sequence: 1
+            )
+
+            displayColumn VOUCHER_CODE (
+                sequence: 3
+            )
+
         )
 
     )
 
-    pageItem P9167_ID (
-        type: displayOnly
-        label {
-            label: ID
-            alignment: left
+    region livestack-event-details (
+        name: LiveStack Event Details
+        type: form
+        source {
+            location: localDatabase
+            tableName: LL_LIVESTACK_EVENTS
         }
         layout {
             sequence: 10
-            region: @livestack-event-details
-            slot: regionBody
-            alignment: left
-            columnSpan: 1
+            slot: contentBody
         }
         appearance {
-            template: @optional-floating
-            templateOptions: #DEFAULT#
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
         }
-        source {
-            formRegion: @livestack-event-details
-            column: ID
-            dataType: number
-            primaryKey: true
-        }
-        security {
-            sessionStateProtection: checksumRequiredSessionLevel
-            encryptSessionState: false
-        }
-    )
-
-    pageItem P9167_EVENT_CODE (
-        type: displayOnly
-        label {
-            label: LiveStack Event Code
-            alignment: left
-        }
-        layout {
-            sequence: 20
-            region: @livestack-event-details
-            slot: regionBody
-            alignment: left
-            startNewRow: false
-            columnSpan: 3
-        }
-        appearance {
-            template: @optional-floating
-            templateOptions: #DEFAULT#
-        }
-        source {
-            formRegion: @livestack-event-details
-            column: EVENT_CODE
-            dataType: varchar2
-        }
-        security {
-            encryptSessionState: false
-        }
-    )
-
-    pageItem P9167_LIVESTACK_ID (
-        type: popupLov
-        label {
-            label: LiveStack
-            alignment: left
-        }
-        lov {
-            type: sqlQuery
-            sqlQuery:
-                ```sql
-                select name || ' (' || id || ')' as d,
-                       id as r
-                  from ll_livestacks
-                 where nvl(active_flg, 'Y') <> 'N'
-                 order by name
-                ```
-            displayExtraValues: false
-            displayNullValue: false
-        }
-        layout {
-            sequence: 40
-            region: @livestack-event-details
-            slot: regionBody
-            alignment: left
-            startNewRow: true
-        }
-        appearance {
-            template: @required-floating
-            templateOptions: #DEFAULT#
-            width: 60
-        }
-        validation {
-            valueRequired: true
-        }
-        source {
-            formRegion: @livestack-event-details
-            column: LIVESTACK_ID
-            dataType: number
-        }
-        security {
-            encryptSessionState: false
+        edit {
+            enabled: true
+            allowedOperations: [
+                add
+                update
+                delete
+            ]
         }
     )
 
@@ -843,6 +742,37 @@ page 9167 (
         }
     )
 
+    pageItem P9167_DESC_LONG_OVERRIDE (
+        type: richTextEditor
+        label {
+            label: Description Override
+            alignment: left
+        }
+        settings {
+            format: html
+            toolbar: basic
+            minHeight: 180
+        }
+        layout {
+            sequence: 130
+            region: @livestack-event-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @livestack-event-details
+            column: DESC_LONG_OVERRIDE
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
     pageItem P9167_EMAIL_CREATOR (
         type: textField
         label {
@@ -850,7 +780,7 @@ page 9167 (
             alignment: left
         }
         layout {
-            sequence: 50
+            sequence: 60
             region: @livestack-event-details
             slot: regionBody
             alignment: left
@@ -880,7 +810,7 @@ page 9167 (
             alignment: left
         }
         layout {
-            sequence: 60
+            sequence: 70
             region: @livestack-event-details
             slot: regionBody
             alignment: left
@@ -905,144 +835,81 @@ page 9167 (
         }
     )
 
-    pageItem P9167_VALID_FROM (
-        type: datePickerJquery
+    pageItem P9167_EVENT_CODE (
+        type: displayOnly
         label {
-            label: Start Date
-            alignment: left
-        }
-        settings {
-            minDate: -2d
-        }
-        layout {
-            sequence: 70
-            region: @livestack-event-details
-            slot: regionBody
-            alignment: left
-            columnSpan: 2
-        }
-        appearance {
-            template: @optional-floating
-            templateOptions: #DEFAULT#
-            width: 32
-        }
-        source {
-            formRegion: @livestack-event-details
-            column: VALID_FROM
-            dataType: date
-        }
-        security {
-            encryptSessionState: false
-        }
-    )
-
-    pageItem P9167_VALID_TO (
-        type: datePickerJquery
-        label {
-            label: End Date
+            label: LiveStack Event Code
             alignment: left
         }
         layout {
-            sequence: 80
+            sequence: 20
             region: @livestack-event-details
             slot: regionBody
             alignment: left
             startNewRow: false
-            columnSpan: 2
+            columnSpan: 3
         }
         appearance {
             template: @optional-floating
             templateOptions: #DEFAULT#
-            width: 32
         }
         source {
             formRegion: @livestack-event-details
-            column: VALID_TO
-            dataType: date
+            column: EVENT_CODE
+            dataType: varchar2
         }
         security {
             encryptSessionState: false
         }
     )
 
-    pageItem P9167_VALID_TIMEZONE (
+    pageItem P9167_ID (
+        type: displayOnly
+        label {
+            label: ID
+            alignment: left
+        }
+        layout {
+            sequence: 10
+            region: @livestack-event-details
+            slot: regionBody
+            alignment: left
+            columnSpan: 1
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @livestack-event-details
+            column: ID
+            dataType: number
+            primaryKey: true
+        }
+        security {
+            sessionStateProtection: checksumRequiredSessionLevel
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9167_LIVESTACK_ID (
         type: popupLov
         label {
-            label: Timezone
+            label: LiveStack
             alignment: left
-        }
-        settings {
-            fetchOnSearch: true
         }
         lov {
-            type: sharedComponent
-            lov: @timezones
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select name || ' (' || id || ')' as d,
+                       id as r
+                  from ll_livestacks
+                 where nvl(active_flg, 'Y') <> 'N'
+                 order by name
+                ```
             displayExtraValues: false
             displayNullValue: false
-        }
-        layout {
-            sequence: 90
-            region: @livestack-event-details
-            slot: regionBody
-            alignment: left
-            startNewRow: false
-            columnSpan: 2
-        }
-        appearance {
-            template: @optional-floating
-            templateOptions: #DEFAULT#
-            width: 32
-        }
-        source {
-            formRegion: @livestack-event-details
-            column: VALID_TIMEZONE
-            dataType: varchar2
-        }
-        security {
-            encryptSessionState: false
-        }
-    )
-
-    pageItem P9167_TITLE_OVERRIDE (
-        type: textField
-        label {
-            label: Title Override
-            alignment: left
-        }
-        layout {
-            sequence: 100
-            region: @livestack-event-details
-            slot: regionBody
-            alignment: left
-        }
-        appearance {
-            template: @optional-floating
-            templateOptions: #DEFAULT#
-            width: 60
-        }
-        validation {
-            maxLength: 1000
-        }
-        source {
-            formRegion: @livestack-event-details
-            column: TITLE_OVERRIDE
-            dataType: varchar2
-        }
-        security {
-            encryptSessionState: false
-        }
-    )
-
-    pageItem P9167_DESC_LONG_OVERRIDE (
-        type: richTextEditor
-        label {
-            label: Description Override
-            alignment: left
-        }
-        settings {
-            format: html
-            toolbar: basic
-            minHeight: 180
         }
         layout {
             sequence: 110
@@ -1051,13 +918,17 @@ page 9167 (
             alignment: left
         }
         appearance {
-            template: @optional-floating
+            template: @required-floating
             templateOptions: #DEFAULT#
+            width: 60
+        }
+        validation {
+            valueRequired: true
         }
         source {
             formRegion: @livestack-event-details
-            column: DESC_LONG_OVERRIDE
-            dataType: varchar2
+            column: LIVESTACK_ID
+            dataType: number
         }
         security {
             encryptSessionState: false
@@ -1076,7 +947,7 @@ page 9167 (
             minHeight: 180
         }
         layout {
-            sequence: 120
+            sequence: 140
             region: @livestack-event-details
             slot: regionBody
             alignment: left
@@ -1107,7 +978,7 @@ page 9167 (
             minHeight: 180
         }
         layout {
-            sequence: 130
+            sequence: 150
             region: @livestack-event-details
             slot: regionBody
             alignment: left
@@ -1133,7 +1004,7 @@ page 9167 (
             alignment: left
         }
         layout {
-            sequence: 140
+            sequence: 160
             region: @livestack-event-details
             slot: regionBody
             alignment: left
@@ -1151,6 +1022,134 @@ page 9167 (
             formRegion: @livestack-event-details
             column: REMARKS
             dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9167_EVENT_TITLE (
+        type: textField
+        label {
+            label: Event Title
+            alignment: left
+        }
+        layout {
+            sequence: 40
+            region: @livestack-event-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 60
+        }
+        validation {
+            maxLength: 1000
+        }
+        source {
+            formRegion: @livestack-event-details
+            column: EVENT_TITLE
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9167_VALID_FROM (
+        type: datePickerJquery
+        label {
+            label: Start Date
+            alignment: left
+        }
+        settings {
+            minDate: -2d
+        }
+        layout {
+            sequence: 80
+            region: @livestack-event-details
+            slot: regionBody
+            alignment: left
+            columnSpan: 2
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        source {
+            formRegion: @livestack-event-details
+            column: VALID_FROM
+            dataType: date
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9167_VALID_TIMEZONE (
+        type: popupLov
+        label {
+            label: Timezone
+            alignment: left
+        }
+        settings {
+            fetchOnSearch: true
+        }
+        lov {
+            type: sharedComponent
+            lov: @timezones
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 100
+            region: @livestack-event-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 2
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        source {
+            formRegion: @livestack-event-details
+            column: VALID_TIMEZONE
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9167_VALID_TO (
+        type: datePickerJquery
+        label {
+            label: End Date
+            alignment: left
+        }
+        layout {
+            sequence: 90
+            region: @livestack-event-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 2
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        source {
+            formRegion: @livestack-event-details
+            column: VALID_TO
+            dataType: date
         }
         security {
             encryptSessionState: false
@@ -1229,6 +1228,32 @@ page 9167 (
         }
     )
 
+    button populate-overrides (
+        buttonName: POPULATE_OVERRIDES
+        label: Populate Empty Overrides
+        layout {
+            sequence: 120
+            region: @livestack-event-details
+            slot: regionBody
+            startNewRow: false
+            columnSpan: 4
+        }
+        appearance {
+            buttonTemplate: @text-with-icon
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--large
+                t-Button--iconLeft
+                t-Button--gapTop
+            ]
+            icon: fa-copy
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
     button save (
         buttonName: SAVE
         label: Apply Changes
@@ -1249,27 +1274,6 @@ page 9167 (
         serverSideCondition {
             type: itemIsNotNull
             item: P9167_ID
-        }
-    )
-
-    button populate-overrides (
-        buttonName: POPULATE_OVERRIDES
-        label: Populate Empty Overrides
-        layout {
-            sequence: 40
-            region: @livestack-event-details
-            slot: change
-        }
-        appearance {
-            buttonTemplate: @text-with-icon
-            templateOptions: [
-                #DEFAULT#
-                t-Button--iconLeft
-            ]
-            icon: fa-copy
-        }
-        behavior {
-            action: definedByDynamicAction
         }
     )
 
@@ -1297,8 +1301,8 @@ page 9167 (
                           from ll_livestacks
                          where id = :P9167_LIVESTACK_ID
                     ) loop
-                        if :P9167_TITLE_OVERRIDE is null then
-                            :P9167_TITLE_OVERRIDE := x.name;
+                        if :P9167_EVENT_TITLE is null then
+                            :P9167_EVENT_TITLE := x.name;
                         end if;
 
                         if :P9167_DESC_LONG_OVERRIDE is null then
@@ -1316,13 +1320,13 @@ page 9167 (
                     ```
                 itemsToSubmit: [
                     P9167_LIVESTACK_ID
-                    P9167_TITLE_OVERRIDE
+                    P9167_EVENT_TITLE
                     P9167_DESC_LONG_OVERRIDE
                     P9167_OUTLINE_OVERRIDE
                     P9167_PREREQS_OVERRIDE
                 ]
                 itemsToReturn: [
-                    P9167_TITLE_OVERRIDE
+                    P9167_EVENT_TITLE
                     P9167_DESC_LONG_OVERRIDE
                     P9167_OUTLINE_OVERRIDE
                     P9167_PREREQS_OVERRIDE
@@ -1350,6 +1354,18 @@ page 9167 (
         }
     )
 
+    process process-associated-workshop-events (
+        name: Process Associated Workshop Events
+        type: interactiveGridAutoRowProcessing
+        editableRegion: @associated-workshop-events-grid
+        execution {
+            sequence: 20
+        }
+        advanced {
+            executionMappingIdentifier: 9167000000000030
+        }
+    )
+
     process process-form-livestack-event-details (
         name: Process form LiveStack Event Details
         type: formAutoRowProcessing
@@ -1363,18 +1379,6 @@ page 9167 (
         serverSideCondition {
             type: requestIsContainedInValue
             value: CREATE,SAVE,DELETE
-        }
-    )
-
-    process process-associated-workshop-events (
-        name: Process Associated Workshop Events
-        type: interactiveGridAutoRowProcessing
-        editableRegion: @associated-workshop-events-grid
-        execution {
-            sequence: 20
-        }
-        advanced {
-            executionMappingIdentifier: 9167000000000030
         }
     )
 

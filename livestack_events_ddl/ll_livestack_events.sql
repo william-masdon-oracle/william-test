@@ -8,7 +8,7 @@ create table ll_livestack_events (
     valid_from      date,
     valid_to        date,
     valid_timezone  varchar2(50),
-    title_override  varchar2(1000),
+    event_title     varchar2(1000),
     desc_long_override varchar2(4000),
     outline_override varchar2(4000),
     prereqs_override varchar2(4000),
@@ -67,8 +67,8 @@ comment on table ll_livestack_event_vouchers is
     'Maps a LiveStack event entry to an existing LL_VOUCHERS event code.';
 comment on column ll_livestack_events.event_code is
     'Public LiveStack event code generated with the same format as LL_VOUCHERS.VOUCHER_CODE.';
-comment on column ll_livestack_events.title_override is
-    'Optional LiveStack title override for this event.';
+comment on column ll_livestack_events.event_title is
+    'Event title shown for this LiveStack event.';
 comment on column ll_livestack_events.desc_long_override is
     'Optional LiveStack long description override for this event.';
 comment on column ll_livestack_events.outline_override is
