@@ -61,17 +61,12 @@ page 70 (
             type: sqlQuery
             sqlQuery:
                 ```sql
-                select lee.id,
-                       lee.livestack_entry_id,
+                select le.position,
                        lee.event_id,
+                       coalesce(le.title_override, w.title) as entry_title,
                        e.event_code,
                        e.event_status,
-                       e.livelabs_id,
-                       coalesce(le.title_override, w.title) as entry_title,
-                       le.position,
-                       e.valid_from,
-                       e.valid_to,
-                       e.updated_flg
+                       e.livelabs_id
                   from wms_livestack_event_entries lee
                   join wms_events e
                     on e.id = lee.event_id
@@ -106,15 +101,30 @@ page 70 (
             whenNoDataFound: Entry events are created after the LiveStack event request is submitted.
         }
 
-        column ENTRY_TITLE (
+        column POSITION (
             reportColumnQueryId: 1
             derivedColumn: N
-            type: link
             heading {
-                heading: Entry
+                heading: Position
+                alignment: end
             }
             layout {
                 sequence: 10
+                columnAlignment: end
+            }
+        )
+
+        column EVENT_ID (
+            reportColumnQueryId: 2
+            derivedColumn: N
+            type: link
+            heading {
+                heading: Event ID
+                alignment: end
+            }
+            layout {
+                sequence: 20
+                columnAlignment: end
             }
             link {
                 target: {
@@ -124,64 +134,53 @@ page 70 (
                     }
                     clearCache: 35
                 }
-                linkText: #ENTRY_TITLE#
+                linkText: #EVENT_ID#
             }
         )
 
-        column EVENT_CODE (
-            reportColumnQueryId: 2
-            derivedColumn: N
-            heading {
-                heading: Event Code
-            }
-            layout {
-                sequence: 20
-            }
-        )
-
-        column EVENT_STATUS (
+        column ENTRY_TITLE (
             reportColumnQueryId: 3
             derivedColumn: N
             heading {
-                heading: Status
+                heading: Entry
             }
             layout {
                 sequence: 30
             }
         )
 
-        column LIVELABS_ID (
+        column EVENT_CODE (
             reportColumnQueryId: 4
             derivedColumn: N
             heading {
-                heading: Workshop ID
-                alignment: end
+                heading: Event Code
             }
             layout {
                 sequence: 40
-                columnAlignment: end
             }
         )
 
-        column VALID_FROM (
+        column EVENT_STATUS (
             reportColumnQueryId: 5
             derivedColumn: N
             heading {
-                heading: Valid From
+                heading: Status
             }
             layout {
                 sequence: 50
             }
         )
 
-        column VALID_TO (
+        column LIVELABS_ID (
             reportColumnQueryId: 6
             derivedColumn: N
             heading {
-                heading: Valid To
+                heading: Workshop ID
+                alignment: end
             }
             layout {
                 sequence: 60
+                columnAlignment: end
             }
         )
 
@@ -204,7 +203,7 @@ page 70 (
             primaryKey: true
         }
         sessionState {
-            storage: session
+            storage: memory
         }
     )
 
@@ -457,8 +456,11 @@ page 70 (
             columnSpan: 3
         }
         appearance {
-            template: @optional-floating
+            template: @required-floating
             templateOptions: #DEFAULT#
+        }
+        validation {
+            valueRequired: true
         }
         source {
             formRegion: @livestack-event-form
@@ -482,8 +484,11 @@ page 70 (
             columnSpan: 3
         }
         appearance {
-            template: @optional-floating
+            template: @required-floating
             templateOptions: #DEFAULT#
+        }
+        validation {
+            valueRequired: true
         }
         source {
             formRegion: @livestack-event-form
@@ -493,10 +498,26 @@ page 70 (
     )
 
     pageItem P70_VALID_TIMEZONE (
-        type: textField
+        type: popupLov
         label {
             label: Timezone
             alignment: left
+        }
+        settings {
+            fetchOnSearch: true
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select key_name, key_value
+                from wms_keys
+                where key_type='TIMEZONE'
+                and active_flg='Y'
+                order by key_order, key_name
+                ```
+            displayExtraValues: false
+            displayNullValue: false
         }
         layout {
             sequence: 110
@@ -507,10 +528,12 @@ page 70 (
             columnSpan: 3
         }
         appearance {
-            template: @optional-floating
+            template: @required-floating
             templateOptions: #DEFAULT#
+            width: 30
         }
         validation {
+            valueRequired: true
             maxLength: 50
         }
         source {
@@ -520,11 +543,42 @@ page 70 (
         }
     )
 
+    button populate-empty-fields (
+        buttonName: Populate_Empty_Fields
+        label: Populate Empty Fields
+        layout {
+            sequence: 115
+            region: @livestack-event-form
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 3
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--large
+                t-Button--gapTop
+            ]
+        }
+        behavior {
+            action: definedByDynamicAction
+            executeValidations: false
+        }
+    )
+
     pageItem P70_DESC_LONG_OVERRIDE (
-        type: textarea
+        type: richTextEditor
         label {
             label: Long Description Override
             alignment: left
+        }
+        settings {
+            format: html
+            toolbar: basic
+            minHeight: 180
         }
         layout {
             sequence: 120
@@ -535,11 +589,6 @@ page 70 (
         appearance {
             template: @optional-floating
             templateOptions: #DEFAULT#
-            width: 60
-            height: 5
-        }
-        validation {
-            maxLength: 4000
         }
         source {
             formRegion: @livestack-event-form
@@ -556,6 +605,7 @@ page 70 (
         }
         settings {
             format: html
+            toolbar: basic
             minHeight: 180
         }
         layout {
@@ -583,6 +633,7 @@ page 70 (
         }
         settings {
             format: html
+            toolbar: basic
             minHeight: 180
         }
         layout {
@@ -762,6 +813,99 @@ page 70 (
         }
     )
 
+    dynamicAction populate-empty-fields-da (
+        name: Populate Empty Fields DA
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @populate-empty-fields
+        }
+
+        action native-alert (
+            action: alert
+            settings {
+                title: Select a LiveStack
+                message: Please select a LiveStack before populating empty fields.
+                style: danger
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+            clientSideCondition {
+                type: itemIsNull
+                item: P70_LIVESTACK_ID
+            }
+        )
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    begin
+                        select nvl(:P70_EVENT_TITLE, name),
+                               nvl(:P70_DESC_LONG_OVERRIDE, desc_long),
+                               nvl(:P70_OUTLINE_OVERRIDE, outline),
+                               nvl(:P70_PREREQS_OVERRIDE, prereqs)
+                          into :P70_EVENT_TITLE,
+                               :P70_DESC_LONG_OVERRIDE,
+                               :P70_OUTLINE_OVERRIDE,
+                               :P70_PREREQS_OVERRIDE
+                          from wms_livestacks
+                         where id = :P70_LIVESTACK_ID;
+                    end;
+                    ```
+                itemsToSubmit: [
+                    P70_LIVESTACK_ID
+                    P70_EVENT_TITLE
+                    P70_DESC_LONG_OVERRIDE
+                    P70_OUTLINE_OVERRIDE
+                    P70_PREREQS_OVERRIDE
+                ]
+                itemsToReturn: [
+                    P70_EVENT_TITLE
+                    P70_DESC_LONG_OVERRIDE
+                    P70_OUTLINE_OVERRIDE
+                    P70_PREREQS_OVERRIDE
+                ]
+                showProcessing: true
+            }
+            execution {
+                sequence: 20
+                fireWhenEventResultIs: true
+                fireOnInit: false
+            }
+            clientSideCondition {
+                type: itemIsNotNull
+                item: P70_LIVESTACK_ID
+            }
+        )
+
+    )
+
+    validation max-valid-to (
+        name: max_valid_to
+        execution {
+            sequence: 10
+        }
+        validation {
+            plsqlExpression: (to_date(:P70_VALID_TO, 'MM/DD/YYYY') - to_date(:P70_VALID_FROM, 'MM/DD/YYYY')) <= 30
+        }
+        error {
+            errorMessage: Creating an Event Code lasting more than 30 days is not permitted. Please set the start and end date to include a maximum of 30 days, and if necessary, include the reasoning behind an extended time in the <b>Remarks</b> section.
+            displayLocation: inlineInNotification
+            associatedItem: @P70_VALID_FROM
+        }
+        serverSideCondition {
+            type: noRowsReturned
+            sqlQuery: select email from workshop_person_role where workshop_id is null and lower(email) = lower(:APP_USER) and livelabs_publisher_flg = 1;
+        }
+    )
+
     process initialize-form-livestack-event (
         name: Initialize form LiveStack Event
         type: formInitialization
@@ -815,6 +959,7 @@ page 70 (
                 ```plsql
                 declare
                     l_event_id wms_events.id%type;
+                    l_existing_count number;
                 begin
                     for entry in (
                         select le.id as livestack_entry_id,
@@ -825,12 +970,13 @@ page 70 (
                          order by le.position nulls last, le.id
                     )
                     loop
-                        if not exists (
-                            select 1
-                              from wms_livestack_event_entries lee
-                             where lee.livestack_event_id = :P70_ID
-                               and lee.livestack_entry_id = entry.livestack_entry_id
-                        ) then
+                        select count(*)
+                          into l_existing_count
+                          from wms_livestack_event_entries lee
+                         where lee.livestack_event_id = :P70_ID
+                           and lee.livestack_entry_id = entry.livestack_entry_id;
+                
+                        if l_existing_count = 0 then
                             insert into wms_events (
                                 email_creator,
                                 email_requestor,

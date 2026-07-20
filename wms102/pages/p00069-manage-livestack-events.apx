@@ -89,6 +89,164 @@ page 69 (
                 saveButton
             ]
         }
+        advanced {
+            savedReportMappingIdentifier: 70364581090000000001
+        }
+
+        savedReport 703645811 (
+            visibility: primary
+            view {
+                default: grid
+            }
+            singleRowView {
+                displayedColumns: true
+            }
+
+            displayColumn (
+                column: @ID
+                layout {
+                    width: 70
+                    sequence: 1
+                }
+            )
+
+            displayColumn (
+                column: @LIVESTACK_ID
+                layout {
+                    width: 100
+                    sequence: 2
+                }
+            )
+
+            displayColumn (
+                column: @LIVESTACK_NAME
+                layout {
+                    width: 300
+                    sequence: 3
+                }
+            )
+
+            displayColumn (
+                column: @EVENT_TITLE
+                layout {
+                    width: 300
+                    sequence: 4
+                }
+            )
+
+            displayColumn (
+                column: @EVENT_CODE
+                layout {
+                    width: 160
+                    sequence: 5
+                }
+            )
+
+            displayColumn (
+                column: @EVENT_STATUS
+                layout {
+                    width: 140
+                    sequence: 6
+                }
+            )
+
+            displayColumn (
+                column: @ENTRY_EVENT_COUNT
+                layout {
+                    width: 110
+                    sequence: 7
+                }
+            )
+
+            displayColumn (
+                column: @EMAIL_CREATOR
+                layout {
+                    width: 180
+                    sequence: 8
+                }
+            )
+
+            displayColumn (
+                column: @EMAIL_REQUESTOR
+                layout {
+                    show: false
+                    sequence: 9
+                }
+            )
+
+            displayColumn (
+                column: @VALID_FROM
+                layout {
+                    width: 110
+                    sequence: 10
+                }
+            )
+
+            displayColumn (
+                column: @VALID_TO
+                layout {
+                    width: 110
+                    sequence: 11
+                }
+            )
+
+            displayColumn (
+                column: @VALID_TIMEZONE
+                layout {
+                    show: false
+                    sequence: 12
+                }
+            )
+
+            displayColumn (
+                column: @ACTIVE_FLG
+                layout {
+                    show: false
+                    sequence: 13
+                }
+            )
+
+            displayColumn (
+                column: @UPDATED_FLG
+                layout {
+                    show: false
+                    sequence: 14
+                }
+            )
+
+            displayColumn (
+                column: @CREATED_DATE
+                layout {
+                    show: false
+                    sequence: 15
+                }
+            )
+
+            displayColumn (
+                column: @CREATED_BY
+                layout {
+                    show: false
+                    sequence: 16
+                }
+            )
+
+            displayColumn (
+                column: @UPDATED_ON
+                layout {
+                    show: false
+                    sequence: 17
+                }
+            )
+
+            displayColumn (
+                column: @UPDATED_BY
+                layout {
+                    show: false
+                    sequence: 18
+                }
+            )
+
+        )
 
         column ID (
             type: link
@@ -222,6 +380,20 @@ page 69 (
             }
         )
 
+        column EMAIL_REQUESTOR (
+            type: hidden
+            layout {
+                sequence: 85
+            }
+            source {
+                databaseColumn: EMAIL_REQUESTOR
+                dataType: varchar2
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
         column VALID_FROM (
             type: datePicker
             heading {
@@ -247,6 +419,104 @@ page 69 (
             source {
                 databaseColumn: VALID_TO
                 dataType: date
+            }
+        )
+
+        column VALID_TIMEZONE (
+            type: hidden
+            layout {
+                sequence: 110
+            }
+            source {
+                databaseColumn: VALID_TIMEZONE
+                dataType: varchar2
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column ACTIVE_FLG (
+            type: hidden
+            layout {
+                sequence: 120
+            }
+            source {
+                databaseColumn: ACTIVE_FLG
+                dataType: varchar2
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column UPDATED_FLG (
+            type: hidden
+            layout {
+                sequence: 130
+            }
+            source {
+                databaseColumn: UPDATED_FLG
+                dataType: number
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column CREATED_DATE (
+            type: hidden
+            layout {
+                sequence: 140
+            }
+            source {
+                databaseColumn: CREATED_DATE
+                dataType: date
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column CREATED_BY (
+            type: hidden
+            layout {
+                sequence: 150
+            }
+            source {
+                databaseColumn: CREATED_BY
+                dataType: varchar2
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column UPDATED_ON (
+            type: hidden
+            layout {
+                sequence: 160
+            }
+            source {
+                databaseColumn: UPDATED_ON
+                dataType: date
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column UPDATED_BY (
+            type: hidden
+            layout {
+                sequence: 170
+            }
+            source {
+                databaseColumn: UPDATED_BY
+                dataType: varchar2
+            }
+            exportPrinting {
+                includeInExportPrint: false
             }
         )
 
