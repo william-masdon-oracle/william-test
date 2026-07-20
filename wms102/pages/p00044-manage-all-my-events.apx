@@ -262,6 +262,14 @@ page 44 (
                 }
             )
 
+            displayColumn (
+                column: @LIVESTACK_EVENT_ID
+                layout {
+                    show: false
+                    sequence: 27
+                }
+            )
+
         )
 
         column ACTIVE_FLG (
@@ -527,6 +535,20 @@ page 44 (
             }
         )
 
+        column LIVESTACK_EVENT_ID (
+            type: hidden
+            layout {
+                sequence: 275
+            }
+            source {
+                databaseColumn: LIVESTACK_EVENT_ID
+                dataType: number
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
         column ID (
             type: link
             heading {
@@ -785,4 +807,3 @@ page 44 (
     )
 
 )
-
