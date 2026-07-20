@@ -786,7 +786,6 @@ page 9167 (
             slot: regionBody
             alignment: left
             startNewRow: true
-            columnSpan: 4
         }
         appearance {
             template: @required-floating
