@@ -677,7 +677,7 @@ page 9167 (
     )
 
     pageItem P9167_EVENT_CODE (
-        type: textField
+        type: displayOnly
         label {
             label: LiveStack Event Code
             alignment: left
@@ -688,15 +688,11 @@ page 9167 (
             slot: regionBody
             alignment: left
             startNewRow: false
-            columnSpan: 2
+            columnSpan: 3
         }
         appearance {
             template: @optional-floating
             templateOptions: #DEFAULT#
-            width: 32
-        }
-        validation {
-            maxLength: 50
         }
         source {
             formRegion: @livestack-event-details
@@ -728,10 +724,11 @@ page 9167 (
             displayNullValue: false
         }
         layout {
-            sequence: 30
+            sequence: 40
             region: @livestack-event-details
             slot: regionBody
             alignment: left
+            startNewRow: true
             columnSpan: 4
         }
         appearance {
@@ -765,7 +762,7 @@ page 9167 (
             displayNullValue: false
         }
         layout {
-            sequence: 40
+            sequence: 30
             region: @livestack-event-details
             slot: regionBody
             alignment: left
