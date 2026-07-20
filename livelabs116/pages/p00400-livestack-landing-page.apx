@@ -1910,7 +1910,12 @@ page 400 (
                 declare
                   l_event_id           ll_livestack_events.id%type;
                   l_livestack_id       ll_livestack_events.livestack_id%type;
+                  l_event_title        ll_livestack_events.title_override%type;
+                  l_event_desc_long    ll_livestack_events.desc_long_override%type;
+                  l_event_outline      ll_livestack_events.outline_override%type;
+                  l_event_prereqs      ll_livestack_events.prereqs_override%type;
                   l_event_admin        varchar2(1) := 'N';
+                  l_base_name          ll_livestacks.name%type;
                   e_apex_engine_stop   exception;
                   pragma exception_init(e_apex_engine_stop, -20876);
                 begin
@@ -1927,6 +1932,10 @@ page 400 (
                     begin
                       select id,
                              livestack_id,
+                             title_override,
+                             desc_long_override,
+                             outline_override,
+                             prereqs_override,
                              case
                                when instr(upper(email_requestor), upper(:APP_USER)) > 0
                                  or instr(upper(email_creator), upper(:APP_USER)) > 0
@@ -1939,6 +1948,10 @@ page 400 (
                              end
                         into l_event_id,
                              l_livestack_id,
+                             l_event_title,
+                             l_event_desc_long,
+                             l_event_outline,
+                             l_event_prereqs,
                              l_event_admin
                         from ll_livestack_events
                        where event_code = :WEC
@@ -1965,15 +1978,16 @@ page 400 (
                     end;
                   end if;
                 
-                  select name,
-                         desc_long,
-                         outline,
-                         prereqs,
+                  select nvl(l_event_title, name),
+                         nvl(l_event_desc_long, desc_long),
+                         nvl(l_event_outline, outline),
+                         nvl(l_event_prereqs, prereqs),
                          length_override,
                          livestack_type,
                          video_link,
                          (select sum(entry_time_hours) from ll_livestack_entries_vw where livestack_id = :P400_ID),
-                         (select count(*) from ll_livestack_users where livestack_id = :P400_ID and user_email = :APP_USER and subscribed_flg = 'Y')
+                         (select count(*) from ll_livestack_users where livestack_id = :P400_ID and user_email = :APP_USER and subscribed_flg = 'Y'),
+                         name
                     into :P400_TITLE,
                          :P400_DESC_LONG,
                          :P400_OUTLINE,
@@ -1982,13 +1996,21 @@ page 400 (
                          :P400_LIVESTACK_TYPE,
                          :P400_VIDEO_LINK,
                          :P400_WORKSHOP_TIME,
-                         :P400_SUBSCRIBED_FLG
+                         :P400_SUBSCRIBED_FLG,
+                         l_base_name
                     from ll_livestacks
                    where id = :P400_ID
                      and (
                            active_flg in ('Y', 'U')
                            or (active_flg = 'E' and :WEC is not null)
                          );
+
+                  :P400_ABOUT_OR_TITLE := '<div style="font-size:25px"><b>' ||
+                                          case
+                                            when l_event_title is not null then apex_escape.html(l_base_name)
+                                            else 'About This LiveStack'
+                                          end ||
+                                          '</b></div>';
                 exception
                   when e_apex_engine_stop then
                     raise;
