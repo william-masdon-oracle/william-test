@@ -620,6 +620,20 @@ page 35 (
         }
     )
 
+    pageItem P35_LIVESTACK_EVENT_ID (
+        type: hidden
+        layout {
+            sequence: 475
+            region: @request-an-event
+            slot: regionBody
+        }
+        source {
+            formRegion: @request-an-event
+            column: LIVESTACK_EVENT_ID
+            dataType: number
+        }
+    )
+
     pageItem P35_EVENT_DATE (
         type: textField
         label {
@@ -779,6 +793,7 @@ page 35 (
                 and lower(email) = lower(:APP_USER) 
                 and livelabs_publisher_flg = 1 
                 and :P35_ID is not null
+                and :P35_LIVESTACK_EVENT_ID is null
                 ```
         }
     )
@@ -1057,6 +1072,10 @@ page 35 (
             formRegion: @request-an-event
             column: LIVELABS_ID
             dataType: number
+        }
+        readOnly {
+            type: expression
+            plsqlExpression: :P35_LIVESTACK_EVENT_ID is not null
         }
     )
 
@@ -1669,6 +1688,10 @@ page 35 (
             column: VALID_FROM
             dataType: date
         }
+        readOnly {
+            type: expression
+            plsqlExpression: :P35_LIVESTACK_EVENT_ID is not null
+        }
     )
 
     pageItem P35_VALID_TIMEZONE (
@@ -1715,6 +1738,10 @@ page 35 (
             column: VALID_TIMEZONE
             dataType: varchar2
         }
+        readOnly {
+            type: expression
+            plsqlExpression: :P35_LIVESTACK_EVENT_ID is not null
+        }
     )
 
     pageItem P35_VALID_TO (
@@ -1743,6 +1770,10 @@ page 35 (
             formRegion: @request-an-event
             column: VALID_TO
             dataType: date
+        }
+        readOnly {
+            type: expression
+            plsqlExpression: :P35_LIVESTACK_EVENT_ID is not null
         }
     )
 

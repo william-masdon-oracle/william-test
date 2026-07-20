@@ -205,7 +205,6 @@ page 70 (
             region: @livestack-event-form
             slot: regionBody
             alignment: left
-            columnSpan: 2
         }
         appearance {
             template: @optional-floating
@@ -249,7 +248,6 @@ page 70 (
             region: @livestack-event-form
             slot: regionBody
             alignment: left
-            columnSpan: 8
         }
         appearance {
             template: @required-floating
@@ -284,7 +282,6 @@ page 70 (
             slot: regionBody
             alignment: left
             startNewRow: false
-            columnSpan: 2
         }
         appearance {
             template: @required-floating
@@ -322,7 +319,6 @@ page 70 (
             slot: regionBody
             alignment: left
             startNewRow: false
-            columnSpan: 2
         }
         appearance {
             template: @required-floating
@@ -357,7 +353,6 @@ page 70 (
             region: @livestack-event-form
             slot: regionBody
             alignment: left
-            columnSpan: 8
         }
         appearance {
             template: @optional-floating
@@ -374,6 +369,18 @@ page 70 (
         }
     )
 
+    pageItem P70_ORIGINAL_EVENT_TITLE (
+        type: hidden
+        layout {
+            sequence: 155
+            slot: contentBody
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery: select event_title from wms_livestack_events where id = :P70_ID
+        }
+    )
+
     pageItem P70_EVENT_CODE (
         type: displayOnly
         label {
@@ -386,7 +393,6 @@ page 70 (
             slot: regionBody
             alignment: left
             startNewRow: false
-            columnSpan: 2
         }
         appearance {
             template: @optional-floating
@@ -410,7 +416,6 @@ page 70 (
             region: @livestack-event-form
             slot: regionBody
             alignment: left
-            columnSpan: 6
         }
         appearance {
             template: @required-floating
@@ -444,7 +449,6 @@ page 70 (
             slot: regionBody
             alignment: left
             startNewRow: false
-            columnSpan: 6
         }
         appearance {
             template: @optional-floating
@@ -473,7 +477,6 @@ page 70 (
             region: @livestack-event-form
             slot: regionBody
             alignment: left
-            columnSpan: 3
         }
         appearance {
             template: @required-floating
@@ -501,7 +504,6 @@ page 70 (
             slot: regionBody
             alignment: left
             startNewRow: false
-            columnSpan: 3
         }
         appearance {
             template: @required-floating
@@ -545,7 +547,6 @@ page 70 (
             slot: regionBody
             alignment: left
             startNewRow: false
-            columnSpan: 3
         }
         appearance {
             template: @required-floating
@@ -572,7 +573,6 @@ page 70 (
             slot: regionBody
             alignment: left
             startNewRow: false
-            columnSpan: 3
         }
         appearance {
             buttonTemplate: @text
@@ -983,8 +983,20 @@ page 70 (
                 begin
                     for entry in (
                         select le.id as livestack_entry_id,
-                               le.entry_id as livelabs_id
+                               le.entry_id as livelabs_id,
+                               ll.alwaysfree_flg,
+                               ll.alwaysfree_url,
+                               ll.freetier_flg,
+                               ll.freetier_url,
+                               ll.paid_flg,
+                               ll.paid_url,
+                               ll.greenbutton_flg,
+                               ll.greenbutton_url,
+                               ll.livesql_flg,
+                               ll.livesql_url
                           from wms_livestack_entries le
+                          join workshop_ll ll
+                            on ll.id = le.entry_id
                          where le.livestack_id = :P70_LIVESTACK_ID
                            and nvl(le.active_flg, 1) = 1
                          order by le.position nulls last, le.id
@@ -1006,6 +1018,8 @@ page 70 (
                                 livelabs_id,
                                 active_flg,
                                 valid_timezone,
+                                alt_url,
+                                event_json,
                                 event_status,
                                 updated_flg,
                                 livestack_event_id
@@ -1018,6 +1032,32 @@ page 70 (
                                 entry.livelabs_id,
                                 'Y',
                                 :P70_VALID_TIMEZONE,
+                                json_object(
+                                    'FREETIER_URL' value entry.freetier_url,
+                                    'LIVELABS_URL' value entry.greenbutton_url,
+                                    'ALWAYSFREE_URL' value entry.alwaysfree_url,
+                                    'PAID_URL' value entry.paid_url,
+                                    'LIVESQL_URL' value entry.livesql_url,
+                                    'DESKTOP_GUIDE_URL' value null,
+                                    'DESKTOP_APP1_URL' value null,
+                                    'DESKTOP_APP2_URL' value null
+                                ),
+                                json_object(
+                                    'DisplayOciInstructions' value null,
+                                    'AlwaysFreeEnabled' value entry.alwaysfree_flg,
+                                    'FreeTierEnabled' value entry.freetier_flg,
+                                    'PaidTenancyEnabled' value entry.paid_flg,
+                                    'LiveLabsGreenEnabled' value entry.greenbutton_flg,
+                                    'LiveSQLEnabled' value entry.livesql_flg,
+                                    'EventType' value null,
+                                    'EventDate' value null,
+                                    'EventLocation' value null,
+                                    'EventOrganizer' value null,
+                                    'EventIconLink' value null,
+                                    'YoutubeLink' value null,
+                                    'EventTcValue' value null,
+                                    'AdvertEnabled' value 'N'
+                                ),
                                 'Submitted',
                                 2,
                                 :P70_ID
@@ -1049,6 +1089,43 @@ page 70 (
         }
         serverSideCondition {
             whenButtonPressed: @create
+        }
+    )
+
+    process update-entry-events (
+        name: Update Entry Events
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                update wms_events e
+                   set e.title = case
+                           when e.title = :P70_ORIGINAL_EVENT_TITLE
+                                or (e.title is null and :P70_ORIGINAL_EVENT_TITLE is null)
+                           then :P70_EVENT_TITLE
+                           else e.title
+                       end,
+                       e.valid_from = :P70_VALID_FROM,
+                       e.valid_to = :P70_VALID_TO,
+                       e.valid_timezone = :P70_VALID_TIMEZONE,
+                       e.active_flg = :P70_ACTIVE_FLG,
+                       e.event_status = :P70_EVENT_STATUS,
+                       e.updated_flg = case
+                           when nvl(e.updated_flg, 0) = 2 then 2
+                           else 1
+                       end
+                 where e.id in (
+                       select lee.event_id
+                         from wms_livestack_event_entries lee
+                        where lee.livestack_event_id = :P70_ID
+                 );
+                ```
+        }
+        execution {
+            sequence: 40
+        }
+        serverSideCondition {
+            whenButtonPressed: @save
         }
     )
 
