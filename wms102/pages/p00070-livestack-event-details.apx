@@ -152,11 +152,19 @@ page 70 (
         column EVENT_CODE (
             reportColumnQueryId: 4
             derivedColumn: N
+            type: link
             heading {
                 heading: Event Code
             }
             layout {
                 sequence: 40
+            }
+            link {
+                target: {
+                    type: url
+                    url: javascript:void(window.open("https://livelabs.oracle.com/ords/dbpm/r/livelabs/view-workshop?wec=#EVENT_CODE#","_blank"));
+                }
+                linkText: #EVENT_CODE#
             }
         )
 
@@ -187,13 +195,21 @@ page 70 (
     )
 
     pageItem P70_ID (
-        type: hidden
-        settings {
-            valueProtected: false
+        type: displayOnly
+        label {
+            label: ID
+            alignment: left
         }
         layout {
             sequence: 10
-            slot: contentBody
+            region: @livestack-event-form
+            slot: regionBody
+            alignment: left
+            columnSpan: 2
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
         }
         source {
             formRegion: @livestack-event-form
@@ -203,7 +219,7 @@ page 70 (
             primaryKey: true
         }
         sessionState {
-            storage: memory
+            storage: request
         }
     )
 
@@ -229,7 +245,7 @@ page 70 (
                 ```
         }
         layout {
-            sequence: 20
+            sequence: 50
             region: @livestack-event-form
             slot: regionBody
             alignment: left
@@ -263,7 +279,7 @@ page 70 (
             displayNullValue: false
         }
         layout {
-            sequence: 30
+            sequence: 20
             region: @livestack-event-form
             slot: regionBody
             alignment: left
@@ -324,6 +340,10 @@ page 70 (
             type: static
             staticValue: Submitted
         }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P70_ID
+        }
     )
 
     pageItem P70_EVENT_TITLE (
@@ -333,7 +353,7 @@ page 70 (
             alignment: left
         }
         layout {
-            sequence: 50
+            sequence: 60
             region: @livestack-event-form
             slot: regionBody
             alignment: left
@@ -361,12 +381,12 @@ page 70 (
             alignment: left
         }
         layout {
-            sequence: 60
+            sequence: 30
             region: @livestack-event-form
             slot: regionBody
             alignment: left
             startNewRow: false
-            columnSpan: 4
+            columnSpan: 2
         }
         appearance {
             template: @optional-floating
@@ -978,6 +998,7 @@ page 70 (
                 
                         if l_existing_count = 0 then
                             insert into wms_events (
+                                title,
                                 email_creator,
                                 email_requestor,
                                 valid_from,
@@ -989,6 +1010,7 @@ page 70 (
                                 updated_flg,
                                 livestack_event_id
                             ) values (
+                                :P70_EVENT_TITLE,
                                 :P70_EMAIL_CREATOR,
                                 :P70_EMAIL_REQUESTOR,
                                 :P70_VALID_FROM,
