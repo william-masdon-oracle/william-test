@@ -1135,6 +1135,26 @@ list desktop-navigation-menu (
         }
     )
 
+    entry livestack-event-codes (
+        label: LiveStack Event Codes
+        layout {
+            sequence: 9445
+            parentEntry: @support
+        }
+        isCurrent {
+            type: pages
+            pages: [
+                9166
+                9167
+            ]
+        }
+        link {
+            target: {
+                page: 9166
+            }
+        }
+    )
+
     entry workshops (
         label: Workshops
         layout {
@@ -1294,4 +1314,3 @@ list wizard-progress-list (
     )
 
 )
-

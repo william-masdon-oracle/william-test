@@ -1,0 +1,385 @@
+page 9166 (
+    name: LiveStack Event Codes
+    alias: LIVESTACK-EVENT-CODES
+    title: LiveStack Event Codes
+    appearance {
+        pageTemplate: @standard-trustarc
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region livestack-event-codes (
+        name: LiveStack Event Codes
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select lse.id,
+                       lse.event_code,
+                       lse.livestack_id,
+                       ls.name as livestack_name,
+                       lse.active_flg,
+                       lse.email_creator,
+                       lse.email_requestor,
+                       lse.valid_from,
+                       lse.valid_to,
+                       lse.valid_timezone,
+                       lse.title_override,
+                       (select count(*)
+                          from ll_livestack_event_vouchers lsev
+                         where lsev.livestack_event_id = lse.id) as mapped_events,
+                       (select count(*)
+                          from ll_livestack_event_users lseu
+                         where lseu.livestack_event_id = lse.id) as users_registered
+                  from ll_livestack_events lse
+                  left join ll_livestacks ls
+                    on ls.id = lse.livestack_id
+                 where instr(upper(lse.email_requestor), upper(:app_user)) > 0
+                    or instr(upper(lse.email_creator), upper(:app_user)) > 0
+                    or ll_pkg_security.am_i_allowed(
+                           p_apex_user   => :app_user,
+                           p_access_type => 'EVENT_CODE_ADMIN',
+                           p_access_value => lse.id
+                       ) = 'Y'
+                    or upper(:app_user) in ('ANOOSHA.PILLI@ORACLE.COM','KAMRYN.VINSON@ORACLE.COM')
+                ```
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        link {
+            linkColumn: customTarget
+            target: {
+                page: 9167
+                items: {
+                    P9167_ID: #ID#
+                }
+                action: resetPagination
+            }
+            linkIcon: <span aria-label="Edit"><span class="fa fa-edit" aria-hidden="true" title="Edit"></span></span>
+        }
+        pagination {
+            type: rowRangesXToY
+        }
+        messages {
+            whenNoDataFound: No data found.
+            whenMoreDataFound: The maximum row count for this report is #MAX_ROW_COUNT# rows.  Please apply a filter to reduce the number of records in your query.
+        }
+        actionsMenu {
+            subscription: false
+        }
+        advanced {
+            savedReportMappingIdentifier: 9166000000000001
+        }
+
+        column ACTIVE_FLG (
+            type: plainTextBasedOnLov
+            heading {
+                heading: Active
+            }
+            lov {
+                lov: @active-flg
+            }
+            layout {
+                sequence: 60
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: F
+            }
+        )
+
+        column EMAIL_CREATOR (
+            type: plainText
+            heading {
+                heading: Event Creator
+            }
+            layout {
+                sequence: 70
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: G
+            }
+        )
+
+        column EMAIL_REQUESTOR (
+            type: plainText
+            heading {
+                heading: Additional Owners
+            }
+            layout {
+                sequence: 80
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: H
+            }
+        )
+
+        column EVENT_CODE (
+            type: plainText
+            heading {
+                heading: Event Code
+            }
+            layout {
+                sequence: 20
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: B
+            }
+        )
+
+        column ID (
+            type: plainText
+            heading {
+                heading: ID
+                alignment: end
+            }
+            layout {
+                sequence: 10
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: A
+            }
+        )
+
+        column LIVESTACK_ID (
+            type: plainText
+            heading {
+                heading: LiveStack ID
+                alignment: end
+            }
+            layout {
+                sequence: 30
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: C
+            }
+        )
+
+        column LIVESTACK_NAME (
+            type: plainText
+            heading {
+                heading: LiveStack
+            }
+            layout {
+                sequence: 40
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: D
+            }
+        )
+
+        column MAPPED_EVENTS (
+            type: plainText
+            heading {
+                heading: Mapped Events
+                alignment: end
+            }
+            layout {
+                sequence: 130
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: M
+            }
+        )
+
+        column TITLE_OVERRIDE (
+            type: plainText
+            heading {
+                heading: Title Override
+            }
+            layout {
+                sequence: 50
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: E
+            }
+        )
+
+        column USERS_REGISTERED (
+            type: plainText
+            heading {
+                heading: Users Registered
+                alignment: end
+            }
+            layout {
+                sequence: 140
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: N
+            }
+        )
+
+        column VALID_FROM (
+            type: plainText
+            heading {
+                heading: Start Date
+            }
+            layout {
+                sequence: 90
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: I
+            }
+        )
+
+        column VALID_TIMEZONE (
+            type: plainText
+            heading {
+                heading: Timezone
+            }
+            layout {
+                sequence: 110
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: K
+            }
+        )
+
+        column VALID_TO (
+            type: plainText
+            heading {
+                heading: End Date
+            }
+            layout {
+                sequence: 100
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: J
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+
+        savedReport 916600 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn ID (
+                sequence: 1
+            )
+
+            displayColumn EVENT_CODE (
+                sequence: 2
+            )
+
+            displayColumn LIVESTACK_NAME (
+                sequence: 3
+            )
+
+            displayColumn TITLE_OVERRIDE (
+                sequence: 4
+            )
+
+            displayColumn ACTIVE_FLG (
+                sequence: 5
+            )
+
+            displayColumn MAPPED_EVENTS (
+                sequence: 6
+            )
+
+            displayColumn USERS_REGISTERED (
+                sequence: 7
+            )
+
+            displayColumn VALID_FROM (
+                sequence: 8
+            )
+
+            displayColumn VALID_TO (
+                sequence: 9
+            )
+
+        )
+
+    )
+
+    button create-livestack-event (
+        buttonName: Create-LiveStack-Event
+        label: Create LiveStack Event
+        layout {
+            sequence: 10
+            region: @livestack-event-codes
+            slot: rightOfInteractiveReportSearchBar
+        }
+        appearance {
+            buttonTemplate: @text-with-icon
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--iconLeft
+            ]
+            icon: fa-plus
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 9167
+                clearCache: 9167
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+)
