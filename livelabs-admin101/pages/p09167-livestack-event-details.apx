@@ -70,10 +70,23 @@ page 9167 (
         type: interactiveGrid
         source {
             location: localDatabase
-            tableName: LL_LIVESTACK_EVENT_VOUCHERS
-            includeRowidColumn: true
-            whereClause: livestack_event_id = :P9167_ID
-            pageItemsToSubmit: P9167_ID
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select v.rowid,
+                       v.id,
+                       v.livestack_event_id,
+                       v.livestack_entry_id,
+                       v.voucher_id,
+                       v.active_flg,
+                       (select position from ll_livestack_entries where id = v.livestack_entry_id) as position
+                  from ll_livestack_event_vouchers v
+                 where v.livestack_event_id = :P9167_ID
+                ```
+            pageItemsToSubmit: [
+                P9167_ID
+                P9167_LIVESTACK_ID
+            ]
         }
         layout {
             sequence: 10
@@ -117,7 +130,7 @@ page 9167 (
             savedReportMappingIdentifier: 9167000000000001
         }
 
-        savedReport 916701 (
+        savedReport primary (
             visibility: primary
             view {
                 default: grid
@@ -129,49 +142,68 @@ page 9167 (
             displayColumn (
                 column: @APEX$ROW_ACTION
                 layout {
-                    sequence: 0
+                    frozen: true
+                    width: 43
+                    sequence: 1
                 }
             )
 
             displayColumn (
                 column: @ROWID
                 layout {
-                    sequence: 1
+                    sequence: 3
                 }
             )
 
             displayColumn (
                 column: @ID
                 layout {
-                    sequence: 2
+                    sequence: 4
                 }
             )
 
             displayColumn (
                 column: @LIVESTACK_EVENT_ID
                 layout {
-                    sequence: 3
+                    sequence: 5
                 }
             )
 
             displayColumn (
                 column: @LIVESTACK_ENTRY_ID
                 layout {
-                    sequence: 4
+                    sequence: 6
                 }
             )
 
             displayColumn (
                 column: @VOUCHER_ID
                 layout {
-                    sequence: 5
+                    sequence: 7
                 }
             )
 
             displayColumn (
                 column: @ACTIVE_FLG
                 layout {
-                    sequence: 6
+                    width: 93
+                    sequence: 8
+                }
+            )
+
+            displayColumn (
+                column: @POSITION
+                layout {
+                    width: 73
+                    sequence: 2
+                }
+            )
+
+            sort (
+                column: @POSITION
+                sort {
+                    nulls: last
+                    sequence: 1
                 }
             )
 
@@ -245,19 +277,22 @@ page 9167 (
                 type: sqlQuery
                 sqlQuery:
                     ```sql
-                    select to_char(position, '990') || ' - ' ||
-                           nvl(title_override, entry_type || ' ' || entry_id) || ' (' || id || ')' as d,
-                           id as r
-                      from ll_livestack_entries
-                     where livestack_id = (
-                               select livestack_id
-                                 from ll_livestack_events
-                                where id = :P9167_ID
-                           )
-                     order by position, id
+                    select to_char(e.position, '990') || ' - ' ||
+                           nvl(e.title_override, w.name) || ' (' || e.id || ')' as d,
+                           e.id as r
+                      from ll_livestack_entries e
+                      left join ll_workshops w
+                        on e.entry_id = w.id
+                     where e.livestack_id = :P9167_LIVESTACK_ID
+                     order by e.position, e.id
                     ```
                 displayExtraValues: false
                 displayNullValue: false
+            }
+            cascadingLov {
+                parentColumns: ID
+                itemsToSubmit: P9167_LIVESTACK_ID
+                parentRequired: false
             }
             layout {
                 sequence: 60
@@ -268,9 +303,6 @@ page 9167 (
             source {
                 databaseColumn: LIVESTACK_ENTRY_ID
                 dataType: number
-            }
-            columnFilter {
-                lovType: useLov
             }
         )
 
@@ -286,6 +318,32 @@ page 9167 (
             default {
                 type: item
                 item: P9167_ID
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column POSITION (
+            type: displayOnly
+            heading {
+                heading: Position
+            }
+            layout {
+                sequence: 90
+            }
+            source {
+                databaseColumn: POSITION
+                dataType: number
+                queryOnly: true
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
             }
             exportPrinting {
                 includeInExportPrint: false
@@ -319,18 +377,20 @@ page 9167 (
                     select to_char(id, '99000') || ' - ' || reason || ' (' || voucher_code || ')' as d,
                            id as r
                       from ll_vouchers_vw
-                     where :LIVESTACK_ENTRY_ID is null
-                        or workshop_id = (
+                     where workshop_id = (
                                select entry_id
                                  from ll_livestack_entries
                                 where id = :LIVESTACK_ENTRY_ID
                                   and entry_type in ('WORKSHOP','TENANCY','SANDBOX')
                            )
-                     order by case when sysdate between valid_from_gmt and valid_to_gmt then 0 else 1 end,
-                              id desc
+                     order by id desc
                     ```
                 displayExtraValues: false
                 displayNullValue: false
+            }
+            cascadingLov {
+                parentColumns: LIVESTACK_ENTRY_ID
+                itemsToSubmit: LIVESTACK_ENTRY_ID
             }
             layout {
                 sequence: 70
@@ -341,9 +401,6 @@ page 9167 (
             source {
                 databaseColumn: VOUCHER_ID
                 dataType: number
-            }
-            columnFilter {
-                lovType: useLov
             }
         )
 
@@ -1196,6 +1253,91 @@ page 9167 (
         }
     )
 
+    button populate-overrides (
+        buttonName: POPULATE_OVERRIDES
+        label: Populate Empty Overrides
+        layout {
+            sequence: 40
+            region: @livestack-event-details
+            slot: change
+        }
+        appearance {
+            buttonTemplate: @text-with-icon
+            templateOptions: [
+                #DEFAULT#
+                t-Button--iconLeft
+            ]
+            icon: fa-copy
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    dynamicAction populate-overrides (
+        name: Populate Empty Overrides
+        execution {
+            sequence: 20
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @populate-overrides
+        }
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    for x in (
+                        select name,
+                               desc_long,
+                               outline,
+                               prereqs
+                          from ll_livestacks
+                         where id = :P9167_LIVESTACK_ID
+                    ) loop
+                        if :P9167_TITLE_OVERRIDE is null then
+                            :P9167_TITLE_OVERRIDE := x.name;
+                        end if;
+
+                        if :P9167_DESC_LONG_OVERRIDE is null then
+                            :P9167_DESC_LONG_OVERRIDE := x.desc_long;
+                        end if;
+
+                        if :P9167_OUTLINE_OVERRIDE is null then
+                            :P9167_OUTLINE_OVERRIDE := x.outline;
+                        end if;
+
+                        if :P9167_PREREQS_OVERRIDE is null then
+                            :P9167_PREREQS_OVERRIDE := x.prereqs;
+                        end if;
+                    end loop;
+                    ```
+                itemsToSubmit: [
+                    P9167_LIVESTACK_ID
+                    P9167_TITLE_OVERRIDE
+                    P9167_DESC_LONG_OVERRIDE
+                    P9167_OUTLINE_OVERRIDE
+                    P9167_PREREQS_OVERRIDE
+                ]
+                itemsToReturn: [
+                    P9167_TITLE_OVERRIDE
+                    P9167_DESC_LONG_OVERRIDE
+                    P9167_OUTLINE_OVERRIDE
+                    P9167_PREREQS_OVERRIDE
+                ]
+                showProcessing: true
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
     process initialize-form-livestack-event-details (
         name: Initialize form LiveStack Event Details
         type: formInitialization
@@ -1218,6 +1360,10 @@ page 9167 (
         }
         advanced {
             executionMappingIdentifier: 9167000000000020
+        }
+        serverSideCondition {
+            type: requestIsContainedInValue
+            value: CREATE,SAVE,DELETE
         }
     )
 
@@ -1242,6 +1388,10 @@ page 9167 (
             target: {
                 page: 9166
             }
+        }
+        serverSideCondition {
+            type: requestIsContainedInValue
+            value: CREATE,SAVE,DELETE
         }
     )
 
