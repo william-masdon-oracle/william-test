@@ -54,32 +54,42 @@ page 70 (
     )
 
     region associated-workshop-events (
-        name: Associated Workshop Events
+        name: LiveStack Event Entries
         type: classicReport
         source {
             location: localDatabase
             type: sqlQuery
             sqlQuery:
                 ```sql
-                select le.position,
+                select '<input type="checkbox" name="f01" value="' || le.id || '" ' ||
+                           case
+                               when :P70_ID is null then 'checked="checked" '
+                               when lee.id is not null and lee.active_flg = 'Y' then 'checked="checked" '
+                           end ||
+                           'aria-label="Include ' ||
+                           apex_escape.html_attribute(coalesce(le.title_override, w.title, 'entry ' || le.id)) ||
+                           '">' as include_entry,
+                       le.position,
                        lee.event_id,
+                       e.title as event_title,
                        coalesce(le.title_override, w.title) as entry_title,
                        e.event_code,
-                       e.event_status,
-                       e.livelabs_id
-                  from wms_livestack_event_entries lee
-                  join wms_events e
+                       le.entry_id as livelabs_id
+                  from wms_livestack_entries le
+                  left join wms_livestack_event_entries lee
+                    on lee.livestack_entry_id = le.id
+                   and lee.livestack_event_id = :P70_ID
+                  left join wms_events e
                     on e.id = lee.event_id
-                  join wms_livestack_entries le
-                    on le.id = lee.livestack_entry_id
                   left join workshop_ll ll
                     on ll.id = le.entry_id
                   left join workshop w
                     on w.id = ll.workshop_id
-                 where lee.livestack_event_id = :P70_ID
-                 order by le.position nulls last, lee.id
+                 where le.livestack_id = :P70_LIVESTACK_ID
+                   and nvl(le.active_flg, 1) = 1
+                 order by le.position nulls last, le.id
                 ```
-            pageItemsToSubmit: P70_ID
+            pageItemsToSubmit: P70_ID,P70_LIVESTACK_ID
         }
         layout {
             sequence: 30
@@ -97,25 +107,47 @@ page 70 (
             template: @standard
             templateOptions: #DEFAULT#
         }
+        reportLayout {
+            numberOfRows: 1000
+        }
+        performance {
+            maxRowsToProcess: 1000
+        }
         messages {
-            whenNoDataFound: Entry events are created after the LiveStack event request is submitted.
+            whenNoDataFound: Select a LiveStack to choose event entries.
         }
 
-        column POSITION (
+        column INCLUDE_ENTRY (
             reportColumnQueryId: 1
+            derivedColumn: N
+            heading {
+                heading: Include
+                alignment: center
+            }
+            layout {
+                sequence: 10
+                columnAlignment: center
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column POSITION (
+            reportColumnQueryId: 2
             derivedColumn: N
             heading {
                 heading: Position
                 alignment: end
             }
             layout {
-                sequence: 10
+                sequence: 20
                 columnAlignment: end
             }
         )
 
         column EVENT_ID (
-            reportColumnQueryId: 2
+            reportColumnQueryId: 3
             derivedColumn: N
             type: link
             heading {
@@ -123,7 +155,7 @@ page 70 (
                 alignment: end
             }
             layout {
-                sequence: 20
+                sequence: 30
                 columnAlignment: end
             }
             link {
@@ -138,26 +170,37 @@ page 70 (
             }
         )
 
-        column ENTRY_TITLE (
-            reportColumnQueryId: 3
+        column EVENT_TITLE (
+            reportColumnQueryId: 4
             derivedColumn: N
             heading {
-                heading: Entry
+                heading: Event Title
             }
             layout {
-                sequence: 30
+                sequence: 40
+            }
+        )
+
+        column ENTRY_TITLE (
+            reportColumnQueryId: 5
+            derivedColumn: N
+            heading {
+                heading: LiveStack Entry Title
+            }
+            layout {
+                sequence: 50
             }
         )
 
         column EVENT_CODE (
-            reportColumnQueryId: 4
+            reportColumnQueryId: 6
             derivedColumn: N
             type: link
             heading {
                 heading: Event Code
             }
             layout {
-                sequence: 40
+                sequence: 60
             }
             link {
                 target: {
@@ -168,26 +211,15 @@ page 70 (
             }
         )
 
-        column EVENT_STATUS (
-            reportColumnQueryId: 5
-            derivedColumn: N
-            heading {
-                heading: Status
-            }
-            layout {
-                sequence: 50
-            }
-        )
-
         column LIVELABS_ID (
-            reportColumnQueryId: 6
+            reportColumnQueryId: 7
             derivedColumn: N
             heading {
                 heading: Workshop ID
                 alignment: end
             }
             layout {
-                sequence: 60
+                sequence: 70
                 columnAlignment: end
             }
         )
@@ -781,7 +813,7 @@ page 70 (
         behavior {
             action: redirectThisApp
             target: {
-                page: 69
+                page: 44
             }
             warnOnUnsavedChanges: doNotCheck
         }
@@ -907,6 +939,30 @@ page 70 (
 
     )
 
+    dynamicAction refresh-entry-selection (
+        name: Refresh Entry Selection
+        execution {
+            sequence: 20
+        }
+        when {
+            selectionType: items
+            items: P70_LIVESTACK_ID
+        }
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @associated-workshop-events
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
     validation max-valid-to (
         name: max_valid_to
         execution {
@@ -971,19 +1027,37 @@ page 70 (
         }
     )
 
-    process create-entry-events (
-        name: Create Entry Events
+    process sync-entry-events (
+        name: Sync Entry Events
         type: executeCode
         source {
             plsqlCode:
                 ```plsql
                 declare
                     l_event_id wms_events.id%type;
-                    l_existing_count number;
+                    l_selected boolean;
+
+                    function is_selected (
+                        p_livestack_entry_id in number
+                    ) return boolean
+                    is
+                    begin
+                        if apex_application.g_f01.count > 0 then
+                            for i in 1 .. apex_application.g_f01.count loop
+                                if apex_application.g_f01(i) = to_char(p_livestack_entry_id) then
+                                    return true;
+                                end if;
+                            end loop;
+                        end if;
+
+                        return false;
+                    end is_selected;
                 begin
                     for entry in (
                         select le.id as livestack_entry_id,
                                le.entry_id as livelabs_id,
+                               lee.id as livestack_event_entry_id,
+                               lee.event_id,
                                ll.alwaysfree_flg,
                                ll.alwaysfree_url,
                                ll.freetier_flg,
@@ -997,18 +1071,17 @@ page 70 (
                           from wms_livestack_entries le
                           join workshop_ll ll
                             on ll.id = le.entry_id
+                          left join wms_livestack_event_entries lee
+                            on lee.livestack_entry_id = le.id
+                           and lee.livestack_event_id = :P70_ID
                          where le.livestack_id = :P70_LIVESTACK_ID
                            and nvl(le.active_flg, 1) = 1
                          order by le.position nulls last, le.id
                     )
                     loop
-                        select count(*)
-                          into l_existing_count
-                          from wms_livestack_event_entries lee
-                         where lee.livestack_event_id = :P70_ID
-                           and lee.livestack_entry_id = entry.livestack_entry_id;
-                
-                        if l_existing_count = 0 then
+                        l_selected := is_selected(entry.livestack_entry_id);
+
+                        if l_selected and entry.livestack_event_entry_id is null then
                             insert into wms_events (
                                 title,
                                 email_creator,
@@ -1079,6 +1152,26 @@ page 70 (
                                 'Y',
                                 :APP_USER
                             );
+                        elsif l_selected then
+                            update wms_livestack_event_entries
+                               set active_flg = 'Y',
+                                   updated_by = :APP_USER,
+                                   updated_on = sysdate
+                             where id = entry.livestack_event_entry_id;
+                        else
+                            update wms_livestack_event_entries
+                               set active_flg = 'N',
+                                   updated_by = :APP_USER,
+                                   updated_on = sysdate
+                             where id = entry.livestack_event_entry_id;
+
+                            update wms_events
+                               set active_flg = 'N',
+                                   updated_flg = case
+                                       when nvl(updated_flg, 0) = 2 then 2
+                                       else 1
+                                   end
+                             where id = entry.event_id;
                         end if;
                     end loop;
                 end;
@@ -1086,9 +1179,6 @@ page 70 (
         }
         execution {
             sequence: 30
-        }
-        serverSideCondition {
-            whenButtonPressed: @create
         }
     )
 
@@ -1108,7 +1198,17 @@ page 70 (
                        e.valid_from = :P70_VALID_FROM,
                        e.valid_to = :P70_VALID_TO,
                        e.valid_timezone = :P70_VALID_TIMEZONE,
-                       e.active_flg = :P70_ACTIVE_FLG,
+                       e.active_flg = case
+                           when exists (
+                               select 1
+                                 from wms_livestack_event_entries lee
+                                where lee.event_id = e.id
+                                  and lee.livestack_event_id = :P70_ID
+                                  and lee.active_flg = 'Y'
+                           )
+                           then :P70_ACTIVE_FLG
+                           else 'N'
+                       end,
                        e.event_status = :P70_EVENT_STATUS,
                        e.updated_flg = case
                            when nvl(e.updated_flg, 0) = 2 then 2
