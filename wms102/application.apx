@@ -84,31 +84,6 @@ app WMS (
     staticFiles {
         appFilesPath: https://livelabs.oracle.com/cdn/wmsappfiles/
     }
-    availability {
-        status: restricted
-        restrictUserList: [
-            ADELIN.ANDREI.CERNAUTAN@ORACLE.COM
-            " BRIANNA.A.AMBLER@ORACLE.COM"
-            " CARMEN.BERDANT@ORACLE.COM"
-            " DAVID.START@ORACLE.COM"
-            " EUGENIO.GALIANO@ORACLE.COM"
-            " HOPE.FISHER@ORACLE.COM"
-            " IOANA.CRISTINA.MUNTEANU@ORACLE.COM"
-            " KAY.MALCOLM@ORACLE.COM"
-            " KEVIN.LAZARZ@ORACLE.COM"
-            " LINDA.FOINDING@ORACLE.COM"
-            " VASILE-LUCIAN.BRINZEI@ORACLE.COM"
-            " MARCO.ANTONIO.LUCHIAN@ORACLE.COM"
-            " MARY.HESS@ORACLE.COM"
-            " MATTHEW.KOWALIK@ORACLE.COM"
-            " PAT.SHEPHERD@ORACLE.COM"
-            " RAMONA.MAGADAN@ORACLE.COM"
-            " SANDITA.MOISEI@ORACLE.COM"
-            " TEODOR.CONSTANTIN.NECHITA@ORACLE.COM"
-            " VALENTINA.V.CONSTANTIN@ORACLE.COM"
-            " WILLIAM.MASDON@ORACLE.COM"
-        ]
-    }
     advanced {
         passEcid: false
         faviconHtml:

@@ -18,7 +18,7 @@ page 35 (
         name: Button Region
         type: staticContent
         layout {
-            sequence: 10
+            sequence: 40
             slot: contentBody
         }
         appearance {
@@ -37,7 +37,7 @@ page 35 (
         name: Edit Workshop Links
         type: staticContent
         layout {
-            sequence: 30
+            sequence: 60
             slot: contentBody
         }
         appearance {
@@ -52,11 +52,41 @@ page 35 (
         }
     )
 
+    region new (
+        name: LiveStack Event Info
+        title: Event Managed by LiveStack Event
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                This event is a child of a LiveStack event. You can edit some fields like title and the overrides, but other fields like the start and end date, status, and associated workshop must be managed from the LiveStack Event. 
+                <br><br>
+                To edit the LiveStack Event, click on the button below. 
+                ```
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+            renderComponents: belowContent
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P35_LIVESTACK_EVENT_ID
+        }
+    )
+
     region qr-code (
         name: QR Code
         type: staticContent
         layout {
-            sequence: 40
+            sequence: 70
             slot: contentBody
         }
         appearance {
@@ -79,7 +109,7 @@ page 35 (
             tableName: WMS_EVENTS
         }
         layout {
-            sequence: 20
+            sequence: 50
             slot: contentBody
         }
         appearance {
@@ -620,20 +650,6 @@ page 35 (
         }
     )
 
-    pageItem P35_LIVESTACK_EVENT_ID (
-        type: hidden
-        layout {
-            sequence: 475
-            region: @request-an-event
-            slot: regionBody
-        }
-        source {
-            formRegion: @request-an-event
-            column: LIVESTACK_EVENT_ID
-            dataType: number
-        }
-    )
-
     pageItem P35_EVENT_DATE (
         type: textField
         label {
@@ -1125,6 +1141,20 @@ page 35 (
             template: @optional-floating
             templateOptions: #DEFAULT#
             width: 30
+        }
+    )
+
+    pageItem P35_LIVESTACK_EVENT_ID (
+        type: hidden
+        layout {
+            sequence: 475
+            region: @request-an-event
+            slot: regionBody
+        }
+        source {
+            formRegion: @request-an-event
+            column: LIVESTACK_EVENT_ID
+            dataType: number
         }
     )
 
@@ -1825,9 +1855,36 @@ page 35 (
         behavior {
             action: redirectThisApp
             target: {
-                page: 51
+                page: 44
             }
             warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button edit-livestack-event (
+        buttonName: Edit-LiveStack-Event
+        label: Edit LiveStack Event
+        layout {
+            sequence: 20
+            region: @new
+            slot: regionBody
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: [
+                #DEFAULT#
+                t-Button--large
+                t-Button--gapTop
+            ]
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 70
+                items: {
+                    P70_ID: &P35_LIVESTACK_EVENT_ID.
+                }
+            }
         }
     )
 
@@ -2580,3 +2637,4 @@ page 35 (
     )
 
 )
+

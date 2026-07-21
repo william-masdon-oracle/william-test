@@ -1,0 +1,223 @@
+page 69 (
+    name: Request an Event Code
+    alias: REQUEST-AN-EVENT-CODE
+    title: Request an Event Code
+    appearance {
+        pageTemplate: @standard-custom
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region event-type (
+        name: Choose Event Type
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <div id="event-types" class="event-types">
+                  <div class="event-type-card"
+                       id="WORKSHOP_EVENT"
+                       role="link"
+                       tabindex="0"
+                       aria-label="Request a Workshop event code">
+                    <span class="event-type-icon fa fa-flask" aria-hidden="true"></span>
+                    <div>
+                      <h3>Workshop Event</h3>
+                      <p>Request an event code for a standard workshop in WMS or LiveLabs.</p>
+                    </div>
+                  </div>
+                
+                  <div class="event-type-card"
+                       id="LIVESTACK_EVENT"
+                       role="link"
+                       tabindex="0"
+                       aria-label="Request a LiveStack event code">
+                    <span class="event-type-icon fa fa-layers" aria-hidden="true"></span>
+                    <div>
+                      <h3>LiveStack Event</h3>
+                      <p>Request an event code for a LiveStack. Choose Workshop if you are unsure.</p>
+                    </div>
+                  </div>
+                </div>
+                <style>
+                    .event-types {
+                  display: grid;
+                  grid-template-columns: repeat(2, minmax(0, 1fr));
+                  gap: 1rem;
+                }
+                
+                .event-type-card {
+                  display: flex;
+                  align-items: flex-start;
+                  gap: 1rem;
+                  min-height: 9rem;
+                  padding: 1.5rem;
+                  border: 1px solid #d9e1d5;
+                  border-radius: 6px;
+                  background: #fff;
+                  cursor: pointer;
+                  transition: background-color .18s ease, border-color .18s ease,
+                              box-shadow .18s ease, transform .18s ease;
+                }
+                
+                .event-type-card:hover {
+                  background: #f1f7ef;
+                  border-color: #86a77c;
+                  box-shadow: 0 3px 10px rgb(0 0 0 / 8%);
+                  transform: translateY(-2px);
+                }
+                
+                .event-type-card:focus-visible {
+                  outline: 3px solid #4b8f42;
+                  outline-offset: 2px;
+                }
+                
+                .event-type-icon {
+                  flex: 0 0 auto;
+                  margin-top: .1rem;
+                  color: #5f8f56;
+                  font-size: 2.25rem;
+                  line-height: 1;
+                }
+                
+                .event-type-card h3 {
+                  margin: 0 0 .55rem;
+                  color: #2d4f29;
+                  font-size: 1.4rem;
+                  line-height: 1.2;
+                }
+                
+                .event-type-card p {
+                  margin: 0;
+                  color: #4d4d4d;
+                  line-height: 1.45;
+                }
+                
+                @media (max-width: 640px) {
+                  .event-types {
+                    grid-template-columns: 1fr;
+                  }
+                }
+                </style>
+                ```
+        }
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    region title (
+        name: Title
+        title: Request an Event Code
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @title-bar
+            templateOptions: [
+                #DEFAULT#
+                t-BreadcrumbRegion--useRegionTitle
+            ]
+        }
+    )
+
+    dynamicAction livestack-event (
+        name: LiveStack Event
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: jQuerySelector
+            jquerySelector: #LIVESTACK_EVENT
+        }
+
+        action native-submit-page (
+            action: submitPage
+            settings {
+                requestButtonName: LIVESTACK
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction workshop-event (
+        name: Workshop Event
+        execution {
+            sequence: 20
+        }
+        when {
+            event: click
+            selectionType: jQuerySelector
+            jquerySelector: #WORKSHOP_EVENT
+        }
+
+        action native-submit-page (
+            action: submitPage
+            settings {
+                requestButtonName: WORKSHOP
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    branch (
+        name: Workshop Event
+        execution {
+            sequence: 10
+        }
+        behavior {
+            target: {
+                page: 35
+                successMessage: false
+            }
+        }
+        serverSideCondition {
+            type: request=Value
+            value: WORKSHOP
+        }
+    )
+
+    branch (
+        name: LiveStack Event
+        execution {
+            sequence: 20
+        }
+        behavior {
+            target: {
+                page: 70
+                successMessage: false
+            }
+        }
+        serverSideCondition {
+            type: request=Value
+            value: LIVESTACK
+        }
+    )
+
+)
+

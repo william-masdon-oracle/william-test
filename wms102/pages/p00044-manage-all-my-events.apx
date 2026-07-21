@@ -13,25 +13,513 @@ page 44 (
         formAutoComplete: false
     }
 
-    region title (
-        name: Title
-        title: Manage Events
-        type: staticContent
+    region livestack-events (
+        name: LiveStack Events
+        type: interactiveGrid
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select lse.id as edit_id,
+                       lse.id,
+                       lse.livestack_id,
+                       lse.event_title,
+                       lse.event_code,
+                       lse.email_creator,
+                       lse.email_requestor,
+                       lse.valid_from,
+                       lse.valid_to,
+                       lse.valid_timezone,
+                       lse.active_flg,
+                       lse.event_status,
+                       lse.updated_flg,
+                       lse.created_date,
+                       lse.created_by,
+                       lse.updated_on,
+                       lse.updated_by
+                  from wms_livestack_events lse
+                 where lower(:APP_USER) = lower(lse.email_creator)
+                    or lower(:APP_USER) in lower(lse.email_requestor)
+                    or lower(:APP_USER) in (
+                           select email
+                             from workshop_person_role
+                            where workshop_id is null
+                              and active_flg = 1
+                       )
+                ```
+        }
         layout {
-            sequence: 10
+            sequence: 40
             slot: contentBody
         }
         appearance {
-            template: @title-bar
+            template: @collapsible
             templateOptions: [
                 #DEFAULT#
-                t-BreadcrumbRegion--useRegionTitle
+                is-expanded
+                t-Region--scrollBody
+            ]
+        }
+        toolbar {
+            controls: [
+                searchCol
+                searchField
+                actionsMenu
+                resetButton
+                saveButton
+            ]
+        }
+        advanced {
+            savedReportMappingIdentifier: 70364581090000000001
+        }
+
+        savedReport primary (
+            visibility: primary
+            view {
+                default: grid
+                rowsPerPage: 15
+            }
+            singleRowView {
+                displayedColumns: true
+            }
+
+            displayColumn (
+                column: @EDIT_ID
+                layout {
+                    width: 40
+                    sequence: 1
+                }
+            )
+
+            displayColumn (
+                column: @ID
+                layout {
+                    width: 88
+                    sequence: 2
+                }
+            )
+
+            displayColumn (
+                column: @LIVESTACK_ID
+                layout {
+                    width: 88
+                    sequence: 3
+                }
+            )
+
+            displayColumn (
+                column: @EVENT_TITLE
+                layout {
+                    width: 300
+                    sequence: 4
+                }
+            )
+
+            displayColumn (
+                column: @EVENT_CODE
+                layout {
+                    width: 160
+                    sequence: 5
+                }
+            )
+
+            displayColumn (
+                column: @EVENT_STATUS
+                layout {
+                    width: 140
+                    sequence: 6
+                }
+            )
+
+            displayColumn (
+                column: @EMAIL_CREATOR
+                layout {
+                    width: 180
+                    sequence: 7
+                }
+            )
+
+            displayColumn (
+                column: @EMAIL_REQUESTOR
+                layout {
+                    show: false
+                    sequence: 8
+                }
+            )
+
+            displayColumn (
+                column: @VALID_FROM
+                layout {
+                    width: 110
+                    sequence: 9
+                }
+            )
+
+            displayColumn (
+                column: @VALID_TO
+                layout {
+                    width: 110
+                    sequence: 10
+                }
+            )
+
+            displayColumn (
+                column: @VALID_TIMEZONE
+                layout {
+                    show: false
+                    sequence: 11
+                }
+            )
+
+            displayColumn (
+                column: @ACTIVE_FLG
+                layout {
+                    show: false
+                    sequence: 12
+                }
+            )
+
+            displayColumn (
+                column: @UPDATED_FLG
+                layout {
+                    show: false
+                    sequence: 13
+                }
+            )
+
+            displayColumn (
+                column: @CREATED_DATE
+                layout {
+                    show: false
+                    sequence: 14
+                }
+            )
+
+            displayColumn (
+                column: @CREATED_BY
+                layout {
+                    show: false
+                    sequence: 15
+                }
+            )
+
+            displayColumn (
+                column: @UPDATED_ON
+                layout {
+                    show: false
+                    sequence: 16
+                }
+            )
+
+            displayColumn (
+                column: @UPDATED_BY
+                layout {
+                    show: false
+                    sequence: 17
+                }
+            )
+
+            sort (
+                column: @ID
+                sort {
+                    direction: desc
+                    nulls: first
+                    sequence: 1
+                }
+            )
+
+        )
+
+        column ACTIVE_FLG (
+            type: hidden
+            layout {
+                sequence: 120
+            }
+            source {
+                databaseColumn: ACTIVE_FLG
+                dataType: varchar2
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column CREATED_BY (
+            type: hidden
+            layout {
+                sequence: 150
+            }
+            source {
+                databaseColumn: CREATED_BY
+                dataType: varchar2
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column CREATED_DATE (
+            type: hidden
+            layout {
+                sequence: 140
+            }
+            source {
+                databaseColumn: CREATED_DATE
+                dataType: date
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column EDIT_ID (
+            type: link
+            layout {
+                sequence: 5
+            }
+            link {
+                target: {
+                    page: 70
+                    items: {
+                        P70_ID: &EDIT_ID.
+                    }
+                    clearCache: 70
+                }
+                linkText: <span class="fa fa-edit" aria-hidden="true"></span><span class="u-VisuallyHidden">Edit</span>
+            }
+            source {
+                databaseColumn: EDIT_ID
+                dataType: number
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column EMAIL_CREATOR (
+            type: textField
+            heading {
+                heading: Creator
+            }
+            layout {
+                sequence: 80
+            }
+            source {
+                databaseColumn: EMAIL_CREATOR
+                dataType: varchar2
+            }
+        )
+
+        column EMAIL_REQUESTOR (
+            type: hidden
+            layout {
+                sequence: 85
+            }
+            source {
+                databaseColumn: EMAIL_REQUESTOR
+                dataType: varchar2
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column EVENT_CODE (
+            type: textField
+            heading {
+                heading: Event Code
+            }
+            layout {
+                sequence: 50
+            }
+            source {
+                databaseColumn: EVENT_CODE
+                dataType: varchar2
+            }
+        )
+
+        column EVENT_STATUS (
+            type: textField
+            heading {
+                heading: Status
+            }
+            layout {
+                sequence: 60
+            }
+            source {
+                databaseColumn: EVENT_STATUS
+                dataType: varchar2
+            }
+        )
+
+        column EVENT_TITLE (
+            type: textField
+            heading {
+                heading: Event Title
+            }
+            layout {
+                sequence: 40
+            }
+            source {
+                databaseColumn: EVENT_TITLE
+                dataType: varchar2
+            }
+        )
+
+        column ID (
+            type: numberField
+            heading {
+                heading: Event ID
+                alignment: end
+            }
+            settings {
+                numberAlignment: end
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 10
+                columnAlignment: end
+            }
+            source {
+                databaseColumn: ID
+                dataType: number
+            }
+        )
+
+        column LIVESTACK_ID (
+            type: numberField
+            heading {
+                heading: LiveStack ID
+            }
+            layout {
+                sequence: 20
+            }
+            source {
+                databaseColumn: LIVESTACK_ID
+                dataType: number
+            }
+        )
+
+        column UPDATED_BY (
+            type: hidden
+            layout {
+                sequence: 170
+            }
+            source {
+                databaseColumn: UPDATED_BY
+                dataType: varchar2
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column UPDATED_FLG (
+            type: hidden
+            layout {
+                sequence: 130
+            }
+            source {
+                databaseColumn: UPDATED_FLG
+                dataType: number
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column UPDATED_ON (
+            type: hidden
+            layout {
+                sequence: 160
+            }
+            source {
+                databaseColumn: UPDATED_ON
+                dataType: date
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column VALID_FROM (
+            type: datePicker
+            heading {
+                heading: Valid From
+            }
+            layout {
+                sequence: 90
+            }
+            source {
+                databaseColumn: VALID_FROM
+                dataType: date
+            }
+        )
+
+        column VALID_TIMEZONE (
+            type: hidden
+            layout {
+                sequence: 110
+            }
+            source {
+                databaseColumn: VALID_TIMEZONE
+                dataType: varchar2
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column VALID_TO (
+            type: datePicker
+            heading {
+                heading: Valid To
+            }
+            layout {
+                sequence: 100
+            }
+            source {
+                databaseColumn: VALID_TO
+                dataType: date
+            }
+        )
+
+    )
+
+    region new (
+        name: Page Description
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <p style="padding: 0px 30px;">
+                    This page contains your Workshop and LiveStack Events. <b>Workshop Events</b> are the "classic" Event Code for a single workshop in WMS and LiveLabs, which allow temporary access and customization options for delivering hands-on workshops on LiveLabs. 
+                    <br><br>
+                    <b>LiveStack Events</b> are used to do the same for LiveStacks, which are a collection of related workshop and resources, meant to guide users from introduction, to hands-on learning, to adoption and scale. 
+                </p>
+                ```
+        }
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--scrollBody
             ]
         }
     )
 
     region requested-events (
-        name: Requested Events
+        name: Workshop Events
         type: interactiveGrid
         source {
             location: localDatabase
@@ -41,8 +529,7 @@ page 44 (
                 select e.id as edit_id,
                        e.*
                   from wms_events e
-                 where e.livestack_event_id is null
-                   and (
+                 where  (
                        (lower(:APP_USER) = lower(e.email_creator)
                        or lower(:APP_USER) in lower(e.email_requestor))
                        or lower(:APP_USER) in (
@@ -55,7 +542,7 @@ page 44 (
                 ```
         }
         layout {
-            sequence: 20
+            sequence: 30
             slot: contentBody
         }
         appearance {
@@ -68,6 +555,9 @@ page 44 (
         }
         advanced {
             regionDisplaySelector: true
+        }
+        pagination {
+            type: page
         }
         toolbar {
             controls: [
@@ -90,7 +580,7 @@ page 44 (
             savedReportMappingIdentifier: 13118495445524509137
         }
 
-        savedReport 133158486 (
+        savedReport primary (
             visibility: primary
             view {
                 default: grid
@@ -103,16 +593,16 @@ page 44 (
             displayColumn (
                 column: @EDIT_ID
                 layout {
-                    width: 70
-                    sequence: 0
+                    width: 40
+                    sequence: 1
                 }
             )
 
             displayColumn (
                 column: @ID
                 layout {
-                    width: 64
-                    sequence: 1
+                    width: 86
+                    sequence: 2
                 }
             )
 
@@ -120,15 +610,15 @@ page 44 (
                 column: @TITLE
                 layout {
                     width: 348
-                    sequence: 3
+                    sequence: 4
                 }
             )
 
             displayColumn (
                 column: @EVENT_CODE
                 layout {
-                    width: 176
-                    sequence: 4
+                    width: 144
+                    sequence: 5
                 }
             )
 
@@ -136,7 +626,7 @@ page 44 (
                 column: @EMAIL_CREATOR
                 layout {
                     width: 153
-                    sequence: 6
+                    sequence: 7
                 }
             )
 
@@ -144,7 +634,7 @@ page 44 (
                 column: @EMAIL_REQUESTOR
                 layout {
                     show: false
-                    sequence: 7
+                    sequence: 8
                 }
             )
 
@@ -152,7 +642,7 @@ page 44 (
                 column: @VALID_FROM
                 layout {
                     width: 95
-                    sequence: 8
+                    sequence: 9
                 }
             )
 
@@ -160,7 +650,7 @@ page 44 (
                 column: @VALID_TO
                 layout {
                     width: 86
-                    sequence: 9
+                    sequence: 10
                 }
             )
 
@@ -168,7 +658,7 @@ page 44 (
                 column: @USERS_MAXIMUM
                 layout {
                     show: false
-                    sequence: 10
+                    sequence: 11
                 }
             )
 
@@ -176,7 +666,7 @@ page 44 (
                 column: @LIVELABS_ID
                 layout {
                     width: 83
-                    sequence: 2
+                    sequence: 3
                 }
             )
 
@@ -184,7 +674,7 @@ page 44 (
                 column: @ALT_DESC_LONG
                 layout {
                     show: false
-                    sequence: 11
+                    sequence: 12
                 }
             )
 
@@ -192,7 +682,7 @@ page 44 (
                 column: @ALT_DESC_SHORT
                 layout {
                     show: false
-                    sequence: 12
+                    sequence: 13
                 }
             )
 
@@ -200,7 +690,7 @@ page 44 (
                 column: @ALT_DESC_OUTLINE
                 layout {
                     show: false
-                    sequence: 13
+                    sequence: 14
                 }
             )
 
@@ -208,7 +698,7 @@ page 44 (
                 column: @ALT_DESC_PREREQ
                 layout {
                     show: false
-                    sequence: 14
+                    sequence: 15
                 }
             )
 
@@ -297,7 +787,7 @@ page 44 (
                 column: @EVENT_STATUS
                 layout {
                     width: 138
-                    sequence: 5
+                    sequence: 6
                 }
             )
 
@@ -316,36 +806,37 @@ page 44 (
                 }
             )
 
-        )
-
-        column EDIT_ID (
-            type: link
-            heading {
-                heading: Edit
-            }
-            layout {
-                sequence: 5
-            }
-            link {
-                target: {
-                    page: 35
-                    items: {
-                        P35_ID: &EDIT_ID.
-                    }
-                    clearCache: 35
+            displayColumn (
+                column: @COMMUNITY_EVENT_ID
+                layout {
+                    sequence: 28
                 }
-                linkText: <span class="fa fa-edit" aria-hidden="true"></span><span class="u-VisuallyHidden">Edit</span>
-            }
-            source {
-                databaseColumn: EDIT_ID
-                dataType: number
-            }
-            security {
-                escapeSpecialChars: false
-            }
-            exportPrinting {
-                includeInExportPrint: false
-            }
+            )
+
+            displayColumn (
+                column: @GITHUB_OVERRIDE_FLG
+                layout {
+                    show: false
+                    sequence: 29
+                }
+            )
+
+            displayColumn (
+                column: @EVENT_CONFIG_JSON
+                layout {
+                    sequence: 30
+                }
+            )
+
+            sort (
+                column: @ID
+                sort {
+                    direction: desc
+                    nulls: first
+                    sequence: 1
+                }
+            )
+
         )
 
         column ACTIVE_FLG (
@@ -430,48 +921,36 @@ page 44 (
         )
 
         column ALT_TIME_AVAILABLE (
-            type: numberField
+            type: hidden
             heading {
                 heading: Alt Time Available
-                alignment: end
-            }
-            settings {
-                numberAlignment: end
-                virtualKeyboard: text
             }
             layout {
                 sequence: 240
-                columnAlignment: end
             }
             source {
                 databaseColumn: ALT_TIME_AVAILABLE
                 dataType: number
             }
-            columnFilter {
-                lovType: none
+            exportPrinting {
+                includeInExportPrint: false
             }
         )
 
         column ALT_TIME_HOURS (
-            type: numberField
+            type: hidden
             heading {
                 heading: Alt Time Hours
-                alignment: end
-            }
-            settings {
-                numberAlignment: end
-                virtualKeyboard: text
             }
             layout {
                 sequence: 230
-                columnAlignment: end
             }
             source {
                 databaseColumn: ALT_TIME_HOURS
                 dataType: number
             }
-            columnFilter {
-                lovType: none
+            exportPrinting {
+                includeInExportPrint: false
             }
         )
 
@@ -489,6 +968,23 @@ page 44 (
             }
         )
 
+        column COMMUNITY_EVENT_ID (
+            type: hidden
+            heading {
+                heading: Community Event Id
+            }
+            layout {
+                sequence: 290
+            }
+            source {
+                databaseColumn: COMMUNITY_EVENT_ID
+                dataType: number
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
         column DISPLAY_TAGS (
             type: hidden
             layout {
@@ -500,6 +996,33 @@ page 44 (
             }
             exportPrinting {
                 includeInExportPrint: false
+            }
+        )
+
+        column EDIT_ID (
+            type: link
+            layout {
+                sequence: 5
+            }
+            link {
+                target: {
+                    page: 35
+                    items: {
+                        P35_ID: &EDIT_ID.
+                    }
+                    clearCache: 35
+                }
+                linkText: <span class="fa fa-edit" aria-hidden="true"></span><span class="u-VisuallyHidden">Edit</span>
+            }
+            source {
+                databaseColumn: EDIT_ID
+                dataType: number
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+            security {
+                escapeSpecialChars: false
             }
         )
 
@@ -575,6 +1098,23 @@ page 44 (
             }
         )
 
+        column EVENT_CONFIG_JSON (
+            type: hidden
+            heading {
+                heading: Event Config Json
+            }
+            layout {
+                sequence: 310
+            }
+            source {
+                databaseColumn: EVENT_CONFIG_JSON
+                dataType: varchar2
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
         column EVENT_JSON (
             type: hidden
             layout {
@@ -611,17 +1151,28 @@ page 44 (
             }
         )
 
-        column LIVESTACK_EVENT_ID (
-            type: hidden
+        column GITHUB_OVERRIDE_FLG (
+            type: textField
+            heading {
+                heading: Github Override Flg
+            }
             layout {
-                sequence: 275
+                sequence: 300
+            }
+            validation {
+                maxLength: 1
             }
             source {
-                databaseColumn: LIVESTACK_EVENT_ID
-                dataType: number
+                databaseColumn: GITHUB_OVERRIDE_FLG
+                dataType: varchar2
             }
-            exportPrinting {
-                includeInExportPrint: false
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
             }
         )
 
@@ -638,6 +1189,9 @@ page 44 (
             layout {
                 sequence: 30
                 columnAlignment: end
+            }
+            validation {
+                valueRequired: true
             }
             source {
                 databaseColumn: ID
@@ -674,6 +1228,20 @@ page 44 (
             }
         )
 
+        column LIVESTACK_EVENT_ID (
+            type: hidden
+            layout {
+                sequence: 275
+            }
+            source {
+                databaseColumn: LIVESTACK_EVENT_ID
+                dataType: number
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
         column REMARKS (
             type: hidden
             layout {
@@ -689,25 +1257,19 @@ page 44 (
         )
 
         column TENANCY_ID (
-            type: numberField
+            type: hidden
             heading {
                 heading: Tenancy Id
-                alignment: end
-            }
-            settings {
-                numberAlignment: end
-                virtualKeyboard: text
             }
             layout {
                 sequence: 210
-                columnAlignment: end
             }
             source {
                 databaseColumn: TENANCY_ID
                 dataType: number
             }
-            columnFilter {
-                lovType: none
+            exportPrinting {
+                includeInExportPrint: false
             }
         )
 
@@ -848,475 +1410,22 @@ page 44 (
         }
     )
 
-    region livestack-events (
-        name: LiveStack Events
-        type: interactiveGrid
-        source {
-            location: localDatabase
-            type: sqlQuery
-            sqlQuery:
-                ```sql
-                select lse.id as edit_id,
-                       lse.id,
-                       lse.livestack_id,
-                       lse.event_title,
-                       lse.event_code,
-                       lse.email_creator,
-                       lse.email_requestor,
-                       lse.valid_from,
-                       lse.valid_to,
-                       lse.valid_timezone,
-                       lse.active_flg,
-                       lse.event_status,
-                       lse.updated_flg,
-                       lse.created_date,
-                       lse.created_by,
-                       lse.updated_on,
-                       lse.updated_by
-                  from wms_livestack_events lse
-                 where lower(:APP_USER) = lower(lse.email_creator)
-                    or lower(:APP_USER) in lower(lse.email_requestor)
-                    or lower(:APP_USER) in (
-                           select email
-                             from workshop_person_role
-                            where workshop_id is null
-                              and active_flg = 1
-                       )
-                ```
-        }
+    region title (
+        name: Title
+        title: Manage Events
+        type: staticContent
         layout {
-            sequence: 30
+            sequence: 10
             slot: contentBody
         }
         appearance {
-            template: @collapsible
+            template: @title-bar
             templateOptions: [
                 #DEFAULT#
-                is-expanded
-                t-Region--scrollBody
+                t-BreadcrumbRegion--useRegionTitle
             ]
+            renderComponents: belowContent
         }
-        toolbar {
-            controls: [
-                searchCol
-                searchField
-                actionsMenu
-                resetButton
-                saveButton
-            ]
-        }
-        advanced {
-            savedReportMappingIdentifier: 70364581090000000001
-        }
-
-        savedReport 703645811 (
-            visibility: primary
-            view {
-                default: grid
-                rowsPerPage: 15
-            }
-            singleRowView {
-                displayedColumns: true
-            }
-
-            displayColumn (
-                column: @EDIT_ID
-                layout {
-                    width: 70
-                    sequence: 0
-                }
-            )
-
-            displayColumn (
-                column: @ID
-                layout {
-                    width: 70
-                    sequence: 1
-                }
-            )
-
-            displayColumn (
-                column: @LIVESTACK_ID
-                layout {
-                    width: 100
-                    sequence: 2
-                }
-            )
-
-            displayColumn (
-                column: @EVENT_TITLE
-                layout {
-                    width: 300
-                    sequence: 4
-                }
-            )
-
-            displayColumn (
-                column: @EVENT_CODE
-                layout {
-                    width: 160
-                    sequence: 5
-                }
-            )
-
-            displayColumn (
-                column: @EVENT_STATUS
-                layout {
-                    width: 140
-                    sequence: 6
-                }
-            )
-
-            displayColumn (
-                column: @EMAIL_CREATOR
-                layout {
-                    width: 180
-                    sequence: 8
-                }
-            )
-
-            displayColumn (
-                column: @EMAIL_REQUESTOR
-                layout {
-                    show: false
-                    sequence: 9
-                }
-            )
-
-            displayColumn (
-                column: @VALID_FROM
-                layout {
-                    width: 110
-                    sequence: 10
-                }
-            )
-
-            displayColumn (
-                column: @VALID_TO
-                layout {
-                    width: 110
-                    sequence: 11
-                }
-            )
-
-            displayColumn (
-                column: @VALID_TIMEZONE
-                layout {
-                    show: false
-                    sequence: 12
-                }
-            )
-
-            displayColumn (
-                column: @ACTIVE_FLG
-                layout {
-                    show: false
-                    sequence: 13
-                }
-            )
-
-            displayColumn (
-                column: @UPDATED_FLG
-                layout {
-                    show: false
-                    sequence: 14
-                }
-            )
-
-            displayColumn (
-                column: @CREATED_DATE
-                layout {
-                    show: false
-                    sequence: 15
-                }
-            )
-
-            displayColumn (
-                column: @CREATED_BY
-                layout {
-                    show: false
-                    sequence: 16
-                }
-            )
-
-            displayColumn (
-                column: @UPDATED_ON
-                layout {
-                    show: false
-                    sequence: 17
-                }
-            )
-
-            displayColumn (
-                column: @UPDATED_BY
-                layout {
-                    show: false
-                    sequence: 18
-                }
-            )
-
-        )
-
-        column EDIT_ID (
-            type: link
-            heading {
-                heading: Edit
-            }
-            layout {
-                sequence: 5
-            }
-            link {
-                target: {
-                    page: 70
-                    items: {
-                        P70_ID: &EDIT_ID.
-                    }
-                    clearCache: 70
-                }
-                linkText: <span class="fa fa-edit" aria-hidden="true"></span><span class="u-VisuallyHidden">Edit</span>
-            }
-            source {
-                databaseColumn: EDIT_ID
-                dataType: number
-            }
-            security {
-                escapeSpecialChars: false
-            }
-            exportPrinting {
-                includeInExportPrint: false
-            }
-        )
-
-        column ID (
-            type: numberField
-            heading {
-                heading: Event ID
-                alignment: end
-            }
-            settings {
-                numberAlignment: end
-                virtualKeyboard: text
-            }
-            layout {
-                sequence: 10
-                columnAlignment: end
-            }
-            source {
-                databaseColumn: ID
-                dataType: number
-            }
-        )
-
-        column LIVESTACK_ID (
-            type: numberField
-            heading {
-                heading: LiveStack ID
-            }
-            layout {
-                sequence: 20
-            }
-            source {
-                databaseColumn: LIVESTACK_ID
-                dataType: number
-            }
-        )
-
-        column EVENT_TITLE (
-            type: textField
-            heading {
-                heading: Event Title
-            }
-            layout {
-                sequence: 40
-            }
-            source {
-                databaseColumn: EVENT_TITLE
-                dataType: varchar2
-            }
-        )
-
-        column EVENT_CODE (
-            type: textField
-            heading {
-                heading: Event Code
-            }
-            layout {
-                sequence: 50
-            }
-            source {
-                databaseColumn: EVENT_CODE
-                dataType: varchar2
-            }
-        )
-
-        column EVENT_STATUS (
-            type: textField
-            heading {
-                heading: Status
-            }
-            layout {
-                sequence: 60
-            }
-            source {
-                databaseColumn: EVENT_STATUS
-                dataType: varchar2
-            }
-        )
-
-        column EMAIL_CREATOR (
-            type: textField
-            heading {
-                heading: Creator
-            }
-            layout {
-                sequence: 80
-            }
-            source {
-                databaseColumn: EMAIL_CREATOR
-                dataType: varchar2
-            }
-        )
-
-        column EMAIL_REQUESTOR (
-            type: hidden
-            layout {
-                sequence: 85
-            }
-            source {
-                databaseColumn: EMAIL_REQUESTOR
-                dataType: varchar2
-            }
-            exportPrinting {
-                includeInExportPrint: false
-            }
-        )
-
-        column VALID_FROM (
-            type: datePicker
-            heading {
-                heading: Valid From
-            }
-            layout {
-                sequence: 90
-            }
-            source {
-                databaseColumn: VALID_FROM
-                dataType: date
-            }
-        )
-
-        column VALID_TO (
-            type: datePicker
-            heading {
-                heading: Valid To
-            }
-            layout {
-                sequence: 100
-            }
-            source {
-                databaseColumn: VALID_TO
-                dataType: date
-            }
-        )
-
-        column VALID_TIMEZONE (
-            type: hidden
-            layout {
-                sequence: 110
-            }
-            source {
-                databaseColumn: VALID_TIMEZONE
-                dataType: varchar2
-            }
-            exportPrinting {
-                includeInExportPrint: false
-            }
-        )
-
-        column ACTIVE_FLG (
-            type: hidden
-            layout {
-                sequence: 120
-            }
-            source {
-                databaseColumn: ACTIVE_FLG
-                dataType: varchar2
-            }
-            exportPrinting {
-                includeInExportPrint: false
-            }
-        )
-
-        column UPDATED_FLG (
-            type: hidden
-            layout {
-                sequence: 130
-            }
-            source {
-                databaseColumn: UPDATED_FLG
-                dataType: number
-            }
-            exportPrinting {
-                includeInExportPrint: false
-            }
-        )
-
-        column CREATED_DATE (
-            type: hidden
-            layout {
-                sequence: 140
-            }
-            source {
-                databaseColumn: CREATED_DATE
-                dataType: date
-            }
-            exportPrinting {
-                includeInExportPrint: false
-            }
-        )
-
-        column CREATED_BY (
-            type: hidden
-            layout {
-                sequence: 150
-            }
-            source {
-                databaseColumn: CREATED_BY
-                dataType: varchar2
-            }
-            exportPrinting {
-                includeInExportPrint: false
-            }
-        )
-
-        column UPDATED_ON (
-            type: hidden
-            layout {
-                sequence: 160
-            }
-            source {
-                databaseColumn: UPDATED_ON
-                dataType: date
-            }
-            exportPrinting {
-                includeInExportPrint: false
-            }
-        )
-
-        column UPDATED_BY (
-            type: hidden
-            layout {
-                sequence: 170
-            }
-            source {
-                databaseColumn: UPDATED_BY
-                dataType: varchar2
-            }
-            exportPrinting {
-                includeInExportPrint: false
-            }
-        )
-
     )
 
     button create-event (
@@ -1332,6 +1441,7 @@ page 44 (
             hot: true
             templateOptions: [
                 #DEFAULT#
+                t-Button--large
                 t-Button--iconLeft
             ]
             icon: fa-plus-circle-o
@@ -1378,3 +1488,4 @@ page 44 (
     )
 
 )
+

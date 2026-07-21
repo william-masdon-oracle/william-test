@@ -15,44 +15,6 @@ page 70 (
         formAutoComplete: false
     }
 
-    region button-region (
-        name: Button Region
-        type: staticContent
-        layout {
-            sequence: 10
-            slot: contentBody
-        }
-        appearance {
-            template: @title-bar
-            templateOptions: [
-                #DEFAULT#
-                t-BreadcrumbRegion--useBreadcrumbTitle
-            ]
-        }
-    )
-
-    region livestack-event-form (
-        name: LiveStack Event
-        type: form
-        source {
-            location: localDatabase
-            tableName: WMS_LIVESTACK_EVENTS
-        }
-        layout {
-            sequence: 20
-            slot: contentBody
-        }
-        appearance {
-            template: @standard
-            templateOptions: [
-                #DEFAULT#
-                t-Region--removeHeader
-                t-Region--noBorder
-                t-Region--scrollBody
-            ]
-        }
-    )
-
     region associated-workshop-events (
         name: LiveStack Event Entries
         type: classicReport
@@ -89,7 +51,10 @@ page 70 (
                    and nvl(le.active_flg, 1) = 1
                  order by le.position nulls last, le.id
                 ```
-            pageItemsToSubmit: P70_ID,P70_LIVESTACK_ID
+            pageItemsToSubmit: [
+                P70_ID
+                P70_LIVESTACK_ID
+            ]
         }
         layout {
             sequence: 30
@@ -103,12 +68,12 @@ page 70 (
                 t-Region--scrollBody
             ]
         }
+        reportLayout {
+            numberOfRows: 1000
+        }
         componentAppearance {
             template: @standard
             templateOptions: #DEFAULT#
-        }
-        reportLayout {
-            numberOfRows: 1000
         }
         performance {
             maxRowsToProcess: 1000
@@ -117,32 +82,33 @@ page 70 (
             whenNoDataFound: Select a LiveStack to choose event entries.
         }
 
-        column INCLUDE_ENTRY (
-            reportColumnQueryId: 1
+        column ENTRY_TITLE (
+            reportColumnQueryId: 5
             derivedColumn: N
             heading {
-                heading: Include
-                alignment: center
+                heading: LiveStack Entry Title
             }
             layout {
-                sequence: 10
-                columnAlignment: center
-            }
-            security {
-                escapeSpecialChars: false
+                sequence: 50
             }
         )
 
-        column POSITION (
-            reportColumnQueryId: 2
+        column EVENT_CODE (
+            reportColumnQueryId: 6
             derivedColumn: N
+            type: link
             heading {
-                heading: Position
-                alignment: end
+                heading: Event Code
             }
             layout {
-                sequence: 20
-                columnAlignment: end
+                sequence: 60
+            }
+            link {
+                target: {
+                    type: url
+                    url: javascript:void(window.open("https://livelabs.oracle.com/ords/dbpm/r/livelabs/view-workshop?wec=#EVENT_CODE#","_blank"));
+                }
+                linkText: #EVENT_CODE#
             }
         )
 
@@ -181,33 +147,19 @@ page 70 (
             }
         )
 
-        column ENTRY_TITLE (
-            reportColumnQueryId: 5
+        column INCLUDE_ENTRY (
+            reportColumnQueryId: 1
             derivedColumn: N
             heading {
-                heading: LiveStack Entry Title
+                heading: Include
+                alignment: center
             }
             layout {
-                sequence: 50
+                sequence: 10
+                columnAlignment: center
             }
-        )
-
-        column EVENT_CODE (
-            reportColumnQueryId: 6
-            derivedColumn: N
-            type: link
-            heading {
-                heading: Event Code
-            }
-            layout {
-                sequence: 60
-            }
-            link {
-                target: {
-                    type: url
-                    url: javascript:void(window.open("https://livelabs.oracle.com/ords/dbpm/r/livelabs/view-workshop?wec=#EVENT_CODE#","_blank"));
-                }
-                linkText: #EVENT_CODE#
+            security {
+                escapeSpecialChars: false
             }
         )
 
@@ -224,75 +176,56 @@ page 70 (
             }
         )
 
+        column POSITION (
+            reportColumnQueryId: 2
+            derivedColumn: N
+            heading {
+                heading: Position
+                alignment: end
+            }
+            layout {
+                sequence: 20
+                columnAlignment: end
+            }
+        )
+
     )
 
-    pageItem P70_ID (
-        type: displayOnly
-        label {
-            label: ID
-            alignment: left
-        }
+    region button-region (
+        name: Button Region
+        type: staticContent
         layout {
             sequence: 10
-            region: @livestack-event-form
-            slot: regionBody
-            alignment: left
+            slot: contentBody
         }
         appearance {
-            template: @optional-floating
-            templateOptions: #DEFAULT#
-        }
-        source {
-            formRegion: @livestack-event-form
-            column: ID
-            dataType: number
-            queryOnly: true
-            primaryKey: true
-        }
-        sessionState {
-            storage: request
+            template: @title-bar
+            templateOptions: [
+                #DEFAULT#
+                t-BreadcrumbRegion--useBreadcrumbTitle
+            ]
         }
     )
 
-    pageItem P70_LIVESTACK_ID (
-        type: popupLov
-        label {
-            label: LiveStack
-            alignment: left
-        }
-        settings {
-            fetchOnSearch: true
-            title: Select a LiveStack
-        }
-        lov {
-            type: sqlQuery
-            sqlQuery:
-                ```sql
-                select name || ' (ID: ' || id || ')' as d,
-                       id as r
-                  from wms_livestacks
-                 where nvl(active_flg, 'Y') = 'Y'
-                 order by lower(name)
-                ```
+    region livestack-event-form (
+        name: LiveStack Event
+        type: form
+        source {
+            location: localDatabase
+            tableName: WMS_LIVESTACK_EVENTS
         }
         layout {
-            sequence: 50
-            region: @livestack-event-form
-            slot: regionBody
-            alignment: left
+            sequence: 20
+            slot: contentBody
         }
         appearance {
-            template: @required-floating
-            templateOptions: #DEFAULT#
-            width: 30
-        }
-        validation {
-            valueRequired: true
-        }
-        source {
-            formRegion: @livestack-event-form
-            column: LIVESTACK_ID
-            dataType: number
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--noBorder
+                t-Region--scrollBody
+            ]
         }
     )
 
@@ -330,6 +263,145 @@ page 70 (
         default {
             type: static
             staticValue: Y
+        }
+    )
+
+    pageItem P70_CREATED_BY (
+        type: hidden
+        layout {
+            sequence: 180
+            slot: contentBody
+        }
+        source {
+            formRegion: @livestack-event-form
+            column: CREATED_BY
+            dataType: varchar2
+        }
+    )
+
+    pageItem P70_CREATED_DATE (
+        type: hidden
+        layout {
+            sequence: 170
+            slot: contentBody
+        }
+        source {
+            formRegion: @livestack-event-form
+            column: CREATED_DATE
+            dataType: date
+        }
+    )
+
+    pageItem P70_DESC_LONG_OVERRIDE (
+        type: richTextEditor
+        label {
+            label: Long Description Override
+            alignment: left
+        }
+        settings {
+            format: html
+            toolbar: basic
+            minHeight: 180
+        }
+        layout {
+            sequence: 120
+            region: @livestack-event-form
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @livestack-event-form
+            column: DESC_LONG_OVERRIDE
+            dataType: varchar2
+        }
+    )
+
+    pageItem P70_EMAIL_CREATOR (
+        type: textField
+        label {
+            label: Creator Email
+            alignment: left
+        }
+        layout {
+            sequence: 70
+            region: @livestack-event-form
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required-floating
+            templateOptions: #DEFAULT#
+            width: 60
+        }
+        validation {
+            valueRequired: true
+            maxLength: 200
+        }
+        source {
+            formRegion: @livestack-event-form
+            column: EMAIL_CREATOR
+            dataType: varchar2
+        }
+        default {
+            type: sqlQuerySingleValue
+            sqlQuerySingleValue: select :APP_USER from dual;
+        }
+    )
+
+    pageItem P70_EMAIL_REQUESTOR (
+        type: textarea
+        label {
+            label: Requestor Emails
+            alignment: left
+        }
+        layout {
+            sequence: 80
+            region: @livestack-event-form
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 60
+            height: 3
+        }
+        validation {
+            maxLength: 4000
+        }
+        source {
+            formRegion: @livestack-event-form
+            column: EMAIL_REQUESTOR
+            dataType: varchar2
+        }
+    )
+
+    pageItem P70_EVENT_CODE (
+        type: displayOnly
+        label {
+            label: Event Code
+            alignment: left
+        }
+        layout {
+            sequence: 30
+            region: @livestack-event-form
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @livestack-event-form
+            column: EVENT_CODE
+            dataType: varchar2
         }
     )
 
@@ -401,6 +473,73 @@ page 70 (
         }
     )
 
+    pageItem P70_ID (
+        type: displayOnly
+        label {
+            label: ID
+            alignment: left
+        }
+        layout {
+            sequence: 10
+            region: @livestack-event-form
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @livestack-event-form
+            column: ID
+            dataType: number
+            queryOnly: true
+            primaryKey: true
+        }
+    )
+
+    pageItem P70_LIVESTACK_ID (
+        type: popupLov
+        label {
+            label: LiveStack
+            alignment: left
+        }
+        settings {
+            fetchOnSearch: true
+            title: Select a LiveStack
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select name || ' (ID: ' || id || ')' as d,
+                       id as r
+                  from wms_livestacks
+                 where nvl(active_flg, 'Y') = 'Y'
+                 order by lower(name)
+                ```
+        }
+        layout {
+            sequence: 50
+            region: @livestack-event-form
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            formRegion: @livestack-event-form
+            column: LIVESTACK_ID
+            dataType: number
+        }
+    )
+
     pageItem P70_ORIGINAL_EVENT_TITLE (
         type: hidden
         layout {
@@ -410,242 +549,6 @@ page 70 (
         source {
             type: sqlQuerySingleValue
             sqlQuery: select event_title from wms_livestack_events where id = :P70_ID
-        }
-    )
-
-    pageItem P70_EVENT_CODE (
-        type: displayOnly
-        label {
-            label: Event Code
-            alignment: left
-        }
-        layout {
-            sequence: 30
-            region: @livestack-event-form
-            slot: regionBody
-            alignment: left
-            startNewRow: false
-        }
-        appearance {
-            template: @optional-floating
-            templateOptions: #DEFAULT#
-        }
-        source {
-            formRegion: @livestack-event-form
-            column: EVENT_CODE
-            dataType: varchar2
-        }
-    )
-
-    pageItem P70_EMAIL_CREATOR (
-        type: textField
-        label {
-            label: Creator Email
-            alignment: left
-        }
-        layout {
-            sequence: 70
-            region: @livestack-event-form
-            slot: regionBody
-            alignment: left
-        }
-        appearance {
-            template: @required-floating
-            templateOptions: #DEFAULT#
-            width: 60
-        }
-        validation {
-            valueRequired: true
-            maxLength: 200
-        }
-        source {
-            formRegion: @livestack-event-form
-            column: EMAIL_CREATOR
-            dataType: varchar2
-        }
-        default {
-            type: sqlQuerySingleValue
-            sqlQuerySingleValue: select :APP_USER from dual;
-        }
-    )
-
-    pageItem P70_EMAIL_REQUESTOR (
-        type: textarea
-        label {
-            label: Requestor Emails
-            alignment: left
-        }
-        layout {
-            sequence: 80
-            region: @livestack-event-form
-            slot: regionBody
-            alignment: left
-            startNewRow: false
-        }
-        appearance {
-            template: @optional-floating
-            templateOptions: #DEFAULT#
-            width: 60
-            height: 3
-        }
-        validation {
-            maxLength: 4000
-        }
-        source {
-            formRegion: @livestack-event-form
-            column: EMAIL_REQUESTOR
-            dataType: varchar2
-        }
-    )
-
-    pageItem P70_VALID_FROM (
-        type: datePicker
-        label {
-            label: Valid From
-            alignment: left
-        }
-        layout {
-            sequence: 90
-            region: @livestack-event-form
-            slot: regionBody
-            alignment: left
-        }
-        appearance {
-            template: @required-floating
-            templateOptions: #DEFAULT#
-        }
-        validation {
-            valueRequired: true
-        }
-        source {
-            formRegion: @livestack-event-form
-            column: VALID_FROM
-            dataType: date
-        }
-    )
-
-    pageItem P70_VALID_TO (
-        type: datePicker
-        label {
-            label: Valid To
-            alignment: left
-        }
-        layout {
-            sequence: 100
-            region: @livestack-event-form
-            slot: regionBody
-            alignment: left
-            startNewRow: false
-        }
-        appearance {
-            template: @required-floating
-            templateOptions: #DEFAULT#
-        }
-        validation {
-            valueRequired: true
-        }
-        source {
-            formRegion: @livestack-event-form
-            column: VALID_TO
-            dataType: date
-        }
-    )
-
-    pageItem P70_VALID_TIMEZONE (
-        type: popupLov
-        label {
-            label: Timezone
-            alignment: left
-        }
-        settings {
-            fetchOnSearch: true
-        }
-        lov {
-            type: sqlQuery
-            sqlQuery:
-                ```sql
-                select key_name, key_value
-                from wms_keys
-                where key_type='TIMEZONE'
-                and active_flg='Y'
-                order by key_order, key_name
-                ```
-            displayExtraValues: false
-            displayNullValue: false
-        }
-        layout {
-            sequence: 110
-            region: @livestack-event-form
-            slot: regionBody
-            alignment: left
-            startNewRow: false
-        }
-        appearance {
-            template: @required-floating
-            templateOptions: #DEFAULT#
-            width: 30
-        }
-        validation {
-            valueRequired: true
-            maxLength: 50
-        }
-        source {
-            formRegion: @livestack-event-form
-            column: VALID_TIMEZONE
-            dataType: varchar2
-        }
-    )
-
-    button populate-empty-fields (
-        buttonName: Populate_Empty_Fields
-        label: Populate Empty Fields
-        layout {
-            sequence: 115
-            region: @livestack-event-form
-            slot: regionBody
-            alignment: left
-            startNewRow: false
-        }
-        appearance {
-            buttonTemplate: @text
-            hot: true
-            templateOptions: [
-                #DEFAULT#
-                t-Button--large
-                t-Button--gapTop
-            ]
-        }
-        behavior {
-            action: definedByDynamicAction
-            executeValidations: false
-        }
-    )
-
-    pageItem P70_DESC_LONG_OVERRIDE (
-        type: richTextEditor
-        label {
-            label: Long Description Override
-            alignment: left
-        }
-        settings {
-            format: html
-            toolbar: basic
-            minHeight: 180
-        }
-        layout {
-            sequence: 120
-            region: @livestack-event-form
-            slot: regionBody
-            alignment: left
-        }
-        appearance {
-            template: @optional-floating
-            templateOptions: #DEFAULT#
-        }
-        source {
-            formRegion: @livestack-event-form
-            column: DESC_LONG_OVERRIDE
-            dataType: varchar2
         }
     )
 
@@ -733,6 +636,19 @@ page 70 (
         }
     )
 
+    pageItem P70_UPDATED_BY (
+        type: hidden
+        layout {
+            sequence: 200
+            slot: contentBody
+        }
+        source {
+            formRegion: @livestack-event-form
+            column: UPDATED_BY
+            dataType: varchar2
+        }
+    )
+
     pageItem P70_UPDATED_FLG (
         type: hidden
         layout {
@@ -743,32 +659,6 @@ page 70 (
             formRegion: @livestack-event-form
             column: UPDATED_FLG
             dataType: number
-        }
-    )
-
-    pageItem P70_CREATED_DATE (
-        type: hidden
-        layout {
-            sequence: 170
-            slot: contentBody
-        }
-        source {
-            formRegion: @livestack-event-form
-            column: CREATED_DATE
-            dataType: date
-        }
-    )
-
-    pageItem P70_CREATED_BY (
-        type: hidden
-        layout {
-            sequence: 180
-            slot: contentBody
-        }
-        source {
-            formRegion: @livestack-event-form
-            column: CREATED_BY
-            dataType: varchar2
         }
     )
 
@@ -785,16 +675,101 @@ page 70 (
         }
     )
 
-    pageItem P70_UPDATED_BY (
-        type: hidden
+    pageItem P70_VALID_FROM (
+        type: datePicker
+        label {
+            label: Valid From
+            alignment: left
+        }
         layout {
-            sequence: 200
-            slot: contentBody
+            sequence: 90
+            region: @livestack-event-form
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required-floating
+            templateOptions: #DEFAULT#
+        }
+        validation {
+            valueRequired: true
         }
         source {
             formRegion: @livestack-event-form
-            column: UPDATED_BY
+            column: VALID_FROM
+            dataType: date
+        }
+    )
+
+    pageItem P70_VALID_TIMEZONE (
+        type: popupLov
+        label {
+            label: Timezone
+            alignment: left
+        }
+        settings {
+            fetchOnSearch: true
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select key_name, key_value
+                from wms_keys
+                where key_type='TIMEZONE'
+                and active_flg='Y'
+                order by key_order, key_name
+                ```
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 110
+            region: @livestack-event-form
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @required-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            valueRequired: true
+            maxLength: 50
+        }
+        source {
+            formRegion: @livestack-event-form
+            column: VALID_TIMEZONE
             dataType: varchar2
+        }
+    )
+
+    pageItem P70_VALID_TO (
+        type: datePicker
+        label {
+            label: Valid To
+            alignment: left
+        }
+        layout {
+            sequence: 100
+            region: @livestack-event-form
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @required-floating
+            templateOptions: #DEFAULT#
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            formRegion: @livestack-event-form
+            column: VALID_TO
+            dataType: date
         }
     )
 
@@ -839,6 +814,30 @@ page 70 (
         serverSideCondition {
             type: itemIsNull
             item: P70_ID
+        }
+    )
+
+    button populate-empty-fields (
+        buttonName: Populate_Empty_Fields
+        label: Populate Empty Fields
+        layout {
+            sequence: 115
+            region: @livestack-event-form
+            slot: regionBody
+            startNewRow: false
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--large
+                t-Button--gapTop
+            ]
+        }
+        behavior {
+            action: definedByDynamicAction
+            executeValidations: false
         }
     )
 
@@ -928,7 +927,6 @@ page 70 (
             }
             execution {
                 sequence: 20
-                fireWhenEventResultIs: true
                 fireOnInit: false
             }
             clientSideCondition {
@@ -990,6 +988,9 @@ page 70 (
             sequence: 10
             point: beforeHeader
         }
+        advanced {
+            executionMappingIdentifier: 10920522305853265
+        }
     )
 
     process set-defaults (
@@ -1016,6 +1017,9 @@ page 70 (
         execution {
             sequence: 10
         }
+        advanced {
+            executionMappingIdentifier: 10920698708853265
+        }
     )
 
     process submit-form (
@@ -1024,6 +1028,9 @@ page 70 (
         formRegion: @livestack-event-form
         execution {
             sequence: 20
+        }
+        advanced {
+            executionMappingIdentifier: 10920773480853265
         }
     )
 
@@ -1036,7 +1043,7 @@ page 70 (
                 declare
                     l_event_id wms_events.id%type;
                     l_selected boolean;
-
+                
                     function is_selected (
                         p_livestack_entry_id in number
                     ) return boolean
@@ -1049,7 +1056,7 @@ page 70 (
                                 end if;
                             end loop;
                         end if;
-
+                
                         return false;
                     end is_selected;
                 begin
@@ -1080,7 +1087,7 @@ page 70 (
                     )
                     loop
                         l_selected := is_selected(entry.livestack_entry_id);
-
+                
                         if l_selected and entry.livestack_event_entry_id is null then
                             insert into wms_events (
                                 title,
@@ -1164,7 +1171,7 @@ page 70 (
                                    updated_by = :APP_USER,
                                    updated_on = sysdate
                              where id = entry.livestack_event_entry_id;
-
+                
                             update wms_events
                                set active_flg = 'N',
                                    updated_flg = case
@@ -1179,6 +1186,9 @@ page 70 (
         }
         execution {
             sequence: 30
+        }
+        advanced {
+            executionMappingIdentifier: 11846746556553200
         }
     )
 
@@ -1224,9 +1234,13 @@ page 70 (
         execution {
             sequence: 40
         }
+        advanced {
+            executionMappingIdentifier: 11595336438340944
+        }
         serverSideCondition {
             whenButtonPressed: @save
         }
     )
 
 )
+
