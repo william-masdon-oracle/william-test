@@ -54,7 +54,8 @@ create table wms_livestack_event_entries (
     constraint wms_lse_entries_pk primary key (id),
     constraint wms_lse_entries_event_fk foreign key (livestack_event_id, livestack_id)
         references wms_livestack_events (id, livestack_id)
-        on delete cascade,
+        on delete cascade
+        deferrable initially immediate,
     constraint wms_lse_entries_entry_fk foreign key (livestack_entry_id, livestack_id)
         references wms_livestack_entries (id, livestack_id)
         on delete cascade,

@@ -498,6 +498,14 @@ page 70 (
         }
     )
 
+    pageItem P70_LIVESTACK_CHANGE_ACTION (
+        type: hidden
+        layout {
+            sequence: 152
+            slot: contentBody
+        }
+    )
+
     pageItem P70_LIVESTACK_ID (
         type: popupLov
         label {
@@ -549,6 +557,18 @@ page 70 (
         source {
             type: sqlQuerySingleValue
             sqlQuery: select event_title from wms_livestack_events where id = :P70_ID
+        }
+    )
+
+    pageItem P70_ORIGINAL_LIVESTACK_ID (
+        type: hidden
+        layout {
+            sequence: 150
+            slot: contentBody
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery: select max(livestack_id) from wms_livestack_events where id = :P70_ID
         }
     )
 
@@ -864,6 +884,123 @@ page 70 (
         }
     )
 
+    dynamicAction handle-livestack-change-action (
+        name: Handle LiveStack Change Action
+        execution {
+            sequence: 22
+        }
+        when {
+            selectionType: items
+            items: P70_LIVESTACK_CHANGE_ACTION
+        }
+        clientSideCondition {
+            type: itemIsNotNull
+            item: P70_ID
+        }
+
+        action clear-livestack-change-action (
+            action: setValue
+            settings {
+                suppressChangeEvent: true
+            }
+            affectedElements {
+                selectionType: items
+                items: P70_LIVESTACK_CHANGE_ACTION
+            }
+            execution {
+                sequence: 50
+                fireOnInit: false
+            }
+            clientSideCondition {
+                type: item=value
+                item: P70_LIVESTACK_CHANGE_ACTION
+                value: CONFIRM
+            }
+        )
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @associated-workshop-events
+            }
+            execution {
+                sequence: 40
+                fireOnInit: false
+            }
+            clientSideCondition {
+                type: item=value
+                item: P70_LIVESTACK_CHANGE_ACTION
+                value: CONFIRM
+            }
+        )
+
+        action remap-existing-livestack-events (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    begin
+                        wms_livestack_event_pkg.remap_livestack_event(
+                            p_livestack_event_id => :P70_ID,
+                            p_new_livestack_id => :P70_LIVESTACK_ID,
+                            p_event_title => :P70_EVENT_TITLE,
+                            p_email_creator => :P70_EMAIL_CREATOR,
+                            p_email_requestor => :P70_EMAIL_REQUESTOR,
+                            p_valid_from => :P70_VALID_FROM,
+                            p_valid_to => :P70_VALID_TO,
+                            p_valid_timezone => :P70_VALID_TIMEZONE,
+                            p_event_status => :P70_EVENT_STATUS,
+                            p_updated_by => :APP_USER
+                        );
+                    
+                        :P70_ORIGINAL_LIVESTACK_ID := :P70_LIVESTACK_ID;
+                    end;
+                    ```
+                itemsToSubmit: [
+                    P70_ID
+                    P70_LIVESTACK_ID
+                    P70_ORIGINAL_LIVESTACK_ID
+                    P70_EVENT_TITLE
+                    P70_EMAIL_CREATOR
+                    P70_EMAIL_REQUESTOR
+                    P70_VALID_FROM
+                    P70_VALID_TO
+                    P70_VALID_TIMEZONE
+                    P70_EVENT_STATUS
+                ]
+                itemsToReturn: P70_ORIGINAL_LIVESTACK_ID
+                showProcessing: true
+            }
+            execution {
+                sequence: 30
+                fireOnInit: false
+            }
+            clientSideCondition {
+                type: item=value
+                item: P70_LIVESTACK_CHANGE_ACTION
+                value: CONFIRM
+            }
+        )
+
+        action reset-livestack-selection (
+            action: executeJsCode
+            settings {
+                jsCode: location.reload();
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+            clientSideCondition {
+                type: item=value
+                item: P70_LIVESTACK_CHANGE_ACTION
+                value: CANCEL
+            }
+        )
+
+    )
+
     dynamicAction populate-empty-fields-da (
         name: Populate Empty Fields DA
         execution {
@@ -946,6 +1083,56 @@ page 70 (
             selectionType: items
             items: P70_LIVESTACK_ID
         }
+        clientSideCondition {
+            type: itemIsNotNull
+            item: P70_ID
+        }
+
+        action confirm-existing-livestack-change (
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    var originalLiveStackId = apex.item("P70_ORIGINAL_LIVESTACK_ID").getValue();
+                    var newLiveStackId = apex.item("P70_LIVESTACK_ID").getValue();
+                    var actionItem = apex.item("P70_LIVESTACK_CHANGE_ACTION");
+                    
+                    if (originalLiveStackId && newLiveStackId && originalLiveStackId !== newLiveStackId) {
+                        actionItem.setValue(
+                            window.confirm("Changing the LiveStack will completely overwrite the associated workshop events for this LiveStack event. Existing generated workshop event rows may be reassigned or deleted. Continue?")
+                                ? "CONFIRM"
+                                : "CANCEL"
+                        );
+                    } else {
+                        actionItem.setValue("", null, true);
+                    }
+                    ```
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+            clientSideCondition {
+                type: jsExpression
+                javaScriptExpression: $v("P70_ORIGINAL_LIVESTACK_ID") && $v("P70_LIVESTACK_ID") && $v("P70_ORIGINAL_LIVESTACK_ID") !== $v("P70_LIVESTACK_ID")
+            }
+        )
+
+    )
+
+    dynamicAction refresh-entry-selection-new (
+        name: Refresh Entry Selection - New Event
+        execution {
+            sequence: 25
+        }
+        when {
+            selectionType: items
+            items: P70_LIVESTACK_ID
+        }
+        clientSideCondition {
+            type: itemIsNull
+            item: P70_ID
+        }
 
         action native-refresh (
             action: refresh
@@ -977,6 +1164,52 @@ page 70 (
         serverSideCondition {
             type: noRowsReturned
             sqlQuery: select email from workshop_person_role where workshop_id is null and lower(email) = lower(:APP_USER) and livelabs_publisher_flg = 1;
+        }
+    )
+
+    validation user-can-edit-livestack-event (
+        name: User Can Edit LiveStack Event
+        execution {
+            sequence: 20
+        }
+        validation {
+            type: functionBodyReturningBoolean
+            plsqlFunctionBody:
+                ```plsql
+                declare
+                    l_count number;
+                begin
+                    if :P70_ID is null then
+                        return true;
+                    end if;
+                
+                    if apex_authorization.is_authorized('Administration Rights')
+                       or apex_authorization.is_authorized('WMS Administrator') then
+                        return true;
+                    end if;
+                
+                    select count(*)
+                      into l_count
+                      from wms_livestack_events
+                     where id = :P70_ID
+                       and (
+                           lower(email_creator) = lower(:APP_USER)
+                           or instr(
+                                  ',' || replace(lower(email_requestor), ' ', '') || ',',
+                                  ',' || lower(:APP_USER) || ','
+                              ) > 0
+                       );
+                
+                    return l_count > 0;
+                end;
+                ```
+        }
+        error {
+            errorMessage: You are not allowed to edit this LiveStack event.
+            displayLocation: inlineInNotification
+        }
+        serverSideCondition {
+            whenButtonPressed: @save
         }
     )
 
