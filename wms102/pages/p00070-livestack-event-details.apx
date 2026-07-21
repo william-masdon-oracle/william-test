@@ -588,6 +588,7 @@ page 70 (
                                    where workshop_id is null
                                      and lower(email) = lower(:APP_USER)
                                      and livelabs_publisher_flg = 1
+                                     and :P70_ID is not null
                               ) then 'Y'
                          when exists (
                                   select 1
@@ -625,6 +626,7 @@ page 70 (
                                    where workshop_id is null
                                      and lower(email) = lower(:APP_USER)
                                      and livelabs_publisher_flg = 1
+                                     and :P70_ID is not null
                               ) then 'Y'
                          else 'N'
                        end
@@ -1236,14 +1238,14 @@ page 70 (
         }
         serverSideCondition {
             type: noRowsReturned
-            sqlQuery: select email from workshop_person_role where workshop_id is null and lower(email) = lower(:APP_USER) and livelabs_publisher_flg = 1;
+            sqlQuery: select email from workshop_person_role where workshop_id is null and lower(email) = lower(:APP_USER) and livelabs_publisher_flg = 1 and :P70_ID is not null;
         }
     )
 
     validation user-can-edit-livestack-event (
         name: User Can Edit LiveStack Event
         execution {
-            sequence: 20
+            sequence: 40
         }
         validation {
             type: functionBodyReturningBoolean
@@ -1261,7 +1263,8 @@ page 70 (
                       from workshop_person_role
                      where workshop_id is null
                        and lower(email) = lower(:APP_USER)
-                       and livelabs_publisher_flg = 1;
+                       and livelabs_publisher_flg = 1
+                       and :P70_ID is not null;
 
                     if l_count > 0 then
                         return true;
@@ -1289,6 +1292,58 @@ page 70 (
         }
         serverSideCondition {
             whenButtonPressed: @save
+        }
+    )
+
+    validation oracle-emails-only-creator (
+        name: Oracle Emails Only - Creator
+        execution {
+            sequence: 20
+        }
+        validation {
+            plsqlExpression: "REGEXP_LIKE(UPPER(TRIM(:P70_EMAIL_CREATOR)), '^[A-Z0-9._%+-]+@ORACLE\\.COM$')"
+        }
+        error {
+            errorMessage: You must only use Oracle email addresses.
+            displayLocation: inlineInNotification
+            associatedItem: @P70_EMAIL_CREATOR
+        }
+    )
+
+    validation oracle-emails-only-requestors (
+        name: Oracle Emails Only - Requestors
+        execution {
+            sequence: 30
+        }
+        validation {
+            type: functionBodyReturningBoolean
+            plsqlFunctionBody:
+                ```plsql
+                declare
+                    l_invalid number := 0;
+                begin
+                    if trim(:P70_EMAIL_REQUESTOR) is null then
+                        return true;
+                    end if;
+
+                    select count(*)
+                      into l_invalid
+                      from (
+                          select trim(regexp_substr(:P70_EMAIL_REQUESTOR, '[^,]+', 1, level)) as email
+                            from dual
+                         connect by level <= regexp_count(:P70_EMAIL_REQUESTOR, ',') + 1
+                      )
+                     where email is null
+                        or not regexp_like(upper(email), '^[A-Z0-9._%+-]+@ORACLE\.COM$');
+
+                    return l_invalid = 0;
+                end;
+                ```
+        }
+        error {
+            errorMessage: You must only use Oracle email addresses.
+            displayLocation: inlineInNotification
+            associatedItem: @P70_EMAIL_REQUESTOR
         }
     )
 
@@ -1477,6 +1532,14 @@ page 70 (
                                    updated_by = :APP_USER,
                                    updated_on = sysdate
                              where id = entry.livestack_event_entry_id;
+
+                            update wms_events
+                               set active_flg = 'Y',
+                                   updated_flg = case
+                                       when nvl(updated_flg, 0) = 2 then 2
+                                       else 1
+                                   end
+                             where id = entry.event_id;
                         else
                             update wms_livestack_event_entries
                                set active_flg = 'N',

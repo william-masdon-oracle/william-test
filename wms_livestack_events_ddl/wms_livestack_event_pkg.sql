@@ -120,6 +120,10 @@ create or replace package body wms_livestack_event_pkg as
 
         update wms_livestack_events
            set livestack_id = p_new_livestack_id,
+               updated_flg = case
+                   when nvl(updated_flg, 0) = 2 then 2
+                   else 1
+               end,
                updated_by = p_updated_by,
                updated_on = sysdate
          where id = p_livestack_event_id;
