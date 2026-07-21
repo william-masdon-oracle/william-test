@@ -440,6 +440,11 @@ page 70 (
             type: static
             staticValue: Submitted
         }
+        readOnly {
+            type: item!=value
+            item: P70_IS_EVENT_ADMIN
+            value: Y
+        }
         serverSideCondition {
             type: itemIsNotNull
             item: P70_ID
@@ -546,6 +551,11 @@ page 70 (
             column: LIVESTACK_ID
             dataType: number
         }
+        readOnly {
+            type: item!=value
+            item: P70_CAN_EDIT_EVENT
+            value: Y
+        }
     )
 
     pageItem P70_ORIGINAL_EVENT_TITLE (
@@ -557,6 +567,69 @@ page 70 (
         source {
             type: sqlQuerySingleValue
             sqlQuery: select event_title from wms_livestack_events where id = :P70_ID
+        }
+    )
+
+    pageItem P70_CAN_EDIT_EVENT (
+        type: hidden
+        layout {
+            sequence: 145
+            slot: contentBody
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery:
+                ```sql
+                select case
+                         when :P70_ID is null then 'Y'
+                         when exists (
+                                  select 1
+                                    from workshop_person_role
+                                   where workshop_id is null
+                                     and lower(email) = lower(:APP_USER)
+                                     and livelabs_publisher_flg = 1
+                              ) then 'Y'
+                         when exists (
+                                  select 1
+                                    from wms_livestack_events
+                                   where id = :P70_ID
+                                     and (
+                                         lower(email_creator) = lower(:APP_USER)
+                                         or instr(
+                                                ',' || replace(lower(email_requestor), ' ', '') || ',',
+                                                ',' || replace(lower(:APP_USER), ' ', '') || ','
+                                            ) > 0
+                                     )
+                              ) then 'Y'
+                         else 'N'
+                       end
+                  from dual
+                ```
+        }
+    )
+
+    pageItem P70_IS_EVENT_ADMIN (
+        type: hidden
+        layout {
+            sequence: 148
+            slot: contentBody
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery:
+                ```sql
+                select case
+                         when exists (
+                                  select 1
+                                    from workshop_person_role
+                                   where workshop_id is null
+                                     and lower(email) = lower(:APP_USER)
+                                     and livelabs_publisher_flg = 1
+                              ) then 'Y'
+                         else 'N'
+                       end
+                  from dual
+                ```
         }
     )
 
@@ -1183,8 +1256,14 @@ page 70 (
                         return true;
                     end if;
                 
-                    if apex_authorization.is_authorized('Administration Rights')
-                       or apex_authorization.is_authorized('WMS Administrator') then
+                    select count(*)
+                      into l_count
+                      from workshop_person_role
+                     where workshop_id is null
+                       and lower(email) = lower(:APP_USER)
+                       and livelabs_publisher_flg = 1;
+
+                    if l_count > 0 then
                         return true;
                     end if;
                 
@@ -1196,7 +1275,7 @@ page 70 (
                            lower(email_creator) = lower(:APP_USER)
                            or instr(
                                   ',' || replace(lower(email_requestor), ' ', '') || ',',
-                                  ',' || lower(:APP_USER) || ','
+                                  ',' || replace(lower(:APP_USER), ' ', '') || ','
                               ) > 0
                        );
                 
@@ -1476,4 +1555,3 @@ page 70 (
     )
 
 )
-
