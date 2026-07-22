@@ -1,4 +1,10 @@
 create or replace package wms_livestack_event_pkg as
+    procedure updateLiveStackEventCodes;
+
+    procedure updateLiveStackEventCode (
+        p_livestack_event_id in wms_livestack_events.id%type
+    );
+
     procedure remap_livestack_event (
         p_livestack_event_id in wms_livestack_events.id%type,
         p_new_livestack_id   in wms_livestack_events.livestack_id%type,
@@ -15,6 +21,272 @@ end wms_livestack_event_pkg;
 /
 
 create or replace package body wms_livestack_event_pkg as
+    procedure authorize_livelabs_ords is
+        l_ords_id     varchar2(4000);
+        l_ords_secret varchar2(4000);
+        l_ords_auth   varchar2(4000);
+    begin
+        apex_web_service.g_request_headers.delete;
+
+        select value
+          into l_ords_id
+          from wms_system_parameters
+         where name = 'ORDS_ID';
+
+        select value
+          into l_ords_secret
+          from wms_system_parameters
+         where name = 'ORDS_SECRET';
+
+        select value
+          into l_ords_auth
+          from wms_system_parameters
+         where name = 'ORDS_AUTH';
+
+        apex_web_service.oauth_authenticate(
+            p_token_url      => l_ords_auth,
+            p_client_id      => l_ords_id,
+            p_client_secret  => l_ords_secret,
+            p_proxy_override => null
+        );
+
+        apex_web_service.g_request_headers(1).name := 'Authorization';
+        apex_web_service.g_request_headers(1).value := 'Bearer ' || apex_web_service.oauth_get_last_token;
+        apex_web_service.g_request_headers(2).name := 'Content-Type';
+        apex_web_service.g_request_headers(2).value := 'application/json';
+    end authorize_livelabs_ords;
+
+    function get_ords_url return varchar2 is
+        l_ords_url varchar2(4000);
+    begin
+        select value
+          into l_ords_url
+          from wms_system_parameters
+         where name = 'ORDS_URL';
+
+        return l_ords_url;
+    end get_ords_url;
+
+    procedure updateLiveStackEventCodes is
+        l_error_message varchar2(4000);
+    begin
+        -- Child workshop events must exist in LiveLabs before their vouchers can
+        -- be mapped to the parent LiveStack event.
+        wms_pkg_ords.updateEventCodes;
+
+        for event in (
+            select id
+              from wms_livestack_events
+             where event_status in ('Event Published', 'Event Approved')
+               and updated_flg > 0
+             order by id
+        )
+        loop
+            updateLiveStackEventCode(event.id);
+        end loop;
+    exception
+        when others then
+            l_error_message := sqlerrm;
+            insert into ords_log(priority, error_message)
+            values (
+                1,
+                'Unhandled exception from updateLiveStackEventCodes, outside the ORDS call: ' || l_error_message
+            );
+    end updateLiveStackEventCodes;
+
+    procedure updateLiveStackEventCode (
+        p_livestack_event_id in wms_livestack_events.id%type
+    ) is
+        l_ords_url      varchar2(4000);
+        l_parent_body   clob;
+        l_entries_body  clob;
+        l_response      clob;
+        l_error_message varchar2(4000);
+        l_event_code    wms_livestack_events.event_code%type;
+        l_status_code   number;
+    begin
+        authorize_livelabs_ords;
+        l_ords_url := get_ords_url;
+
+        select json_object(
+                   'livestack_event_id' value lse.id,
+                   'event_code' value lse.event_code,
+                   'livestack_id' value lse.livestack_id,
+                   'active_flg' value lse.active_flg,
+                   'email_creator' value lse.email_creator,
+                   'email_requestor' value lse.email_requestor,
+                   'valid_from' value to_char(lse.valid_from, 'MM/DD/YYYY'),
+                   'valid_to' value to_char(lse.valid_to, 'MM/DD/YYYY'),
+                   'valid_timezone' value lse.valid_timezone,
+                   'event_title' value lse.event_title,
+                   'desc_long_override' value lse.desc_long_override,
+                   'outline_override' value lse.outline_override,
+                   'prereqs_override' value lse.prereqs_override,
+                   'remarks' value lse.remarks
+                   returning clob
+               )
+          into l_parent_body
+          from wms_livestack_events lse
+         where lse.id = p_livestack_event_id
+           and lse.event_status in ('Event Published', 'Event Approved')
+           and lse.updated_flg > 0;
+
+        apex_web_service.g_status_code := null;
+
+        for event in (
+            select *
+              from wms_livestack_events
+             where id = p_livestack_event_id
+        )
+        loop
+            if event.updated_flg = 2 then
+                l_response := apex_web_service.make_rest_request(
+                    p_url            => l_ords_url || 'livestackEvents/write/createLiveStackEvent',
+                    p_http_method    => 'POST',
+                    p_body           => l_parent_body,
+                    p_proxy_override => null
+                );
+            elsif event.updated_flg = 1 then
+                l_response := apex_web_service.make_rest_request(
+                    p_url            => l_ords_url || 'livestackEvents/write/updateLiveStackEvent/' || event.id,
+                    p_http_method    => 'PUT',
+                    p_body           => l_parent_body,
+                    p_proxy_override => null
+                );
+            else
+                insert into ords_log(priority, error_message, payload)
+                values (
+                    1,
+                    'Unexpected LiveStack event updated_flg for event ' || event.id || ': ' || event.updated_flg,
+                    l_parent_body
+                );
+                return;
+            end if;
+
+            if apex_web_service.g_status_code between 200 and 299 then
+                if event.updated_flg = 2 then
+                    l_event_code := json_value(l_response, '$.LiveStack_Event_Code');
+
+                    update wms_livestack_events
+                       set event_code = coalesce(event_code, l_event_code)
+                     where id = event.id;
+                end if;
+
+                insert into ords_log(priority, error_message, payload)
+                values (
+                    9,
+                    'LiveStack event parent sync success for event ' || event.id || ': ' || l_response,
+                    l_parent_body
+                );
+            else
+                insert into ords_log(priority, error_message, payload)
+                values (
+                    1,
+                    'LiveStack event parent REST error for event ' || event.id ||
+                        '. Status=' || apex_web_service.g_status_code || ', Response=' || l_response,
+                    l_parent_body
+                );
+                return;
+            end if;
+        end loop;
+
+        select json_object(
+                   'livestack_event_id' value lse.id,
+                   'entries' value coalesce(
+                       (
+                           select json_arrayagg(
+                                      json_object(
+                                          'livestack_event_entry_id' value lee.id,
+                                          'livestack_entry_id' value lee.livestack_entry_id,
+                                          'voucher_id' value lee.event_id,
+                                          'active_flg' value case
+                                              when nvl(lse.active_flg, 'Y') = 'Y'
+                                               and nvl(lee.active_flg, 'Y') = 'Y'
+                                               and nvl(e.active_flg, 'Y') = 'Y'
+                                              then 'Y'
+                                              else 'N'
+                                          end
+                                      )
+                                      order by lee.id
+                                      returning clob
+                                  )
+                             from wms_livestack_event_entries lee
+                             join wms_events e
+                               on e.id = lee.event_id
+                            where lee.livestack_event_id = lse.id
+                           )
+                       ,
+                       json_array(returning clob)
+                   ) format json
+                   returning clob
+               )
+          into l_entries_body
+          from wms_livestack_events lse
+         where lse.id = p_livestack_event_id;
+
+        apex_web_service.g_status_code := null;
+        l_response := apex_web_service.make_rest_request(
+            p_url            => l_ords_url || 'livestackEvents/write/syncLiveStackEventEntries/' || p_livestack_event_id,
+            p_http_method    => 'POST',
+            p_body           => l_entries_body,
+            p_proxy_override => null
+        );
+
+        if apex_web_service.g_status_code between 200 and 299 then
+            insert into ords_log(priority, error_message, payload)
+            values (
+                9,
+                'LiveStack event entries batch sync success for event ' ||
+                    p_livestack_event_id || ': ' || l_response,
+                l_entries_body
+            );
+
+            update wms_livestack_events
+               set updated_flg = 0,
+                   event_status = 'Event Published'
+             where id = p_livestack_event_id;
+        else
+            insert into ords_log(priority, error_message, payload)
+            values (
+                1,
+                'LiveStack event entries batch REST error for event ' ||
+                    p_livestack_event_id || '. Status=' || apex_web_service.g_status_code ||
+                    ', Response=' || l_response,
+                l_entries_body
+            );
+        end if;
+    exception
+        when no_data_found then
+            insert into ords_log(priority, error_message)
+            values (
+                1,
+                'LiveStack event ' || p_livestack_event_id ||
+                    ' was not eligible for ORDS sync or does not exist.'
+            );
+        when others then
+            l_status_code := apex_web_service.g_status_code;
+            l_error_message := sqlerrm;
+            if l_entries_body is not null then
+                insert into ords_log(priority, error_message, payload)
+                values (
+                    1,
+                    'Unhandled exception from updateLiveStackEventCode for event ' ||
+                        p_livestack_event_id || '. Status=' || l_status_code ||
+                        ', Error=' || l_error_message,
+                    l_entries_body
+                );
+            else
+                insert into ords_log(priority, error_message, payload)
+                values (
+                    1,
+                    'Unhandled exception from updateLiveStackEventCode for event ' ||
+                        p_livestack_event_id || '. Status=' || l_status_code ||
+                        ', Error=' || l_error_message,
+                    l_parent_body
+                );
+            end if;
+    end updateLiveStackEventCode;
+
     procedure remap_livestack_event (
         p_livestack_event_id in wms_livestack_events.id%type,
         p_new_livestack_id   in wms_livestack_events.livestack_id%type,
