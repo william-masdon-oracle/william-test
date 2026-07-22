@@ -1396,6 +1396,38 @@ list desktop-navigation-menu (
         }
     )
 
+    entry request-livestack-event (
+        label: Request LiveStack Event
+        icon {
+            imageIconCssClasses: fa-layers
+        }
+        layout {
+            sequence: 10000149
+            parentEntry: @request-an-event-code
+        }
+        link {
+            target: {
+                page: 70
+            }
+        }
+    )
+
+    entry request-workshop-event (
+        label: Request Workshop Event
+        icon {
+            imageIconCssClasses: fa-flask
+        }
+        layout {
+            sequence: 1000
+            parentEntry: @request-an-event-code
+        }
+        link {
+            target: {
+                page: 35
+            }
+        }
+    )
+
     entry roles-and-responsibilities (
         label: Roles and Responsibilities
         icon {

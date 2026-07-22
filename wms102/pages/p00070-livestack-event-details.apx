@@ -933,7 +933,7 @@ page 70 (
         buttonName: Create
         label: Create LiveStack Event
         layout {
-            sequence: 30
+            sequence: 40
             region: @button-region
             slot: next
         }
@@ -980,7 +980,7 @@ page 70 (
         buttonName: Save
         label: Save Changes
         layout {
-            sequence: 20
+            sequence: 30
             region: @button-region
             slot: next
         }
@@ -996,6 +996,32 @@ page 70 (
         serverSideCondition {
             type: itemIsNotNull
             item: P70_ID
+        }
+    )
+
+    button view (
+        buttonName: View
+        label: View in LiveLabs
+        layout {
+            sequence: 20
+            region: @button-region
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @text-with-icon
+            templateOptions: [
+                #DEFAULT#
+                t-Button--iconRight
+            ]
+            icon: fa-external-link
+        }
+        behavior {
+            action: redirectUrl
+            targetUrl: javascript:void(window.open("https://livelabs.oracle.com/ords/r/dbpm/livelabs/livestack-landing-page?wec=&P70_EVENT_CODE.","_blank"))
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P70_EVENT_CODE
         }
     )
 

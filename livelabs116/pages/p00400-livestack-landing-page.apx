@@ -1841,66 +1841,6 @@ page 400 (
         }
     )
 
-    process insert-livestack-event-user (
-        name: Insert LiveStack Event User
-        type: executeCode
-        source {
-            plsqlCode:
-                ```plsql
-                declare
-                  cursor c_livestack_event is
-                    select lse.id,
-                           lseu.owner1,
-                           lse.email_creator,
-                           lse.email_requestor
-                      from ll_livestack_events lse,
-                           (select livestack_event_id, owner1
-                              from ll_livestack_event_users
-                             where upper(owner1) = upper(:APP_USER)) lseu
-                     where lse.id = lseu.livestack_event_id (+)
-                       and lse.event_code = :WEC
-                       and lse.active_flg = 'Y'
-                       and sysdate between nvl(lse.valid_from, sysdate) and nvl(lse.valid_to, sysdate);
-
-                  v_livestack_event_id  number;
-                  v_owner1              varchar2(100);
-                  v_email_requestor     varchar2(2000);
-                  v_email_creator       varchar2(2000);
-                begin
-                  ll_pkg_log.log(40, 'P400 - Insert LiveStack Event User begin');
-
-                  if :WEC is not null then
-                    open c_livestack_event;
-                    fetch c_livestack_event into v_livestack_event_id, v_owner1, v_email_creator, v_email_requestor;
-
-                    if    c_livestack_event%FOUND
-                      and v_owner1 is null
-                      and instr(nvl(upper(v_email_creator),'X'), upper(:APP_USER)) = 0
-                      and instr(nvl(upper(v_email_requestor),'X'), upper(:APP_USER)) = 0
-                      and nvl(ll_pkg_security.am_i_allowed(
-                            p_apex_user    => :APP_USER,
-                            p_access_type  => 'EVENT_CODE_ADMIN',
-                            p_access_value => v_livestack_event_id), 'N') <> 'Y'
-                    then
-                      insert into ll_livestack_event_users (livestack_event_id, owner1)
-                      values (v_livestack_event_id, :APP_USER);
-                      commit;
-                    end if;
-
-                    close c_livestack_event;
-                  end if;
-
-                  :P400_EVENT_ID := v_livestack_event_id;
-                  ll_pkg_log.log(40, 'P400 - Insert LiveStack Event User end');
-                end;
-                ```
-        }
-        execution {
-            sequence: 7
-            point: beforeHeader
-        }
-    )
-
     process get-livestack-info (
         name: Get LiveStack Info
         type: executeCode
@@ -2004,7 +1944,7 @@ page 400 (
                            active_flg in ('Y', 'U')
                            or (active_flg = 'E' and :WEC is not null)
                          );
-
+                
                   :P400_ABOUT_OR_TITLE := '<div style="font-size:25px"><b>' ||
                                           case
                                             when l_event_title is not null then apex_escape.html(l_base_name)
@@ -2033,6 +1973,69 @@ page 400 (
         }
     )
 
+    process insert-livestack-event-user (
+        name: Insert LiveStack Event User
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                declare
+                  cursor c_livestack_event is
+                    select lse.id,
+                           lseu.owner1,
+                           lse.email_creator,
+                           lse.email_requestor
+                      from ll_livestack_events lse,
+                           (select livestack_event_id, owner1
+                              from ll_livestack_event_users
+                             where upper(owner1) = upper(:APP_USER)) lseu
+                     where lse.id = lseu.livestack_event_id (+)
+                       and lse.event_code = :WEC
+                       and lse.active_flg = 'Y'
+                       and sysdate between nvl(lse.valid_from, sysdate) and nvl(lse.valid_to, sysdate);
+                
+                  v_livestack_event_id  number;
+                  v_owner1              varchar2(100);
+                  v_email_requestor     varchar2(2000);
+                  v_email_creator       varchar2(2000);
+                begin
+                  ll_pkg_log.log(40, 'P400 - Insert LiveStack Event User begin');
+                
+                  if :WEC is not null then
+                    open c_livestack_event;
+                    fetch c_livestack_event into v_livestack_event_id, v_owner1, v_email_creator, v_email_requestor;
+                
+                    if    c_livestack_event%FOUND
+                      and v_owner1 is null
+                      and instr(nvl(upper(v_email_creator),'X'), upper(:APP_USER)) = 0
+                      and instr(nvl(upper(v_email_requestor),'X'), upper(:APP_USER)) = 0
+                      and nvl(ll_pkg_security.am_i_allowed(
+                            p_apex_user    => :APP_USER,
+                            p_access_type  => 'EVENT_CODE_ADMIN',
+                            p_access_value => v_livestack_event_id), 'N') <> 'Y'
+                    then
+                      insert into ll_livestack_event_users (livestack_event_id, owner1)
+                      values (v_livestack_event_id, :APP_USER);
+                      commit;
+                    end if;
+                
+                    close c_livestack_event;
+                  end if;
+                
+                  :P400_EVENT_ID := v_livestack_event_id;
+                  ll_pkg_log.log(40, 'P400 - Insert LiveStack Event User end');
+                end;
+                ```
+        }
+        execution {
+            sequence: 7
+            point: beforeHeader
+        }
+        advanced {
+            executionMappingIdentifier: 10205943060459182
+        }
+    )
+
     branch (
         execution {
             sequence: 10
@@ -2046,3 +2049,4 @@ page 400 (
     )
 
 )
+
