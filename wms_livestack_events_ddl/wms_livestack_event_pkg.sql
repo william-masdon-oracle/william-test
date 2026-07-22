@@ -1,4 +1,4 @@
-create or replace package wms_livestack_event_pkg as
+create or replace package wms_pkg_livestack_event as
     procedure updateLiveStackEventCodes;
 
     procedure updateLiveStackEventCode (
@@ -17,10 +17,10 @@ create or replace package wms_livestack_event_pkg as
         p_event_status       in wms_livestack_events.event_status%type,
         p_updated_by         in varchar2
     );
-end wms_livestack_event_pkg;
+end wms_pkg_livestack_event;
 /
 
-create or replace package body wms_livestack_event_pkg as
+create or replace package body wms_pkg_livestack_event as
     procedure authorize_livelabs_ords is
         l_ords_id     varchar2(4000);
         l_ords_secret varchar2(4000);
@@ -606,5 +606,5 @@ create or replace package body wms_livestack_event_pkg as
 
             raise;
     end remap_livestack_event;
-end wms_livestack_event_pkg;
+end wms_pkg_livestack_event;
 /

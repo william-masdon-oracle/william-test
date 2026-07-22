@@ -192,7 +192,8 @@ page 70 (
     )
 
     region button-region (
-        name: Button Region
+        name: Title Region
+        title: &P70_PAGE_TITLE.
         type: staticContent
         layout {
             sequence: 10
@@ -202,7 +203,7 @@ page 70 (
             template: @title-bar
             templateOptions: [
                 #DEFAULT#
-                t-BreadcrumbRegion--useBreadcrumbTitle
+                t-BreadcrumbRegion--useRegionTitle
             ]
         }
     )
@@ -266,10 +267,49 @@ page 70 (
         }
     )
 
+    pageItem P70_CAN_EDIT_EVENT (
+        type: hidden
+        layout {
+            sequence: 145
+            slot: contentBody
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery:
+                ```sql
+                select case
+                         when :P70_ID is null then 'Y'
+                         when exists (
+                                  select 1
+                                    from workshop_person_role
+                                   where workshop_id is null
+                                     and lower(email) = lower(:APP_USER)
+                                     and livelabs_publisher_flg = 1
+                                     and :P70_ID is not null
+                              ) then 'Y'
+                         when exists (
+                                  select 1
+                                    from wms_livestack_events
+                                   where id = :P70_ID
+                                     and (
+                                         lower(email_creator) = lower(:APP_USER)
+                                         or instr(
+                                                ',' || replace(lower(email_requestor), ' ', '') || ',',
+                                                ',' || replace(lower(:APP_USER), ' ', '') || ','
+                                            ) > 0
+                                     )
+                              ) then 'Y'
+                         else 'N'
+                       end
+                  from dual
+                ```
+        }
+    )
+
     pageItem P70_CREATED_BY (
         type: hidden
         layout {
-            sequence: 180
+            sequence: 225
             slot: contentBody
         }
         source {
@@ -282,7 +322,7 @@ page 70 (
     pageItem P70_CREATED_DATE (
         type: hidden
         layout {
-            sequence: 170
+            sequence: 215
             slot: contentBody
         }
         source {
@@ -440,14 +480,14 @@ page 70 (
             type: static
             staticValue: Submitted
         }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P70_ID
+        }
         readOnly {
             type: item!=value
             item: P70_IS_EVENT_ADMIN
             value: Y
-        }
-        serverSideCondition {
-            type: itemIsNotNull
-            item: P70_ID
         }
     )
 
@@ -503,10 +543,36 @@ page 70 (
         }
     )
 
+    pageItem P70_IS_EVENT_ADMIN (
+        type: hidden
+        layout {
+            sequence: 165
+            slot: contentBody
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery:
+                ```sql
+                select case
+                         when exists (
+                                  select 1
+                                    from workshop_person_role
+                                   where workshop_id is null
+                                     and lower(email) = lower(:APP_USER)
+                                     and livelabs_publisher_flg = 1
+                                     and :P70_ID is not null
+                              ) then 'Y'
+                         else 'N'
+                       end
+                  from dual
+                ```
+        }
+    )
+
     pageItem P70_LIVESTACK_CHANGE_ACTION (
         type: hidden
         layout {
-            sequence: 152
+            sequence: 185
             slot: contentBody
         }
     )
@@ -561,7 +627,7 @@ page 70 (
     pageItem P70_ORIGINAL_EVENT_TITLE (
         type: hidden
         layout {
-            sequence: 155
+            sequence: 195
             slot: contentBody
         }
         source {
@@ -570,75 +636,10 @@ page 70 (
         }
     )
 
-    pageItem P70_CAN_EDIT_EVENT (
-        type: hidden
-        layout {
-            sequence: 145
-            slot: contentBody
-        }
-        source {
-            type: sqlQuerySingleValue
-            sqlQuery:
-                ```sql
-                select case
-                         when :P70_ID is null then 'Y'
-                         when exists (
-                                  select 1
-                                    from workshop_person_role
-                                   where workshop_id is null
-                                     and lower(email) = lower(:APP_USER)
-                                     and livelabs_publisher_flg = 1
-                                     and :P70_ID is not null
-                              ) then 'Y'
-                         when exists (
-                                  select 1
-                                    from wms_livestack_events
-                                   where id = :P70_ID
-                                     and (
-                                         lower(email_creator) = lower(:APP_USER)
-                                         or instr(
-                                                ',' || replace(lower(email_requestor), ' ', '') || ',',
-                                                ',' || replace(lower(:APP_USER), ' ', '') || ','
-                                            ) > 0
-                                     )
-                              ) then 'Y'
-                         else 'N'
-                       end
-                  from dual
-                ```
-        }
-    )
-
-    pageItem P70_IS_EVENT_ADMIN (
-        type: hidden
-        layout {
-            sequence: 148
-            slot: contentBody
-        }
-        source {
-            type: sqlQuerySingleValue
-            sqlQuery:
-                ```sql
-                select case
-                         when exists (
-                                  select 1
-                                    from workshop_person_role
-                                   where workshop_id is null
-                                     and lower(email) = lower(:APP_USER)
-                                     and livelabs_publisher_flg = 1
-                                     and :P70_ID is not null
-                              ) then 'Y'
-                         else 'N'
-                       end
-                  from dual
-                ```
-        }
-    )
-
     pageItem P70_ORIGINAL_LIVESTACK_ID (
         type: hidden
         layout {
-            sequence: 150
+            sequence: 175
             slot: contentBody
         }
         source {
@@ -672,6 +673,45 @@ page 70 (
             formRegion: @livestack-event-form
             column: OUTLINE_OVERRIDE
             dataType: varchar2
+        }
+    )
+
+    pageItem P70_PAGE_TITLE (
+        type: hidden
+        layout {
+            sequence: 155
+            slot: contentBody
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery:
+                ```sql
+                select case
+                         when :P70_ID is null then 'Y'
+                         when exists (
+                                  select 1
+                                    from workshop_person_role
+                                   where workshop_id is null
+                                     and lower(email) = lower(:APP_USER)
+                                     and livelabs_publisher_flg = 1
+                                     and :P70_ID is not null
+                              ) then 'Y'
+                         when exists (
+                                  select 1
+                                    from wms_livestack_events
+                                   where id = :P70_ID
+                                     and (
+                                         lower(email_creator) = lower(:APP_USER)
+                                         or instr(
+                                                ',' || replace(lower(email_requestor), ' ', '') || ',',
+                                                ',' || replace(lower(:APP_USER), ' ', '') || ','
+                                            ) > 0
+                                     )
+                              ) then 'Y'
+                         else 'N'
+                       end
+                  from dual
+                ```
         }
     )
 
@@ -734,7 +774,7 @@ page 70 (
     pageItem P70_UPDATED_BY (
         type: hidden
         layout {
-            sequence: 200
+            sequence: 245
             slot: contentBody
         }
         source {
@@ -747,7 +787,7 @@ page 70 (
     pageItem P70_UPDATED_FLG (
         type: hidden
         layout {
-            sequence: 160
+            sequence: 205
             slot: contentBody
         }
         source {
@@ -760,7 +800,7 @@ page 70 (
     pageItem P70_UPDATED_ON (
         type: hidden
         layout {
-            sequence: 190
+            sequence: 235
             slot: contentBody
         }
         source {
@@ -1016,7 +1056,7 @@ page 70 (
                 plsqlCode:
                     ```plsql
                     begin
-                        wms_livestack_event_pkg.remap_livestack_event(
+                        wms_pkg_livestack_event.remap_livestack_event(
                             p_livestack_event_id => :P70_ID,
                             p_new_livestack_id => :P70_LIVESTACK_ID,
                             p_event_title => :P70_EVENT_TITLE,
@@ -1242,59 +1282,6 @@ page 70 (
         }
     )
 
-    validation user-can-edit-livestack-event (
-        name: User Can Edit LiveStack Event
-        execution {
-            sequence: 40
-        }
-        validation {
-            type: functionBodyReturningBoolean
-            plsqlFunctionBody:
-                ```plsql
-                declare
-                    l_count number;
-                begin
-                    if :P70_ID is null then
-                        return true;
-                    end if;
-                
-                    select count(*)
-                      into l_count
-                      from workshop_person_role
-                     where workshop_id is null
-                       and lower(email) = lower(:APP_USER)
-                       and livelabs_publisher_flg = 1
-                       and :P70_ID is not null;
-
-                    if l_count > 0 then
-                        return true;
-                    end if;
-                
-                    select count(*)
-                      into l_count
-                      from wms_livestack_events
-                     where id = :P70_ID
-                       and (
-                           lower(email_creator) = lower(:APP_USER)
-                           or instr(
-                                  ',' || replace(lower(email_requestor), ' ', '') || ',',
-                                  ',' || replace(lower(:APP_USER), ' ', '') || ','
-                              ) > 0
-                       );
-                
-                    return l_count > 0;
-                end;
-                ```
-        }
-        error {
-            errorMessage: You are not allowed to edit this LiveStack event.
-            displayLocation: inlineInNotification
-        }
-        serverSideCondition {
-            whenButtonPressed: @save
-        }
-    )
-
     validation oracle-emails-only-creator (
         name: Oracle Emails Only - Creator
         execution {
@@ -1325,7 +1312,7 @@ page 70 (
                     if trim(:P70_EMAIL_REQUESTOR) is null then
                         return true;
                     end if;
-
+                
                     select count(*)
                       into l_invalid
                       from (
@@ -1335,7 +1322,7 @@ page 70 (
                       )
                      where email is null
                         or not regexp_like(upper(email), '^[A-Z0-9._%+-]+@ORACLE\.COM$');
-
+                
                     return l_invalid = 0;
                 end;
                 ```
@@ -1344,6 +1331,59 @@ page 70 (
             errorMessage: You must only use Oracle email addresses.
             displayLocation: inlineInNotification
             associatedItem: @P70_EMAIL_REQUESTOR
+        }
+    )
+
+    validation user-can-edit-livestack-event (
+        name: User Can Edit LiveStack Event
+        execution {
+            sequence: 40
+        }
+        validation {
+            type: functionBodyReturningBoolean
+            plsqlFunctionBody:
+                ```plsql
+                declare
+                    l_count number;
+                begin
+                    if :P70_ID is null then
+                        return true;
+                    end if;
+                
+                    select count(*)
+                      into l_count
+                      from workshop_person_role
+                     where workshop_id is null
+                       and lower(email) = lower(:APP_USER)
+                       and livelabs_publisher_flg = 1
+                       and :P70_ID is not null;
+                
+                    if l_count > 0 then
+                        return true;
+                    end if;
+                
+                    select count(*)
+                      into l_count
+                      from wms_livestack_events
+                     where id = :P70_ID
+                       and (
+                           lower(email_creator) = lower(:APP_USER)
+                           or instr(
+                                  ',' || replace(lower(email_requestor), ' ', '') || ',',
+                                  ',' || replace(lower(:APP_USER), ' ', '') || ','
+                              ) > 0
+                       );
+                
+                    return l_count > 0;
+                end;
+                ```
+        }
+        error {
+            errorMessage: You are not allowed to edit this LiveStack event.
+            displayLocation: inlineInNotification
+        }
+        serverSideCondition {
+            whenButtonPressed: @save
         }
     )
 
@@ -1386,6 +1426,33 @@ page 70 (
         }
         advanced {
             executionMappingIdentifier: 10920698708853265
+        }
+    )
+
+    process set-page-title (
+        name: Set page title
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                begin
+                select
+                    case when :P70_ID is null then 
+                        'Request New LiveStack Event'
+                    else
+                        'Edit LiveStack Event'
+                    end
+                  into :P70_PAGE_TITLE
+                  from dual;
+                end;
+                ```
+        }
+        execution {
+            sequence: 20
+            point: beforeHeader
+        }
+        advanced {
+            executionMappingIdentifier: 13428250181861803
         }
     )
 
@@ -1532,7 +1599,7 @@ page 70 (
                                    updated_by = :APP_USER,
                                    updated_on = sysdate
                              where id = entry.livestack_event_entry_id;
-
+                
                             update wms_events
                                set active_flg = 'Y',
                                    updated_flg = case
@@ -1618,3 +1685,4 @@ page 70 (
     )
 
 )
+
