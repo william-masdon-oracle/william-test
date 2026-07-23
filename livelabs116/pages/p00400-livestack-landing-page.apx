@@ -527,7 +527,7 @@ page 400 (
             type: sqlQuery
             sqlQuery:
                 ```sql
-                with col_data as ( 
+                with col_data as (
                     select e.ID,
                            e.livestack_id,
                            e.POSITION,
@@ -549,10 +549,16 @@ page 400 (
                         and lev.active_flg = 'Y'
                       left join ll_vouchers v
                         on v.id = lev.voucher_id
+                        and v.active_flg = 'Y'
                      where e.livestack_id = :P400_ID
+                       and (
+                           :P400_EVENT_ID is null
+                           or v.id is not null
+                       )
                 )
-                select 
+                select
                     cd.*,
+                    row_number() over (order by cd.position nulls last, cd.id) as display_position,
                     ll_pkg_admin.hours_readable(cd.entry_time_hours) as time_hours_readable,
                     case
                         when cd.entry_event_code is not null and cd.entry_type = 'WORKSHOP' then null
@@ -616,12 +622,9 @@ page 400 (
             column: ENTRY_DESC
             cssClasses: u-lineclamp-3
         }
-        secondaryBody {
-            column: ENTRY_EVENT_CODE
-        }
         iconAndBadge {
             iconSource: initials
-            iconColumn: POSITION
+            iconColumn: DISPLAY_POSITION
             badgeColumn: BADGE_COL
             badgeCssClasses: &BADGE_CLASS.
         }
@@ -1571,6 +1574,10 @@ page 400 (
         advanced {
             htmlDomId: subscribe-button-id
         }
+        serverSideCondition {
+            type: rowsReturned
+            sqlQuery: select 1 from ll_livestacks where id = :P400_ID and active_flg = 'Y'
+        }
     )
 
     dynamicAction open-share (
@@ -1618,6 +1625,9 @@ page 400 (
                 jsCode:
                     ```javascript-browser
                     const btn = document.getElementById("subscribe-button-id");
+                    if (!btn) {
+                        return;
+                    }
                     
                     // add a class to the button
                     btn.classList.add("t-Button--primary"); 
@@ -1666,6 +1676,28 @@ page 400 (
             item: P400_SUBSCRIBED_FLG
             value: 0
         }
+
+        action native-confirm (
+            action: confirm
+            settings {
+                title: Subscribe to LiveStack
+                message:
+                    ```html
+                    This event uses a temporary version of this LiveStack and may include different content than the public LiveStack. Would you like to subscribe to the public LiveStack?
+                    ```
+                style: warning
+                confirmLabel: Subscribe
+                cancelLabel: Cancel
+            }
+            execution {
+                sequence: 5
+                fireOnInit: false
+            }
+            clientSideCondition {
+                type: itemIsNotNull
+                item: P400_EVENT_ID
+            }
+        )
 
         action native-execute-plsql-code (
             action: executeServerSideCode
@@ -2049,4 +2081,3 @@ page 400 (
     )
 
 )
-

@@ -168,7 +168,7 @@ create or replace package body wms_pkg_livestack_event as
                     l_event_code := json_value(l_response, '$.LiveStack_Event_Code');
 
                     update wms_livestack_events
-                       set event_code = coalesce(event_code, l_event_code)
+                       set event_code = coalesce(event_code, l_event_code), updated_flg = 1
                      where id = event.id;
                 end if;
 

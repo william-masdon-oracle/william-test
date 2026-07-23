@@ -1649,6 +1649,15 @@ page 70 (
                              where id = entry.event_id;
                         end if;
                     end loop;
+
+                    update wms_livestack_events
+                       set updated_flg = case
+                               when nvl(updated_flg, 0) = 2 then 2
+                               else 1
+                           end,
+                           updated_by = :APP_USER,
+                           updated_on = sysdate
+                     where id = :P70_ID;
                 end;
                 ```
         }
@@ -1711,4 +1720,3 @@ page 70 (
     )
 
 )
-

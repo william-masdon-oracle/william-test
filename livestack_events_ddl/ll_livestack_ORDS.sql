@@ -328,7 +328,7 @@ begin
 
     if l_invalid_count > 0 then
         :status := 400;
-        :error_message := ''Each mapping must include a LiveStack entry for the parent LiveStack and a voucher for that entry workshop.'';
+        :error_message := ''One or more submitted mappings reference an invalid LiveStack entry or voucher. Unselected entries should be omitted from the payload.'';
         return;
     end if;
 
