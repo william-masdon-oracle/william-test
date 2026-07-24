@@ -14,6 +14,8 @@ create or replace package wms_pkg_livestack_event as
         p_valid_from         in wms_livestack_events.valid_from%type,
         p_valid_to           in wms_livestack_events.valid_to%type,
         p_valid_timezone     in wms_livestack_events.valid_timezone%type,
+        p_users_maximum      in wms_livestack_events.users_maximum%type,
+        p_users_concurrent   in wms_livestack_events.users_concurrent%type,
         p_event_status       in wms_livestack_events.event_status%type,
         p_updated_by         in varchar2
     );
@@ -118,6 +120,8 @@ create or replace package body wms_pkg_livestack_event as
                    'valid_from' value to_char(lse.valid_from, 'MM/DD/YYYY'),
                    'valid_to' value to_char(lse.valid_to, 'MM/DD/YYYY'),
                    'valid_timezone' value lse.valid_timezone,
+                   'users_maximum' value lse.users_maximum,
+                   'users_concurrent' value lse.users_concurrent,
                    'event_title' value lse.event_title,
                    'desc_long_override' value lse.desc_long_override,
                    'outline_override' value lse.outline_override,
@@ -296,6 +300,8 @@ create or replace package body wms_pkg_livestack_event as
         p_valid_from         in wms_livestack_events.valid_from%type,
         p_valid_to           in wms_livestack_events.valid_to%type,
         p_valid_timezone     in wms_livestack_events.valid_timezone%type,
+        p_users_maximum      in wms_livestack_events.users_maximum%type,
+        p_users_concurrent   in wms_livestack_events.users_concurrent%type,
         p_event_status       in wms_livestack_events.event_status%type,
         p_updated_by         in varchar2
     ) is
@@ -334,6 +340,8 @@ create or replace package body wms_pkg_livestack_event as
                    valid_from = p_valid_from,
                    valid_to = p_valid_to,
                    livelabs_id = p_entry,
+                   users_maximum = p_users_maximum,
+                   users_concurrent = p_users_concurrent,
                    active_flg = 'Y',
                    valid_timezone = p_valid_timezone,
                    alt_url = json_object(
@@ -488,6 +496,8 @@ create or replace package body wms_pkg_livestack_event as
                     valid_from,
                     valid_to,
                     livelabs_id,
+                    users_maximum,
+                    users_concurrent,
                     active_flg,
                     valid_timezone,
                     alt_url,
@@ -502,6 +512,8 @@ create or replace package body wms_pkg_livestack_event as
                     p_valid_from,
                     p_valid_to,
                     entry.livelabs_id,
+                    p_users_maximum,
+                    p_users_concurrent,
                     'Y',
                     p_valid_timezone,
                     json_object(

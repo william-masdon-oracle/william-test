@@ -8,6 +8,8 @@ create table wms_livestack_events (
     valid_from             date,
     valid_to               date,
     valid_timezone         varchar2(50),
+    users_maximum          number,
+    users_concurrent       number,
     active_flg             varchar2(1) default 'Y' not null,
     desc_long_override     varchar2(4000),
     outline_override       varchar2(4000),
@@ -83,6 +85,10 @@ comment on column wms_livestack_events.event_title is
     'Display title for the LiveStack event.';
 comment on column wms_livestack_events.event_status is
     'WMS approval/publication status for the LiveStack event request.';
+comment on column wms_livestack_events.users_maximum is
+    'Maximum number of users allowed for the LiveStack parent event.';
+comment on column wms_livestack_events.users_concurrent is
+    'Maximum number of concurrent users allowed for the LiveStack parent event.';
 comment on column wms_livestack_event_entries.event_id is
     'WMS_EVENTS.ID for the event request associated with this LiveStack entry.';
 comment on column wms_events.livestack_event_id is

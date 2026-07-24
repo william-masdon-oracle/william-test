@@ -810,6 +810,70 @@ page 70 (
         }
     )
 
+    pageItem P70_USERS_CONCURRENT (
+        type: numberField
+        label {
+            label: Concurrent Users
+            alignment: left
+        }
+        settings {
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 115
+            region: @livestack-event-form
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        source {
+            formRegion: @livestack-event-form
+            column: USERS_CONCURRENT
+            dataType: number
+        }
+        help {
+            inlineHelpText: LiveLabs Sandbox Only
+            helpText: How many users should be able to use this LiveStack event code at the same time?
+        }
+    )
+
+    pageItem P70_USERS_MAXIMUM (
+        type: numberField
+        label {
+            label: Max Users
+            alignment: left
+        }
+        settings {
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 112
+            region: @livestack-event-form
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        source {
+            formRegion: @livestack-event-form
+            column: USERS_MAXIMUM
+            dataType: number
+        }
+        help {
+            inlineHelpText: LiveLabs Sandbox Only
+            helpText: How many users should be able to use this LiveStack event code in total?
+        }
+    )
+
     pageItem P70_VALID_FROM (
         type: datePicker
         label {
@@ -1091,6 +1155,8 @@ page 70 (
                             p_valid_from => :P70_VALID_FROM,
                             p_valid_to => :P70_VALID_TO,
                             p_valid_timezone => :P70_VALID_TIMEZONE,
+                            p_users_maximum => :P70_USERS_MAXIMUM,
+                            p_users_concurrent => :P70_USERS_CONCURRENT,
                             p_event_status => :P70_EVENT_STATUS,
                             p_updated_by => :APP_USER
                         );
@@ -1108,6 +1174,8 @@ page 70 (
                     P70_VALID_FROM
                     P70_VALID_TO
                     P70_VALID_TIMEZONE
+                    P70_USERS_MAXIMUM
+                    P70_USERS_CONCURRENT
                     P70_EVENT_STATUS
                 ]
                 itemsToReturn: P70_ORIGINAL_LIVESTACK_ID
@@ -1556,6 +1624,8 @@ page 70 (
                                 valid_from,
                                 valid_to,
                                 livelabs_id,
+                                users_maximum,
+                                users_concurrent,
                                 active_flg,
                                 valid_timezone,
                                 alt_url,
@@ -1570,6 +1640,8 @@ page 70 (
                                 :P70_VALID_FROM,
                                 :P70_VALID_TO,
                                 entry.livelabs_id,
+                                :P70_USERS_MAXIMUM,
+                                :P70_USERS_CONCURRENT,
                                 'Y',
                                 :P70_VALID_TIMEZONE,
                                 json_object(
@@ -1685,6 +1757,42 @@ page 70 (
                        e.valid_from = :P70_VALID_FROM,
                        e.valid_to = :P70_VALID_TO,
                        e.valid_timezone = :P70_VALID_TIMEZONE,
+                       e.users_maximum = :P70_USERS_MAXIMUM,
+                       e.users_concurrent = :P70_USERS_CONCURRENT,
+                       e.alt_url = (
+                           select json_object(
+                                      'FREETIER_URL' value ll.freetier_url,
+                                      'LIVELABS_URL' value ll.greenbutton_url,
+                                      'ALWAYSFREE_URL' value ll.alwaysfree_url,
+                                      'PAID_URL' value ll.paid_url,
+                                      'LIVESQL_URL' value ll.livesql_url,
+                                      'DESKTOP_GUIDE_URL' value null,
+                                      'DESKTOP_APP1_URL' value null,
+                                      'DESKTOP_APP2_URL' value null
+                                  )
+                             from workshop_ll ll
+                            where ll.id = e.livelabs_id
+                       ),
+                       e.event_json = (
+                           select json_object(
+                                      'DisplayOciInstructions' value null,
+                                      'AlwaysFreeEnabled' value ll.alwaysfree_flg,
+                                      'FreeTierEnabled' value ll.freetier_flg,
+                                      'PaidTenancyEnabled' value ll.paid_flg,
+                                      'LiveLabsGreenEnabled' value ll.greenbutton_flg,
+                                      'LiveSQLEnabled' value ll.livesql_flg,
+                                      'EventType' value null,
+                                      'EventDate' value null,
+                                      'EventLocation' value null,
+                                      'EventOrganizer' value null,
+                                      'EventIconLink' value null,
+                                      'YoutubeLink' value null,
+                                      'EventTcValue' value null,
+                                      'AdvertEnabled' value 'N'
+                                  )
+                             from workshop_ll ll
+                            where ll.id = e.livelabs_id
+                       ),
                        e.active_flg = case
                            when exists (
                                select 1

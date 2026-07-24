@@ -28,7 +28,7 @@ page 400 (
                 let mailto  = '&APP_USER.',
                     subject = 'Oracle LiveLabs LiveStack: ' + apex.item('P400_TITLE').getValue(),
                     body    = '%0D%0AHere\'s a link to the Oracle LiveLabs LiveStack "' + apex.item('P400_TITLE').getValue() + '":%0D%0A%0D%0A' + apex.item('P400_URL').getValue() + '%0D%0A%0D%0AMany thanks,%0D%0A%0D%0A';
-                
+
                 location.href = `mailto:${mailto}?subject=${subject}&body=${body}`;
             }
             
@@ -699,6 +699,11 @@ page 400 (
             }
         )
 
+        serverSideCondition {
+            type: expression
+            plsqlExpression: nvl(:P400_EVENT_ACCESS_STATUS, 'OK') not in ('Oversubscribed', 'Toomany')
+        }
+
     )
 
     region other-livestacks-you-might-like (
@@ -790,7 +795,7 @@ page 400 (
                 ```html
                 <span class="&TIME_ICON." style="font-size:1em;vertical-align:baseline;color:black;">&nbsp;&nbsp;&LIVESTACK_TIME.</span>
                 <span style="float:right;color:black;">&CARD_VIEWS.</span>
-                
+
                 ```
         }
         iconAndBadge {
@@ -844,7 +849,7 @@ page 400 (
                         <button type="button" title="Copy to clipboard" aria-label="Copy to clipboard" class="t-Button t-Button--noLabel t-Button--icon t-Button--large"  data-clipboard-source="&P400_URL.">
                             <span aria-hidden="true" class="t-Icon fa fa-synonym fa-lg"></span>
                         </button>
-                
+
                         <button type="button" title="Share in Email" aria-label="Share in Email" class="t-Button t-Button--noLabel t-Button--icon t-Button--large" onclick="shareEmail();">
                             <span aria-hidden="true" class="t-Icon fa fa-envelope-o fa-lg"></span>
                         </button>
@@ -1062,6 +1067,84 @@ page 400 (
         }
     )
 
+    pageItem P400_EVENT_OVERSUBSCRIBED (
+        type: displayOnly
+        label {
+            alignment: left
+        }
+        settings {
+            format: htmlUnsafe
+            sendOnPageSubmit: false
+        }
+        layout {
+            sequence: 12
+            region: @content-in-this-livestack
+            slot: regionBody
+            alignment: left
+            labelColumnSpan: 0
+            columnCssClasses: greenbutton-error
+        }
+        appearance {
+            template: @/hidden
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            cssClasses: greenbutton-error
+            customAttributes: style="word-break: auto-phrase;"
+        }
+        default {
+            type: static
+            staticValue: The maximum number of registrations for this LiveStack event code has been reached. Please ask your Oracle contact for more information. (Ref: Oversubscribed)
+        }
+        serverSideCondition {
+            type: item=value
+            item: P400_EVENT_ACCESS_STATUS
+            value: Oversubscribed
+        }
+        security {
+            sessionStateProtection: restricted
+        }
+    )
+
+    pageItem P400_EVENT_TOOMANY (
+        type: displayOnly
+        label {
+            alignment: left
+        }
+        settings {
+            format: htmlUnsafe
+            sendOnPageSubmit: false
+        }
+        layout {
+            sequence: 14
+            region: @content-in-this-livestack
+            slot: regionBody
+            alignment: left
+            labelColumnSpan: 0
+            columnCssClasses: greenbutton-error
+        }
+        appearance {
+            template: @/hidden
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            cssClasses: greenbutton-error
+            customAttributes: style="word-break: auto-phrase;"
+        }
+        default {
+            type: static
+            staticValue: Too many users are currently using this LiveStack event code. Please try again later. (Ref: TooManyEC)
+        }
+        serverSideCondition {
+            type: item=value
+            item: P400_EVENT_ACCESS_STATUS
+            value: Toomany
+        }
+        security {
+            sessionStateProtection: restricted
+        }
+    )
+
     pageItem P400_DESC_LONG (
         type: displayOnly
         label {
@@ -1101,6 +1184,17 @@ page 400 (
         }
         layout {
             sequence: 35
+            slot: body
+        }
+        sessionState {
+            storage: request
+        }
+    )
+
+    pageItem P400_EVENT_ACCESS_STATUS (
+        type: hidden
+        layout {
+            sequence: 36
             slot: body
         }
         sessionState {
@@ -2015,11 +2109,24 @@ page 400 (
                   cursor c_livestack_event is
                     select lse.id,
                            lseu.owner1,
+                           lseu.users_rank,
                            lse.email_creator,
-                           lse.email_requestor
-                      from ll_livestack_events lse,
-                           (select livestack_event_id, owner1
+                           lse.email_requestor,
+                           lse.users_maximum,
+                           lse.users_concurrent,
+                           (select count(*)
                               from ll_livestack_event_users
+                             where livestack_event_id = lse.id) as users_registered
+                      from ll_livestack_events lse,
+                           (select livestack_event_id,
+                                   owner1,
+                                   users_rank
+                              from (
+                                  select livestack_event_id,
+                                         owner1,
+                                         rank() over (partition by livestack_event_id order by id) as users_rank
+                                    from ll_livestack_event_users
+                              )
                              where upper(owner1) = upper(:APP_USER)) lseu
                      where lse.id = lseu.livestack_event_id (+)
                        and lse.event_code = :WEC
@@ -2028,27 +2135,69 @@ page 400 (
                 
                   v_livestack_event_id  number;
                   v_owner1              varchar2(100);
+                  v_users_rank          number;
                   v_email_requestor     varchar2(2000);
                   v_email_creator       varchar2(2000);
+                  v_users_maximum       number;
+                  v_users_concurrent    number;
+                  v_users_registered    number;
+                  v_event_admin         varchar2(1);
                 begin
                   ll_pkg_log.log(40, 'P400 - Insert LiveStack Event User begin');
+                  :P400_EVENT_ACCESS_STATUS := 'OK';
                 
                   if :WEC is not null then
                     open c_livestack_event;
-                    fetch c_livestack_event into v_livestack_event_id, v_owner1, v_email_creator, v_email_requestor;
+                    fetch c_livestack_event
+                     into v_livestack_event_id,
+                          v_owner1,
+                          v_users_rank,
+                          v_email_creator,
+                          v_email_requestor,
+                          v_users_maximum,
+                          v_users_concurrent,
+                          v_users_registered;
+
+                    if c_livestack_event%FOUND then
+                      v_event_admin := case
+                        when instr(nvl(upper(v_email_creator),'X'), upper(:APP_USER)) > 0
+                          or instr(nvl(upper(v_email_requestor),'X'), upper(:APP_USER)) > 0
+                          or nvl(ll_pkg_security.am_i_allowed(
+                               p_apex_user    => :APP_USER,
+                               p_access_type  => 'EVENT_CODE_ADMIN',
+                               p_access_value => v_livestack_event_id), 'N') = 'Y'
+                        then 'Y'
+                        else 'N'
+                      end;
+
+                      if v_owner1 is null
+                         and v_event_admin = 'N'
+                      then
+                        insert into ll_livestack_event_users (livestack_event_id, owner1)
+                        values (v_livestack_event_id, :APP_USER);
+                        commit;
+
+                        select users_rank, users_registered
+                          into v_users_rank, v_users_registered
+                          from (
+                              select owner1,
+                                     rank() over (order by id) as users_rank,
+                                     count(*) over () as users_registered
+                                from ll_livestack_event_users
+                               where livestack_event_id = v_livestack_event_id
+                          )
+                         where upper(owner1) = upper(:APP_USER);
+                      end if;
                 
-                    if    c_livestack_event%FOUND
-                      and v_owner1 is null
-                      and instr(nvl(upper(v_email_creator),'X'), upper(:APP_USER)) = 0
-                      and instr(nvl(upper(v_email_requestor),'X'), upper(:APP_USER)) = 0
-                      and nvl(ll_pkg_security.am_i_allowed(
-                            p_apex_user    => :APP_USER,
-                            p_access_type  => 'EVENT_CODE_ADMIN',
-                            p_access_value => v_livestack_event_id), 'N') <> 'Y'
-                    then
-                      insert into ll_livestack_event_users (livestack_event_id, owner1)
-                      values (v_livestack_event_id, :APP_USER);
-                      commit;
+                      if v_event_admin = 'N' then
+                        if coalesce(v_users_rank, v_users_registered, 0) > nvl(v_users_maximum, 9999) then
+                          ll_pkg_log.log(1, 'WEC: ' || :WEC || ' - LiveStack users registered: ' || v_users_registered || ' - users maximum: ' || v_users_maximum || ' - Rank: ' || v_users_rank);
+                          :P400_EVENT_ACCESS_STATUS := 'Oversubscribed';
+                        elsif nvl(v_users_registered, 0) > nvl(v_users_concurrent, 9999) then
+                          ll_pkg_log.log(1, 'WEC: ' || :WEC || ' - LiveStack users registered: ' || v_users_registered || ' - users concurrent: ' || v_users_concurrent);
+                          :P400_EVENT_ACCESS_STATUS := 'Toomany';
+                        end if;
+                      end if;
                     end if;
                 
                     close c_livestack_event;
