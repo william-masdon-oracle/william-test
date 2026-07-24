@@ -356,6 +356,20 @@ begin
         return;
     end if;
 
+    delete from ll_livestack_event_vouchers lev
+     where lev.livestack_event_id = :livestack_event_id
+       and not exists (
+           select 1
+             from json_table(
+                      l_payload,
+                      ''$.entries[*]''
+                      columns (
+                          livestack_event_entry_id number path ''$.livestack_event_entry_id''
+                      )
+                  ) jt
+            where jt.livestack_event_entry_id = lev.id
+       );
+
     merge into ll_livestack_event_vouchers target
     using (
         select jt.livestack_event_entry_id,
@@ -375,11 +389,12 @@ begin
                ) jt
     ) source
        on (
-           target.livestack_event_id = source.livestack_event_id
-           and target.livestack_entry_id = source.livestack_entry_id
+           target.id = source.livestack_event_entry_id
+           and target.livestack_event_id = source.livestack_event_id
        )
      when matched then update
-          set target.voucher_id = source.voucher_id,
+          set target.livestack_entry_id = source.livestack_entry_id,
+              target.voucher_id = source.voucher_id,
               target.active_flg = source.active_flg
      when not matched then insert (
           id,
@@ -394,20 +409,6 @@ begin
           source.voucher_id,
           source.active_flg
      );
-
-    delete from ll_livestack_event_vouchers lev
-     where lev.livestack_event_id = :livestack_event_id
-       and not exists (
-           select 1
-             from json_table(
-                      l_payload,
-                      ''$.entries[*]''
-                      columns (
-                          livestack_entry_id number path ''$.livestack_entry_id''
-                      )
-                  ) jt
-            where jt.livestack_entry_id = lev.livestack_entry_id
-       );
 
     :status := 200;
 exception
