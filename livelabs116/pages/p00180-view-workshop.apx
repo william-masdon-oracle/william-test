@@ -2015,7 +2015,7 @@ page 180 (
                 
                         -- If Green Button is enabled, determine the status
                 
-                        if nvl(JSON_VALUE(l_event.event_json, '$.LiveLabsGreenEnabled'),'N') <> 'Y' then
+                        if nvl(JSON_VALUE(l_event.event_json, '$.LiveLabsGreenEnabled'),'N') not in  ('Y', 'G') then
                             :P180_ENABLE_LL := 'Disable';
                         else
                             :P180_ENABLE_LL := 'Enable';
