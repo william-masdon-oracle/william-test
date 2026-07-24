@@ -344,7 +344,7 @@ page 70 (
             minHeight: 180
         }
         layout {
-            sequence: 120
+            sequence: 152
             region: @livestack-event-form
             slot: regionBody
             alignment: left
@@ -509,6 +509,7 @@ page 70 (
             width: 60
         }
         validation {
+            valueRequired: true
             maxLength: 1000
         }
         source {
@@ -660,7 +661,7 @@ page 70 (
             minHeight: 180
         }
         layout {
-            sequence: 130
+            sequence: 162
             region: @livestack-event-form
             slot: regionBody
             alignment: left
@@ -727,7 +728,7 @@ page 70 (
             minHeight: 180
         }
         layout {
-            sequence: 140
+            sequence: 172
             region: @livestack-event-form
             slot: regionBody
             alignment: left
@@ -750,7 +751,7 @@ page 70 (
             alignment: left
         }
         layout {
-            sequence: 150
+            sequence: 182
             region: @livestack-event-form
             slot: regionBody
             alignment: left
@@ -820,7 +821,7 @@ page 70 (
             virtualKeyboard: text
         }
         layout {
-            sequence: 115
+            sequence: 122
             region: @livestack-event-form
             slot: regionBody
             alignment: left
@@ -831,13 +832,15 @@ page 70 (
             templateOptions: #DEFAULT#
             width: 30
         }
+        validation {
+            valueRequired: true
+        }
         source {
             formRegion: @livestack-event-form
             column: USERS_CONCURRENT
             dataType: number
         }
         help {
-            inlineHelpText: LiveLabs Sandbox Only
             helpText: How many users should be able to use this LiveStack event code at the same time?
         }
     )
@@ -863,13 +866,15 @@ page 70 (
             templateOptions: #DEFAULT#
             width: 30
         }
+        validation {
+            valueRequired: true
+        }
         source {
             formRegion: @livestack-event-form
             column: USERS_MAXIMUM
             dataType: number
         }
         help {
-            inlineHelpText: LiveLabs Sandbox Only
             helpText: How many users should be able to use this LiveStack event code in total?
         }
     )
@@ -1020,7 +1025,7 @@ page 70 (
         buttonName: Populate_Empty_Fields
         label: Populate Empty Fields
         layout {
-            sequence: 115
+            sequence: 132
             region: @livestack-event-form
             slot: regionBody
             startNewRow: false
@@ -1721,7 +1726,7 @@ page 70 (
                              where id = entry.event_id;
                         end if;
                     end loop;
-
+                
                     update wms_livestack_events
                        set updated_flg = case
                                when nvl(updated_flg, 0) = 2 then 2
@@ -1828,3 +1833,4 @@ page 70 (
     )
 
 )
+
