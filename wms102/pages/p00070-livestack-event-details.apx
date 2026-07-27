@@ -303,6 +303,10 @@ page 70 (
                        end
                   from dual
                 ```
+            used: always
+        }
+        sessionState {
+            storage: request
         }
     )
 
@@ -567,6 +571,10 @@ page 70 (
                        end
                   from dual
                 ```
+            used: always
+        }
+        sessionState {
+            storage: request
         }
     )
 
@@ -639,6 +647,9 @@ page 70 (
 
     pageItem P70_ORIGINAL_LIVESTACK_ID (
         type: hidden
+        settings {
+            valueProtected: false
+        }
         layout {
             sequence: 175
             slot: contentBody
@@ -903,6 +914,9 @@ page 70 (
             column: VALID_FROM
             dataType: date
         }
+        help {
+            helpText: "The Event Code will be valid starting at 12am (in your selected timezone) on this date. We recommend selecting a day prior to your event to be safe. "
+        }
     )
 
     pageItem P70_VALID_TIMEZONE (
@@ -974,6 +988,9 @@ page 70 (
             formRegion: @livestack-event-form
             column: VALID_TO
             dataType: date
+        }
+        help {
+            helpText: "The Event Code will close at 12am (in your selected timezone) on this date. We recommend selecting a day after your event to be safe. "
         }
     )
 

@@ -28,7 +28,7 @@ page 400 (
                 let mailto  = '&APP_USER.',
                     subject = 'Oracle LiveLabs LiveStack: ' + apex.item('P400_TITLE').getValue(),
                     body    = '%0D%0AHere\'s a link to the Oracle LiveLabs LiveStack "' + apex.item('P400_TITLE').getValue() + '":%0D%0A%0D%0A' + apex.item('P400_URL').getValue() + '%0D%0A%0D%0AMany thanks,%0D%0A%0D%0A';
-
+            
                 location.href = `mailto:${mailto}?subject=${subject}&body=${body}`;
             }
             
@@ -605,6 +605,10 @@ page 400 (
                 t-CardsRegion--hideHeader js-addHiddenHeadingRoleDesc
             ]
         }
+        serverSideCondition {
+            type: expression
+            plsqlExpression: nvl(:P400_EVENT_ACCESS_STATUS, 'OK') not in ('Oversubscribed', 'Toomany')
+        }
         componentAppearance {
             layout: horizontal
         }
@@ -699,11 +703,6 @@ page 400 (
             }
         )
 
-        serverSideCondition {
-            type: expression
-            plsqlExpression: nvl(:P400_EVENT_ACCESS_STATUS, 'OK') not in ('Oversubscribed', 'Toomany')
-        }
-
     )
 
     region other-livestacks-you-might-like (
@@ -795,7 +794,7 @@ page 400 (
                 ```html
                 <span class="&TIME_ICON." style="font-size:1em;vertical-align:baseline;color:black;">&nbsp;&nbsp;&LIVESTACK_TIME.</span>
                 <span style="float:right;color:black;">&CARD_VIEWS.</span>
-
+                
                 ```
         }
         iconAndBadge {
@@ -849,7 +848,7 @@ page 400 (
                         <button type="button" title="Copy to clipboard" aria-label="Copy to clipboard" class="t-Button t-Button--noLabel t-Button--icon t-Button--large"  data-clipboard-source="&P400_URL.">
                             <span aria-hidden="true" class="t-Icon fa fa-synonym fa-lg"></span>
                         </button>
-
+                
                         <button type="button" title="Share in Email" aria-label="Share in Email" class="t-Button t-Button--noLabel t-Button--icon t-Button--large" onclick="shareEmail();">
                             <span aria-hidden="true" class="t-Icon fa fa-envelope-o fa-lg"></span>
                         </button>
@@ -1067,6 +1066,63 @@ page 400 (
         }
     )
 
+    pageItem P400_DESC_LONG (
+        type: displayOnly
+        label {
+            label: Desc Long
+            alignment: left
+        }
+        settings {
+            format: html
+            sendOnPageSubmit: false
+        }
+        layout {
+            sequence: 50
+            region: @about-this-workshop
+            slot: regionBody
+            alignment: left
+            labelColumnSpan: 0
+        }
+        appearance {
+            template: @/hidden
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            customAttributes: style="word-break: auto-phrase;"
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            sessionStateProtection: restricted
+        }
+    )
+
+    pageItem P400_EVENT_ACCESS_STATUS (
+        type: hidden
+        layout {
+            sequence: 36
+            slot: body
+        }
+        sessionState {
+            storage: request
+        }
+    )
+
+    pageItem P400_EVENT_ID (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 35
+            slot: body
+        }
+        sessionState {
+            storage: request
+        }
+    )
+
     pageItem P400_EVENT_OVERSUBSCRIBED (
         type: displayOnly
         label {
@@ -1142,63 +1198,6 @@ page 400 (
         }
         security {
             sessionStateProtection: restricted
-        }
-    )
-
-    pageItem P400_DESC_LONG (
-        type: displayOnly
-        label {
-            label: Desc Long
-            alignment: left
-        }
-        settings {
-            format: html
-            sendOnPageSubmit: false
-        }
-        layout {
-            sequence: 50
-            region: @about-this-workshop
-            slot: regionBody
-            alignment: left
-            labelColumnSpan: 0
-        }
-        appearance {
-            template: @/hidden
-            templateOptions: #DEFAULT#
-        }
-        advanced {
-            customAttributes: style="word-break: auto-phrase;"
-        }
-        sessionState {
-            storage: request
-        }
-        security {
-            sessionStateProtection: restricted
-        }
-    )
-
-    pageItem P400_EVENT_ID (
-        type: hidden
-        settings {
-            valueProtected: false
-        }
-        layout {
-            sequence: 35
-            slot: body
-        }
-        sessionState {
-            storage: request
-        }
-    )
-
-    pageItem P400_EVENT_ACCESS_STATUS (
-        type: hidden
-        layout {
-            sequence: 36
-            slot: body
-        }
-        sessionState {
-            storage: request
         }
     )
 
@@ -1775,10 +1774,7 @@ page 400 (
             action: confirm
             settings {
                 title: Subscribe to LiveStack
-                message:
-                    ```html
-                    This event uses a temporary version of this LiveStack and may include different content than the public LiveStack. Would you like to subscribe to the public LiveStack?
-                    ```
+                message: This event uses a temporary version of this LiveStack and may include different content than the public LiveStack. Would you like to subscribe to the public LiveStack?
                 style: warning
                 confirmLabel: Subscribe
                 cancelLabel: Cancel
@@ -2157,7 +2153,7 @@ page 400 (
                           v_users_maximum,
                           v_users_concurrent,
                           v_users_registered;
-
+                
                     if c_livestack_event%FOUND then
                       v_event_admin := case
                         when instr(nvl(upper(v_email_creator),'X'), upper(:APP_USER)) > 0
@@ -2169,14 +2165,14 @@ page 400 (
                         then 'Y'
                         else 'N'
                       end;
-
+                
                       if v_owner1 is null
                          and v_event_admin = 'N'
                       then
                         insert into ll_livestack_event_users (livestack_event_id, owner1)
                         values (v_livestack_event_id, :APP_USER);
                         commit;
-
+                
                         select users_rank, users_registered
                           into v_users_rank, v_users_registered
                           from (
@@ -2230,3 +2226,4 @@ page 400 (
     )
 
 )
+

@@ -1528,6 +1528,9 @@ page 320 (
             template: @optional-above
             templateOptions: #DEFAULT#
         }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
     )
 
     pageItem P320_EVENT (
@@ -7374,6 +7377,65 @@ page 320 (
             serverSideCondition {
                 type: expression
                 plsqlExpression: :P320_WORKSHOP_STATUS = 'Quarterly QA'
+            }
+        )
+
+    )
+
+    dynamicAction send-comment-email (
+        name: send comment email
+        execution {
+            sequence: 200
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @sendemail
+        }
+
+        action native-alert (
+            action: alert
+            settings {
+                title: Email Sent
+                message: Your message has been sent to the LiveLabs Workshop Contacts.
+            }
+            execution {
+                sequence: 40
+                fireOnInit: false
+            }
+        )
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    BEGIN
+                        mail_utils_pkg.mail_comments_proc( :APP_USER , :P320_ID, :P320_EMAIL_TEAM );
+                    
+                        insert into ll_comments (email_creator, the_comment, workshop_id, commentdate, commenttype)
+                        values (lower(:APP_USER), :P320_EMAIL_TEAM, :P320_ID, current_timestamp, 'WORKSHOP');
+                    END;
+                    ```
+                itemsToSubmit: [
+                    P320_ID
+                    P320_EMAIL_TEAM
+                ]
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+        action native-set-value (
+            action: setValue
+            affectedElements {
+                selectionType: items
+                items: P320_EMAIL_TEAM
+            }
+            execution {
+                sequence: 20
             }
         )
 

@@ -93,3 +93,137 @@ comment on column wms_livestack_event_entries.event_id is
     'WMS_EVENTS.ID for the event request associated with this LiveStack entry.';
 comment on column wms_events.livestack_event_id is
     'Parent WMS_LIVESTACK_EVENTS.ID when this event was generated for a LiveStack event entry.';
+
+
+
+create or replace TRIGGER "WMS_EVENTS_BEFORE_INSERT_UPDATE" 
+BEFORE
+insert or update on "WMS_EVENTS"
+for each row
+declare
+v_email_system_param varchar2(1);
+v_email_to varchar2(4000);
+v_email_cc varchar2(4000);
+v_body clob;
+v_body_text clob;
+v_body_warning clob;
+v_subject varchar2(4000);
+begin
+  if :NEW."ID" is null then 
+    select "WMS_EVENTS_ID_SEQ".nextval into :NEW."ID" from sys.dual; 
+  end if; 
+  if :new.event_status is null or (:old.event_status = 'Changes Requested' and :new.event_status not in ('Event Approved', 'Event Published')) then
+    :new.event_status := 'Submitted';
+  end if;
+-- EMAILS
+select value into v_email_system_param from wms_system_parameters where name = 'SEND_UPDATE_EMAILS';
+if (:new.event_status != :old.event_status or :old.event_status is null) and (v_email_system_param = 'Y') and (:new.livestack_event_id is null) then
+-- workshop team emails
+v_email_to := :new.email_creator; 
+v_email_cc := :new.email_requestor;
+    -- GET EMAIL BODY TEXT
+    if :new.event_status = 'Submitted' and :old.event_status is null then
+        v_subject := 'SUBMITTED';
+        v_body_text := 'A new event, ' || :new.title || ', has been submitted to WMS and is now under review.<br>
+        <br>
+        <span style="color:orange"><u><strong>What''s Next?</strong></u></span><br>
+        <b>LiveLabs Team,</b><br>
+        Please review this Event Code Request in WMS. Depending on the accuracy and completion of the request, put the Event Code Request in "Changes Requested" or "Event Approved." Use the "Remarks to the LiveLabs Team" section in WMS to fill out any notes for the Event Requestor should the event need to be placed in "Changes Requested."
+        <br><br>
+        <b>Event Code Requestor,</b><br>
+        Please ensure all fields in your request are accurate and up-to-date. The LiveLabs team should get back to you within 1-2 business days. If you have not heard anything from them after that period, please email livelabs-help-db_us@oracle.com.
+        <br>';
+    end if;
+    if :new.event_status = 'Submitted' and :old.event_status = 'Changes Requested' then
+        v_subject := 'RE-SUBMITTED';
+        v_body_text := 'The event, ' || :new.title || ', has been re-submitted to WMS and is now under review.<br>
+        <br>
+        <span style="color:orange"><u><strong>What''s Next?</strong></u></span><br>
+        <b>LiveLabs Team,</b><br>
+        The requestor has completed the chagnes to the Event Code Request and it''s now back in your hands. Please review the request and change the status to "Changes Requested" for additional changes needed or "Event Approved" if the Event Code is ready to be moved to LiveLabs production.
+        <br><br>
+        <b>Event Code Requestor,</b><br>
+        Please ensure all fields in your request are accurate and up-to-date. The LiveLabs team should get back to you within 1-2 business days. If you have not heard anything from them after that period, please email livelabs-help-db_us@oracle.com.
+        <br>';
+    end if;
+    if :new.event_status = 'Changes Requested' then
+        v_subject := 'CHANGES REQUESTED';
+        v_body_text := 'The LiveLabs Team has requested that the event, ' || :new.title || ', provide more information.<br>
+        <br>
+        <span style="color:orange"><u><strong>What''s Next?</strong></u></span><br>
+        <b>Event Code Requestor,</b><br>
+        Please see the "Remarks to the LiveLabs Team" section in your Event Code for notes made by the LiveLabs Team. Correct what is mentioned in that field and then click the "Save Changes" button and your event will automatically be resubmitted. 
+        <br>';
+    end if;
+    if :new.event_status = 'Event Approved' then
+        v_subject := 'EVENT APPROVED';
+        v_body_text := 'The event, ' || :new.title || ', has been approved. Congratulations!<br>
+        <br>
+        <span style="color:orange"><u><strong>What''s Next?</strong></u></span><br>
+        <b>Event Code Requestor,</b><br>
+        Your event has now been approved by the LiveLabs Team. Sometime in the next 24 hours, your Event Code will be automatically pushed to LiveLabs. Check back in WMS once that occurs to find the Event Code that you can share with your customers or users. You will recieve an email when the Event Code has been successfully deployed to LiveLabs.
+        <br><br>';
+    end if;
+    if :new.event_status = 'Event Published' then
+        v_subject := 'EVENT PUBLISHED';
+        v_body_text := 'The event, ' || :new.title || ', has been deployed to LiveLabs and is ready to be used!<br>
+        <br>
+        <span style="color:orange"><u><strong>What''s Next?</strong></u></span><br>
+        <b>Event Code Requestor,</b><br>
+        Congratulations! Your Event Code is now live in LiveLabs. Please use WMS to modify any components of your Event Code from here on out. Thank you for using LiveLabs!
+        <br><br>
+        <b><u>Your Event Code:</u>   ' || :new.event_code || '</b>
+        <br><br>';
+    end if;
+-- CONSTRUCT EMAIL BODY HTML
+wwv_flow_api.set_security_group_id; --Required to send email via job
+-- header image
+v_body := '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /> <title>Oracle WMS</title> <meta name="viewport" content="width=device-width, initial-scale=1.0"/> <style type=3D"text/css"> body { margin: 0; padding: 0 ; min-width: 100%; -webkit-text-size-adjust: none; -ms-text-size-adjust: none; text-size-adjust: none; font-family: ''Oracle Sans'', ''Helvetica Neue'', ''Segoe UI'', Roboto, Helvetica, Arial, sans-serif; mso-line-height-rule: exactly; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; } a { color: #2d7bbb; } table { border: 0; border-spacing: 0; border-collapse: collapse; mso-table-lspace: 0pt; mso-table-rspace: 0pt; } table td, table th { line-height: 1.4; padding: 0; vertical-align: top; border-collapse: collapse; } @media only screen and (max-width: 599px) { .mobile-hide { display: none !important; } .fluid-img { max-width: 100% !important; height: auto !important; } .stack, 
+.stack-left { display: block !important; width: 100% !important; } .stack-left { text-align: left !important; } .hero-text { font-size: 24px !important; } } </style> </head> <body style="margin: 0; padding: 0;"> 
+<table border="0" cellpadding="0" cellspacing="0" width="100%"> <tr> <td style="padding: 10px 0 30px 0;"> <table align="center" border="0" cellpadding="0" cellspacing="0" width="600" style="border: 0px solid #AEA8A1; border-collapse: collapse;"> <tr> <td align="left" valign="bottom" style="; padding: 0px 0px 0px 0px; color: #F0F0F0; font-size: 28px; font-weight: 300; font-family: ''Oracle Sans'', ''Helvetica Neue'', ''Segoe UI'', Roboto, Helvetica, Arial, sans-serif;"> 
+<img src="https://objectstorage.us-ashburn-1.oraclecloud.com/p/7NIwFSz8TkFiO7xMjaWZtFqsD6o3QdPoNE45KyzzdJT9ffDUZ8PtuBu5Sx0rHzZ2/n/c4u04/b/livelabsfiles/o/wms_mailhead.png" width="100%"> </td> </td> </tr> ';
+-- --Workshop Details line
+v_body := v_body ||'<td bgcolor="#F2F1EC" style="padding:10px 0px 10px 30px; color: #153643; font-family: ''Oracle Sans'', ''Helvetica Neue'', ''Segoe UI'', Roboto, Helvetica, -Sans, Arial, sans-serif; font-size: 12px; font-weight: 300">';
+v_body := v_body ||'<p><a style="color: #ab452c; text-decoration: none; border-bottom: 0.5px dashed;" href="bit.ly/WorkshopManagementSystem">Workshop Management System (WMS)</a> (VPN Required) | <a style="color: #ab452c; text-decoration: none; border-bottom: 0.5px dashed;" href="https://developer.oracle.com/livelabs">LiveLabs</a></p>';
+v_body := v_body ||'</td></tr>';
+v_body := v_body || '<tr><td bgcolor="#F2F1EC" style="padding: 0px 30px 0px 30px;"><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td style="color: #153643; font-family: ''Oracle Sans'', ''Helvetica Neue'', ''Segoe UI'', Roboto, Helvetica, -Sans, Arial, sans-serif; font-size: 18px; font-weight: 300; padding-bottom:10px">'||utl_tcp.crlf;
+--event name
+v_body := v_body || '<strong>' || :new.title || ' - ' || :new.event_status || '</strong>';
+v_body := v_body || '</td></tr>';
+v_body := v_body || '<tr><td style="font-family: ''Oracle Sans'', ''Helvetica Neue'', ''Segoe UI'', Roboto, Helvetica, Arial, sans-serif; font-size: 12px; font-weight: 300; padding:0px 0px 10px 0px">';
+-- event body
+v_body := v_body || v_body_text||utl_tcp.crlf;
+-- event details
+v_body := v_body || '<br><span style="color:#3d5a3b"><u><strong>Details</strong></u></span><br>';
+v_body := v_body || '<strong>Event Status: '||:new.event_status || '</strong><br>';
+v_body := v_body ||'<strong>ID: </strong>'||to_char(:NEW.id)||'<br>';  
+--  emails
+v_body := v_body ||'<br><strong><span style="color:#3d5a3b"><u>Workshop Team</u></span></strong><br>';
+v_body := v_body ||'<strong>Event Code Requestor:</strong> '||lower(:NEW.email_creator)||'<br>';
+v_body := v_body ||'<strong>Additional Requestors:</strong> '||nvl(lower(:NEW.email_requestor),'None Defined')||'<br>';  
+-- what's next
+v_body := v_body || '<tr><td><table bgcolor="#c9c4b9" style="margin-top:0px"><td  valign="top" width="600px" style="font-family: ''Oracle Sans'', ''Helvetica Neue'',''Segoe UI'', Roboto, Helvetica, Arial, sans-serif; font-size: 12px; padding:10px 10px 10px 10px"><p><b style="color: #ff0000">KEEP YOUR EVENT CODE UP TO DATE</b></p><p>';
+v_body := v_body ||'The Event Code Requestor can make edits to event by visiting <strong><a style="color: #ab452c; text-decoration: none; border-bottom: 0.5px dashed;" href="bit.ly/WorkshopManagementSystem">Workshop Management System (WMS)</a> (VPN Required).</strong> <br><br><strong><span style="#3d5a3b">Please keep your Event Code up to date.  You are responsible for updating its information.</span></strong>  '||utl_tcp.crlf;      
+-- ending
+v_body := v_body || '</td></table></td></tr>';
+v_body := v_body || '<tr> <td> <table bgcolor="#453f3c" style="margin-top:20px"> <td width="300px" valign="top" width="400px" style="font-family: ''Oracle Sans'', ''Helvetica Neue'', ''Segoe UI'', Roboto, Helvetica, Arial, sans-serif; font-size: 12px; padding:10px 10px 10px 10px"> <!-- articles --> <p><b style="color: #ffca0e">Links</b></p> <p><a style="color: #cac4b8; text-decoration: none; border-bottom: 0.5px dashed;" href="https://oracle-livelabs.github.io/common/sample-livelabs-templates/create-labs/labs/workshops/livelabs/">Workshop Step by Step</a></p> <p><a style="color: #cac4b8; text-decoration: none; border-bottom: 0.5px dashed;"';
+--v_body := v_body || 'href="https://objectstorage.us-ashburn-1.oraclecloud.com/p/6ZNsO8IxC51APVPyX4I8OiD9cD-2mB5rs7MOqWYv_8M8_CGSxIPYjsnlh5MpOpBC/n/c4u03/b/data-management-library-files/o/WMS%20Files/wms-swimlane.png">Workshop Workflow/Swimlanes</a></p>'||utl_tcp.crlf;
+v_body := v_body || '<p><a style="color: #cac4b8; text-decoration: none; border-bottom: 0.5px dashed;" href="https://livelabs.oracle.com/">LiveLabs</a></p> <p><a style="color: #cac4b8; text-decoration: none; border-bottom: 0.5px dashed;" href="https://apex.oraclecorp.com/pls/apex/f?p=LIVELABS ">WMS</a></p> </td> <td width="300px" valign="top" width="400px" style="font-family: ''Oracle Sans'', ''Helvetica Neue'', ''Segoe UI'', Roboto, Helvetica, Arial, sans-serif; font-size: 12px; padding:10px 10px 10px 10px"> <!-- articles --> <p><b style="color: #ffca0e">Contact</b></p>';
+--v_body := v_body || '<p><a style="color: #cac4b8; text-decoration: none; border-bottom: 0.5px dashed;" href="https://otube.oracle.com/media/t/1_bxj0cfqf">Using GitHub</a></p> <p><a style="color: #cac4b8; text-decoration: none; border-bottom: 0.5px dashed;" href="https://otube.oracle.com/media/LiveLabs+Overview+How+to+Submit+a+Workshop/1_6adeqm1t">LiveLabs Overview</a></p> <p><a style="color: #cac4b8; text-decoration: none; border-bottom: 0.5px dashed;" href="https://otube.oracle.com/media/NA+TechCast+EP12+-+Oracle+LiveLabs/1_cu6fdhux">TechCast - LiveLabs</a></p> </td> </table> </td></tr>'||utl_tcp.crlf;
+--v_body := v_body || '<tr> <td align="center" style="color: #dark-gray; font-family: ''Oracle Sans'', ''Helvetica Neue'', ''Segoe UI'', Roboto, Helvetica, Arial, sans-serif; font-weight: 200; font-size: 12px; padding:10px 0px 20px 0px"" > <p><b>Slack:</b> #workshop-authors-help </p> </td> </tr> </table> </td> </tr> <tr> </tr> <tr> <td bgcolor="#312D2A" style="padding: 10px 10px 10px 10px;">';                           
+v_body := v_body || '<p><a style="color: #cac4b8; text-decoration: none; border-bottom: 0.5px dashed;" <b>Slack: </b></a><a style="color: #cac4b8; text-decoration: none; border-bottom: 0.5px dashed;"  href="https://oracle.enterprise.slack.com/archives/CTUPZQ5HA">#livelabs-authors-help</a></p><p><a style="color: #cac4b8; text-decoration: none; border-bottom: 0.5px dashed;" <b>Email: </b> livelabs-help_us@oracle.com </p></a></p></table> </td> </tr> <tr> </tr> <tr> <td bgcolor="#312D2A" style="padding: 10px 10px 10px 10px;">';
+v_body := v_body || '<table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td align="center" style="color: #ffffff; font-family: ''Oracle Sans'', ''Helvetica Neue'', ''Segoe UI'', Roboto, Helvetica, Arial, sans-serif; font-size: 10px; font-weight:100" >Copyright © 2025 Oracle and/or its affiliates. All rights reserved. </td></tr> </table> </td> </tr></table></td> </tr></table></body></html>';
+-- SEND EMAIL
+v_body_warning := 'To view the content of this message, please use an HTML enabled mail client.'||utl_tcp.crlf;
+apex_mail.send(
+    p_to            =>  v_email_to,
+    p_cc            =>  v_email_cc,
+    p_bcc           =>  'livelabs-help-db_us@oracle.com',
+    p_from          =>  'livelabs-help-db_us@oracle.com',
+    p_body          =>  v_body_warning,
+    p_body_html     =>  v_body,
+    p_subj          =>  v_subject || ': EVENT ID#' || :new.id || ' - ' || :new.title
+);
+end if;
+end;
+/

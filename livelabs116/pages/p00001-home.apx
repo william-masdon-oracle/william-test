@@ -1030,7 +1030,7 @@ page 1 (
         name: Featured LiveStacks
         type: staticContent
         layout {
-            sequence: 69
+            sequence: 110
             slot: body
         }
         appearance {
@@ -1050,7 +1050,7 @@ page 1 (
         name: Featured Workshops
         type: staticContent
         layout {
-            sequence: 110
+            sequence: 69
             slot: body
         }
         appearance {
