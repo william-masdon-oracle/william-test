@@ -2292,6 +2292,7 @@ page 180 (
                     P420_WID: &WID.
                     P420_LIVESTACK_ID: &P180_LIVESTACK_ID.
                     P420_LIVESTACK_ENTRY_ID: &P180_LIVESTACK_ENTRY_ID.
+                    P420_WEC: &WEC.
                 }
                 successMessage: false
             }
@@ -2423,4 +2424,3 @@ page 180 (
     )
 
 )
-

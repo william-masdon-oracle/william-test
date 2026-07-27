@@ -507,6 +507,48 @@ page 420 (
             }
             warnOnUnsavedChanges: doNotCheck
         }
+        serverSideCondition {
+            type: itemIsNull
+            item: P420_LIVESTACK_EC
+        }
+    )
+
+    button back-to-livestack-event (
+        buttonName: Back-to-livestack-event
+        label: Back
+        layout {
+            sequence: 20
+            region: @journey-info
+            slot: regionBody
+            rowCssClasses: u-justify-content-space-between
+            columnCssClasses: mxw80
+        }
+        appearance {
+            buttonTemplate: @/text-with-icon
+            templateOptions: [
+                #DEFAULT#
+                t-Button--mobileHideLabel
+                t-Button--tiny
+                t-Button--primary
+                t-Button--iconLeft
+            ]
+            cssClasses: u-pullLeft
+            icon: fa-chevron-left
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 400
+                items: {
+                    WEC: &P420_LIVESTACK_EC.
+                }
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P420_LIVESTACK_EC
+        }
     )
 
     button completed (
@@ -568,10 +610,52 @@ page 420 (
                 page: 400
                 items: {
                     P400_ID: &P420_LIVESTACK_ID.
+                }
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+        serverSideCondition {
+            type: itemIsNull
+            item: P420_LIVESTACK_EC
+        }
+    )
+
+    button continue-with-livestack-event (
+        buttonName: Continue-with-LiveStack-event
+        label: Continue with LiveStack
+        layout {
+            sequence: 50
+            region: @workshop-complete
+            slot: regionBody
+            startNewRow: false
+            columnCssClasses: u-pullRight
+        }
+        appearance {
+            buttonTemplate: @/text-with-icon
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--iconRight
+                t-Button--gapLeft
+                t-Button--gapRight
+                t-Button--gapTop
+            ]
+            cssClasses: u-pullRight
+            icon: fa-chevron-right
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 400
+                items: {
                     WEC: &P420_LIVESTACK_EC.
                 }
             }
             warnOnUnsavedChanges: doNotCheck
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P420_LIVESTACK_EC
         }
     )
 
@@ -636,10 +720,53 @@ page 420 (
                 page: 400
                 items: {
                     P400_ID: &P420_LIVESTACK_ID.
+                }
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+        serverSideCondition {
+            type: itemIsNull
+            item: P420_LIVESTACK_EC
+        }
+    )
+
+    button return-to-livestack-event (
+        buttonName: Return-to-LiveStack-event
+        label: Return to LiveStack
+        layout {
+            sequence: 40
+            region: @livestack-complete
+            slot: regionBody
+            rowCssClasses: [
+                u-flex
+                u-justify-content-space-between
+            ]
+        }
+        appearance {
+            buttonTemplate: @/text-with-icon
+            templateOptions: [
+                #DEFAULT#
+                t-Button--iconLeft
+                t-Button--gapLeft
+                t-Button--gapRight
+                t-Button--gapTop
+            ]
+            cssClasses: u-normal
+            icon: fa-chevron-left
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 400
+                items: {
                     WEC: &P420_LIVESTACK_EC.
                 }
             }
             warnOnUnsavedChanges: doNotCheck
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P420_LIVESTACK_EC
         }
     )
 
@@ -705,6 +832,49 @@ page 420 (
                 }
             }
             warnOnUnsavedChanges: doNotCheck
+        }
+        serverSideCondition {
+            type: itemIsNull
+            item: P420_LIVESTACK_EC
+        }
+    )
+
+    button share-accomplishment-event (
+        buttonName: Share-Accomplishment-event
+        label: Share your Accomplishment
+        layout {
+            sequence: 60
+            region: @livestack-complete
+            slot: regionBody
+            startNewRow: false
+            columnCssClasses: u-pullRight
+        }
+        appearance {
+            buttonTemplate: @/text-with-icon
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--iconRight
+                t-Button--gapLeft
+                t-Button--gapRight
+                t-Button--gapTop
+            ]
+            cssClasses: u-pullRight
+            icon: fa-share
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 400
+                items: {
+                    WEC: &P420_LIVESTACK_EC.
+                }
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P420_LIVESTACK_EC
         }
     )
 
@@ -1111,18 +1281,23 @@ page 420 (
                                                                             p_access_type => 'WORKSHOP_VIEW',
                                                                             p_access_value => :P420_WID ) = 'Y';
                    cursor c_livestack_event (p_voucher_id number) is 
-                                select lse.event_code 
+                                select lse.event_code,
+                                       lse.event_title
                                 from ll_livestack_event_vouchers lsev
                                     join ll_livestack_events lse 
                                         on lse.id = lsev.livestack_event_id 
                                         and lsev.voucher_id = p_voucher_id 
-                                        and lsev.livestack_entry_id = :P420_LIVESTACK_ENTRY_ID;
+                                        and lsev.livestack_entry_id = :P420_LIVESTACK_ENTRY_ID
+                                where lse.active_flg = 'Y'
+                                  and lse.livestack_id = :P420_LIVESTACK_ID
+                                  and lsev.active_flg = 'Y';
                 
                 
                   v_ws_lab_url     varchar2(4000);              
                   v_ec_lab_url     varchar2(4000);
                   v_ws_name         varchar2(4000);
                   v_voucher_id number;
+                  v_livestack_event_title ll_livestack_events.event_title%type;
                 begin
                 
                   if :P420_WEC is not null then 
@@ -1132,7 +1307,7 @@ page 420 (
                 
                         ll_pkg_log.log(1, 'before EC');
                         open c_livestack_event(v_voucher_id);
-                        fetch c_livestack_event into :P420_LIVESTACK_EC;
+                        fetch c_livestack_event into :P420_LIVESTACK_EC, v_livestack_event_title;
                         close c_livestack_event;
                         ll_pkg_log.log(1, 'after EC' || :P420_LIVESTACK_EC);
                   end if;
@@ -1156,7 +1331,7 @@ page 420 (
                 
                   :P420_WORKSHOP_LOCATION := nvl(JSON_VALUE(v_ec_lab_url, '$.PAID_URL'), JSON_VALUE(v_ws_lab_url, '$.PAID_URL'));
                 
-                  select name into :P420_LIVESTACK_NAME from ll_livestacks where id = :P420_LIVESTACK_ID;
+                  select nvl(v_livestack_event_title, name) into :P420_LIVESTACK_NAME from ll_livestacks where id = :P420_LIVESTACK_ID;
                 
                   select nvl(title_override, :P420_WORKSHOP_NAME) into :P420_LIVESTACK_ENTRY_NAME from ll_livestack_entries where id = :P420_LIVESTACK_ENTRY_ID;
                 
@@ -1174,4 +1349,3 @@ page 420 (
     )
 
 )
-

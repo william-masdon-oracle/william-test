@@ -323,6 +323,7 @@ page 300 (
                         P410_ID: &ID.
                         P410_LIVESTACK_ID: &LIVESTACK_ID.
                         P410_LIVESTACK_ENTRY_ID: &LIVESTACK_ENTRY_ID.
+                        P410_WEC: &VOUCHER_CODE.
                     }
                     clearCache: 410
                 }
@@ -551,4 +552,3 @@ page 300 (
     )
 
 )
-
