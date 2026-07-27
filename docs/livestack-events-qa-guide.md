@@ -22,18 +22,18 @@ The parent LiveStack Event does not replace the workshop events. It owns the Liv
 
 WMS is where users request and manage LiveStack Events.
 
-Relevant pages:
+Relevant WMS screens:
 
-- **Page 44: Manage All My Events**
+- **Manage All My Events**
   - Now includes both regular workshop events and LiveStack Events.
   - Users can start event creation from the combined event request flow.
 
-- **Page 69: Request an Event Code**
+- **Request an Event Code**
   - Entry page for choosing which type of event to create.
   - Workshop Event is the default path for a normal single-workshop event.
   - LiveStack Event is for LiveStacks only.
 
-- **Page 70: LiveStack Event Details**
+- **LiveStack Event Details**
   - Main request/edit page for LiveStack Events.
   - Users choose the LiveStack, event metadata, date range, timezone, user limits, and optional content overrides.
   - Users choose which LiveStack entries should receive workshop event codes.
@@ -44,30 +44,30 @@ Relevant pages:
 
 LiveLabs Admin is where LiveStack Events can be reviewed or managed after they exist in LiveLabs.
 
-Relevant pages:
+Relevant LiveLabs Admin screens:
 
-- **Page 9166: LiveStack Event Codes**
+- **LiveStack Event Codes**
   - Admin report/list for LiveStack Event codes.
 
-- **Page 9167: LiveStack Event Details**
+- **LiveStack Event Details**
   - Admin form for a LiveStack Event.
   - Shows parent values and associated workshop event mappings.
   - Includes override fields and links to regular event-code details where applicable.
 
 ### LiveLabs Public App
 
-Relevant pages:
+Relevant LiveLabs Public App screens:
 
-- **Page 400: LiveStack Landing Page**
+- **LiveStack Landing Page**
   - Can load by normal LiveStack ID.
   - Can also load by LiveStack Event code.
-  - When loaded by event code, page 400 applies the parent event overrides and only shows the selected active event entries.
+  - When loaded by event code, it applies the parent event overrides and only shows the selected active event entries.
 
-- **Page 180: Workshop Event Page**
+- **Workshop Event Page**
   - Used when a LiveStack Event entry links to a workshop event code.
-  - The entry should open page 180 using the event code when one exists.
+  - The entry should open using the event code when one exists.
 
-- **Page 320: Reservation Flow**
+- **Reservation Flow**
   - Receives the child voucher/event ID through `P320_VOUCHER_ID`.
   - The event code can be set through the existing `WEC` item reference.
 
@@ -75,12 +75,12 @@ Relevant pages:
 
 1. User opens WMS and chooses to request an event code.
 2. User chooses **LiveStack Event**.
-3. User selects a LiveStack on page 70.
-4. The page displays the LiveStack entries.
+3. User selects a LiveStack on the **LiveStack Event Details** screen.
+4. The screen displays the LiveStack entries.
 5. Entries are selected by default for a new event.
 6. User can turn individual entries on or off.
 7. User enters the event title, dates, timezone, optional overrides, max users, and concurrent users.
-8. User saves the page.
+8. User saves the event.
 9. WMS creates the LiveStack Event parent row.
 10. WMS creates regular workshop event rows for selected entries only.
 11. Associated workshop events appear in the entry table.
@@ -109,7 +109,7 @@ Changing the LiveStack on an existing LiveStack Event is intentionally destructi
 
 Expected behavior:
 
-1. User changes the LiveStack field on page 70.
+1. User changes the LiveStack field on the **LiveStack Event Details** screen.
 2. A confirmation dialog warns that associated workshop events will be overwritten.
 3. If user cancels, the LiveStack field should revert.
 4. If user accepts, WMS remaps the generated workshop event rows to fit the new LiveStack.
@@ -153,6 +153,12 @@ Expected WMS permissions:
 - If the user cannot edit the event, the LiveStack field should be disabled so the remap process cannot be triggered.
 - Creator and requestor emails should be Oracle email addresses ending in `@oracle.com`.
 
+QA access setup:
+
+- Testers may need to be added as event admins to test admin-only behavior.
+- Testers may also need to be removed from the event admin role to test creator, requestor, and normal-user behavior.
+- Retest status changes, edit access, LiveStack remap access, and user-limit tracking after changing roles.
+
 ## Sync To LiveLabs
 
 WMS syncs data to LiveLabs through ORDS.
@@ -174,21 +180,21 @@ The sync happens in three conceptual parts:
 
 Important QA note: The parent sync can succeed while the entry batch sync fails. Check both log entries.
 
-## LiveLabs Page 400 Behavior
+## LiveLabs Landing Page Behavior
 
-Page 400 should support two entry paths:
+The **LiveStack Landing Page** should support two entry paths:
 
 - Normal LiveStack ID
 - LiveStack Event code
 
 When loaded by LiveStack ID:
 
-- Page 400 should show the normal LiveStack values.
+- The page should show the normal LiveStack values.
 - The content section should show the normal active LiveStack entries.
 
 When loaded by LiveStack Event code:
 
-- Page 400 should resolve the event code to the parent LiveStack Event.
+- The page should resolve the event code to the parent LiveStack Event.
 - Event title and override fields should replace the normal LiveStack values when provided.
 - If an override field is blank, the normal LiveStack value should display.
 - The content section should only show entries with active mapped workshop event codes.
@@ -197,29 +203,29 @@ When loaded by LiveStack Event code:
 
 Example: if visible entries have positions 2, 5, and 8, the page should display them as 1, 2, and 3.
 
-## Entry Links From Page 400
+## Entry Links From The LiveStack Landing Page
 
 Expected behavior for event-mode entries:
 
-- Workshop entries with an event code should link to page 180 using the event code.
-- Sandbox/reservation entries should pass the event/voucher ID to page 320 using `P320_VOUCHER_ID`.
+- Workshop entries with an event code should link to the **Workshop Event Page** using the event code.
+- Sandbox/reservation entries should pass the event/voucher ID to the **Reservation Flow** using `P320_VOUCHER_ID`.
 - Existing `WEC` behavior can still be used where required.
 - If an entry does not have an active event mapping in event mode, it should not appear.
 
-## Subscribe Behavior On Page 400
+## Subscribe Behavior On The LiveStack Landing Page
 
 The normal Subscribe button applies to the public LiveStack, not the temporary event version.
 
 Expected behavior:
 
 - Subscribe button should only display when the underlying LiveStack is public and active.
-- If the page was loaded by LiveStack Event code, clicking Subscribe should show a warning that the event may contain different content than the public LiveStack.
+- If the **LiveStack Landing Page** was loaded by LiveStack Event code, clicking Subscribe should show a warning that the event may contain different content than the public LiveStack.
 - If user confirms, they subscribe to the public LiveStack.
 - If user cancels, no subscription change should happen.
 
 ## LiveStack Event User Tracking
 
-When a user opens page 400 with a LiveStack Event code:
+When a user opens the **LiveStack Landing Page** with a LiveStack Event code:
 
 - LiveLabs tracks that the user entered the parent LiveStack Event code.
 - Event creator, requestors, and event admins should not be counted as normal users for this tracking.
@@ -231,11 +237,11 @@ LiveStack Events now have parent-level max and concurrent user fields.
 
 Expected behavior:
 
-- WMS page 70 should allow max users and concurrent users to be entered.
+- The **LiveStack Event Details** screen should allow max users and concurrent users to be entered.
 - Generated workshop event rows should inherit those values.
 - WMS sync should send those values to LiveLabs.
 - LiveLabs should store those values on the parent LiveStack Event.
-- Page 400 should block event content when the parent event exceeds its configured limits.
+- The **LiveStack Landing Page** should block event content when the parent event exceeds its configured limits.
 
 Current implementation note for QA:
 
@@ -251,7 +257,7 @@ Symptoms:
 
 - Log says parent sync success.
 - Entry batch log shows REST error.
-- Page 400 may show old entries, missing entries, or no update.
+- The **LiveStack Landing Page** may show old entries, missing entries, or no update.
 
 Likely causes:
 
@@ -275,9 +281,9 @@ Check:
 - Generated child workshop event is inactive.
 - Parent LiveStack Event has been marked updated.
 - LiveLabs entry batch sync succeeded.
-- Page 400 was reloaded with the correct event code.
+- The **LiveStack Landing Page** was reloaded with the correct event code.
 
-### Page 400 Shows Raw Position Numbers
+### LiveStack Landing Page Shows Raw Position Numbers
 
 Expected behavior is relative numbering of visible entries.
 
@@ -291,13 +297,13 @@ Check whether the entry is:
 - Sandbox/reservation flow
 - Tenancy or other entry type
 
-Workshop entries should use page 180 with event code. Sandbox/reservation entries should pass the voucher ID to page 320.
+Workshop entries should use the **Workshop Event Page** with event code. Sandbox/reservation entries should pass the voucher ID to the **Reservation Flow**.
 
 ## Suggested QA Scenarios
 
 ### Scenario 1: Create A New LiveStack Event
 
-1. Open WMS page 69.
+1. Open **Request an Event Code** in WMS.
 2. Choose LiveStack Event.
 3. Select a LiveStack with multiple entries.
 4. Leave all entries selected.
@@ -314,16 +320,16 @@ Workshop entries should use page 180 with event code. Sandbox/reservation entrie
 3. Save.
 4. Verify only selected entries have generated workshop events.
 5. Sync to LiveLabs.
-6. Open page 400 by event code.
+6. Open the **LiveStack Landing Page** by event code.
 7. Verify only selected entries display.
 
 ### Scenario 3: Disable An Entry After Sync
 
 1. Start with a synced LiveStack Event that has multiple active entries.
-2. On WMS page 70, deselect one active entry.
+2. On **LiveStack Event Details**, deselect one active entry.
 3. Save.
 4. Sync to LiveLabs.
-5. Open page 400 by event code.
+5. Open the **LiveStack Landing Page** by event code.
 6. Verify the disabled entry no longer displays.
 
 ### Scenario 4: Re-enable An Existing Entry
@@ -333,11 +339,11 @@ Workshop entries should use page 180 with event code. Sandbox/reservation entrie
 3. Save.
 4. Verify the existing row is reactivated rather than duplicated.
 5. Sync to LiveLabs.
-6. Verify the entry appears again on page 400.
+6. Verify the entry appears again on the **LiveStack Landing Page**.
 
 ### Scenario 5: Remap To A Different LiveStack
 
-1. Open an existing LiveStack Event on WMS page 70.
+1. Open an existing LiveStack Event on **LiveStack Event Details**.
 2. Change the LiveStack field.
 3. Confirm the warning dialog appears.
 4. Cancel once and verify the field reverts.
@@ -345,7 +351,7 @@ Workshop entries should use page 180 with event code. Sandbox/reservation entrie
 6. Save.
 7. Verify associated workshop events now match the new LiveStack entries.
 8. Sync to LiveLabs.
-9. Open page 400 by event code.
+9. Open the **LiveStack Landing Page** by event code.
 10. Verify the page shows the new LiveStack content and does not show old invalid entries.
 
 ### Scenario 6: Change Back To The Original LiveStack
@@ -359,29 +365,29 @@ Workshop entries should use page 180 with event code. Sandbox/reservation entrie
 
 1. Set event title, description, outline, and prerequisites overrides.
 2. Sync to LiveLabs.
-3. Open page 400 by event code.
+3. Open the **LiveStack Landing Page** by event code.
 4. Verify override values display.
 5. Clear one override field in WMS.
 6. Sync again.
-7. Verify page 400 falls back to the base LiveStack value for that field.
+7. Verify the **LiveStack Landing Page** falls back to the base LiveStack value for that field.
 
 ### Scenario 8: Max User Limit
 
 1. Set max users to a low value such as 1.
 2. Sync to LiveLabs.
-3. Open page 400 by event code as one normal test user.
-4. Open page 400 by event code as another normal test user.
+3. Open the **LiveStack Landing Page** by event code as one normal test user.
+4. Open the **LiveStack Landing Page** by event code as another normal test user.
 5. Verify the later user sees the oversubscribed message and the event content cards are hidden.
 
 ### Scenario 9: Event Admin Bypass
 
-1. Open page 400 by event code as the event creator, requestor, or event admin.
+1. Open the **LiveStack Landing Page** by event code as the event creator, requestor, or event admin.
 2. Verify the user is not treated like a normal tracked user for limit enforcement.
 3. Verify content can still be accessed during valid event dates.
 
 ### Scenario 10: Subscribe From Event Page
 
-1. Open page 400 by LiveStack Event code.
+1. Open the **LiveStack Landing Page** by LiveStack Event code.
 2. Click Subscribe.
 3. Verify a warning explains that the event version may differ from the public LiveStack.
 4. Cancel and confirm no subscription change.
@@ -397,7 +403,16 @@ Use clearly named test records, for example:
 - Use short valid date windows
 - Use low limits only in Dev
 
+Recommended coverage:
+
+- Create new LiveStacks and new LiveStack Events to test the complete setup flow from a clean starting point.
+- Edit existing LiveStacks and existing LiveStack Events to test upgrade/regression behavior.
+- Change dates, timezone, title, overrides, max users, concurrent users, selected entries, active flags, requestors, and status.
+- Try to find flaws by changing fields in different orders, saving repeatedly, syncing after partial changes, and switching LiveStacks more than once.
+
 Avoid using production-like public events for destructive remap testing because changing the parent LiveStack can delete obsolete generated child mappings/events.
+
+Also test existing LiveStack functionality in LiveLabs that is not event-code based. Normal public LiveStacks should still load, subscribe, launch entries, reserve sandboxes, run tenancy content, mark content complete, and return to the normal LiveStack flow as they did before this feature.
 
 ## QA Completion Checklist
 
@@ -408,10 +423,11 @@ Avoid using production-like public events for destructive remap testing because 
 - WMS remap updates rows for the new LiveStack.
 - WMS-to-LiveLabs parent sync succeeds.
 - WMS-to-LiveLabs entry batch sync succeeds.
-- Page 400 loads by LiveStack ID.
-- Page 400 loads by LiveStack Event code.
-- Page 400 applies overrides.
-- Page 400 shows only active event entries.
-- Page 400 entry links go to the correct downstream page.
-- Page 400 handles max user limits.
+- The **LiveStack Landing Page** loads by LiveStack ID.
+- The **LiveStack Landing Page** loads by LiveStack Event code.
+- The **LiveStack Landing Page** applies overrides.
+- The **LiveStack Landing Page** shows only active event entries.
+- The **LiveStack Landing Page** entry links go to the correct downstream screen.
+- The **LiveStack Landing Page** handles max user limits.
+- Existing non-event LiveStack flows still behave as expected.
 - Subscribe behavior is clear and does not silently subscribe to event-specific content.
