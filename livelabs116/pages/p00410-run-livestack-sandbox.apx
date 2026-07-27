@@ -632,7 +632,7 @@ page 410 (
         }
     )
 
-    button back-to-livestack (
+    button back-to-livestack-event (
         buttonName: Back-to-livestack
         label: Back
         layout {
@@ -658,51 +658,11 @@ page 410 (
             target: {
                 page: 400
                 items: {
+                    WEC: &P410_LIVESTACK_EC.
                     P400_ID: &P410_LIVESTACK_ID.
                 }
             }
             warnOnUnsavedChanges: doNotCheck
-        }
-        serverSideCondition {
-            type: itemIsNull
-            item: P410_LIVESTACK_EC
-        }
-    )
-
-    button back-to-livestack-event (
-        buttonName: Back-to-livestack-event
-        label: Back
-        layout {
-            sequence: 20
-            region: @journey-info
-            slot: regionBody
-            columnCssClasses: mxw80
-        }
-        appearance {
-            buttonTemplate: @/text-with-icon
-            templateOptions: [
-                #DEFAULT#
-                t-Button--mobileHideLabel
-                t-Button--tiny
-                t-Button--primary
-                t-Button--iconLeft
-            ]
-            cssClasses: u-pullLeft
-            icon: fa-chevron-left
-        }
-        behavior {
-            action: redirectThisApp
-            target: {
-                page: 400
-                items: {
-                    WEC: &P410_LIVESTACK_EC.
-                }
-            }
-            warnOnUnsavedChanges: doNotCheck
-        }
-        serverSideCondition {
-            type: itemIsNotNull
-            item: P410_LIVESTACK_EC
         }
     )
 
@@ -1720,3 +1680,4 @@ page 410 (
     )
 
 )
+
