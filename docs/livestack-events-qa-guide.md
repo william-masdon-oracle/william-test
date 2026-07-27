@@ -6,6 +6,12 @@ LiveStack Events let WMS users request one parent event code for a LiveStack whi
 
 This gives event teams one public LiveStack event link, but each workshop inside the LiveStack can still behave like a normal LiveLabs event code with its own workshop-specific event record.
 
+## Dev Environment Links
+
+- **WMS Dev**: [https://livelabs-dev.oracle.com/ords/r/wms/wms/home](https://livelabs-dev.oracle.com/ords/r/wms/wms/home)
+- **LiveLabs Dev**: [https://livelabs-dev.oracle.com/ords/r/dbpm/livelabs/home](https://livelabs-dev.oracle.com/ords/r/dbpm/livelabs/home)
+- **LiveLabs Admin Dev**: [https://livelabs-dev.oracle.com/ords/r/dbpm/livelabs-admin/home](https://livelabs-dev.oracle.com/ords/r/dbpm/livelabs-admin/home)
+
 ## Main Objects
 
 There are three related concepts:
