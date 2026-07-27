@@ -582,6 +582,413 @@ page 900 (
         }
     )
 
+    region livestack-events (
+        name: LiveStack Events
+        title: LiveStack Events
+        type: staticContent
+        layout {
+            sequence: 50
+            parentRegion: @sync-queue
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--accent1
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    region livestack-events-2 (
+        name: LiveStack Events
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select lse.id,
+                       lse.event_code,
+                       lse.livestack_id,
+                       ls.name as livestack_name,
+                       lse.event_title,
+                       lse.email_creator,
+                       lse.valid_from,
+                       lse.valid_to,
+                       lse.valid_timezone,
+                       lse.users_maximum,
+                       lse.users_concurrent,
+                       lse.active_flg,
+                       lse.event_status,
+                       lse.updated_flg,
+                       lse.updated_by,
+                       lse.updated_on
+                  from wms_livestack_events lse
+                  left join wms_livestacks ls
+                    on ls.id = lse.livestack_id
+                 where lse.event_status in ('Event Published', 'Event Approved')
+                   and lse.updated_flg > 0
+                ```
+        }
+        layout {
+            sequence: 10
+            parentRegion: @livestack-events
+            slot: subRegions
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        pagination {
+            type: rowRangesXToY
+        }
+        performance {
+            maxRowsToProcess: 1000000
+        }
+        advanced {
+            savedReportMappingIdentifier: 4117519001751001
+        }
+
+        column ACTIVE_FLG (
+            type: plainText
+            heading {
+                heading: Active Flg
+                alignment: center
+            }
+            layout {
+                sequence: 120
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: L
+            }
+        )
+
+        column EMAIL_CREATOR (
+            type: plainText
+            heading {
+                heading: Email Creator
+                alignment: center
+            }
+            layout {
+                sequence: 60
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: F
+            }
+        )
+
+        column EVENT_CODE (
+            type: plainText
+            heading {
+                heading: Event Code
+                alignment: center
+            }
+            layout {
+                sequence: 20
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: B
+            }
+        )
+
+        column EVENT_STATUS (
+            type: plainText
+            heading {
+                heading: Event Status
+                alignment: center
+            }
+            layout {
+                sequence: 130
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: M
+            }
+        )
+
+        column EVENT_TITLE (
+            type: plainText
+            heading {
+                heading: Event Title
+                alignment: center
+            }
+            layout {
+                sequence: 50
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: E
+            }
+        )
+
+        column ID (
+            type: link
+            heading {
+                heading: Event ID
+                alignment: center
+            }
+            layout {
+                sequence: 10
+                columnAlignment: end
+            }
+            link {
+                target: {
+                    page: 70
+                    items: {
+                        P70_ID: #ID#
+                    }
+                }
+                linkText: #ID#
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: A
+            }
+        )
+
+        column LIVESTACK_ID (
+            type: plainText
+            heading {
+                heading: LiveStack ID
+                alignment: center
+            }
+            layout {
+                sequence: 30
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: C
+            }
+        )
+
+        column LIVESTACK_NAME (
+            type: plainText
+            heading {
+                heading: LiveStack Name
+                alignment: center
+            }
+            layout {
+                sequence: 40
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: D
+            }
+        )
+
+        column UPDATED_BY (
+            type: plainText
+            heading {
+                heading: Updated By
+                alignment: center
+            }
+            layout {
+                sequence: 150
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: O
+            }
+        )
+
+        column UPDATED_FLG (
+            type: plainText
+            heading {
+                heading: Updated Flg
+                alignment: center
+            }
+            layout {
+                sequence: 140
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: N
+            }
+        )
+
+        column UPDATED_ON (
+            type: plainText
+            heading {
+                heading: Updated On
+                alignment: center
+            }
+            layout {
+                sequence: 160
+                columnAlignment: center
+            }
+            appearance {
+                formatMask: DD-MON-YYYY HH24:MI:SS
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: P
+            }
+        )
+
+        column USERS_CONCURRENT (
+            type: plainText
+            heading {
+                heading: Users Concurrent
+                alignment: center
+            }
+            layout {
+                sequence: 110
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: K
+            }
+        )
+
+        column USERS_MAXIMUM (
+            type: plainText
+            heading {
+                heading: Users Maximum
+                alignment: center
+            }
+            layout {
+                sequence: 100
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: J
+            }
+        )
+
+        column VALID_FROM (
+            type: plainText
+            heading {
+                heading: Valid From
+                alignment: center
+            }
+            layout {
+                sequence: 70
+                columnAlignment: center
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: G
+            }
+        )
+
+        column VALID_TIMEZONE (
+            type: plainText
+            heading {
+                heading: Valid Timezone
+                alignment: center
+            }
+            layout {
+                sequence: 90
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: I
+            }
+        )
+
+        column VALID_TO (
+            type: plainText
+            heading {
+                heading: Valid To
+                alignment: center
+            }
+            layout {
+                sequence: 80
+                columnAlignment: center
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: H
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: LiveStack Events to be Synced
+        }
+
+        savedReport 411751901 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn EVENT_CODE (
+                sequence: 2
+            )
+
+            displayColumn EVENT_STATUS (
+                sequence: 6
+            )
+
+            displayColumn EVENT_TITLE (
+                sequence: 5
+            )
+
+            displayColumn ID (
+                sequence: 1
+            )
+
+            displayColumn LIVESTACK_ID (
+                sequence: 3
+            )
+
+            displayColumn LIVESTACK_NAME (
+                sequence: 4
+            )
+
+            displayColumn UPDATED_FLG (
+                sequence: 7
+            )
+
+        )
+
+    )
+
     region green-buttons (
         name: Green Buttons
         type: staticContent
@@ -1648,7 +2055,7 @@ page 900 (
         }
         lov {
             type: staticValues
-            staticValues: STATIC:Green Buttons;wms_pkg_ords.createGreenButton,Workshops;wms_pkg_ords.updateWorkshops,Event Codes;wms_pkg_ords.updateEventCodes,Tenancies;wms_pkg_ords.updateTenancies,Compute Images;wms_pkg_ords.pushImages
+            staticValues: STATIC:Green Buttons;wms_pkg_ords.createGreenButton,Workshops;wms_pkg_ords.updateWorkshops,Event Codes;wms_pkg_ords.updateEventCodes,LiveStack Events;wms_pkg_livestack_event.updateLiveStackEventCodes,Tenancies;wms_pkg_ords.updateTenancies,Compute Images;wms_pkg_ords.pushImages
             displayExtraValues: false
         }
         layout {
@@ -2013,4 +2420,3 @@ page 900 (
     )
 
 )
-

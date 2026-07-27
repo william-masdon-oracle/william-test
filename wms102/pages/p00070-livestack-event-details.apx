@@ -1503,6 +1503,52 @@ page 70 (
         }
     )
 
+    validation at-least-one-entry-selected (
+        name: At Least One Entry Selected
+        execution {
+            sequence: 50
+        }
+        validation {
+            type: functionBodyReturningBoolean
+            plsqlFunctionBody:
+                ```plsql
+                begin
+                    return apex_application.g_f01.count > 0;
+                end;
+                ```
+        }
+        error {
+            errorMessage: Select at least one LiveStack entry before saving this LiveStack event.
+            displayLocation: inlineInNotification
+        }
+        serverSideCondition {
+            whenButtonPressed: @save
+        }
+    )
+
+    validation at-least-one-entry-selected-create (
+        name: At Least One Entry Selected - Create
+        execution {
+            sequence: 51
+        }
+        validation {
+            type: functionBodyReturningBoolean
+            plsqlFunctionBody:
+                ```plsql
+                begin
+                    return apex_application.g_f01.count > 0;
+                end;
+                ```
+        }
+        error {
+            errorMessage: Select at least one LiveStack entry before creating this LiveStack event.
+            displayLocation: inlineInNotification
+        }
+        serverSideCondition {
+            whenButtonPressed: @create
+        }
+    )
+
     process initialize-form-livestack-event (
         name: Initialize form LiveStack Event
         type: formInitialization
@@ -1850,4 +1896,3 @@ page 70 (
     )
 
 )
-
