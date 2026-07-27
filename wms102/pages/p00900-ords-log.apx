@@ -9,6 +9,7 @@ page 900 (
     }
     navigation {
         cursorFocus: doNotFocusCursor
+        warnOnUnsavedChanges: false
     }
     css {
         inline:
