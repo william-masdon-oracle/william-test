@@ -1,0 +1,2092 @@
+page 9451 (
+    name: Event Reservation Success
+    alias: EVENT-RESERVATION-SUCCESS
+    title: Event Reservation Success
+    appearance {
+        pageTemplate: @standard-trustarc
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region button-bar (
+        name: Button Bar
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @buttons-container
+            templateOptions: [
+                #DEFAULT#
+                t-ButtonRegion--noUI
+            ]
+        }
+        settings {
+            outputAs: text
+        }
+    )
+
+    region event-details (
+        name: Event Details
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select ID,
+                       ID as ID_LINK,
+                       REASON,
+                       VOUCHER_CODE,
+                       WORKSHOP_ID,
+                       EMAIL_REQUESTOR,
+                       VALID_FROM_GMT,
+                       VALID_TO_GMT,
+                       USERS_MAXIMUM,
+                       USERS_CONCURRENT,
+                       USERS_REGISTERED,
+                       USERS_ACTIVE,
+                       USERS_RESERVED,
+                       TENANCY_ID,
+                       REGION_ID,
+                       ACTIVE_FLG,
+                       'Link' as QR_LINK
+                  from LL_VOUCHERS_VW
+                  where  (instr(upper(email_requestor), upper(:app_user)) > 0
+                     or instr(upper(email_creator), upper(:app_user)) > 0
+                     or ll_pkg_security.am_i_allowed(:app_user,'EVENT_CODE', id) = 'Y' ) AND REASON = :P9451_REASON
+                
+                  --P9451_REASON
+                
+                  /*
+                  where (instr(upper(email_requestor), upper(:app_user)) > 0
+                     or instr(upper(email_creator), upper(:app_user)) > 0
+                     or ll_pkg_security.am_i_allowed(:app_user,'EVENT_CODE', id) = 'Y'
+                     or upper(:app_user) in ('ANOOSHA.PILLI@ORACLE.COM','KAMRYN.VINSON@ORACLE.COM') ) AND VOUCHER_CODE = :P9451_VOUCHER_CODE
+                     */
+                     
+                ```
+            pageItemsToSubmit: P9451_REASON
+        }
+        layout {
+            sequence: 40
+            slot: contentBody
+        }
+        appearance {
+            template: @collapsible
+            templateOptions: [
+                #DEFAULT#
+                t-Region--hideShowIconsMath
+                is-expanded
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P9451_REASON
+        }
+        pagination {
+            type: rowRangesXToY
+        }
+        performance {
+            maxRowsToProcess: 1000000
+        }
+        advanced {
+            savedReportMappingIdentifier: 258986000701485766
+        }
+
+        column ACTIVE_FLG (
+            type: plainText
+            heading {
+                heading: Active Flg
+                alignment: center
+            }
+            layout {
+                sequence: 160
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: P
+            }
+        )
+
+        column EMAIL_REQUESTOR (
+            type: plainText
+            heading {
+                heading: Email Requestor
+                alignment: center
+            }
+            layout {
+                sequence: 60
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: F
+            }
+        )
+
+        column ID (
+            type: plainText
+            heading {
+                heading: Id
+                alignment: center
+            }
+            layout {
+                sequence: 10
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: A
+            }
+        )
+
+        column ID_LINK (
+            type: plainText
+            heading {
+                heading: Id Link
+                alignment: center
+            }
+            layout {
+                sequence: 20
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: B
+            }
+        )
+
+        column QR_LINK (
+            type: plainText
+            heading {
+                heading: Qr Link
+                alignment: center
+            }
+            layout {
+                sequence: 170
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: Q
+            }
+        )
+
+        column REASON (
+            type: plainText
+            heading {
+                heading: Reason
+                alignment: center
+            }
+            layout {
+                sequence: 30
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: C
+            }
+        )
+
+        column REGION_ID (
+            type: hidden
+            heading {
+                heading: Region Id
+            }
+            layout {
+                sequence: 150
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: O
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column TENANCY_ID (
+            type: hidden
+            heading {
+                heading: Tenancy Id
+            }
+            layout {
+                sequence: 140
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: N
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column USERS_ACTIVE (
+            type: plainText
+            heading {
+                heading: Users Active
+                alignment: center
+            }
+            layout {
+                sequence: 120
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: L
+            }
+        )
+
+        column USERS_CONCURRENT (
+            type: plainText
+            heading {
+                heading: Users Concurrent
+                alignment: center
+            }
+            layout {
+                sequence: 100
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: J
+            }
+        )
+
+        column USERS_MAXIMUM (
+            type: plainText
+            heading {
+                heading: Users Maximum
+                alignment: center
+            }
+            layout {
+                sequence: 90
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: I
+            }
+        )
+
+        column USERS_REGISTERED (
+            type: plainText
+            heading {
+                heading: Users Registered
+                alignment: center
+            }
+            layout {
+                sequence: 110
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: K
+            }
+        )
+
+        column USERS_RESERVED (
+            type: plainText
+            heading {
+                heading: Users Reserved
+                alignment: center
+            }
+            layout {
+                sequence: 130
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: M
+            }
+        )
+
+        column VALID_FROM_GMT (
+            type: plainText
+            heading {
+                heading: Valid From Gmt
+                alignment: center
+            }
+            layout {
+                sequence: 70
+                columnAlignment: center
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: G
+            }
+        )
+
+        column VALID_TO_GMT (
+            type: plainText
+            heading {
+                heading: Valid To Gmt
+                alignment: center
+            }
+            layout {
+                sequence: 80
+                columnAlignment: center
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: H
+            }
+        )
+
+        column VOUCHER_CODE (
+            type: plainText
+            heading {
+                heading: Voucher Code
+                alignment: center
+            }
+            layout {
+                sequence: 40
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: D
+            }
+        )
+
+        column WORKSHOP_ID (
+            type: plainText
+            heading {
+                heading: Workshop Id
+                alignment: center
+            }
+            layout {
+                sequence: 50
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: E
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: Event Details
+        }
+
+        savedReport 849674 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn ACTIVE_FLG (
+                sequence: 16
+            )
+
+            displayColumn EMAIL_REQUESTOR (
+                sequence: 6
+            )
+
+            displayColumn ID (
+                sequence: 1
+            )
+
+            displayColumn ID_LINK (
+                sequence: 2
+            )
+
+            displayColumn QR_LINK (
+                sequence: 17
+            )
+
+            displayColumn REASON (
+                sequence: 3
+            )
+
+            displayColumn REGION_ID (
+                sequence: 15
+            )
+
+            displayColumn TENANCY_ID (
+                sequence: 14
+            )
+
+            displayColumn USERS_ACTIVE (
+                sequence: 12
+            )
+
+            displayColumn USERS_CONCURRENT (
+                sequence: 10
+            )
+
+            displayColumn USERS_MAXIMUM (
+                sequence: 9
+            )
+
+            displayColumn USERS_REGISTERED (
+                sequence: 11
+            )
+
+            displayColumn USERS_RESERVED (
+                sequence: 13
+            )
+
+            displayColumn VALID_FROM_GMT (
+                sequence: 7
+            )
+
+            displayColumn VALID_TO_GMT (
+                sequence: 8
+            )
+
+            displayColumn VOUCHER_CODE (
+                sequence: 4
+            )
+
+            displayColumn WORKSHOP_ID (
+                sequence: 5
+            )
+
+        )
+
+    )
+
+    region reservations (
+        name: Reservations
+        type: interactiveGrid
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                 select ID,
+                       OWNER1,
+                       REASON,
+                       REGION_ID,
+                       TENANCY_ID,
+                       START_GMT,
+                       STOP_GMT,
+                       (select count(*) from ll_reservation_steps where reservation_id = llr.id) as Steps,
+                       (select count(*) from ll_reservation_steps where reservation_id = llr.id and create_order is not null and create_success is null) as Create_Todo,
+                       (select count(*) from ll_reservation_steps where reservation_id = llr.id and delete_order is not null and delete_success is null) as Delete_Todo,
+                       (select count(*) from ll_reservation_steps where reservation_id = llr.id and create_order is not null and create_success='N') as Create_error,
+                       (select count(*) from ll_reservation_steps where reservation_id = llr.id and delete_order is not null and delete_success='N') as Delete_error,
+                       (select count(*) from user_scheduler_jobs where job_name like '%'||llr.id||'%') jobs_running
+                  from LL_RESERVATIONS_VW llr
+                  where REASON like 'AUTOGEN-'||:P9451_PREFIX||'%'
+                
+                  -- replace('AUTOGEN-'||:P9451_PREFIX||'-'||to_char(l_x,'000'),' ','') 
+                
+                ```
+            pageItemsToSubmit: P9451_PREFIX
+        }
+        layout {
+            sequence: 50
+            slot: contentBody
+        }
+        appearance {
+            template: @collapsible
+            templateOptions: [
+                #DEFAULT#
+                t-Region--hideShowIconsMath
+                is-expanded
+                t-Region--scrollBody
+            ]
+        }
+        serverSideCondition {
+            type: item!=value
+            item: P9451_PREFIX
+            value: WORKSHOP
+        }
+        edit {
+            enabled: true
+            allowedOperations: update
+        }
+        performance {
+            lazyLoading: true
+        }
+        pagination {
+            type: page
+        }
+        toolbar {
+            controls: [
+                searchCol
+                searchField
+                actionsMenu
+                resetButton
+            ]
+        }
+        download {
+            formats: [
+                csv
+                html
+                pdf
+                excel
+            ]
+        }
+        advanced {
+            savedReportMappingIdentifier: 458328094596858331
+        }
+
+        savedReport 1214018 (
+            visibility: primary
+            view {
+                default: grid
+                rowsPerPage: 5
+            }
+            singleRowView {
+                displayedColumns: true
+            }
+
+            displayColumn (
+                column: @REASON
+                layout {
+                    sequence: 12
+                }
+            )
+
+            displayColumn (
+                column: @STEPS
+                layout {
+                    width: 80
+                    sequence: 7
+                }
+            )
+
+            displayColumn (
+                column: @CREATE_TODO
+                layout {
+                    width: 107
+                    sequence: 8
+                }
+            )
+
+            displayColumn (
+                column: @DELETE_TODO
+                layout {
+                    width: 84
+                    sequence: 10
+                }
+            )
+
+            displayColumn (
+                column: @CREATE_ERROR
+                layout {
+                    width: 99
+                    sequence: 9
+                }
+            )
+
+            displayColumn (
+                column: @DELETE_ERROR
+                layout {
+                    width: 142
+                    sequence: 11
+                }
+            )
+
+            displayColumn (
+                column: @ID
+                layout {
+                    sequence: 1
+                }
+            )
+
+            displayColumn (
+                column: @OWNER1
+                layout {
+                    width: 143
+                    sequence: 2
+                }
+            )
+
+            displayColumn (
+                column: @REGION_ID
+                layout {
+                    width: 230
+                    sequence: 3
+                }
+            )
+
+            displayColumn (
+                column: @TENANCY_ID
+                layout {
+                    width: 182
+                    sequence: 2
+                }
+            )
+
+            displayColumn (
+                column: @START_GMT
+                layout {
+                    width: 161
+                    sequence: 4
+                }
+            )
+
+            displayColumn (
+                column: @STOP_GMT
+                layout {
+                    width: 155
+                    sequence: 5
+                }
+            )
+
+            displayColumn (
+                column: @JOBS_RUNNING
+                layout {
+                    width: 89
+                    sequence: 6
+                }
+            )
+
+            sort (
+                column: @OWNER1
+                sort {
+                    nulls: last
+                    sequence: 1
+                }
+            )
+
+        )
+
+        column CREATE_ERROR (
+            type: numberField
+            heading {
+                heading: Create Error
+                alignment: center
+            }
+            settings {
+                numberAlignment: center
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 130
+                columnAlignment: center
+            }
+            source {
+                databaseColumn: CREATE_ERROR
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column CREATE_TODO (
+            type: numberField
+            heading {
+                heading: Create Todo
+                alignment: center
+            }
+            settings {
+                numberAlignment: center
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 110
+                columnAlignment: center
+            }
+            source {
+                databaseColumn: CREATE_TODO
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column DELETE_ERROR (
+            type: numberField
+            heading {
+                heading: Delete Error
+                alignment: center
+            }
+            settings {
+                numberAlignment: center
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 140
+                columnAlignment: center
+            }
+            source {
+                databaseColumn: DELETE_ERROR
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column DELETE_TODO (
+            type: numberField
+            heading {
+                heading: Delete Todo
+                alignment: center
+            }
+            settings {
+                numberAlignment: center
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 120
+                columnAlignment: center
+            }
+            source {
+                databaseColumn: DELETE_TODO
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column ID (
+            type: hidden
+            layout {
+                sequence: 30
+            }
+            source {
+                databaseColumn: ID
+                dataType: number
+                primaryKey: true
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column JOBS_RUNNING (
+            type: numberField
+            heading {
+                heading: Jobs Running
+                alignment: center
+            }
+            settings {
+                numberAlignment: end
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 150
+                columnAlignment: center
+            }
+            source {
+                databaseColumn: JOBS_RUNNING
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column OWNER1 (
+            type: textField
+            heading {
+                heading: Owner1
+            }
+            layout {
+                sequence: 40
+            }
+            validation {
+                maxLength: 50
+            }
+            source {
+                databaseColumn: OWNER1
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column REASON (
+            type: textField
+            heading {
+                heading: Reason
+            }
+            layout {
+                sequence: 160
+            }
+            validation {
+                maxLength: 50
+            }
+            source {
+                databaseColumn: REASON
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column REGION_ID (
+            type: popupLov
+            heading {
+                heading: Region
+            }
+            lov {
+                type: sharedComponent
+                lov: @ll-regions-3
+            }
+            layout {
+                sequence: 50
+            }
+            source {
+                databaseColumn: REGION_ID
+                dataType: number
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: useLov
+            }
+        )
+
+        column START_GMT (
+            type: datePickerJquery
+            heading {
+                heading: Start (GMT Timezone)
+            }
+            layout {
+                sequence: 80
+            }
+            appearance {
+                formatMask: DD-Mon-YYYY HH24:MI:SS
+            }
+            source {
+                databaseColumn: START_GMT
+                dataType: date
+            }
+        )
+
+        column STEPS (
+            type: numberField
+            heading {
+                heading: Steps
+                alignment: center
+            }
+            settings {
+                numberAlignment: center
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 100
+                columnAlignment: center
+            }
+            source {
+                databaseColumn: STEPS
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column STOP_GMT (
+            type: datePickerJquery
+            heading {
+                heading: Stop (GMT timezone)
+            }
+            layout {
+                sequence: 90
+            }
+            appearance {
+                formatMask: DD-Mon-YYYY HH24:MI:SS
+            }
+            source {
+                databaseColumn: STOP_GMT
+                dataType: date
+            }
+        )
+
+        column TENANCY_ID (
+            type: popupLov
+            heading {
+                heading: Tenancy
+            }
+            lov {
+                type: sharedComponent
+                lov: @ll-tenancies-2
+            }
+            layout {
+                sequence: 60
+            }
+            source {
+                databaseColumn: TENANCY_ID
+                dataType: number
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: useLov
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: Reservations
+        }
+    )
+
+    region thank-you (
+        name: Thank you !
+        type: staticContent
+        source {
+            htmlCode: Thank you for uploading Reservations
+        }
+        layout {
+            sequence: 30
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        serverSideCondition {
+            type: item=value
+            item: P9451_PREFIX
+            value: WORKSHOP
+        }
+    )
+
+    region thank-you-2 (
+        name: Thank you !
+        type: staticContent
+        source {
+            htmlCode: "Thank you, Event Code & Future Reservations has been created! "
+        }
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        serverSideCondition {
+            type: item!=value
+            item: P9451_PREFIX
+            value: WORKSHOP
+        }
+    )
+
+    region workshops (
+        name: Workshops
+        type: interactiveGrid
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select ID,
+                       NAME,
+                       WS_OWNER_GROUP,
+                       AUTHOR_EMAIL,
+                       DESC_SHORT,
+                       DESC_LONG,
+                       PACKAGE_TYPE,
+                       TIME_IN_HOURS,
+                       TIME_AVAILABLE,
+                       PROGRAM_CODE,
+                       TRACKING_URL,
+                       APPROVAL_REQUIRED,
+                       ACTIVE_FLG,
+                       DEVELOPMENT_STATUS,
+                       LAB_URL,
+                       DESC_OUTLINE,
+                       DESC_PREREQUISITES,
+                       DESC_OUTCOME,
+                       WORKSHOP_JSON,
+                       TENANCIES_ALLOWED,
+                       MAX_PARALLEL_NON_EC,
+                       WORKSHOP_UID
+                  from LL_WORKSHOPS  
+                ```
+        }
+        layout {
+            sequence: 60
+            slot: contentBody
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        serverSideCondition {
+            type: item=value
+            item: P9451_PREFIX
+            value: WORKSHOP
+        }
+        pagination {
+            type: page
+        }
+        toolbar {
+            controls: [
+                searchCol
+                searchField
+                actionsMenu
+                resetButton
+                saveButton
+            ]
+        }
+        download {
+            formats: [
+                csv
+                html
+                excel
+                pdf
+            ]
+        }
+        advanced {
+            savedReportMappingIdentifier: 89700194159551905
+        }
+
+        savedReport 897413 (
+            visibility: primary
+            view {
+                default: grid
+            }
+            singleRowView {
+                displayedColumns: true
+            }
+
+            displayColumn (
+                column: @ID
+                layout {
+                    sequence: 1
+                }
+            )
+
+            displayColumn (
+                column: @NAME
+                layout {
+                    sequence: 2
+                }
+            )
+
+            displayColumn (
+                column: @WS_OWNER_GROUP
+                layout {
+                    sequence: 3
+                }
+            )
+
+            displayColumn (
+                column: @AUTHOR_EMAIL
+                layout {
+                    sequence: 4
+                }
+            )
+
+            displayColumn (
+                column: @DESC_SHORT
+                layout {
+                    sequence: 5
+                }
+            )
+
+            displayColumn (
+                column: @DESC_LONG
+                layout {
+                    sequence: 6
+                }
+            )
+
+            displayColumn (
+                column: @PACKAGE_TYPE
+                layout {
+                    sequence: 7
+                }
+            )
+
+            displayColumn (
+                column: @TIME_IN_HOURS
+                layout {
+                    sequence: 8
+                }
+            )
+
+            displayColumn (
+                column: @TIME_AVAILABLE
+                layout {
+                    sequence: 9
+                }
+            )
+
+            displayColumn (
+                column: @PROGRAM_CODE
+                layout {
+                    sequence: 10
+                }
+            )
+
+            displayColumn (
+                column: @TRACKING_URL
+                layout {
+                    sequence: 11
+                }
+            )
+
+            displayColumn (
+                column: @APPROVAL_REQUIRED
+                layout {
+                    sequence: 12
+                }
+            )
+
+            displayColumn (
+                column: @ACTIVE_FLG
+                layout {
+                    sequence: 13
+                }
+            )
+
+            displayColumn (
+                column: @DEVELOPMENT_STATUS
+                layout {
+                    sequence: 14
+                }
+            )
+
+            displayColumn (
+                column: @LAB_URL
+                layout {
+                    sequence: 15
+                }
+            )
+
+            displayColumn (
+                column: @DESC_OUTLINE
+                layout {
+                    sequence: 16
+                }
+            )
+
+            displayColumn (
+                column: @DESC_PREREQUISITES
+                layout {
+                    sequence: 17
+                }
+            )
+
+            displayColumn (
+                column: @DESC_OUTCOME
+                layout {
+                    sequence: 18
+                }
+            )
+
+            displayColumn (
+                column: @WORKSHOP_JSON
+                layout {
+                    sequence: 19
+                }
+            )
+
+            displayColumn (
+                column: @TENANCIES_ALLOWED
+                layout {
+                    sequence: 20
+                }
+            )
+
+            displayColumn (
+                column: @MAX_PARALLEL_NON_EC
+                layout {
+                    sequence: 21
+                }
+            )
+
+            displayColumn (
+                column: @WORKSHOP_UID
+                layout {
+                    sequence: 22
+                }
+            )
+
+        )
+
+        column ACTIVE_FLG (
+            type: textField
+            heading {
+                heading: Active Flg
+            }
+            layout {
+                sequence: 130
+            }
+            validation {
+                maxLength: 1
+            }
+            source {
+                databaseColumn: ACTIVE_FLG
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column APPROVAL_REQUIRED (
+            type: textField
+            heading {
+                heading: Approval Required
+            }
+            layout {
+                sequence: 120
+            }
+            validation {
+                maxLength: 1
+            }
+            source {
+                databaseColumn: APPROVAL_REQUIRED
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column AUTHOR_EMAIL (
+            type: textField
+            heading {
+                heading: Author Email
+            }
+            layout {
+                sequence: 40
+            }
+            validation {
+                maxLength: 50
+            }
+            source {
+                databaseColumn: AUTHOR_EMAIL
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column DESC_LONG (
+            type: textarea
+            heading {
+                heading: Desc Long
+            }
+            layout {
+                sequence: 60
+            }
+            validation {
+                maxLength: 4000
+            }
+            source {
+                databaseColumn: DESC_LONG
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column DESC_OUTCOME (
+            type: textarea
+            heading {
+                heading: Desc Outcome
+            }
+            layout {
+                sequence: 180
+            }
+            validation {
+                maxLength: 4000
+            }
+            source {
+                databaseColumn: DESC_OUTCOME
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column DESC_OUTLINE (
+            type: textarea
+            heading {
+                heading: Desc Outline
+            }
+            layout {
+                sequence: 160
+            }
+            validation {
+                maxLength: 4000
+            }
+            source {
+                databaseColumn: DESC_OUTLINE
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column DESC_PREREQUISITES (
+            type: textarea
+            heading {
+                heading: Desc Prerequisites
+            }
+            layout {
+                sequence: 170
+            }
+            validation {
+                maxLength: 4000
+            }
+            source {
+                databaseColumn: DESC_PREREQUISITES
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column DESC_SHORT (
+            type: textarea
+            heading {
+                heading: Desc Short
+            }
+            layout {
+                sequence: 50
+            }
+            validation {
+                maxLength: 4000
+            }
+            source {
+                databaseColumn: DESC_SHORT
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column DEVELOPMENT_STATUS (
+            type: textField
+            heading {
+                heading: Development Status
+            }
+            layout {
+                sequence: 140
+            }
+            validation {
+                maxLength: 50
+            }
+            source {
+                databaseColumn: DEVELOPMENT_STATUS
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column ID (
+            type: numberField
+            heading {
+                heading: Id
+                alignment: end
+            }
+            settings {
+                numberAlignment: end
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 10
+                columnAlignment: end
+            }
+            validation {
+                valueRequired: true
+            }
+            source {
+                databaseColumn: ID
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column LAB_URL (
+            type: textarea
+            heading {
+                heading: Lab Url
+            }
+            layout {
+                sequence: 150
+            }
+            validation {
+                maxLength: 4000
+            }
+            source {
+                databaseColumn: LAB_URL
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column MAX_PARALLEL_NON_EC (
+            type: numberField
+            heading {
+                heading: Max Parallel Non Ec
+                alignment: end
+            }
+            settings {
+                numberAlignment: end
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 210
+                columnAlignment: end
+            }
+            source {
+                databaseColumn: MAX_PARALLEL_NON_EC
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column NAME (
+            type: textarea
+            heading {
+                heading: Name
+            }
+            layout {
+                sequence: 20
+            }
+            validation {
+                valueRequired: true
+                maxLength: 200
+            }
+            source {
+                databaseColumn: NAME
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column PACKAGE_TYPE (
+            type: textField
+            heading {
+                heading: Package Type
+            }
+            layout {
+                sequence: 70
+            }
+            validation {
+                maxLength: 50
+            }
+            source {
+                databaseColumn: PACKAGE_TYPE
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column PROGRAM_CODE (
+            type: textarea
+            heading {
+                heading: Program Code
+            }
+            layout {
+                sequence: 100
+            }
+            validation {
+                maxLength: 200
+            }
+            source {
+                databaseColumn: PROGRAM_CODE
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column TENANCIES_ALLOWED (
+            type: textarea
+            heading {
+                heading: Tenancies Allowed
+            }
+            layout {
+                sequence: 200
+            }
+            validation {
+                maxLength: 200
+            }
+            source {
+                databaseColumn: TENANCIES_ALLOWED
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column TIME_AVAILABLE (
+            type: numberField
+            heading {
+                heading: Time Available
+                alignment: end
+            }
+            settings {
+                numberAlignment: end
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 90
+                columnAlignment: end
+            }
+            source {
+                databaseColumn: TIME_AVAILABLE
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column TIME_IN_HOURS (
+            type: numberField
+            heading {
+                heading: Time In Hours
+                alignment: end
+            }
+            settings {
+                numberAlignment: end
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 80
+                columnAlignment: end
+            }
+            source {
+                databaseColumn: TIME_IN_HOURS
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column TRACKING_URL (
+            type: textarea
+            heading {
+                heading: Tracking Url
+            }
+            layout {
+                sequence: 110
+            }
+            validation {
+                maxLength: 4000
+            }
+            source {
+                databaseColumn: TRACKING_URL
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column WORKSHOP_JSON (
+            type: textarea
+            heading {
+                heading: Workshop Json
+            }
+            layout {
+                sequence: 190
+            }
+            validation {
+                maxLength: 4000
+            }
+            source {
+                databaseColumn: WORKSHOP_JSON
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column WORKSHOP_UID (
+            type: textField
+            heading {
+                heading: Workshop Uid
+            }
+            layout {
+                sequence: 220
+            }
+            validation {
+                maxLength: 10
+            }
+            source {
+                databaseColumn: WORKSHOP_UID
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column WS_OWNER_GROUP (
+            type: textarea
+            heading {
+                heading: Ws Owner Group
+            }
+            layout {
+                sequence: 30
+            }
+            validation {
+                maxLength: 4000
+            }
+            source {
+                databaseColumn: WS_OWNER_GROUP
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: Workshops
+        }
+    )
+
+    pageItem P9451_PREFIX (
+        type: hidden
+        layout {
+            sequence: 10
+            region: @thank-you-2
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9451_REASON (
+        type: hidden
+        layout {
+            sequence: 20
+            region: @thank-you-2
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9451_START_DATE (
+        type: hidden
+        layout {
+            sequence: 60
+            region: @thank-you-2
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9451_START_TIME (
+        type: hidden
+        layout {
+            sequence: 70
+            region: @thank-you-2
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9451_VALID_FROM (
+        type: hidden
+        layout {
+            sequence: 30
+            region: @thank-you-2
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9451_VALID_TO (
+        type: hidden
+        layout {
+            sequence: 40
+            region: @thank-you-2
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9451_WORKSHOP_ID (
+        type: hidden
+        layout {
+            sequence: 50
+            region: @thank-you-2
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button clear (
+        buttonName: CLEAR
+        label: Clear and Create New
+        layout {
+            sequence: 10
+            region: @button-bar
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @text-with-icon
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--iconRight
+            ]
+            cssClasses: u-info
+            icon: fa-server-new
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 9450
+                clearCache: 9450
+                action: clearRegions
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button delete-event-and-reservations (
+        buttonName: Delete_Event_and_Reservations
+        label: Delete Event and Reservations
+        layout {
+            sequence: 40
+            region: @button-bar
+            slot: belowBox
+        }
+        appearance {
+            buttonTemplate: @text-with-icon
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--iconRight
+            ]
+            cssClasses: u-danger
+            icon: fa-remove
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    dynamicAction delete-event-and-reservations (
+        name: delete event and reservations
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @delete-event-and-reservations
+        }
+
+        action native-confirm (
+            action: confirm
+            settings {
+                message: Deleted Reservations and Event !
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    DECLARE
+                        l_file blob;
+                    
+                     BEGIN
+                       delete from  LL_VOUCHERS where REASON = :P9451_REASON AND VALID_FROM = :P9451_VALID_FROM AND VALID_TO = :P9451_VALID_TO;
+                    
+                       delete from ll_reservations where REASON like 'AUTOGEN-'||:P9451_PREFIX||'%' AND WORKSHOP_ID = :P9451_WORKSHOP_ID  ;
+                       --AND  START_DATE = :P9451_START_DATE AND START_TIME = :P9451_START_TIME;
+                       -- AND  START_DATE = :P  , START_TIME  
+                       -- delete from ll_reservations where 
+                       -- REASON like 'AUTOGEN-'||:P9451_PREFIX||'%'
+                    
+                     END;   
+                    ```
+                itemsToSubmit: [
+                    P9451_REASON
+                    P9451_VALID_FROM
+                    P9451_VALID_TO
+                    P9451_START_DATE
+                    P9451_START_TIME
+                ]
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+        action native-submit-page (
+            action: submitPage
+            execution {
+                sequence: 30
+                fireOnInit: false
+            }
+        )
+
+    )
+
+)
+

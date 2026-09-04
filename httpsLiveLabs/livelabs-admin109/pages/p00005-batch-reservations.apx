@@ -1,0 +1,581 @@
+page 5 (
+    name: Batch Reservations
+    alias: BATCH-RESERVATIONS
+    title: Batch Reservations
+    appearance {
+        pageTemplate: @standard-trustarc
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region batch-reservations (
+        name: Batch Reservations
+        type: form
+        source {
+            location: localDatabase
+            tableName: LL_RESERVATIONS
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        edit {
+            enabled: true
+            allowedOperations: [
+                add
+                update
+                delete
+            ]
+        }
+    )
+
+    region breadcrumb (
+        name: Breadcrumb
+        type: breadcrumb
+        source {
+            breadcrumb: @breadcrumb
+        }
+        layout {
+            sequence: 10
+            slot: breadcrumbBar
+        }
+        appearance {
+            template: @title-bar
+            templateOptions: [
+                #DEFAULT#
+                t-BreadcrumbRegion--useBreadcrumbTitle
+            ]
+        }
+        componentAppearance {
+            breadcrumbTemplate: @breadcrumb
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    pageItem P5_BATCH_INTERVAL_SIZE (
+        type: numberField
+        label {
+            label: Batch Interval Size
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 140
+            region: @batch-reservations
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            valueRequired: true
+        }
+        sessionState {
+            storage: request
+        }
+    )
+
+    pageItem P5_BATCH_TIMING_INTERVAL (
+        type: numberField
+        label {
+            label: Batch Timing Interval (in minutes)
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 130
+            region: @batch-reservations
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            valueRequired: true
+        }
+        sessionState {
+            storage: request
+        }
+    )
+
+    pageItem P5_EVENT_CODE_ID (
+        type: popupLov
+        label {
+            label: Event Code ID
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery: select reason||' ('||id||')' as display_value, id from ll_vouchers where workshop_id = :P5_WORKSHOP_ID
+        }
+        cascadingLov {
+            parentItems: P5_WORKSHOP_ID
+            itemsToSubmit: P5_WORKSHOP_ID
+        }
+        layout {
+            sequence: 30
+            region: @batch-reservations
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        source {
+            formRegion: @batch-reservations
+            column: VOUCHER_ID
+            dataType: number
+        }
+    )
+
+    pageItem P5_ID (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 10
+            region: @batch-reservations
+            slot: regionBody
+        }
+        source {
+            formRegion: @batch-reservations
+            column: ID
+            dataType: number
+            primaryKey: true
+        }
+    )
+
+    pageItem P5_OWNER1 (
+        type: textField
+        label {
+            label: Email
+            alignment: left
+        }
+        settings {
+            trimSpaces: none
+        }
+        layout {
+            sequence: 70
+            region: @batch-reservations
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            valueRequired: true
+            maxLength: 50
+        }
+        source {
+            formRegion: @batch-reservations
+            column: OWNER1
+            dataType: varchar2
+        }
+    )
+
+    pageItem P5_REGION_ID (
+        type: popupLov
+        label {
+            label: Region Id
+            alignment: left
+        }
+        lov {
+            type: sharedComponent
+            lov: @ll-regions-3
+        }
+        layout {
+            sequence: 60
+            region: @batch-reservations
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        source {
+            formRegion: @batch-reservations
+            column: REGION_ID
+            dataType: number
+        }
+    )
+
+    pageItem P5_SSH_KEY (
+        type: textField
+        label {
+            label: SSH Public Key
+            alignment: left
+        }
+        layout {
+            sequence: 110
+            region: @batch-reservations
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 4000
+        }
+        source {
+            formRegion: @batch-reservations
+            column: PUBLIC_KEY
+            dataType: varchar2
+        }
+    )
+
+    pageItem P5_START_DATE (
+        type: datePicker
+        label {
+            label: Start Date
+            alignment: left
+        }
+        settings {
+            multipleMonths: 2
+        }
+        layout {
+            sequence: 80
+            region: @batch-reservations
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            valueRequired: true
+            maxLength: 255
+        }
+        source {
+            formRegion: @batch-reservations
+            column: START_DATE
+            dataType: date
+        }
+    )
+
+    pageItem P5_START_TIME (
+        type: selectList
+        label {
+            label: Start Time
+            alignment: left
+        }
+        lov {
+            type: sharedComponent
+            lov: @starttime
+            displayNullValue: false
+        }
+        layout {
+            sequence: 90
+            region: @batch-reservations
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            formRegion: @batch-reservations
+            column: START_TIME
+            dataType: varchar2
+        }
+    )
+
+    pageItem P5_START_TIMEZONE (
+        type: popupLov
+        label {
+            label: Start Timezone
+            alignment: left
+        }
+        settings {
+            fetchOnSearch: true
+        }
+        lov {
+            type: sharedComponent
+            lov: @timezones
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 100
+            region: @batch-reservations
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 50
+        }
+        source {
+            formRegion: @batch-reservations
+            column: START_TIMEZONE
+            dataType: varchar2
+        }
+    )
+
+    pageItem P5_TENANCY_ID (
+        type: popupLov
+        label {
+            label: Tenancy Id
+            alignment: left
+        }
+        settings {
+            fetchOnSearch: true
+        }
+        lov {
+            type: sharedComponent
+            lov: @ll-tenancies-2
+        }
+        layout {
+            sequence: 50
+            region: @batch-reservations
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        source {
+            formRegion: @batch-reservations
+            column: TENANCY_ID
+            dataType: number
+        }
+    )
+
+    pageItem P5_TOTAL_BATCH_SIZE (
+        type: numberField
+        label {
+            label: Total Batch Size
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 120
+            region: @batch-reservations
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            valueRequired: true
+        }
+        sessionState {
+            storage: request
+        }
+    )
+
+    pageItem P5_WORKSHOP_ID (
+        type: popupLov
+        label {
+            label: Workshop
+            alignment: left
+        }
+        settings {
+            fetchOnSearch: true
+        }
+        lov {
+            type: sharedComponent
+            lov: @ll-workshops
+        }
+        layout {
+            sequence: 20
+            region: @batch-reservations
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            formRegion: @batch-reservations
+            column: WORKSHOP_ID
+            dataType: number
+        }
+    )
+
+    button cancel (
+        buttonName: CANCEL
+        label: Cancel
+        layout {
+            sequence: 10
+            region: @batch-reservations
+            slot: close
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 9650
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button create (
+        buttonName: CREATE
+        label: Create Batch Reservations
+        layout {
+            sequence: 40
+            region: @batch-reservations
+            slot: create
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: insert
+        }
+    )
+
+    dynamicAction update-owner-for-preprov (
+        name: Update Owner for PreProv
+        execution {
+            sequence: 10
+        }
+        when {
+            selectionType: items
+            items: P5_EVENT_CODE_ID
+        }
+
+        action native-set-value (
+            action: setValue
+            settings {
+                type: sqlQuery
+                sqlQuery: select voucher_code || '@LIVELABS.COM' from ll_vouchers where id = :P5_EVENT_CODE_ID
+                itemsToSubmit: P5_EVENT_CODE_ID
+            }
+            affectedElements {
+                selectionType: items
+                items: P5_OWNER1
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    process insert-batch (
+        name: insert batch
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                declare
+                v_count number := 0;
+                v_time date;
+                v_time_string varchar2(4000);
+                v_loop number := 0;
+                begin
+                
+                
+                while v_count < :P5_TOTAL_BATCH_SIZE loop
+                    v_time := to_date('11-11-1111:'||:P5_START_TIME, 'MM-DD-YYYY:HH24:MI') + (((1/24)/60)*(v_loop*:P5_BATCH_TIMING_INTERVAL));
+                    v_time_string := to_char(v_time, 'HH24:MI');
+                    for i in 1 .. :P5_BATCH_INTERVAL_SIZE loop
+                        insert into ll_reservations(workshop_id, owner1, region_id, tenancy_id, voucher_id, start_date, start_time, start_timezone, public_key)
+                        values (:P5_WORKSHOP_ID, :P5_OWNER1, :P5_REGION_ID, :P5_TENANCY_ID, :P5_EVENT_CODE_ID, :P5_START_DATE, v_time_string, :P5_START_TIMEZONE, :P5_SSH_KEY);
+                        v_count := v_count + 1;
+                        if v_count >= :P5_TOTAL_BATCH_SIZE then
+                            exit;
+                        end if;
+                    end loop;
+                    v_loop := v_loop + 1;
+                end loop;
+                
+                end;
+                ```
+        }
+        execution {
+            sequence: 10
+        }
+        advanced {
+            executionMappingIdentifier: 197456814712651244
+        }
+    )
+
+    branch (
+        execution {
+            sequence: 1
+        }
+        behavior {
+            target: {
+                page: 9650
+            }
+        }
+    )
+
+)
+

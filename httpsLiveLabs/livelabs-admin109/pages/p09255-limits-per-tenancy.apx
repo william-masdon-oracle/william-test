@@ -1,0 +1,770 @@
+page 9255 (
+    name: Limits per tenancy
+    alias: LIMITS-PER-TENANCY
+    title: Limits per tenancy
+    appearance {
+        pageTemplate: @standard-trustarc
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        authorizationScheme: @superrrrr-user
+        formAutoComplete: false
+    }
+
+    region limits-per-tenancy (
+        name: Limits per tenancy
+        type: interactiveGrid
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select a.id as region_id,
+                       a.region_identifier as region,        
+                       b.name, 
+                       b.scopetype, 
+                       b.availabilityDomain, 
+                       substr(b.availabilitydomain,length(b.availabilitydomain),1) as AD,
+                       (select id from ll_resources where oci_name= :P9255_NAME) as resource_id,
+                       nvl(to_char(b.value), 'Region not registered') as oci_limit, 
+                       (select num_provided from ll_tenancy_provides 
+                        where tenancy_id = :P9255_TENANCY_ID 
+                        and region_id = a.id
+                        and (ad = substr(b.availabilitydomain,length(b.availabilitydomain),1) or b.scopetype<>'AD')
+                        and resource_id = (select id from ll_resources where oci_name= :P9255_NAME)) as num_provided,
+                        :P9255_TENANCY_ID as tenancy_id
+                from ll_oci_regions a,
+                     JSON_TABLE (ll_pkg_exec.get (p_tenancy_id => :P9255_TENANCY_ID, 
+                                                  p_host => ll_pkg_admin.oci_endpoint ('limits', a.region_key), 
+                                                  p_method => '/20190729/limitValues',  
+                                                  p_query_string => 'serviceName='||:P9255_SERVICENAME||'&name='||:P9255_NAME ),
+                                 '$[*]' COLUMNS (name, scopeType, availabilityDomain, value)) b
+                where ( b.scopetype in ('AD','REGION') or (b.scopetype='GLOBAL' and a.region_key = ll_pkg_admin.home_region_key(:P9255_TENANCY_ID)))                
+                                 
+                ```
+        }
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P9255_NAME
+        }
+        edit {
+            enabled: true
+            allowedOperations: update
+        }
+        toolbar {
+            controls: [
+                searchCol
+                searchField
+                actionsMenu
+                resetButton
+                saveButton
+            ]
+        }
+        download {
+            formats: [
+                csv
+                html
+                pdf
+                excel
+            ]
+        }
+        advanced {
+            savedReportMappingIdentifier: 181968205031110323
+        }
+
+        savedReport 1819687 (
+            visibility: primary
+            view {
+                default: grid
+            }
+            singleRowView {
+                displayedColumns: true
+            }
+
+            displayColumn (
+                column: @NAME
+                layout {
+                    sequence: 0
+                }
+            )
+
+            displayColumn (
+                column: @SCOPETYPE
+                layout {
+                    sequence: 1
+                }
+            )
+
+            displayColumn (
+                column: @AVAILABILITYDOMAIN
+                layout {
+                    show: false
+                    width: 211
+                    sequence: 6
+                }
+            )
+
+            displayColumn (
+                column: @OCI_LIMIT
+                layout {
+                    sequence: 4
+                }
+            )
+
+            displayColumn (
+                column: @NUM_PROVIDED
+                layout {
+                    sequence: 5
+                }
+            )
+
+            displayColumn (
+                column: @REGION_ID
+                layout {
+                    show: false
+                    sequence: 7
+                }
+            )
+
+            displayColumn (
+                column: @REGION
+                layout {
+                    sequence: 2
+                }
+            )
+
+            displayColumn (
+                column: @AD
+                layout {
+                    sequence: 3
+                }
+            )
+
+            displayColumn (
+                column: @RESOURCE_ID
+                layout {
+                    show: false
+                    sequence: 8
+                }
+            )
+
+            displayColumn (
+                column: @TENANCY_ID
+                layout {
+                    show: false
+                    sequence: 9
+                }
+            )
+
+            sort (
+                column: @REGION
+                sort {
+                    nulls: last
+                    sequence: 1
+                }
+            )
+
+            sort (
+                column: @AD
+                sort {
+                    nulls: last
+                    sequence: 2
+                }
+            )
+
+        )
+
+        column AD (
+            type: textField
+            heading {
+                heading: Ad
+                alignment: center
+            }
+            layout {
+                sequence: 80
+                columnAlignment: center
+            }
+            validation {
+                maxLength: 4
+            }
+            source {
+                databaseColumn: AD
+                dataType: varchar2
+                queryOnly: true
+                primaryKey: true
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+            readOnly {
+                type: always
+            }
+        )
+
+        column AVAILABILITYDOMAIN (
+            type: textarea
+            heading {
+                heading: Availabilitydomain
+            }
+            layout {
+                sequence: 40
+            }
+            validation {
+                maxLength: 4000
+            }
+            source {
+                databaseColumn: AVAILABILITYDOMAIN
+                dataType: varchar2
+                queryOnly: true
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+            readOnly {
+                type: always
+                execute: forEachRow
+            }
+        )
+
+        column NAME (
+            type: textarea
+            heading {
+                heading: Name
+            }
+            layout {
+                sequence: 20
+            }
+            validation {
+                maxLength: 4000
+            }
+            source {
+                databaseColumn: NAME
+                dataType: varchar2
+                queryOnly: true
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+            readOnly {
+                type: always
+                execute: forEachRow
+            }
+        )
+
+        column NUM_PROVIDED (
+            type: numberField
+            heading {
+                heading: Livelabs Limit
+            }
+            settings {
+                numberAlignment: end
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 60
+            }
+            source {
+                databaseColumn: NUM_PROVIDED
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column OCI_LIMIT (
+            type: numberField
+            heading {
+                heading: OCI Tenancy Limit
+            }
+            settings {
+                numberAlignment: end
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 50
+            }
+            validation {
+                maxLength: 4000
+            }
+            source {
+                databaseColumn: OCI_LIMIT
+                dataType: varchar2
+                queryOnly: true
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+            readOnly {
+                type: always
+                execute: forEachRow
+            }
+        )
+
+        column REGION (
+            type: textField
+            heading {
+                heading: Region
+            }
+            layout {
+                sequence: 10
+            }
+            validation {
+                valueRequired: true
+                maxLength: 50
+            }
+            source {
+                databaseColumn: REGION
+                dataType: varchar2
+                queryOnly: true
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+            readOnly {
+                type: always
+            }
+        )
+
+        column REGION_ID (
+            type: numberField
+            heading {
+                heading: Region Id
+                alignment: end
+            }
+            settings {
+                numberAlignment: end
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 70
+                columnAlignment: end
+            }
+            validation {
+                valueRequired: true
+            }
+            source {
+                databaseColumn: REGION_ID
+                dataType: number
+                queryOnly: true
+                primaryKey: true
+            }
+            columnFilter {
+                lovType: none
+            }
+            readOnly {
+                type: always
+            }
+        )
+
+        column RESOURCE_ID (
+            type: numberField
+            heading {
+                heading: Resource Id
+                alignment: end
+            }
+            settings {
+                numberAlignment: end
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 90
+                columnAlignment: end
+            }
+            source {
+                databaseColumn: RESOURCE_ID
+                dataType: number
+                queryOnly: true
+                primaryKey: true
+            }
+            columnFilter {
+                lovType: none
+            }
+            readOnly {
+                type: always
+            }
+        )
+
+        column SCOPETYPE (
+            type: textarea
+            heading {
+                heading: Scopetype
+                alignment: center
+            }
+            layout {
+                sequence: 30
+                columnAlignment: center
+            }
+            validation {
+                maxLength: 4000
+            }
+            source {
+                databaseColumn: SCOPETYPE
+                dataType: varchar2
+                queryOnly: true
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+            readOnly {
+                type: always
+                execute: forEachRow
+            }
+        )
+
+        column TENANCY_ID (
+            type: textarea
+            heading {
+                heading: Tenancy Id
+            }
+            layout {
+                sequence: 100
+            }
+            validation {
+                maxLength: 2000
+            }
+            source {
+                databaseColumn: TENANCY_ID
+                dataType: varchar2
+                queryOnly: true
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+            readOnly {
+                type: always
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: Limits per tenancy
+        }
+    )
+
+    region resource-limits-per-tenancy (
+        name: Resource limits per tenancy
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    pageItem P9255_NAME (
+        type: popupLov
+        label {
+            label: Name
+            alignment: left
+        }
+        settings {
+            fetchOnSearch: true
+        }
+        lov {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                declare
+                  v_tenancy_id     number;
+                  v_detail_query   varchar2(2000);
+                begin
+                  select min(id) into v_tenancy_id from ll_tenancies where active_flg='Y' and is_public='Y';
+                
+                  v_detail_query := 'select name as source, name as target '||
+                                    ' from (' || ll_pkg_admin.limit_definitions_query(v_tenancy_id) || ') '||
+                                    ' where servicename = '||chr(39)||:P9255_SERVICENAME||chr(39);
+                  
+                  return (v_detail_query);
+                end;
+                ```
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        cascadingLov {
+            parentItems: P9255_SERVICENAME
+            itemsToSubmit: P9255_SERVICENAME
+        }
+        layout {
+            sequence: 50
+            region: @resource-limits-per-tenancy
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9255_SERVICENAME (
+        type: popupLov
+        label {
+            label: Servicename
+            alignment: left
+        }
+        settings {
+            fetchOnSearch: true
+        }
+        lov {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                declare
+                  v_tenancy_id     number;
+                  v_detail_query   varchar2(2000);
+                begin
+                
+                  select min(id) into v_tenancy_id from ll_tenancies where active_flg='Y' and is_public='Y';
+                
+                  v_detail_query := 'select /* RESULT_CACHE */ distinct servicename as source, servicename as target '||
+                                    ' from ('||ll_pkg_admin.limit_definitions_query(v_tenancy_id)||')';
+                  
+                  return (v_detail_query);
+                end;
+                ```
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 40
+            region: @resource-limits-per-tenancy
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9255_TENANCY_ID (
+        type: popupLov
+        label {
+            label: Tenancy
+            alignment: left
+        }
+        settings {
+            fetchOnSearch: true
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select tenancy_name, id
+                from ll_tenancies
+                ```
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 20
+            region: @resource-limits-per-tenancy
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button submit (
+        buttonName: Submit
+        label: Submit
+        layout {
+            sequence: 60
+            region: @resource-limits-per-tenancy
+            slot: regionBody
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    dynamicAction submitted (
+        name: Submitted
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @submit
+        }
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @resource-limits-per-tenancy
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+        action native-submit-page (
+            action: submitPage
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    process limits-per-tenancy-save-interactive-grid-data (
+        name: Limits per tenancy - Save Interactive Grid Data
+        type: executeCode
+        editableRegion: @limits-per-tenancy
+        source {
+            plsqlCode:
+                ```plsql
+                declare
+                
+                  cursor c_tenancy_provides is select id 
+                                               from ll_tenancy_provides 
+                                               where tenancy_id = :P9255_TENANCY_ID
+                                               and region_id = :REGION_ID
+                                               and (AD = :AD or :SCOPETYPE<>'AD')
+                                               and RESOURCE_ID = :RESOURCE_ID;
+                                               
+                  v_id   number;
+                
+                begin
+                     
+                  --if :APEX$ROW_STATUS = 'U' then
+                  -- It will always be an update so we need to check for ourselves if this is an insert or delete
+                
+                  v_id := '';
+                
+                  open c_tenancy_provides;
+                  fetch c_tenancy_provides into v_id;
+                  if c_tenancy_provides%FOUND then
+                    update ll_tenancy_provides set NUM_PROVIDED = :NUM_PROVIDED where tenancy_id = :P9255_TENANCY_ID
+                                                                                  and (region_id = :REGION_ID or :SCOPETYPE='GLOBAL')
+                                                                                  and (AD = :AD or :SCOPETYPE<>'AD')
+                                                                                  and RESOURCE_ID = :RESOURCE_ID;
+                  else
+                    insert into ll_tenancy_provides (tenancy_id, region_id, ad, resource_id, num_provided) values
+                      (:P9255_TENANCY_ID, case :SCOPETYPE when 'GLOBAL' then null else :REGION_ID end, case :SCOPETYPE when 'AD' then :AD else null end, :RESOURCE_ID, :NUM_PROVIDED);
+                  end if;                                                                
+                                          
+                end;
+                ```
+        }
+        execution {
+            sequence: 10
+        }
+        advanced {
+            executionMappingIdentifier: 360810605421711069
+        }
+    )
+
+)
+

@@ -1,0 +1,1027 @@
+page 2 (
+    name: Workshop Bulk Upload
+    alias: WORKSHOP-BULK-UPLOAD
+    title: Workshop Bulk Upload
+    appearance {
+        pageTemplate: @standard-trustarc
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region loaded-file-data (
+        name: Loaded File Data
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select ID,
+                       NAME,
+                       WS_OWNER_GROUP,
+                       AUTHOR_EMAIL,
+                       DESC_SHORT,
+                       DESC_LONG,
+                       PACKAGE_TYPE,
+                       TIME_IN_HOURS,
+                       TIME_AVAILABLE,
+                       PROGRAM_CODE,
+                       TRACKING_URL,
+                       APPROVAL_REQUIRED,
+                       ACTIVE_FLG,
+                       DEVELOPMENT_STATUS,
+                       LAB_URL,
+                       DESC_OUTLINE,
+                       DESC_PREREQUISITES,
+                       DESC_OUTCOME,
+                       WORKSHOP_JSON,
+                       TENANCIES_ALLOWED,
+                       MAX_PARALLEL_NON_EC,
+                       WORKSHOP_UID
+                  from LL_WORKSHOPS WHERE AUTHOR_EMAIL = 'noreply@oracle.com'
+                ```
+        }
+        layout {
+            sequence: 40
+            slot: contentBody
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        pagination {
+            type: rowRangesXToY
+        }
+        performance {
+            maxRowsToProcess: 1000000
+        }
+        advanced {
+            savedReportMappingIdentifier: 74144447966146501
+        }
+
+        column ACTIVE_FLG (
+            type: plainText
+            heading {
+                heading: Active Flg
+                alignment: center
+            }
+            layout {
+                sequence: 130
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: M
+            }
+        )
+
+        column APPROVAL_REQUIRED (
+            type: plainText
+            heading {
+                heading: Approval Required
+                alignment: center
+            }
+            layout {
+                sequence: 120
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: L
+            }
+        )
+
+        column AUTHOR_EMAIL (
+            type: plainText
+            heading {
+                heading: Author Email
+                alignment: center
+            }
+            layout {
+                sequence: 40
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: D
+            }
+        )
+
+        column DESC_LONG (
+            type: plainText
+            heading {
+                heading: Desc Long
+                alignment: center
+            }
+            layout {
+                sequence: 60
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: F
+            }
+        )
+
+        column DESC_OUTCOME (
+            type: plainText
+            heading {
+                heading: Desc Outcome
+                alignment: center
+            }
+            layout {
+                sequence: 180
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: R
+            }
+        )
+
+        column DESC_OUTLINE (
+            type: plainText
+            heading {
+                heading: Desc Outline
+                alignment: center
+            }
+            layout {
+                sequence: 160
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: P
+            }
+        )
+
+        column DESC_PREREQUISITES (
+            type: plainText
+            heading {
+                heading: Desc Prerequisites
+                alignment: center
+            }
+            layout {
+                sequence: 170
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: Q
+            }
+        )
+
+        column DESC_SHORT (
+            type: plainText
+            heading {
+                heading: Desc Short
+                alignment: center
+            }
+            layout {
+                sequence: 50
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: E
+            }
+        )
+
+        column DEVELOPMENT_STATUS (
+            type: plainText
+            heading {
+                heading: Development Status
+                alignment: center
+            }
+            layout {
+                sequence: 140
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: N
+            }
+        )
+
+        column ID (
+            type: plainText
+            heading {
+                heading: Id
+                alignment: center
+            }
+            layout {
+                sequence: 10
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: A
+            }
+        )
+
+        column LAB_URL (
+            type: plainText
+            heading {
+                heading: Lab Url
+                alignment: center
+            }
+            layout {
+                sequence: 150
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: O
+            }
+        )
+
+        column MAX_PARALLEL_NON_EC (
+            type: plainText
+            heading {
+                heading: Max Parallel Non Ec
+                alignment: center
+            }
+            layout {
+                sequence: 210
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: U
+            }
+        )
+
+        column NAME (
+            type: plainText
+            heading {
+                heading: Name
+                alignment: center
+            }
+            layout {
+                sequence: 20
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: B
+            }
+        )
+
+        column PACKAGE_TYPE (
+            type: plainText
+            heading {
+                heading: Package Type
+                alignment: center
+            }
+            layout {
+                sequence: 70
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: G
+            }
+        )
+
+        column PROGRAM_CODE (
+            type: plainText
+            heading {
+                heading: Program Code
+                alignment: center
+            }
+            layout {
+                sequence: 100
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: J
+            }
+        )
+
+        column TENANCIES_ALLOWED (
+            type: plainText
+            heading {
+                heading: Tenancies Allowed
+                alignment: center
+            }
+            layout {
+                sequence: 200
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: T
+            }
+        )
+
+        column TIME_AVAILABLE (
+            type: plainText
+            heading {
+                heading: Time Available
+                alignment: center
+            }
+            layout {
+                sequence: 90
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: I
+            }
+        )
+
+        column TIME_IN_HOURS (
+            type: plainText
+            heading {
+                heading: Time In Hours
+                alignment: center
+            }
+            layout {
+                sequence: 80
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: H
+            }
+        )
+
+        column TRACKING_URL (
+            type: plainText
+            heading {
+                heading: Tracking Url
+                alignment: center
+            }
+            layout {
+                sequence: 110
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: K
+            }
+        )
+
+        column WORKSHOP_JSON (
+            type: plainText
+            heading {
+                heading: Workshop Json
+                alignment: center
+            }
+            layout {
+                sequence: 190
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: S
+            }
+        )
+
+        column WORKSHOP_UID (
+            type: plainText
+            heading {
+                heading: Workshop Uid
+                alignment: center
+            }
+            layout {
+                sequence: 220
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: V
+            }
+        )
+
+        column WS_OWNER_GROUP (
+            type: plainText
+            heading {
+                heading: Ws Owner Group
+                alignment: center
+            }
+            layout {
+                sequence: 30
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: C
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: Loaded File Data
+        }
+
+        savedReport 740011 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn ACTIVE_FLG (
+                sequence: 13
+            )
+
+            displayColumn APPROVAL_REQUIRED (
+                sequence: 12
+            )
+
+            displayColumn AUTHOR_EMAIL (
+                sequence: 4
+            )
+
+            displayColumn DESC_LONG (
+                sequence: 6
+            )
+
+            displayColumn DESC_OUTCOME (
+                sequence: 18
+            )
+
+            displayColumn DESC_OUTLINE (
+                sequence: 16
+            )
+
+            displayColumn DESC_PREREQUISITES (
+                sequence: 17
+            )
+
+            displayColumn DESC_SHORT (
+                sequence: 5
+            )
+
+            displayColumn DEVELOPMENT_STATUS (
+                sequence: 14
+            )
+
+            displayColumn ID (
+                sequence: 1
+            )
+
+            displayColumn LAB_URL (
+                sequence: 15
+            )
+
+            displayColumn MAX_PARALLEL_NON_EC (
+                sequence: 21
+            )
+
+            displayColumn NAME (
+                sequence: 2
+            )
+
+            displayColumn PACKAGE_TYPE (
+                sequence: 7
+            )
+
+            displayColumn PROGRAM_CODE (
+                sequence: 10
+            )
+
+            displayColumn TENANCIES_ALLOWED (
+                sequence: 20
+            )
+
+            displayColumn TIME_AVAILABLE (
+                sequence: 9
+            )
+
+            displayColumn TIME_IN_HOURS (
+                sequence: 8
+            )
+
+            displayColumn TRACKING_URL (
+                sequence: 11
+            )
+
+            displayColumn WORKSHOP_JSON (
+                sequence: 19
+            )
+
+            displayColumn WORKSHOP_UID (
+                sequence: 22
+            )
+
+            displayColumn WS_OWNER_GROUP (
+                sequence: 3
+            )
+
+        )
+
+    )
+
+    region misl-data (
+        name: Misl Data
+        type: staticContent
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region preview (
+        name: Preview
+        type: classicReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select p.line_number,
+                       p.col001, p.col002, p.col003  
+                  from apex_application_temp_files f, 
+                       table( apex_data_parser.parse(
+                                  p_content           => f.blob_content,
+                                  p_file_name         => f.filename,
+                                  p_xlsx_sheet_name   => case when :P2_FILE_TYPE = 1 and :P2_XLSX_WORKSHEET is not null then :P2_XLSX_WORKSHEET end,
+                                  p_add_headers_row   => 'Y',
+                                  p_csv_enclosed      => case when :P2_FILE_TYPE = 2 then '"' end,
+                                  p_file_charset      => case when :P2_FILE_TYPE = 2 then
+                                                             'WE8ISO8859P1'
+                                                         else
+                                                             'AL32UTF8'
+                                                         end,
+                                  p_max_rows          => 10 ) ) p
+                 where f.name = :P2_FILE
+                 and p.line_number > 1
+                ```
+            pageItemsToSubmit: P2_FILE
+        }
+        layout {
+            sequence: 30
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        componentAppearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Report--altRowsDefault
+                t-Report--rowHighlight
+            ]
+        }
+        pagination {
+            type: nextAndPreviousLinks
+        }
+
+        column COL001 (
+            reportColumnQueryId: 2
+            derivedColumn: N
+            heading {
+                heading: Col001
+                alignment: center
+            }
+            layout {
+                sequence: 20
+            }
+        )
+
+        column COL002 (
+            reportColumnQueryId: 3
+            derivedColumn: N
+            heading {
+                heading: Col002
+                alignment: center
+            }
+            layout {
+                sequence: 30
+            }
+        )
+
+        column COL003 (
+            reportColumnQueryId: 4
+            derivedColumn: N
+            heading {
+                heading: Col003
+                alignment: center
+            }
+            layout {
+                sequence: 40
+            }
+        )
+
+        column LINE_NUMBER (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            heading {
+                heading: Line Number
+                alignment: center
+            }
+            layout {
+                sequence: 10
+            }
+        )
+
+    )
+
+    region workshops-file-upload (
+        name: Workshops File Upload
+        type: staticContent
+        source {
+            htmlCode: CSV or XLSX Files Supported
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    pageItem P2_ERROR_ROW_COUNT (
+        type: textField
+        label {
+            label: Error Row Count
+            alignment: left
+        }
+        layout {
+            sequence: 10
+            region: @misl-data
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P2_FILE (
+        type: fileUpload
+        label {
+            label: File
+            alignment: left
+        }
+        storage {
+            type: appTempFiles
+        }
+        layout {
+            sequence: 10
+            region: @workshops-file-upload
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+    )
+
+    pageItem P2_FILE_NAME (
+        type: textField
+        label {
+            label: File Name
+            alignment: left
+        }
+        layout {
+            sequence: 40
+            region: @misl-data
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P2_FILE_TYPE (
+        type: textField
+        label {
+            label: File Type
+            alignment: left
+        }
+        layout {
+            sequence: 30
+            region: @misl-data
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P2_PROCESSED_ROW_COUNT (
+        type: textField
+        label {
+            label: Processed Row Count
+            alignment: left
+        }
+        layout {
+            sequence: 20
+            region: @misl-data
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P2_XLSX_WORKSHEET (
+        type: textField
+        label {
+            label: Xlsx Worksheet
+            alignment: left
+        }
+        layout {
+            sequence: 60
+            region: @misl-data
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button clear (
+        buttonName: CLEAR
+        label: Clear
+        layout {
+            sequence: 30
+            region: @workshops-file-upload
+            slot: regionBody
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button load (
+        buttonName: LOAD
+        label: Load
+        layout {
+            sequence: 20
+            region: @workshops-file-upload
+            slot: regionBody
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    dynamicAction submit-worksheet-on-change (
+        name: Submit worksheet on change
+        execution {
+            sequence: 10
+        }
+        when {
+            selectionType: items
+            items: P2_XLSX_WORKSHEET
+        }
+
+        action native-submit-page (
+            action: submitPage
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction upload-a-file (
+        name: Upload a File
+        execution {
+            sequence: 20
+        }
+        when {
+            selectionType: items
+            items: P2_FILE
+        }
+        clientSideCondition {
+            type: itemIsNotNull
+            item: P2_FILE
+        }
+
+        action native-submit-page (
+            action: submitPage
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    computation p2-file-name (
+        itemName: P2_FILE_NAME
+        execution {
+            sequence: 20
+        }
+        computation {
+            sqlQuery:
+                ```sql
+                select filename
+                  from apex_application_temp_files 
+                 where name = :P2_FILE
+                ```
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P2_FILE
+        }
+    )
+
+    computation p2-file-type (
+        itemName: P2_FILE_TYPE
+        execution {
+            sequence: 10
+        }
+        computation {
+            type: expression
+            plsqlExpression: apex_data_parser.get_file_type( p_file_name => :P2_FILE )
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P2_FILE
+        }
+    )
+
+    process clear-cache (
+        name: Clear Cache
+        type: clearSessionState
+        execution {
+            sequence: 20
+        }
+        advanced {
+            executionMappingIdentifier: 221305984591050786
+        }
+        serverSideCondition {
+            whenButtonPressed: @clear
+            type: expression
+            plsqlExpression: :REQUEST = 'CLEAR' or :P2_ERROR_ROW_COUNT = 0
+        }
+    )
+
+    process load-data (
+        name: Load Data
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                DECLARE
+                    l_file blob;
+                    l_load_result apex_data_loading.t_data_load_result;
+                BEGIN
+                    SELECT blob_content
+                      INTO l_file
+                      FROM apex_application_temp_files
+                     WHERE name = :P2_FILE;
+                    ---CSV_Load_Nomination
+                    /*
+                    if :P3_FILE_TYPE = apex_data_parser.c_file_type_csv then
+                        l_load_result := apex_data_loading.load_data (
+                                             p_static_id    => 'CSV_Load',
+                                             p_data_to_load => l_file );
+                                             */
+                
+                    if :P2_FILE_TYPE = apex_data_parser.c_file_type_csv then
+                        l_load_result := apex_data_loading.load_data (
+                                             p_static_id    => 'LOAD_CSV_LL_WORKSHOPS',
+                                             p_data_to_load => l_file );
+                    elsif :P2_FILE_TYPE = apex_data_parser.c_file_type_xlsx then
+                        l_load_result := apex_data_loading.load_data (
+                                             p_static_id       => 'LOAD_XLSX_LL_WORKSHOPS',
+                                             p_data_to_load    => l_file,
+                                             p_xlsx_sheet_name => :P2_XLSX_WORKSHEET );
+                    
+                    /*
+                    elsif :P3_FILE_TYPE = apex_data_parser.c_file_type_xml then
+                        l_load_result := apex_data_loading.load_data (
+                                             p_static_id    => 'Load_XML_Nominations',
+                                             p_data_to_load => l_file );
+                    elsif :P3_FILE_TYPE = apex_data_parser.c_file_type_json then
+                        l_load_result := apex_data_loading.load_data (
+                                             p_static_id    => 'Load_JSON_Nominations',
+                                             p_data_to_load => l_file );
+                                             */
+                                              
+                    end if;
+                
+                    --:P3_ERROR_ROW_COUNT := l_load_result.error_rows;
+                    --:P3_PROCESSED_ROW_COUNT := l_load_result.processed_rows;
+                END;
+                ```
+        }
+        execution {
+            sequence: 10
+        }
+        successMessage {
+            successMessage: Loaded &P2_PROCESSED_ROW_COUNT!HTML. rows.
+        }
+        error {
+            errorMessage: Failed to load &P2_ERROR_ROW_COUNT!HTML. rows.
+        }
+        advanced {
+            executionMappingIdentifier: 221305873535050785
+        }
+        serverSideCondition {
+            whenButtonPressed: @load
+        }
+    )
+
+)
+

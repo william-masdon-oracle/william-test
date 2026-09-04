@@ -1,0 +1,244 @@
+page 9930 (
+    name: Tracking Code Report
+    alias: TRACKING-CODE-REPORT
+    title: Tracking Code Report
+    appearance {
+        pageTemplate: @standard-trustarc
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region tracking-code-report (
+        name: Tracking Code Report
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select ID,
+                       WORKSHOP_ID,
+                       WEC,
+                       TC_VALUE,
+                       SESSION_ID,
+                       APP_USER,
+                       (select count(TC_VALUE) from ll_tc_values) TC_COUNT,
+                       DATE_ENTRY
+                  from LL_TC_VALUES
+                ```
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        pagination {
+            type: rowRangesXToY
+        }
+        messages {
+            whenNoDataFound: No data found.
+            whenMoreDataFound: The maximum row count for this report is #MAX_ROW_COUNT# rows.  Please apply a filter to reduce the number of records in your query.
+        }
+        actionsMenu {
+            subscription: false
+        }
+        advanced {
+            savedReportMappingIdentifier: 68995515171555385
+        }
+
+        column APP_USER (
+            type: plainText
+            heading {
+                heading: App User
+            }
+            layout {
+                sequence: 6
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: F
+            }
+        )
+
+        column DATE_ENTRY (
+            type: plainText
+            heading {
+                heading: Date Entry
+            }
+            layout {
+                sequence: 7
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: G
+            }
+        )
+
+        column ID (
+            type: plainText
+            heading {
+                heading: Id
+                alignment: end
+            }
+            layout {
+                sequence: 1
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: A
+            }
+        )
+
+        column SESSION_ID (
+            type: plainText
+            heading {
+                heading: Session Id
+                alignment: end
+            }
+            layout {
+                sequence: 5
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: E
+            }
+        )
+
+        column TC_COUNT (
+            type: plainText
+            heading {
+                heading: Tc Count
+                alignment: center
+            }
+            layout {
+                sequence: 17
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: H
+            }
+        )
+
+        column TC_VALUE (
+            type: plainText
+            heading {
+                heading: Tc Value
+            }
+            layout {
+                sequence: 4
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: D
+            }
+        )
+
+        column WEC (
+            type: plainText
+            heading {
+                heading: Wec
+            }
+            layout {
+                sequence: 3
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: C
+            }
+        )
+
+        column WORKSHOP_ID (
+            type: plainText
+            heading {
+                heading: Workshop Id
+                alignment: end
+            }
+            layout {
+                sequence: 2
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: B
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: Tracking Code Report
+        }
+
+        savedReport 656079 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn APP_USER (
+                sequence: 6
+            )
+
+            displayColumn DATE_ENTRY (
+                sequence: 7
+            )
+
+            displayColumn ID (
+                sequence: 1
+            )
+
+            displayColumn SESSION_ID (
+                sequence: 5
+            )
+
+            displayColumn TC_COUNT (
+                sequence: 8
+            )
+
+            displayColumn TC_VALUE (
+                sequence: 4
+            )
+
+            displayColumn WEC (
+                sequence: 3
+            )
+
+            displayColumn WORKSHOP_ID (
+                sequence: 2
+            )
+
+        )
+
+    )
+
+)
+

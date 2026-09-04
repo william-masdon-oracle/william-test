@@ -1,0 +1,2632 @@
+page 120 (
+    name: showcase
+    alias: SHOWCASE
+    title: showcase
+    appearance {
+        pageTemplate: @standard-trustarc
+        templateOptions: #DEFAULT#
+        cssClasses: page-w1280p
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+        warnOnUnsavedChanges: false
+    }
+    css {
+        inline:
+            ```css
+            body  {
+                margin: 0 auto;
+                background-image: url(#APP_IMAGES#ll_bg_tile.png);
+                background-repeat: repeat;
+            }
+            
+            .t-Card-info { 
+                line-height: unset;
+            }
+            .t-Card-info a {
+                font-size: 12px;
+            }
+            
+            .t-Card-item{
+                border: 10px black solid;
+                box-shadow: 2px 2px 4px #000000;
+            }
+            
+            .card_ribbon{
+                //style for ribbon
+            }
+            
+            .card_ribbon:empty{
+                display: none;
+            }
+            .reserve-W {  
+            //    background-color: #759C6C;
+            //    color: white;
+            //    padding: 10px;
+                font-size:0.8em;
+                font-weight:600;
+                background:#eae7e5;
+                color:#776f6b;
+                border:0.5px #776f6b solid;
+                border-radius:5px;
+                padding:5px 5px 5px 5px;
+            }
+            
+            a.reserve-W:hover {
+                background-color: #719668;
+                color: #FCFBFA;
+                box-shadow: none;
+            }
+            
+            .details-W {  
+                background-color: gray;
+                color: white;
+                padding: 10px;
+            }
+            
+            a.details-W:hover {
+                background-color: dimgray;
+                color: #FCFBFA;
+                box-shadow: none;
+            }
+            
+            /*search bar hidden */
+            
+            #SEARCH {
+                display:none;
+            }
+            
+            /* change expand collapse icons
+            .a-icon.a-Collapsible-icon:before{
+                background-image: fa fa-chevron-right;
+            }
+            
+            .a-icon.a-Collapsible-icon:after{
+                background-image: fa fa-chevron-right;    
+            }
+            */
+            
+            /* Set background color for page 
+            body, html{
+                height: 100%;
+                background-color: #46423F;
+                background-image: url(	#APP_IMAGES#rw_dots_bg_wht.png);
+                background-position: center;
+                background-repeat: repeat;
+                background-size: cover;
+            }
+            */
+            
+            #TITLEBAR{
+                color: white;
+                background: url(#APP_IMAGES#ll_region_bg_green.png);
+                min-height: 100%;
+                margin: 0px 40px 20px 30px;
+                padding: 20px 40px 20px 20px;
+                border-radius: 0;
+            }
+                
+            ```
+    }
+    security {
+        authentication: public
+        deepLinking: true
+        formAutoComplete: false
+        browserCache: false
+    }
+    errorHandling {
+        inLineErrorNotificationText: Error - unhanded.
+    }
+
+    region bottom (
+        name: BOTTOM
+        type: staticContent
+        layout {
+            sequence: 120
+            parentRegion: @choose-workshop-tags
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--hiddenOverflow
+                t-Form--noPadding
+                margin-top-none
+                margin-bottom-none
+                margin-left-none
+                margin-right-none
+            ]
+        }
+    )
+
+    region certification (
+        name: Certification
+        type: staticContent
+        layout {
+            sequence: 50
+            parentRegion: @choose-workshop-tags
+            slot: subRegions
+        }
+        appearance {
+            template: @collapsible
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                is-expanded
+                t-Region--noUI
+                t-Region--hiddenOverflow
+                t-Form--noPadding
+                margin-top-none
+                margin-bottom-none
+                margin-left-none
+                margin-right-none
+            ]
+        }
+        advanced {
+            htmlDomId: Certification
+        }
+        serverSideCondition {
+            type: rowsReturned
+            sqlQuery:
+                ```sql
+                select llt.level2||' ('||count(*)||')', llt.id
+                from ll_workshop_tags llwt, ll_workshops llw, ll_tags llt
+                where llwt.workshop_id = llw.id
+                and llwt.tag_id = llt.id
+                and llw.active_flg='Y'
+                and upper(llt.level1) = 'CERTIFICATION'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_WORKSHOP_TYPE) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_ROLE) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_LEVEL) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_FOCUS_AREA) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_PRODUCT) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_SALES_PLAY) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_SALES_FOCUS) = 'Y'
+                group by llt.level2, llt.id 
+                having count(*) > 0
+                ```
+        }
+    )
+
+    region choose-workshop-tags (
+        name: Choose workshop tags
+        type: staticContent
+        layout {
+            sequence: 40
+            slot: contentBody
+            startNewRow: false
+            columnSpan: 3
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: [
+                #DEFAULT#
+                margin-left-lg
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        headerAndFooter {
+            headerText: <div style="background: white; opacity: 0.5">
+            footerText: </div>
+        }
+    )
+
+    region clear-search (
+        name: clear-search
+        type: staticContent
+        layout {
+            sequence: 20
+            parentRegion: @header-text-before-cards
+            slot: subRegions
+            startNewRow: false
+            columnSpan: 3
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--scrollBody
+                t-Form--noPadding
+                margin-top-none
+                margin-bottom-none
+                margin-left-none
+                margin-right-none
+            ]
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    region current-workshops-new (
+        name: Current workshops - new
+        type: cards
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select 
+                "ID"
+                , null header  -- this is the repeating header
+                ,"NAME" card_title
+                -- , null card_subtitle
+                ,ll_pkg_admin.cut_off_at_space (DESC_SHORT, 100) card_text --anything you want for the card text
+                ,ll_pkg_admin.hours_readable (TIME_IN_HOURS, 'SHORT', 'N') card_subtext
+                , null card_icon --any icon, as appropriaite
+                , APEX_PAGE.GET_URL (
+                      p_page   => 180,
+                      p_items  => 'WID',
+                      p_values => ID )  card_link --card link for drill through
+                --,'#APP_IMAGES#ll_region_bg_green.png' card_image
+                , null card_image
+                ,' t-Cards--animRaiseCard t-Cards 
+                u-colors t-Cards--displaySubtitle t-Cards--featured 
+                t-Cards--block force-fa-lg t-Cards--displayIcons t-Cards--cols 
+                t-Cards--5cols' card_list_modifiers -- this is to modify look and feel of cards, see below..
+                -- t-Cards--animColorFill
+                ,null as bookmark_enable -- RP: use 'fa fa-bookmark-o' if we use bookmarks
+                ,'fa fa-check-circle' as workshop_attended -- RP: use 'fa fa-check-circle-o' for workshop not attended - null for nobody
+                ,'New!' as card_ribbon -- RP: null if no ribbon needed
+                ,'#c74634' as card_ribbon_color -- RP: if ribbon card_ribbon not null, use this color for the ribbon
+                --,'star_4_5.png' as star_rating -- RP: png filename star_0_0.png through star_3_5.png to star_5_0.png
+                --,300 as star_votes -- RP: -- RD: remove start rating until feature is fully enabled -- 20210415
+                ,'star_0_0.png' star_rating
+                ,null star_votes
+                ,'fa fa-clock-o' as time_display
+                from LL_WORKSHOPS
+                where ACTIVE_FLG='Y'
+                
+                
+                
+                ```
+        }
+        layout {
+            sequence: 30
+            slot: contentBody
+        }
+        appearance {
+            template: @blank-with-attributes-no-grid
+            templateOptions: [
+                #DEFAULT#
+                t-Form--slimPadding
+                margin-left-md
+            ]
+            icon: fa-button
+        }
+        componentAppearance {
+            gridColumns: 3
+        }
+        card {
+            primaryKeyColumn1: ID
+            primaryKeyColumn2: ID
+        }
+        title {
+            advancedFormatting: true
+            htmlExpression:
+                ```html
+                <div style="float:left;position:absolute">
+                    <p style="font-size:0.8em;margin:-5px 0px 5px -16px"><span style="padding:3px 5px 3px 5px;border-radius:0px 5px 5px 0px;background:&CARD_RIBBON_COLOR.;color:white" class="card_ribbon">&CARD_RIBBON.</span></p>
+                </div>
+                <p style="font-size:1.0em;font-weight:400;line-height:1.1em;padding:20px 0px 0px 0px">&CARD_TITLE.</p>
+                <p style="font-size:0.85em;font-weight:300;line-height:1.15em;padding:0px 0px 10px 0px">&CARD_TEXT.</p>
+                
+                <div style="color:darkgrey;font-size:0.9em;position: absolute;top: 15px;right: 20px">
+                    <span style="float:right;text-align:right;vertical-align:baseline;color: #c74634 ">
+                        <span class="&WORKSHOP_ATTENDED." style="color:#719668;"></span>
+                        <span class="&BOOKMARK_ENABLE."></span>
+                    </span>
+                </div>
+                
+                
+                ```
+        }
+        body {
+            advancedFormatting: true
+            htmlExpression:
+                ```html
+                <div style="color:darkgrey;font-size:0.9em;position: absolute;bottom: 5px;">
+                    <a class="reserve-W" href=&CARD_LINK.>Launch</a> 
+                        <p style="line-height:0.3em;margin:5px 0px 10px 0px;"></p>
+                
+                        <span style=";vertical-align:middle;margin:20px 0px 0px 0px:10px;color: #776f6b;font-size:0.7em;font-weight:400">
+                            <span style="margin:3px 0px 0px 0px"><img src="#APP_IMAGES#&STAR_RATING." style="vertical-align:middle"> (&STAR_VOTES.)</span>
+                        </span>
+                </div>
+                
+                <div style="color:darkgrey;font-size:0.9em;position: absolute;bottom: 5px;right: 20px">
+                    <span style="float:right;text-align:right;">
+                            <span style="font-weight:400;font-size:0.8em;margin:-10px 0px 10px 0px;color:#776f6b">
+                                <span class="&TIME_DISPLAY." style="font-size:1em;vertical-align:baseline;color:#776f6b"></span>&nbsp;&nbsp;&CARD_SUBTEXT.
+                    </span>
+                </div>
+                ```
+        }
+        pagination {
+            showTotalCount: true
+        }
+    )
+
+    region focus-area (
+        name: Focus Area
+        type: staticContent
+        layout {
+            sequence: 70
+            parentRegion: @choose-workshop-tags
+            slot: subRegions
+            startNewRow: false
+            newColumn: false
+        }
+        appearance {
+            template: @collapsible
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                is-expanded
+                t-Region--noUI
+                t-Region--hiddenOverflow
+                t-Form--noPadding
+                margin-top-none
+                margin-bottom-none
+                margin-left-none
+                margin-right-none
+            ]
+        }
+        advanced {
+            htmlDomId: Focus_Area
+        }
+        serverSideCondition {
+            type: rowsReturned
+            sqlQuery:
+                ```sql
+                select nvl(llt.level3,llt.level2)||' ('||count(*)||')', llt.id
+                from ll_workshop_tags llwt, ll_workshops llw, ll_tags llt
+                where llwt.workshop_id = llw.id
+                and llwt.tag_id = llt.id
+                and llw.active_flg='Y'
+                and upper(llt.level1) = 'FOCUS'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_WORKSHOP_TYPE) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_ROLE) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_CERTIFICATION) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_LEVEL) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_PRODUCT) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_SALES_PLAY) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_SALES_FOCUS) = 'Y'
+                group by llt.level3, llt.level2, llt.id 
+                having count(*) > 0
+                ```
+        }
+    )
+
+    region header-text-before-cards (
+        name: Header text before cards
+        type: staticContent
+        source {
+            htmlCode: Click a workshop card to find our more, or to register. Use the filter to focus your list of workshops.
+        }
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--scrollBody
+                t-Form--noPadding
+                margin-top-none
+                margin-bottom-md
+                margin-left-lg
+            ]
+            renderComponents: belowContent
+        }
+    )
+
+    region level (
+        name: Level
+        type: staticContent
+        layout {
+            sequence: 110
+            parentRegion: @choose-workshop-tags
+            slot: subRegions
+        }
+        appearance {
+            template: @collapsible
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                is-expanded
+                t-Region--noUI
+                t-Region--hiddenOverflow
+                t-Form--noPadding
+                margin-top-none
+                margin-bottom-none
+                margin-left-none
+                margin-right-none
+            ]
+        }
+        advanced {
+            htmlDomId: Level
+        }
+        serverSideCondition {
+            type: rowsReturned
+            sqlQuery:
+                ```sql
+                select llt.level2||' ('||count(*)||')', llt.id
+                from ll_workshop_tags llwt, ll_workshops llw, ll_tags llt
+                where llwt.workshop_id = llw.id
+                and llwt.tag_id = llt.id
+                and llw.active_flg='Y'
+                and upper(llt.level1) = 'LEVEL'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_ROLE) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_CERTIFICATION) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_FOCUS_AREA) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_PRODUCT) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_WORKSHOP_TYPE) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_SALES_PLAY) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_SALES_FOCUS) = 'Y'
+                group by llt.level2, llt.id 
+                having count(*) > 0
+                ```
+        }
+    )
+
+    region new-cards (
+        name: New Cards
+        type: cards
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select ID,
+                       NAME,
+                       AUTHOR_NAME,
+                       AUTHOR_EMAIL,
+                       DESC_SHORT,
+                       DESC_LONG,
+                       PACKAGE_TYPE,
+                       TIME_IN_HOURS,
+                       TIME_AVAILABLE,
+                       PROGRAM_CODE,
+                       TRACKING_URL,
+                       APPROVAL_REQUIRED,
+                       ACTIVE_FLG,
+                       DEVELOPMENT_STATUS,
+                       LAB_URL,
+                       DESC_OUTLINE,
+                       DESC_PREREQUISITES,
+                       DESC_OUTCOME,
+                       WORKSHOP_JSON
+                  from LL_WORKSHOPS
+                 where active_flg='Y'
+                 order by name
+                ```
+        }
+        layout {
+            sequence: 50
+            slot: contentBody
+        }
+        appearance {
+            template: @standard-custom
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        serverSideCondition {
+            type: never
+        }
+        componentAppearance {
+            gridColumns: 3
+        }
+        title {
+            column: NAME
+        }
+        subtitle {
+            column: TIME_IN_HOURS
+        }
+        body {
+            column: DESC_SHORT
+        }
+    )
+
+    region product (
+        name: Product
+        type: staticContent
+        layout {
+            sequence: 80
+            parentRegion: @choose-workshop-tags
+            slot: subRegions
+        }
+        appearance {
+            template: @collapsible
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                is-expanded
+                t-Region--noUI
+                t-Region--hiddenOverflow
+                t-Form--noPadding
+                margin-top-none
+                margin-bottom-none
+                margin-left-none
+                margin-right-none
+            ]
+        }
+        advanced {
+            htmlDomId: Product
+        }
+        serverSideCondition {
+            type: rowsReturned
+            sqlQuery:
+                ```sql
+                select nvl(llt.level3,llt.level2)||' ('||count(*)||')', llt.id
+                from ll_workshop_tags llwt, ll_workshops llw, ll_tags llt
+                where llwt.workshop_id = llw.id
+                and llwt.tag_id = llt.id
+                and llw.active_flg='Y'
+                and upper(llt.level1) = 'PRODUCT'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_ROLE) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_LEVEL) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_FOCUS_AREA) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_WORKSHOP_TYPE) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_CERTIFICATION) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_SALES_PLAY) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_SALES_FOCUS) = 'Y'
+                group by llt.level3, llt.level2, llt.id 
+                having count(*) > 0
+                ```
+        }
+    )
+
+    region role (
+        name: Role
+        type: staticContent
+        layout {
+            sequence: 60
+            parentRegion: @choose-workshop-tags
+            slot: subRegions
+        }
+        appearance {
+            template: @collapsible
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                is-expanded
+                t-Region--noUI
+                t-Region--hiddenOverflow
+                t-Form--noPadding
+                margin-top-none
+                margin-bottom-none
+                margin-left-none
+                margin-right-none
+            ]
+        }
+        advanced {
+            htmlDomId: Role
+        }
+        serverSideCondition {
+            type: rowsReturned
+            sqlQuery:
+                ```sql
+                select llt.level2||' ('||count(*)||')', llt.id
+                from ll_workshop_tags llwt, ll_workshops llw, ll_tags llt
+                where llwt.workshop_id = llw.id
+                and llwt.tag_id = llt.id
+                and llw.active_flg='Y'
+                and upper(llt.level1) = 'ROLE'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_WORKSHOP_TYPE) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_CERTIFICATION) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_LEVEL) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_FOCUS_AREA) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_PRODUCT) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_SALES_PLAY) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_SALES_FOCUS) = 'Y'
+                group by llt.level2, llt.id 
+                having count(*) > 0
+                ```
+        }
+    )
+
+    region sales-focus (
+        name: Sales Focus
+        type: staticContent
+        layout {
+            sequence: 90
+            parentRegion: @choose-workshop-tags
+            slot: subRegions
+        }
+        appearance {
+            template: @collapsible
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                is-collapsed
+                t-Region--noUI
+                t-Region--hiddenOverflow
+                t-Form--noPadding
+                margin-top-none
+                margin-bottom-none
+                margin-left-none
+                margin-right-none
+            ]
+        }
+        advanced {
+            htmlDomId: Sales_Focus
+        }
+        serverSideCondition {
+            type: rowsReturned
+            sqlQuery:
+                ```sql
+                select llt.level2||' ('||count(*)||')', llt.id
+                from ll_workshop_tags llwt, ll_workshops llw, ll_tags llt
+                where llwt.workshop_id = llw.id
+                and llwt.tag_id = llt.id
+                and llw.active_flg='Y'
+                and upper(llt.level1) = 'SALES FOCUS'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_ROLE) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_LEVEL) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_FOCUS_AREA) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_WORKSHOP_TYPE) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_CERTIFICATION) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_SALES_PLAY) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_PRODUCT) = 'Y'
+                and instr(upper(:app_user),'@ORACLE.COM')>0
+                group by llt.level2, llt.id 
+                having count(*) > 0
+                ```
+        }
+    )
+
+    region sales-play (
+        name: Sales Play
+        type: staticContent
+        layout {
+            sequence: 100
+            parentRegion: @choose-workshop-tags
+            slot: subRegions
+        }
+        appearance {
+            template: @collapsible
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                is-collapsed
+                t-Region--noUI
+                t-Region--hiddenOverflow
+                t-Form--noPadding
+                margin-top-none
+                margin-bottom-none
+                margin-left-none
+                margin-right-none
+            ]
+        }
+        advanced {
+            htmlDomId: Sales_Play
+        }
+        serverSideCondition {
+            type: rowsReturned
+            sqlQuery:
+                ```sql
+                select llt.level2||' ('||count(*)||')', llt.id
+                from ll_workshop_tags llwt, ll_workshops llw, ll_tags llt
+                where llwt.workshop_id = llw.id
+                and llwt.tag_id = llt.id
+                and llw.active_flg='Y'
+                and upper(llt.level1) = 'SALES PLAY'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_ROLE) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_LEVEL) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_FOCUS_AREA) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_WORKSHOP_TYPE) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_CERTIFICATION) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_PRODUCT) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_SALES_FOCUS) = 'Y'
+                and instr(upper(:app_user),'@ORACLE.COM')>0
+                group by llt.level2, llt.id 
+                having count(*) > 0
+                ```
+        }
+    )
+
+    region search-results (
+        name: search-results
+        type: staticContent
+        source {
+            htmlCode: <strong>Search results:</strong>
+        }
+        layout {
+            sequence: 10
+            parentRegion: @header-text-before-cards
+            slot: subRegions
+            columnSpan: 2
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--scrollBody
+                t-Form--noPadding
+                margin-top-none
+                margin-bottom-none
+                margin-left-none
+                margin-right-none
+            ]
+        }
+    )
+
+    region span-style-font-weight-600-color-white-showcase-span-span-style-font-weight-200-color-white-of-workshops-span (
+        name: <span style="font-weight: 600;color:white">Showcase</span> <span style="font-weight: 200;color:white">of Workshops</span>
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @title-bar
+            templateOptions: [
+                #DEFAULT#
+                t-BreadcrumbRegion--useRegionTitle
+                t-Form--noPadding
+                margin-bottom-sm
+                margin-left-md
+                margin-right-lg
+            ]
+        }
+        advanced {
+            htmlDomId: TITLEBAR
+            regionDisplaySelector: true
+        }
+    )
+
+    region top (
+        name: TOP
+        type: staticContent
+        layout {
+            sequence: 10
+            parentRegion: @choose-workshop-tags
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--hiddenOverflow
+                t-Form--noPadding
+                margin-top-none
+                margin-bottom-none
+                margin-left-none
+                margin-right-none
+            ]
+        }
+    )
+
+    region workshop-type (
+        name: Workshop Type
+        type: staticContent
+        layout {
+            sequence: 40
+            parentRegion: @choose-workshop-tags
+            slot: subRegions
+        }
+        appearance {
+            template: @collapsible
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                is-expanded
+                t-Region--noUI
+                t-Region--hiddenOverflow
+                t-Form--noPadding
+                margin-top-none
+                margin-bottom-none
+                margin-left-none
+                margin-right-none
+            ]
+        }
+        advanced {
+            htmlDomId: Workshop_Type
+        }
+        serverSideCondition {
+            type: rowsReturned
+            sqlQuery:
+                ```sql
+                select llt.level2||' ('||count(*)||')', llt.id
+                from ll_workshop_tags llwt, ll_workshops llw, ll_tags llt
+                where llwt.workshop_id = llw.id
+                and llwt.tag_id = llt.id
+                and llw.active_flg='Y'
+                and upper(llt.level1) = 'WORKSHOP TYPE'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_ROLE) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_CERTIFICATION) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_LEVEL) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_FOCUS_AREA) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_PRODUCT) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_SALES_PLAY) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_SALES_FOCUS) = 'Y'
+                group by llt.level2, llt.id 
+                having count(*) > 0
+                ```
+        }
+    )
+
+    pageItem 120_SEARCH (
+        type: textField
+        label {
+            label: Search
+            alignment: left
+        }
+        layout {
+            sequence: 10
+            region: @header-text-before-cards
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            cssClasses: ll-HeroSearch-text
+            width: 30
+        }
+        advanced {
+            cssClasses: home-search-field
+        }
+        serverSideCondition {
+            type: never
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P120_CERTIFICATION (
+        type: checkboxGroup
+        label {
+            label: Certification
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select llt.level2||' ('||count(*)||')', llt.id
+                from ll_workshop_tags llwt, ll_workshops llw, ll_tags llt
+                where llwt.workshop_id = llw.id
+                and llwt.tag_id = llt.id
+                and llw.active_flg='Y'
+                and upper(llt.level1) = 'CERTIFICATION'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_WORKSHOP_TYPE) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_ROLE) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_LEVEL) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_FOCUS_AREA) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_PRODUCT) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_SALES_PLAY) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_SALES_FOCUS) = 'Y'
+                group by llt.level2, llt.id 
+                having count(*) > 0
+                order by 1
+                
+                ```
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 10
+            region: @certification
+            slot: regionBody
+            alignment: left
+            column: 1
+            labelColumnSpan: 0
+        }
+        appearance {
+            template: @optional
+            templateOptions: [
+                #DEFAULT#
+                margin-top-none
+                margin-bottom-none
+                margin-left-none
+                margin-right-none
+            ]
+        }
+        advanced {
+            preText: <div style="overflow: auto; width: 250px; min-height: 0px; max-height: 150px;">
+            postText: </div>
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P120_FOCUS_AREA (
+        type: checkboxGroup
+        label {
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select nvl(llt.level3,llt.level2)||' ('||count(*)||')', llt.id
+                from ll_workshop_tags llwt, ll_workshops llw, ll_tags llt
+                where llwt.workshop_id = llw.id
+                and llwt.tag_id = llt.id
+                and llw.active_flg='Y'
+                and upper(llt.level1) = 'FOCUS'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_WORKSHOP_TYPE) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_ROLE) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_CERTIFICATION) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_LEVEL) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_PRODUCT) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_SALES_PLAY) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_SALES_FOCUS) = 'Y'
+                group by llt.level3, llt.level2, llt.id 
+                having count(*) > 0
+                order by 1
+                ```
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 10
+            region: @focus-area
+            slot: regionBody
+            alignment: left
+            column: 1
+            labelColumnSpan: 0
+        }
+        appearance {
+            template: @hidden
+            templateOptions: [
+                #DEFAULT#
+                margin-top-none
+                margin-bottom-none
+                margin-left-none
+                margin-right-none
+            ]
+        }
+        advanced {
+            preText: <div style="overflow: auto; width: 250px; min-height: 0px; max-height: 150px;">
+            postText: </div>
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P120_HOST_URL (
+        type: hidden
+        layout {
+            sequence: 20
+            region: @choose-workshop-tags
+            slot: regionBody
+        }
+        source {
+            type: expression
+            plsqlExpression: apex_util.host_url('NULL')
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P120_LEVEL (
+        type: checkboxGroup
+        label {
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select llt.level2||' ('||count(*)||')', llt.id
+                from ll_workshop_tags llwt, ll_workshops llw, ll_tags llt
+                where llwt.workshop_id = llw.id
+                and llwt.tag_id = llt.id
+                and llw.active_flg='Y'
+                and upper(llt.level1) = 'LEVEL'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_ROLE) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_CERTIFICATION) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_FOCUS_AREA) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_PRODUCT) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_WORKSHOP_TYPE) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_SALES_PLAY) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_SALES_FOCUS) = 'Y'
+                group by llt.level2, llt.id 
+                having count(*) > 0
+                order by llt.id
+                
+                ```
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 10
+            region: @level
+            slot: regionBody
+            alignment: left
+            column: 1
+            labelColumnSpan: 0
+        }
+        appearance {
+            template: @hidden
+            templateOptions: [
+                #DEFAULT#
+                margin-left-none
+                margin-right-none
+            ]
+        }
+        advanced {
+            preText: <div style="overflow: auto; width: 250px; min-height: 0px; max-height: 150px;">
+            postText: </div>
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P120_PRODUCT (
+        type: checkboxGroup
+        label {
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select nvl(llt.level3,llt.level2)||' ('||count(*)||')', llt.id
+                from ll_workshop_tags llwt, ll_workshops llw, ll_tags llt
+                where llwt.workshop_id = llw.id
+                and llwt.tag_id = llt.id
+                and llw.active_flg='Y'
+                and upper(llt.level1) = 'PRODUCT'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_ROLE) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_LEVEL) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_FOCUS_AREA) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_WORKSHOP_TYPE) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_CERTIFICATION) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_SALES_PLAY) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_SALES_FOCUS) = 'Y'
+                group by llt.level3, llt.level2, llt.id 
+                having count(*) > 0
+                order by 1
+                ```
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 20
+            region: @product
+            slot: regionBody
+            alignment: left
+            column: 1
+            labelColumnSpan: 0
+        }
+        appearance {
+            template: @hidden
+            templateOptions: [
+                #DEFAULT#
+                margin-left-none
+                margin-right-none
+            ]
+        }
+        advanced {
+            preText: <div style="overflow: auto; width: 250px; min-height: 0px; max-height: 150px;">
+            postText: </div>
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P120_QR (
+        type: plugin/qrCode
+        label {
+            alignment: left
+        }
+        settings {
+            displayType: bmpImage
+            imageSize: 150
+            margines: true
+        }
+        layout {
+            sequence: 30
+            region: @bottom
+            slot: regionBody
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: [
+                #DEFAULT#
+                margin-left-sm
+            ]
+        }
+        source {
+            type: expression
+            plsqlExpression: :P120_HOST_URL||:P120_SHARE_URL
+            used: always
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P120_SHARE_URL
+        }
+        help {
+            inlineHelpText: Right-click the QR Code to save image. This QR contains the URL for the current filters
+        }
+    )
+
+    pageItem P120_ROLE (
+        type: checkboxGroup
+        label {
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select llt.level2||' ('||count(*)||')', llt.id
+                from ll_workshop_tags llwt, ll_workshops llw, ll_tags llt
+                where llwt.workshop_id = llw.id
+                and llwt.tag_id = llt.id
+                and llw.active_flg='Y'
+                and upper(llt.level1) = 'ROLE'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_WORKSHOP_TYPE) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_CERTIFICATION) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_LEVEL) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_FOCUS_AREA) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_PRODUCT) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_SALES_PLAY) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_SALES_FOCUS) = 'Y'
+                group by llt.level2, llt.id 
+                having count(*) > 0
+                order by 1
+                ```
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 10
+            region: @role
+            slot: regionBody
+            alignment: left
+            column: 1
+            labelColumnSpan: 0
+        }
+        appearance {
+            template: @hidden
+            templateOptions: [
+                #DEFAULT#
+                margin-top-none
+                margin-bottom-none
+                margin-left-none
+                margin-right-none
+            ]
+        }
+        advanced {
+            preText: <div style="overflow: auto; width: 250px; min-height: 0px; max-height: 150px;">
+            postText: </div>
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P120_SALES_FOCUS (
+        type: checkboxGroup
+        label {
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select llt.level2||' ('||count(*)||')', llt.id
+                from ll_workshop_tags llwt, ll_workshops llw, ll_tags llt
+                where llwt.workshop_id = llw.id
+                and llwt.tag_id = llt.id
+                and llw.active_flg='Y'
+                and upper(llt.level1) = 'SALES FOCUS'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_ROLE) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_LEVEL) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_FOCUS_AREA) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_WORKSHOP_TYPE) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_CERTIFICATION) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_SALES_PLAY) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_PRODUCT) = 'Y'
+                and instr(upper(:app_user),'@ORACLE.COM')>0
+                group by llt.level2, llt.id 
+                having count(*) > 0
+                order by 1
+                
+                ```
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 10
+            region: @sales-focus
+            slot: regionBody
+            alignment: left
+            column: 1
+            labelColumnSpan: 0
+        }
+        appearance {
+            template: @optional
+            templateOptions: [
+                #DEFAULT#
+                margin-top-none
+                margin-bottom-none
+                margin-left-none
+                margin-right-none
+            ]
+        }
+        advanced {
+            preText: <div style="overflow: auto; width: 250px; min-height: 0px; max-height: 150px;">
+            postText: </div>
+        }
+    )
+
+    pageItem P120_SALES_PLAY (
+        type: checkboxGroup
+        label {
+            label: <strong>Sales Play</strong>
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select llt.level2||' ('||count(*)||')', llt.id
+                from ll_workshop_tags llwt, ll_workshops llw, ll_tags llt
+                where llwt.workshop_id = llw.id
+                and llwt.tag_id = llt.id
+                and llw.active_flg='Y'
+                and upper(llt.level1) = 'SALES PLAY'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_ROLE) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_LEVEL) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_FOCUS_AREA) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_WORKSHOP_TYPE) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_CERTIFICATION) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_PRODUCT) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_SALES_FOCUS) = 'Y'
+                and instr(upper(:app_user),'@ORACLE.COM')>0
+                group by llt.level2, llt.id 
+                having count(*) > 0
+                order by 1
+                ```
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 10
+            region: @sales-play
+            slot: regionBody
+            alignment: left
+            column: 1
+            labelColumnSpan: 0
+        }
+        appearance {
+            template: @hidden
+            templateOptions: [
+                #DEFAULT#
+                margin-top-none
+                margin-bottom-none
+                margin-left-none
+                margin-right-none
+            ]
+        }
+        advanced {
+            preText: <div style="overflow: auto; width: 250px; min-height: 0px; max-height: 150px;">
+            postText: </div>
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P120_SHARE_URL (
+        type: hidden
+        layout {
+            sequence: 10
+            region: @choose-workshop-tags
+            slot: regionBody
+        }
+        source {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                declare
+                  v_items   clob;
+                  v_values  clob;
+                  v_url     varchar2(4000);
+                  
+                  procedure add_value (p_item varchar2, p_value varchar2) is
+                  begin
+                    if p_value is not null then
+                      if v_items is not null  then
+                        v_items := v_items || ',' || p_item;
+                      else
+                        v_items := p_item;
+                      end if;
+                    
+                      if v_values is not null then
+                        v_values := v_values || ',' || p_value;
+                      else
+                        v_values := p_value;
+                      end if;
+                    end if;
+                  end;
+                    
+                begin
+                
+                  add_value('SEARCH',:SEARCH);
+                  add_value('P120_WORKSHOP_TYPE',:P120_WORKSHOP_TYPE);
+                  add_value('P120_CERTIFICATION',:P120_CERTIFICATION);
+                  add_value('P120_ROLE',:P120_ROLE);
+                  add_value('P120_FOCUS_AREA',:P120_FOCUS_AREA);
+                  add_value('P120_PRODUCT',:P120_PRODUCT);
+                  add_value('P120_SALES_FOCUS',:P120_SALES_FOCUS);
+                  add_value('P120_SALES_PLAY',:P120_SALES_PLAY);
+                  add_value('P120_LEVEL',:P120_LEVEL);
+                  
+                  ll_pkg_log.log(10,'v_items: '||v_items);
+                  ll_pkg_log.log(10,'v_values: '||v_values);
+                
+                  v_url := substr( APEX_PAGE.GET_URL ( p_page   => 100,
+                                                       p_items  => v_items,
+                                                       p_values => v_values),2);
+                                                       
+                  v_url := replace(v_url,'%3A',':'); 
+                  v_url := substr(v_url,1,instr(v_url,'&session')-1);
+                
+                  return(v_url);
+                end;
+                ```
+            used: always
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            sessionStateProtection: checksumRequiredAppLevel
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P120_WORKSHOP_TYPE (
+        type: checkboxGroup
+        label {
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select llt.level2||' ('||count(*)||')', llt.id
+                from ll_workshop_tags llwt, ll_workshops llw, ll_tags llt
+                where llwt.workshop_id = llw.id
+                and llwt.tag_id = llt.id
+                and llw.active_flg='Y'
+                and upper(llt.level1) = 'WORKSHOP TYPE'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_ROLE) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_CERTIFICATION) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_LEVEL) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_FOCUS_AREA) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_PRODUCT) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_SALES_PLAY) = 'Y'
+                and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, :P120_SALES_FOCUS) = 'Y'
+                group by llt.level2, llt.id 
+                having count(*) > 0
+                order by 1
+                
+                ```
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 10
+            region: @workshop-type
+            slot: regionBody
+            alignment: left
+            column: 1
+            labelColumnSpan: 0
+        }
+        appearance {
+            template: @optional
+            templateOptions: [
+                #DEFAULT#
+                margin-top-none
+                margin-bottom-none
+                margin-left-none
+                margin-right-none
+            ]
+        }
+        advanced {
+            preText: <div style="overflow: auto; width: 250px; min-height: 0px; max-height: 150px;">
+            postText: </div>
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button clear-filters-bottom (
+        buttonName: CLEAR_FILTERS_BOTTOM
+        label: Clear Filters
+        layout {
+            sequence: 10
+            region: @bottom
+            slot: regionBody
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--noUI
+                t-Button--padTop
+            ]
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button clear-filters-top (
+        buttonName: CLEAR_FILTERS_TOP
+        label: Clear Filters
+        layout {
+            sequence: 40
+            region: @top
+            slot: regionBody
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--noUI
+                t-Button--stretch
+            ]
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button clear-search-btn (
+        buttonName: clear-search-btn
+        label: Clear Search
+        layout {
+            sequence: 20
+            region: @clear-search
+            slot: belowBox
+            horizontalAlignment: left
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--small
+                t-Button--simple
+            ]
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button collapse-all (
+        buttonName: Collapse-All
+        label: Collapse All
+        layout {
+            sequence: 50
+            region: @top
+            slot: regionBody
+            startNewRow: false
+        }
+        appearance {
+            buttonTemplate: @text-with-icon
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--noUI
+                t-Button--iconLeft
+            ]
+            icon: fa-minus-square-o
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button copy-url-for-filter (
+        buttonName: copy-url-for-filter
+        label: Copy URL for Current Filters
+        layout {
+            sequence: 20
+            region: @bottom
+            slot: regionBody
+            startNewRow: false
+            newColumn: false
+        }
+        appearance {
+            buttonTemplate: @text-with-icon
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--small
+                t-Button--noUI
+                t-Button--iconLeft
+            ]
+            icon: fa-copy
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button enter-event-code (
+        buttonName: Enter-event-code
+        label: Enter Event Code
+        layout {
+            sequence: 20
+            region: @top
+            slot: regionBody
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--simple
+                t-Button--padLeft
+                t-Button--gapBottom
+            ]
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 150
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button expand-all (
+        buttonName: Expand-All
+        label: Expand All
+        layout {
+            sequence: 60
+            region: @top
+            slot: regionBody
+            startNewRow: false
+        }
+        appearance {
+            buttonTemplate: @text-with-icon
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--noUI
+                t-Button--iconLeft
+            ]
+            icon: fa-plus-square-o
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    dynamicAction clear-filters-bottom (
+        name: Clear_Filters_bottom
+        execution {
+            sequence: 140
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @clear-filters-bottom
+        }
+
+        action native-clear (
+            action: clear
+            affectedElements {
+                selectionType: items
+                items: [
+                    P120_SALES_FOCUS
+                    P120_ROLE
+                    P120_SALES_PLAY
+                    P120_FOCUS_AREA
+                    P120_PRODUCT
+                    P120_LEVEL
+                    P120_WORKSHOP_TYPE
+                    P120_CERTIFICATION
+                ]
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @current-workshops-new
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction clear-filters-top (
+        name: Clear_Filters_top
+        execution {
+            sequence: 130
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @clear-filters-top
+        }
+
+        action native-clear (
+            action: clear
+            affectedElements {
+                selectionType: items
+                items: [
+                    P120_SALES_FOCUS
+                    P120_ROLE
+                    P120_SALES_PLAY
+                    P120_FOCUS_AREA
+                    P120_PRODUCT
+                    P120_LEVEL
+                    P120_WORKSHOP_TYPE
+                    P120_CERTIFICATION
+                ]
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @current-workshops-new
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction clear-search-and-refresh-report (
+        name: clear search and refresh report
+        execution {
+            sequence: 240
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @clear-search-btn
+        }
+        clientSideCondition {
+            type: itemIsNotNull
+            item: SEARCH
+        }
+
+        action native-clear (
+            action: clear
+            affectedElements {
+                selectionType: items
+                items: SEARCH
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+        action native-open-region (
+            action: openRegion
+            affectedElements {
+                selectionType: region
+                region: @level
+            }
+            execution {
+                sequence: 30
+                fireOnInit: false
+            }
+        )
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: items
+                items: SEARCH
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+        action native-refresh-2 (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @header-text-before-cards
+            }
+            execution {
+                sequence: 30
+                fireOnInit: false
+            }
+        )
+
+        action native-refresh-3 (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @current-workshops-new
+            }
+            execution {
+                sequence: 40
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction click-url-for-filter (
+        name: click URL for filter
+        execution {
+            sequence: 320
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @copy-url-for-filter
+        }
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    function copyToClipboard(text) {
+                        var dummy = document.createElement("textarea");
+                        document.body.appendChild(dummy);
+                        dummy.value = text;
+                        dummy.select();
+                        document.execCommand("copy");
+                        document.body.removeChild(dummy);
+                    }
+                    
+                    javascript:copyToClipboard( $v('P120_HOST_URL') + $v('P120_SHARE_URL') );
+                    
+                    ```
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction collapse-all-actions (
+        name: collapse all actions
+        execution {
+            sequence: 260
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @collapse-all
+        }
+
+        action native-hide (
+            action: hide
+            affectedElements {
+                selectionType: button
+                button: @collapse-all
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    if ( apex.item( "P120_WORKSHOP_TYPE" ).isEmpty()  ) { try { apex.theme.closeRegion( "Workshop_Type" ); } catch { }; }
+                    if ( apex.item( "P120_CERTIFICATION" ).isEmpty()  ) { try { apex.theme.closeRegion( "Certification" ); } catch { }; }
+                    if ( apex.item( "P120_FOCUS_AREA" ).isEmpty()     ) { try { apex.theme.closeRegion( "Focus_Area" );    } catch { }; }
+                    if ( apex.item( "P120_PRODUCT" ).isEmpty()        ) { try { apex.theme.closeRegion( "Product" );       } catch { }; }
+                    if ( apex.item( "P120_SALES_FOCUS" ).isEmpty()    ) { try { apex.theme.closeRegion( "Sales_Focus" );   } catch { }; }
+                    if ( apex.item( "P120_SALES_PLAY" ).isEmpty()     ) { try { apex.theme.closeRegion( "Sales_Play" );    } catch { }; }
+                    if ( apex.item( "P120_LEVEL" ).isEmpty()          ) { try { apex.theme.closeRegion( "Level" );         } catch { }; }
+                    if ( apex.item( "P120_ROLE" ).isEmpty()           ) { try { apex.theme.closeRegion( "Role" );          } catch { }; }
+                    ```
+            }
+            execution {
+                sequence: 30
+            }
+        )
+
+        action native-show (
+            action: show
+            affectedElements {
+                selectionType: button
+                button: @expand-all
+            }
+            execution {
+                sequence: 20
+            }
+        )
+
+    )
+
+    dynamicAction expand-all-actions (
+        name: expand all actions
+        execution {
+            sequence: 270
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @expand-all
+        }
+
+        action native-hide (
+            action: hide
+            affectedElements {
+                selectionType: button
+                button: @expand-all
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    try { apex.theme.openRegion( "Workshop_Type" ); } catch { };
+                    try { apex.theme.openRegion( "Certification" ); } catch { };
+                    try { apex.theme.openRegion( "Focus_Area" ); } catch { };
+                    try { apex.theme.openRegion( "Product" ); } catch { };
+                    try { apex.theme.openRegion( "Sales_Focus" ); } catch { };
+                    try { apex.theme.openRegion( "Sales_Play" ); } catch { };
+                    try { apex.theme.openRegion( "Level" ); } catch { };
+                    try { apex.theme.openRegion( "Role" ); } catch { };
+                    ```
+            }
+            execution {
+                sequence: 120
+                fireOnInit: false
+            }
+        )
+
+        action native-show (
+            action: show
+            affectedElements {
+                selectionType: button
+                button: @collapse-all
+            }
+            execution {
+                sequence: 20
+            }
+        )
+
+    )
+
+    dynamicAction expand-all-items (
+        name: Expand all items
+        execution {
+            sequence: 280
+        }
+        when {
+            event: ready
+        }
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    try { apex.theme.openRegion( "Workshop_Type" ); } catch { };
+                    try { apex.theme.openRegion( "Certification" ); } catch { };
+                    try { apex.theme.openRegion( "Focus_Area" ); } catch { };
+                    try { apex.theme.openRegion( "Product" ); } catch { };
+                    try { apex.theme.openRegion( "Sales_Focus" ); } catch { };
+                    try { apex.theme.openRegion( "Sales_Play" ); } catch { };
+                    try { apex.theme.openRegion( "Level" ); } catch { };
+                    try { apex.theme.openRegion( "Role" ); } catch { };
+                    ```
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    dynamicAction hide-certification-area-if-null (
+        name: Hide Certification area if null
+        execution {
+            sequence: 210
+        }
+        when {
+            event: ready
+        }
+
+        action native-hide (
+            action: hide
+            affectedElements {
+                selectionType: region
+                region: @certification
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    dynamicAction hide-expand-all-button-on-load (
+        name: Hide expand all button on load
+        execution {
+            sequence: 250
+        }
+        when {
+            event: ready
+        }
+
+        action native-hide (
+            action: hide
+            affectedElements {
+                selectionType: button
+                button: @expand-all
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    dynamicAction hide-focus-area-if-null (
+        name: Hide Focus area if null
+        execution {
+            sequence: 150
+        }
+        when {
+            selectionType: region
+            region: @choose-workshop-tags
+        }
+        serverSideCondition {
+            type: itemIsZero
+            item: P120_FOCUS_AREA
+        }
+
+        action native-hide (
+            action: hide
+            affectedElements {
+                selectionType: region
+                region: @focus-area
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    dynamicAction hide-level-area-if-null (
+        name: Hide Level area if null
+        execution {
+            sequence: 160
+        }
+        when {
+            selectionType: region
+            region: @choose-workshop-tags
+        }
+        serverSideCondition {
+            type: itemIsZero
+            item: P120_LEVEL
+        }
+
+        action native-hide (
+            action: hide
+            affectedElements {
+                selectionType: region
+                region: @level
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    dynamicAction hide-product-area-if-null (
+        name: Hide Product area if null
+        execution {
+            sequence: 220
+        }
+        when {
+            selectionType: region
+            region: @choose-workshop-tags
+        }
+        serverSideCondition {
+            type: itemIsZero
+            item: P120_PRODUCT
+        }
+
+        action native-hide (
+            action: hide
+            affectedElements {
+                selectionType: region
+                region: @product
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    dynamicAction hide-role-area-if-null (
+        name: Hide Role area if null
+        execution {
+            sequence: 200
+        }
+        when {
+            selectionType: region
+            region: @choose-workshop-tags
+        }
+        serverSideCondition {
+            type: itemIsZero
+            item: P120_ROLE
+        }
+
+        action native-hide (
+            action: hide
+            affectedElements {
+                selectionType: region
+                region: @role
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    dynamicAction hide-sales-focus-area-if-null (
+        name: Hide Sales Focus area if null
+        execution {
+            sequence: 180
+        }
+        when {
+            selectionType: region
+            region: @choose-workshop-tags
+        }
+        clientSideCondition {
+            type: item<value
+            item: P120_SALES_FOCUS
+            value: 1
+        }
+        serverSideCondition {
+            type: itemIsZero
+            item: P120_SALES_FOCUS
+        }
+
+        action native-hide (
+            action: hide
+            affectedElements {
+                selectionType: region
+                region: @focus-area
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    dynamicAction hide-sales-play-area-if-null (
+        name: Hide Sales Play area if null
+        execution {
+            sequence: 190
+        }
+        when {
+            selectionType: region
+            region: @choose-workshop-tags
+        }
+        serverSideCondition {
+            type: itemIsZero
+            item: P120_SALES_PLAY
+        }
+
+        action native-hide (
+            action: hide
+            affectedElements {
+                selectionType: region
+                region: @sales-play
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    dynamicAction hide-salesfocus-if-null (
+        name: hide Salesfocus if null
+        execution {
+            sequence: 30
+        }
+        when {
+            event: ready
+        }
+        clientSideCondition {
+            type: itemIsNull
+            item: P120_SALES_FOCUS
+        }
+
+        action native-hide (
+            action: hide
+            affectedElements {
+                selectionType: region
+                region: @sales-focus
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    dynamicAction hide-salesplay-if-null (
+        name: hide Salesplay if null
+        execution {
+            sequence: 20
+        }
+        when {
+            event: ready
+        }
+        clientSideCondition {
+            type: itemIsNull
+            item: P120_SALES_PLAY
+        }
+
+        action native-hide (
+            action: hide
+            affectedElements {
+                selectionType: region
+                region: @sales-play
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    dynamicAction hide-search-caption-if-not-search (
+        name: hide search caption if not search
+        execution {
+            sequence: 230
+        }
+        when {
+            event: ready
+        }
+        clientSideCondition {
+            type: itemIsNull
+            item: SEARCH
+        }
+
+        action native-hide (
+            action: hide
+            affectedElements {
+                selectionType: region
+                region: @search-results
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+        action native-hide-2 (
+            action: hide
+            affectedElements {
+                selectionType: region
+                region: @clear-search
+            }
+            execution {
+                sequence: 20
+            }
+        )
+
+    )
+
+    dynamicAction hide-workshop-type-area-if-null (
+        name: Hide Workshop Type area if null
+        execution {
+            sequence: 170
+        }
+        when {
+            selectionType: region
+            region: @choose-workshop-tags
+        }
+        serverSideCondition {
+            type: itemIsZero
+            item: P120_WORKSHOP_TYPE
+        }
+
+        action native-hide (
+            action: hide
+            affectedElements {
+                selectionType: region
+                region: @workshop-type
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    dynamicAction refresh-on-certification-check (
+        name: refresh_on_certification_check
+        execution {
+            sequence: 120
+        }
+        when {
+            selectionType: items
+            items: P120_CERTIFICATION
+        }
+
+        action native-submit-page (
+            action: submitPage
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction refresh-on-focus-check (
+        name: refresh_on_focus_check
+        execution {
+            sequence: 90
+        }
+        when {
+            selectionType: items
+            items: P120_FOCUS_AREA
+        }
+
+        action native-submit-page (
+            action: submitPage
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction refresh-on-level-check (
+        name: refresh_on_level_check
+        execution {
+            sequence: 110
+        }
+        when {
+            selectionType: items
+            items: P120_LEVEL
+        }
+
+        action native-submit-page (
+            action: submitPage
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction refresh-on-product-check (
+        name: refresh_on_product_check
+        execution {
+            sequence: 100
+        }
+        when {
+            selectionType: items
+            items: P120_PRODUCT
+        }
+
+        action native-submit-page (
+            action: submitPage
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction refresh-on-role-check (
+        name: refresh_on_role_check
+        execution {
+            sequence: 50
+        }
+        when {
+            selectionType: items
+            items: P120_ROLE
+        }
+
+        action native-submit-page (
+            action: submitPage
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction refresh-on-sales-focus-check (
+        name: refresh_on_sales_focus_check
+        execution {
+            sequence: 60
+        }
+        when {
+            selectionType: items
+            items: P120_SALES_FOCUS
+        }
+
+        action native-submit-page (
+            action: submitPage
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction refresh-on-sales-play-check (
+        name: refresh_on_sales_play_check
+        execution {
+            sequence: 80
+        }
+        when {
+            selectionType: items
+            items: P120_SALES_PLAY
+        }
+
+        action native-submit-page (
+            action: submitPage
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction refresh-on-workshop-type-check (
+        name: refresh_on_workshop_type_check
+        execution {
+            sequence: 70
+        }
+        when {
+            selectionType: items
+            items: P120_WORKSHOP_TYPE
+        }
+
+        action native-submit-page (
+            action: submitPage
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction show-sales-plays-if-oracle-user (
+        name: Show Sales Plays if Oracle user
+        execution {
+            sequence: 40
+        }
+        when {
+            event: ready
+        }
+        serverSideCondition {
+            type: expression
+            plsqlExpression: instr(upper(:app_user),'@ORACLE.COM')>0
+        }
+
+        action native-show (
+            action: show
+            affectedElements {
+                selectionType: region
+                region: @sales-focus
+            }
+            execution {
+                sequence: 20
+            }
+        )
+
+        action native-show-2 (
+            action: show
+            affectedElements {
+                selectionType: region
+                region: @sales-play
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    dynamicAction update-url-for-filters (
+        name: Update URL for filters
+        execution {
+            sequence: 380
+        }
+        when {
+            selectionType: region
+            region: @current-workshops-new
+        }
+
+        action native-set-value (
+            action: setValue
+            settings {
+                type: plsqlFunctionBody
+                plsqlFunctionBody:
+                    ```plsql
+                    declare
+                      v_items   clob;
+                      v_values  clob;
+                      v_url     varchar2(4000);
+                      
+                      procedure add_value (p_item varchar2, p_value varchar2) is
+                      begin
+                        if p_value is not null then
+                          if v_items is not null  then
+                            v_items := v_items || ',' || p_item;
+                          else
+                            v_items := p_item;
+                          end if;
+                        
+                          if v_values is not null then
+                            v_values := v_values || ',' || p_value;
+                          else
+                            v_values := p_value;
+                          end if;
+                        end if;
+                      end;
+                        
+                    begin
+                      add_value('SEARCH',:SEARCH);
+                      add_value('P120_WORKSHOP_TYPE',:P120_WORKSHOP_TYPE);
+                      
+                      ll_pkg_log.log(10,'v_items: '||v_items);
+                      ll_pkg_log.log(10,'v_values: '||v_values);
+                    
+                      v_url := substr( APEX_PAGE.GET_URL ( p_page   => 100,
+                                                           p_items  => v_items,
+                                                           p_values => v_values),2);
+                                                           
+                      v_url := replace(v_url,'%3A',':'); 
+                      v_url := substr(v_url,1,instr(v_url,'&session')-1);
+                    
+                    --  v_url := substr(APEX_PAGE.GET_URL(
+                    --                    p_page   => 100,
+                    --                    p_items  => 'SEARCH,P120_WORKSHOP_TYPE,P120_CERTIFICATION,P120_ROLE,P120_FOCUS_AREA,P120_PRODUCT,P120_SALES_FOCUS,P120_SALES_PLAY,P120_LEVEL',
+                    --                    p_values => :SEARCH || ',\' || :P120_WORKSHOP_TYPE || '\,\' ||
+                    --                                :P120_CERTIFICATION || '\,\' || :P120_ROLE || '\,\' || 
+                    --                                :P120_FOCUS_AREA || '\,\' || :P120_PRODUCT || '\,\' || 
+                    --                                :P120_SALES_FOCUS || '\,\' || :P120_SALES_PLAY || '\,\' || 
+                    --                                :P120_LEVEL || '\' ),2) ;
+                    
+                      return(v_url);
+                    end;
+                                                    
+                                                    
+                    ```
+                itemsToSubmit: [
+                    P1_SEARCH
+                    P1_DISPLAY_AS
+                    P1_SHOW_EXTERNAL
+                    P1_SHOW_GOLD
+                    P1_FOCUS_AREAS
+                    P1_PRODUCTS
+                    P1_SALES_FOCUS_AREAS
+                    P1_CONTENT_TYPES
+                    P1_NEWS_CONTENT_TYPES
+                    P1_VERSIONS
+                    P1_POSTED_SINCE
+                    P1_ARCHIVED_CONTENT_YN
+                    P1_DISPLAY_CONTENT SEARCH
+                    P120_WORKSHOP_TYPE
+                    P120_CERTIFICATION
+                    P120_ROLE
+                    P120_FOCUS_AREA
+                    P120_PRODUCT
+                    P120_SALES_FOCUS
+                    P120_SALES_PLAY
+                    P120_LEVEL
+                ]
+                escapeSpecialChars: false
+            }
+            affectedElements {
+                selectionType: items
+                items: P120_SHARE_URL
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    process count-page (
+        name: Count page
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                begin
+                  insert into ll_page_visits (page_id, app_session) values (100, :APP_SESSION);
+                  commit;
+                exception
+                  when others then
+                    ll_pkg_log.log(1,'Error during insert on ll_page_visits for page_id 100, app_session '||:APP_SESSION);
+                end;
+                ```
+        }
+        execution {
+            sequence: 20
+            point: afterFooter
+        }
+        advanced {
+            executionMappingIdentifier: 12820741202567283212
+        }
+    )
+
+)
+

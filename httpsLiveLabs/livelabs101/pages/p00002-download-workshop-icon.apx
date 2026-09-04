@@ -1,0 +1,82 @@
+page 2 (
+    name: Download Workshop Icon
+    alias: DOWNLOAD-WORKSHOP-ICON
+    title: Download Workshop Icon
+    appearance {
+        pageTemplate: @standard-trustarc-redesign
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region breadcrumb (
+        name: Breadcrumb
+        type: breadcrumb
+        source {
+            breadcrumb: @breadcrumb
+        }
+        layout {
+            sequence: 10
+            slot: breadcrumbBar
+        }
+        appearance {
+            template: @/title-bar
+            templateOptions: [
+                #DEFAULT#
+                t-BreadcrumbRegion--useBreadcrumbTitle
+            ]
+        }
+        componentAppearance {
+            breadcrumbTemplate: @/breadcrumb
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    pageItem P2_ID (
+        type: hidden
+        layout {
+            sequence: 40
+            slot: body
+        }
+    )
+
+    process new (
+        name: New
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                declare
+                l_blob blob;
+                
+                begin
+                l_blob := ll_pkg_apex.getWorkshopCardIcon(85);
+                
+                apex_http.download(l_blob, 'application/octet-stream');
+                end;
+                
+                -- DECLARE
+                --   l_url VARCHAR2(4000);
+                --   b_blob blob;
+                -- BEGIN
+                --     select icon_blob into b_blob from ll_workshop_icons where id = 85;
+                --         apex_http.download(b_blob, 'application/octet-stream');
+                -- END;
+                ```
+        }
+        execution {
+            sequence: 10
+            point: beforeHeader
+        }
+        advanced {
+            executionMappingIdentifier: 159045791482729722
+        }
+    )
+
+)
+

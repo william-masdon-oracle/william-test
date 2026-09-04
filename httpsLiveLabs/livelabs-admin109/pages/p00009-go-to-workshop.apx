@@ -1,0 +1,131 @@
+page 9 (
+    name: Go to Workshop
+    alias: GO-TO-WORKSHOP
+    title: Go to Workshop
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @modal-dialog
+        templateOptions: #DEFAULT#
+    }
+    dialog {
+        resizable: false
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+        warnOnUnsavedChanges: false
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    pageItem P9_WORKSHOP_ID (
+        type: numberField
+        label {
+            label: Workshop ID
+            alignment: left
+        }
+        settings {
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 30
+            slot: contentBody
+            alignment: left
+            columnSpan: 8
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            valueRequired: true
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        sessionState {
+            storage: request
+        }
+    )
+
+    button go-to-workshop (
+        buttonName: Go_To_Workshop
+        label: Go to Workshop
+        layout {
+            sequence: 40
+            slot: contentBody
+            startNewRow: false
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--large
+                t-Button--stretch
+                t-Button--gapTop
+            ]
+        }
+        behavior {
+            executeValidations: false
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    dynamicAction new (
+        name: New
+        execution {
+            sequence: 10
+        }
+        when {
+            event: ready
+        }
+
+        action native-set-focus (
+            action: setFocus
+            affectedElements {
+                selectionType: items
+                items: P9_WORKSHOP_ID
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    validation validate-workshop-id (
+        name: Validate Workshop ID
+        execution {
+            sequence: 10
+        }
+        validation {
+            language: sql
+            sqlExpression: exists (select 'x' from ll_workshops where id = :P9_WORKSHOP_ID)
+        }
+        error {
+            errorMessage: "This workshop ID does not exist. "
+            displayLocation: inlineWithField
+            associatedItem: @P9_WORKSHOP_ID
+        }
+    )
+
+    branch (
+        name: go to workshop
+        execution {
+            sequence: 10
+        }
+        behavior {
+            target: {
+                page: 9152
+                items: {
+                    P9152_ID: &P9_WORKSHOP_ID.
+                }
+            }
+        }
+    )
+
+)
+

@@ -1,0 +1,185 @@
+page 9173 (
+    name: Policy statements in tenancy
+    alias: POLICY-STATEMENTS-IN-TENANCY
+    title: Policy statements in tenancy
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @modal-dialog-large
+        templateOptions: [
+            #DEFAULT#
+            ui-dialog--stretch
+        ]
+    }
+    dialog {
+        resizable: false
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region report (
+        name: Report 1
+        type: classicReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select case substr(policy_tag_code,1,2)
+                       when 'DG' then 'Allow dynamic-group '||llt.default_dynamic_group||' '|| replace (substr(policy_text,instr(policy_text,'}')+1), '{compartmentName}', llt.default_compartment_name ) ||
+                                      ' where all {request.principal.compartment.tag.Livelabs.Permissions = /*'||policy_tag_code||'*/, '||
+                                      ' request.principal.compartment.tag.Livelabs.Owner = target.resource.compartment.tag.Livelabs.Owner'||
+                                      case nvl(llp.restrict_region,'Y') when 'Y' then ', request.region = request.principal.compartment.tag.Livelabs.Region'
+                                                                       else null end ||
+                                      '}'
+                       else 'Allow any-user ' || replace (substr(policy_text,instr(policy_text,'}')+1), '{compartmentName}', llt.default_compartment_name ) ||
+                            ' where all {target.resource.compartment.tag.Livelabs.Permissions = /*'||policy_tag_code||'*/, '||
+                            'target.resource.compartment.tag.Livelabs.Owner = request.user.name'||
+                            case nvl(llp.restrict_region,'Y') when 'Y' then ', request.region = target.resource.compartment.tag.Livelabs.Region'
+                                                              else null end ||
+                            '}' end as policy_text
+                from ll_policies llp, ll_tenancies llt
+                where apply_using_tags='Y'
+                and llt.id = :P9173_TENANCY
+                
+                ```
+        }
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--scrollBody
+                t-Form--slimPadding
+            ]
+        }
+        serverSideCondition {
+            type: itemIsNotZero
+            item: P9173_TENANCY
+        }
+        reportLayout {
+            numberOfRows: 999
+        }
+        componentAppearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Report--altRowsDefault
+                t-Report--rowHighlight
+            ]
+        }
+        pagination {
+            type: nextAndPreviousLinks
+        }
+        performance {
+            maxRowsToProcess: 500
+        }
+        messages {
+            whenNoDataFound: no data found
+        }
+        componentAdvanced {
+            stripHtml: true
+        }
+        download {
+            csvExportEnabled: true
+            filename: Policy_Lines.csv
+        }
+
+        column POLICY_TEXT (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            heading {
+                heading: Policy Text
+                alignment: center
+            }
+            layout {
+                sequence: 10
+            }
+            sorting {
+                defaultSequence: 1
+            }
+        )
+
+    )
+
+    region tenancy (
+        name: Tenancy
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    pageItem P9173_TENANCY (
+        type: popupLov
+        label {
+            label: Tenancy
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select tenancy_name, id
+                from ll_tenancies
+                ```
+            displayExtraValues: false
+            nullDisplayValue: -
+        }
+        layout {
+            sequence: 10
+            region: @tenancy
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        default {
+            type: static
+            staticValue: 10
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    dynamicAction onchange (
+        name: OnChange
+        execution {
+            sequence: 10
+        }
+        when {
+            selectionType: items
+            items: P9173_TENANCY
+        }
+
+        action native-submit-page (
+            action: submitPage
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+)
+

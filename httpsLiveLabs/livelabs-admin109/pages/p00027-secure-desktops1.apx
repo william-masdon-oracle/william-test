@@ -1,0 +1,363 @@
+page 27 (
+    name: Secure Desktops
+    alias: SECURE-DESKTOPS1
+    title: Secure Desktops
+    appearance {
+        pageTemplate: @standard-trustarc
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region secure-desktops (
+        name: Secure Desktops
+        type: interactiveGrid
+        source {
+            location: localDatabase
+            tableName: LL_SECURE_DESKTOPS
+        }
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        edit {
+            enabled: true
+            allowedOperations: [
+                add
+                update
+                delete
+            ]
+        }
+        toolbar {
+            controls: [
+                searchCol
+                searchField
+                actionsMenu
+                resetButton
+                saveButton
+            ]
+        }
+        download {
+            formats: [
+                csv
+                html
+                pdf
+                excel
+            ]
+        }
+        advanced {
+            savedReportMappingIdentifier: 1233054943242849338
+        }
+
+        savedReport 5335751 (
+            visibility: primary
+            view {
+                default: grid
+            }
+            singleRowView {
+                displayedColumns: true
+            }
+
+            displayColumn (
+                column: @APEX$ROW_ACTION
+                layout {
+                    frozen: true
+                    sequence: 1
+                }
+            )
+
+            displayColumn (
+                column: @ID
+                layout {
+                    width: 46.547
+                    sequence: 2
+                }
+            )
+
+            displayColumn (
+                column: @TENANCY_ID
+                layout {
+                    width: 119.547
+                    sequence: 3
+                }
+            )
+
+            displayColumn (
+                column: @REGION_KEY
+                layout {
+                    width: 154.54700000000003
+                    sequence: 4
+                }
+            )
+
+            displayColumn (
+                column: @GROUP_OCID
+                layout {
+                    sequence: 5
+                }
+            )
+
+            displayColumn (
+                column: @LINK
+                layout {
+                    sequence: 6
+                }
+            )
+
+            displayColumn (
+                column: @COMPARTMENT_OCID
+                layout {
+                    sequence: 7
+                }
+            )
+
+            displayColumn (
+                column: @POOL_OCID
+                layout {
+                    sequence: 8
+                }
+            )
+
+        )
+
+        column APEX$ROW_ACTION (
+            type: actionsMenu
+            layout {
+                sequence: 20
+            }
+        )
+
+        column APEX$ROW_SELECTOR (
+            type: rowSelector
+            layout {
+                sequence: 10
+            }
+        )
+
+        column COMPARTMENT_OCID (
+            type: textarea
+            heading {
+                heading: Compartment Ocid
+            }
+            layout {
+                sequence: 80
+            }
+            validation {
+                maxLength: 4000
+            }
+            source {
+                databaseColumn: COMPARTMENT_OCID
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column GROUP_OCID (
+            type: textarea
+            heading {
+                heading: Group Ocid
+            }
+            layout {
+                sequence: 60
+            }
+            validation {
+                maxLength: 4000
+            }
+            source {
+                databaseColumn: GROUP_OCID
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column ID (
+            type: displayOnly
+            heading {
+                heading: ID
+                alignment: end
+            }
+            layout {
+                sequence: 30
+                columnAlignment: end
+            }
+            source {
+                databaseColumn: ID
+                dataType: number
+                queryOnly: true
+                primaryKey: true
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column LINK (
+            type: textarea
+            heading {
+                heading: Link
+            }
+            layout {
+                sequence: 70
+            }
+            validation {
+                maxLength: 4000
+            }
+            source {
+                databaseColumn: LINK
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column POOL_OCID (
+            type: textarea
+            heading {
+                heading: Pool Ocid
+            }
+            layout {
+                sequence: 90
+            }
+            validation {
+                maxLength: 4000
+            }
+            source {
+                databaseColumn: POOL_OCID
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column REGION_KEY (
+            type: textarea
+            heading {
+                heading: Region Key
+            }
+            layout {
+                sequence: 50
+            }
+            validation {
+                maxLength: 1000
+            }
+            source {
+                databaseColumn: REGION_KEY
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column TENANCY_ID (
+            type: popupLov
+            heading {
+                heading: Tenancy
+            }
+            lov {
+                type: sqlQuery
+                sqlQuery: select tenancy_name, id from ll_tenancies
+                displayExtraValues: false
+                displayNullValue: false
+            }
+            layout {
+                sequence: 40
+            }
+            source {
+                databaseColumn: TENANCY_ID
+                dataType: number
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: useLov
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: Secure Desktops
+        }
+    )
+
+    process secure-desktops-save-interactive-grid-data (
+        name: Secure Desktops - Save Interactive Grid Data
+        type: interactiveGridAutoRowProcessing
+        editableRegion: @secure-desktops
+        execution {
+            sequence: 10
+        }
+        advanced {
+            executionMappingIdentifier: 699485244681254715
+        }
+    )
+
+)
+

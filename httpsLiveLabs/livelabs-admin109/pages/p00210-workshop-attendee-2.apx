@@ -1,0 +1,892 @@
+page 210 (
+    name: Workshop Attendee - Free
+    alias: WORKSHOP-ATTENDEE-2
+    title: Attend the Workshop
+    appearance {
+        pageTemplate: @standard-trustarc
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+        warnOnUnsavedChanges: false
+    }
+    javaScript {
+        functionAndGlobalVariableDeclaration:
+            ```javascript-browser
+            //Get the button:
+            mybutton = document.getElementById("myBtn");
+            //ratebub = document.getElementById("rate_bubble");
+            
+            // When the user scrolls down 20px from the top of the document, show the button
+            window.onscroll = function() {scrollFunction()};
+            
+            function scrollFunction() {
+              if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
+                mybutton.style.display = "block";
+            //    ratebub.style.display = "block";
+              } else {
+                mybutton.style.display = "none";
+            //    ratebub.style.display = "none";
+              }
+            }
+            
+            // When the user clicks on the button, scroll to the top of the document
+            function topFunction() {
+                $('html, body').animate({scrollTop:0}, 'slow');
+                document.body.scrollTop = 0; // For Safari
+                document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+            }
+            ```
+    }
+    css {
+        inline:
+            ```css
+            .t-Body-mainContent  {
+                width: 100%;
+                max-width: 1920px !important;
+                /* min-width: 1200px; */
+                margin: 0 auto;
+                background-image: url(#APP_IMAGES#ll_bg_tile.png);
+                background-repeat: repeat;
+                padding:0px 50px 0px 50px;
+            }
+            
+            #TITLEBAR{
+                color: white;
+                background: url(#APP_IMAGES#ll_region_bg_green.png);
+                min-height: 100%;
+                padding: 20px 40px 20px 45px;
+                border-radius: 0;
+            }
+            
+            #SPRINTBOX, #SPRINTCONTAINER{ 
+                color: white;
+                background: url(#APP_FILES#sprints_bg.png);
+                border-radius: 5px;
+            }
+            
+            .sprintbutton {  
+                padding:10px 15px 10px 15px;
+                border-radius:5px;
+                border:2px solid #000;
+                background-color: #8dab86;
+                color: #fff;
+                box-shadow: 5px 5px 5px black;
+            }
+            
+            button.sprintbutton:hover {
+                background:#40553b; 
+                color: #fff;
+                border:2px solid #Fff;
+                box-shadow: none;
+                cursor: pointer;
+            }
+                    
+            #myBtn {
+              display: none; /* Hidden by default */
+              position: fixed; /* Fixed/sticky position */
+              bottom: 20px; /* Place the button at the bottom of the page */
+            /*  right: 30px;*/ /* Place the button 30px from the right */
+              right: 50%;
+              z-index: 99; /* Make sure it does not overlap */
+              border: none; /* Remove borders */
+              outline: none; /* Remove outline */
+              background-color: #46423f; /* Set a background color */
+              color: white; /* Text color */
+              cursor: pointer; /* Add a mouse pointer on hover */
+              padding: 5px 15px 5px 15px; /* Some padding */
+              border-radius: 5px; /* Rounded corners */
+              font-size: 14px; /* Increase font size */
+            }
+            
+            #myBtn:hover {
+              background-color: #719668; /* Add a dark-grey background on hover */
+            }
+            
+            #rate_bubble {
+              display: none; /* Hidden by default */
+              position: fixed; /* Fixed/sticky position */
+              bottom: 20px; /* Place the button at the bottom of the page */
+            /*  right: 30px;*/ /* Place the button 30px from the right */
+              left: 20px;
+              z-index: 9999; /* Make sure it does not overlap */
+              border: none; /* Remove borders */
+              outline: none; /* Remove outline */
+              background-color: #46423f; /* Set a background color */
+              color: white; /* Text color */
+              cursor: pointer; /* Add a mouse pointer on hover */
+              padding: 5px 15px 5px 15px; /* Some padding */
+              border-radius: 5px; /* Rounded corners */
+              font-size: 14px; /* Increase font size */
+            }
+            ```
+    }
+    security {
+        authentication: public
+        formAutoComplete: false
+    }
+
+    region link (
+        name: link
+        type: staticContent
+        source {
+            htmlCode: &nbsp;&nbsp;&nbsp;<span style="font-size:1.2em; font-weight:400"><a href="&P210_WORKSHOP_LOCATION." target="_blank"><span class="fa fa-external-link" style="vertical-align:middle"></span>&nbsp;Open the workshop instructions in a new tab</a></span>
+        }
+        layout {
+            sequence: 40
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--scrollBody
+                t-Form--noPadding
+                margin-top-sm
+                margin-bottom-md
+                margin-left-sm
+            ]
+            renderComponents: belowContent
+        }
+        serverSideCondition {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                declare
+                
+                  cursor c_workshop is select active_flg from ll_workshops where ID = :P210_WORKSHOP_ID;
+                
+                  v_status        varchar2(1);
+                  v_return_value  BOOLEAN;
+                  v_is_public_ws  varchar2(1);
+                
+                begin
+                
+                  ll_pkg_log.log(40,'P210 - Begin Serverside Enablement of regions');
+                
+                  open c_workshop;
+                  fetch c_workshop into v_is_public_ws;
+                  close c_workshop;
+                
+                  ll_pkg_log.log(40,'P210 - Status of workshop is: '||v_is_public_ws);
+                
+                  if v_is_public_ws = 'Y' then
+                    v_status:='Y';
+                  else 
+                    ll_pkg_log.log(40,'P210 - Status <> Y, Workshop ID is '||:P210_WORKSHOP_ID);
+                    if :P210_WORKSHOP_ID is not null then
+                      v_status := ll_pkg_security.am_i_allowed(p_apex_user => :APP_USER, 
+                                                               p_access_type  => 'WORKSHOP_VIEW',
+                                                               p_access_value => :P210_WORKSHOP_ID );
+                      ll_pkg_log.log(40,'P210 - Status of am_i_allowed is '||v_status||' for P210_WS_ID '||:P210_WORKSHOP_ID||' and user '||:APP_USER);                                               
+                    else
+                      v_status:='N';
+                    end if;
+                  end if;
+                
+                  v_status := nvl(v_status,'N');
+                
+                  ll_pkg_log.log(40,'P210 - End of check, current status is '||v_status);                                               
+                
+                
+                  if v_status = 'Y' then
+                    ll_pkg_log.log(40,'P210 - Sending status TRUE');
+                    return (TRUE);
+                  else
+                    ll_pkg_log.log(40,'P210 - Sending status FALSE');
+                    return (FALSE);
+                  end if;
+                end;
+                ```
+        }
+    )
+
+    region rate-this-workshop (
+        name: Rate this workshop
+        type: staticContent
+        layout {
+            sequence: 50
+            slot: inlineDialogs
+        }
+        appearance {
+            template: @inline-dialog
+            templateOptions: [
+                #DEFAULT#
+                js-dialog-autoheight
+                js-dialog-size480x320
+                t-Form--xlarge
+            ]
+        }
+        advanced {
+            htmlDomId: RATE_WK_210
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    region span-style-font-weight-400-p210-workshop-span-span-style-font-weight-200-workshop-span (
+        name: <span style="font-weight: 400">&P210_WORKSHOP.</span><span style="font-weight: 200"> Workshop</span>
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <div id=SPRINTBOX> 
+                    <div style="display:float;float:left;padding:0px 0px 0px 0px;">
+                    <p><img src=#APP_FILES#sprints_new.png alt="New ribbon" width="50px"></p>
+                </div>
+                <div style="display:float;float:left;padding:30px 20px 0px 0px;color:white;font-size:1.8em;">
+                    <p>Introducing <b>LiveLabs</b> <i><span style="color:#fcbf37">Sprints</span></i></p>
+                </div>
+                <div style="display:float;float:left;padding:30px 20px 0px 20px;color:white;font-size:1.2em">
+                    <p>Simplify how you learn cloud skills!</p>
+                </div>
+                <div style="font-size:1.2em;display:float;float:right;padding:20px 20px 20px 0px">
+                    <p>
+                        <button 
+                            type="button" 
+                            title="Try Other LiveLabs Sprints" 
+                            aria-label="Try Other LiveLabs Sprints" 
+                            class="sprintbutton"
+                            onclick="window.location.href='&P210_SPRINTS_URL.'">
+                            Try Other <b>LiveLabs</b> <i><span style="color:#ffe7b6">Sprints</span></i>
+                        </button>
+                    </p>
+                </div>        
+                <div style="font-size:1.2em;display:float;float:right;padding:20px 20px 20px 10px">
+                    <p>
+                        <img src=#APP_FILES#sprints_cars.png alt="LiveLabs Sprints race car" width="250px" style="padding:-10px 20px 0px 0px;margin-right:20px" align="middle"> 
+                    </p>
+                </div>
+                </div>        
+                
+                <!---green banner code-->
+                <div id=TITLEBAR>
+                <p style="font-weight: 400;color:white;font-size:2.3em;line-height:1em">
+                &P210_WORKSHOP.
+                <span style="font-weight: 200;"> Workshop</span>
+                </p>
+                <p style="color:white;font-size:1.0em;margin-top:-5px;">
+                &P210_DESC_SHORT.
+                </p>
+                
+                <p style="font-size:1.1em; color:white;font-weight:600;margin-top:-5px;">
+                <i><a href="&P210_WORKSHOP_LOCATION." target="_blank" style="color:white;"><span class="fa fa-external-link" style="vertical-align:middle;color:white;"></span>&nbsp;Open these workshop instructions in a new tab</a></i>
+                    <!--span style="float:right;color:white;font-weight:800;vertical-align:middle">
+                        <a href="javascript:openModal('RATE_WK_210');" style="color:white"><span class="fa fa-star-o" style="vertical-align:baseline;color:white;"></span> Rate this workshop?</a>
+                    </span-->
+                </p>
+                
+                <button onclick="topFunction()" id="myBtn" title="Go to top">Return to top of page</button>
+                </div>
+                <!--div id="rate_bubble" style="float:right;color:white;font-weight:800;vertical-align:middle">
+                        <a href="javascript:openModal('RATE_WK_210');" style="color:white"><span class="fa fa-star-o" style="vertical-align:baseline;color:white;"></span> Rate this workshop?</a>
+                </div-->
+                ```
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--textContent
+                t-Region--hiddenOverflow
+                t-Form--noPadding
+                margin-bottom-sm
+                margin-left-md
+                margin-right-md
+            ]
+        }
+        advanced {
+            htmlDomId: SPRINTCONTAINER
+            regionDisplaySelector: true
+        }
+        serverSideCondition {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                declare
+                
+                  cursor c_workshop is select active_flg from ll_workshops where ID = :P210_WORKSHOP_ID;
+                
+                  v_status        varchar2(1);
+                  v_return_value  BOOLEAN;
+                  v_is_public_ws  varchar2(1);
+                
+                begin
+                
+                  ll_pkg_log.log(40,'P210 - Begin Serverside Enablement of regions');
+                
+                  open c_workshop;
+                  fetch c_workshop into v_is_public_ws;
+                  close c_workshop;
+                
+                  ll_pkg_log.log(40,'P210 - Status of workshop is: '||v_is_public_ws);
+                
+                  if v_is_public_ws = 'Y' then
+                    v_status:='Y';
+                  else 
+                    ll_pkg_log.log(40,'P210 - Status <> Y, Workshop ID is '||:P210_WORKSHOP_ID);
+                    if :P210_WORKSHOP_ID is not null then
+                      v_status := ll_pkg_security.am_i_allowed(p_apex_user => :APP_USER, 
+                                                               p_access_type  => 'WORKSHOP_VIEW',
+                                                               p_access_value => :P210_WORKSHOP_ID );
+                      ll_pkg_log.log(40,'P210 - Status of am_i_allowed is '||v_status||' for P210_WS_ID '||:P210_WORKSHOP_ID||' and user '||:APP_USER);                                               
+                    else
+                      v_status:='N';
+                    end if;
+                  end if;
+                
+                  v_status := nvl(v_status,'N');
+                
+                  ll_pkg_log.log(40,'P210 - End of check, current status is '||v_status);                                               
+                
+                
+                  if v_status = 'Y' then
+                    ll_pkg_log.log(40,'P210 - Sending status TRUE');
+                    return (TRUE);
+                  else
+                    ll_pkg_log.log(40,'P210 - Sending status FALSE');
+                    return (FALSE);
+                  end if;
+                end;
+                ```
+        }
+    )
+
+    region workshop-instructions-nbsp-nbsp-nbsp-span-style-font-size-0-9em-a-href-p210-workshop-location-target-blank-span-class-fa-fa-external-link-style-vertical-align-middle-span-nbsp-open-these-instructions-in-a-new-tab-a-span (
+        name: Workshop Instructions&nbsp;&nbsp;&nbsp;<span style="font-size:0.9em; "><a href="&P210_WORKSHOP_LOCATION." target="_blank"><span class="fa fa-external-link" style="vertical-align:middle"></span>&nbsp;Open these instructions in a new tab</a></span>
+        type: url
+        layout {
+            sequence: 30
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--scrollBody
+                t-Form--noPadding
+                margin-top-none
+                margin-bottom-md
+                margin-left-md
+                margin-right-md
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        serverSideCondition {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                declare
+                
+                  cursor c_workshop is select active_flg from ll_workshops where ID = :P210_WORKSHOP_ID;
+                
+                  v_status        varchar2(1);
+                  v_return_value  BOOLEAN;
+                  v_is_public_ws  varchar2(1);
+                
+                begin
+                
+                  ll_pkg_log.log(40,'P210 - Begin Serverside Enablement of regions');
+                
+                  open c_workshop;
+                  fetch c_workshop into v_is_public_ws;
+                  close c_workshop;
+                
+                  ll_pkg_log.log(40,'P210 - Status of workshop is: '||v_is_public_ws);
+                
+                  if v_is_public_ws = 'Y' then
+                    v_status:='Y';
+                  else 
+                    ll_pkg_log.log(40,'P210 - Status <> Y, Workshop ID is '||:P210_WORKSHOP_ID);
+                    if :P210_WORKSHOP_ID is not null then
+                      v_status := ll_pkg_security.am_i_allowed(p_apex_user => :APP_USER, 
+                                                               p_access_type  => 'WORKSHOP_VIEW',
+                                                               p_access_value => :P210_WORKSHOP_ID );
+                      ll_pkg_log.log(40,'P210 - Status of am_i_allowed is '||v_status||' for P210_WS_ID '||:P210_WORKSHOP_ID||' and user '||:APP_USER);                                               
+                    else
+                      v_status:='N';
+                    end if;
+                  end if;
+                
+                  v_status := nvl(v_status,'N');
+                
+                  ll_pkg_log.log(40,'P210 - End of check, current status is '||v_status);                                               
+                
+                
+                  if v_status = 'Y' then
+                    ll_pkg_log.log(40,'P210 - Sending status TRUE');
+                    return (TRUE);
+                  else
+                    ll_pkg_log.log(40,'P210 - Sending status FALSE');
+                    return (FALSE);
+                  end if;
+                end;
+                ```
+        }
+        settings {
+            url: &P210_WORKSHOP_LOCATION.
+            iframeAttrs: title="LiveLabs Content" width="100%" height="1500px"
+        }
+    )
+
+    pageItem P210_DESC_SHORT (
+        type: hidden
+        layout {
+            sequence: 60
+            region: @span-style-font-weight-400-p210-workshop-span-span-style-font-weight-200-workshop-span
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P210_ID_STILL_USED_QUESTIONMARK (
+        type: hidden
+        layout {
+            sequence: 10
+            region: @span-style-font-weight-400-p210-workshop-span-span-style-font-weight-200-workshop-span
+            slot: regionBody
+        }
+    )
+
+    pageItem P210_SPRINTS_URL (
+        type: hidden
+        layout {
+            sequence: 90
+            region: @span-style-font-weight-400-p210-workshop-span-span-style-font-weight-200-workshop-span
+            slot: regionBody
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                declare
+                  v_url     varchar2(4000); 
+                    
+                begin
+                
+                    v_url := substr( APEX_PAGE.GET_URL ( p_page   => 100,
+                                                         p_items  => 'p100_workshop_type,me',
+                                                       p_values => '225,141'
+                                                                    ),2);
+                                                       
+                    v_url := replace(v_url,'%3A',':'); 
+                    v_url := substr(v_url,1,instr(v_url,'&session')-1);
+                
+                    return apex_util.host_url('NULL') || v_url;
+                end;
+                ```
+            used: always
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P210_STAR_RATING (
+        type: starRating
+        label {
+            label: How would you rate this workshop?<br>
+            alignment: left
+        }
+        settings {
+            useDefaults: false
+            activeColor: #F2B600
+            inactiveColor: #A19CA1
+            tooltip: #VALUE# star rating
+            showValue: true
+            readOnlyDisplay: starsAndValue
+        }
+        layout {
+            sequence: 10
+            region: @rate-this-workshop
+            slot: regionBody
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: [
+                t-Form-fieldContainer--stretchInputs
+                t-Form-fieldContainer--xlarge
+                margin-left-lg
+            ]
+        }
+        source {
+            used: always
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P210_TC (
+        type: hidden
+        layout {
+            sequence: 70
+            region: @span-style-font-weight-400-p210-workshop-span-span-style-font-weight-200-workshop-span
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+        comments {
+            comments: Tracking Code for marketing
+        }
+    )
+
+    pageItem P210_TYPE (
+        type: hidden
+        layout {
+            sequence: 50
+            region: @span-style-font-weight-400-p210-workshop-span-span-style-font-weight-200-workshop-span
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P210_WORKSHOP (
+        type: hidden
+        layout {
+            sequence: 30
+            region: @span-style-font-weight-400-p210-workshop-span-span-style-font-weight-200-workshop-span
+            slot: regionBody
+        }
+        sessionState {
+            storage: request
+        }
+    )
+
+    pageItem P210_WORKSHOP_ID (
+        type: hidden
+        layout {
+            sequence: 20
+            region: @span-style-font-weight-400-p210-workshop-span-span-style-font-weight-200-workshop-span
+            slot: regionBody
+        }
+    )
+
+    pageItem P210_WORKSHOP_LOCATION (
+        type: hidden
+        layout {
+            sequence: 40
+            region: @span-style-font-weight-400-p210-workshop-span-span-style-font-weight-200-workshop-span
+            slot: regionBody
+        }
+        sessionState {
+            storage: request
+        }
+    )
+
+    pageItem SC (
+        type: hidden
+        layout {
+            sequence: 80
+            region: @span-style-font-weight-400-p210-workshop-span-span-style-font-weight-200-workshop-span
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button close (
+        buttonName: Close
+        label: Close
+        layout {
+            sequence: 20
+            region: @rate-this-workshop
+            slot: previous
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button submit-rating (
+        buttonName: Submit-Rating
+        label: Submit Rating
+        layout {
+            sequence: 10
+            region: @rate-this-workshop
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    dynamicAction clickuser (
+        name: ClickUser
+        execution {
+            sequence: 20
+        }
+        when {
+            event: click
+            selectionType: items
+            items: P210_USERNAME
+        }
+        serverSideCondition {
+            type: never
+        }
+
+        action native-alert (
+            action: alert
+            settings {
+                message: Username copied
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    /* Select the text field */
+                    $('#P210_USERNAME').select();
+                    
+                    /* Copy the text inside the text field */
+                    document.execCommand("copy");
+                    ```
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction sprints-check (
+        name: Sprints Check
+        execution {
+            sequence: 40
+        }
+        when {
+            event: ready
+        }
+        clientSideCondition {
+            type: itemIsNotNull
+            item: SC
+        }
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    const urlSearchParams = new URLSearchParams(window.location.search);
+                    const params = Object.fromEntries(urlSearchParams.entries());
+                    console.log(params);
+                    if ("sc" in params) { 
+                        document.querySelector("#SPRINTBOX").style = 'display:block;';
+                        document.querySelector("#TITLEBAR").style = 'display:none;';
+                    } else {
+                        document.querySelector("#SPRINTBOX").style = 'display:none;';
+                        document.querySelector("#TITLEBAR").style = 'display:block;';
+                    }
+                    ```
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+        action native-javascript-code-2 (
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    const urlSearchParams = new URLSearchParams(window.location.search);
+                    const params = Object.fromEntries(urlSearchParams.entries());
+                    console.log(params);
+                    if ("sc" in params) { 
+                        document.querySelector("#SPRINTBOX").style = 'display:block;';
+                        document.querySelector("#TITLEBAR").style = 'display:none;';
+                    } else {
+                        document.querySelector("#SPRINTBOX").style = 'display:none;';
+                        document.querySelector("#TITLEBAR").style = 'display:block;';
+                    }
+                    ```
+            }
+            execution {
+                sequence: 10
+                fireWhenEventResultIs: false
+            }
+        )
+
+    )
+
+    dynamicAction submitrating (
+        name: SubmitRating
+        execution {
+            sequence: 30
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @submit-rating
+        }
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    begin
+                      ll_pkg_apex.set_star_rating ( p_app_user       => :app_user,
+                                                    p_workshop_id    => :P210_WORKSHOP_ID,
+                                                    p_rating         => :P210_STAR_RATING,
+                                                    p_session_id     => :APP_SESSION,
+                                                    p_event_code_id  => null );
+                    end;                                
+                    ```
+                itemsToSubmit: [
+                    P210_WORKSHOP_ID
+                    P210_STAR_RATING
+                ]
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+        action native-submit-page (
+            action: submitPage
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    process count-page-and-workshop (
+        name: Count page and workshop
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                begin
+                  insert into ll_page_visits (page_id, workshop_id, app_session) values (210,:P210_WORKSHOP_ID, :APP_SESSION);
+                exception
+                  when others then
+                    ll_pkg_log.log(1,'Error during insert on ll_page_visits for page_id 210, workshop_id '||:P210_WORKSHOP_ID||', app_session '||:APP_SESSION);
+                end;
+                ```
+        }
+        execution {
+            sequence: 10
+            point: afterFooter
+        }
+        advanced {
+            executionMappingIdentifier: 11226870344600806439
+        }
+    )
+
+    process retrieve-info (
+        name: RETRIEVE_INFO
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                declare
+                  cursor c_workshop is select lab_url, name, desc_short
+                                       from ll_workshops
+                                       where id = :P210_WORKSHOP_ID
+                                       and ( ll_pkg_security.am_i_allowed ( p_apex_user => :APP_USER,
+                                                                            p_access_type => 'WORKSHOP_VIEW',
+                                                                            p_access_value => :P210_WORKSHOP_ID ) = 'Y'
+                                             or
+                                             active_flg = 'Y' );
+                
+                  cursor c_event_code is select alt_url, alt_desc_short
+                                         from ll_vouchers
+                                         where voucher_code = :EC_GLOBAL
+                                         and workshop_id = :P210_WORKSHOP_ID
+                                         and ll_pkg_security.am_i_allowed ( p_apex_user => :APP_USER,
+                                                                            p_access_type => 'WORKSHOP_VIEW',
+                                                                            p_access_value => :P210_WORKSHOP_ID ) = 'Y';
+                
+                  v_search         varchar2(200);
+                  v_ws_name        varchar2(4000);
+                  v_ws_lab_url     varchar2(4000);                       
+                  v_ec_lab_url     varchar2(4000);
+                  v_ws_desc_short  varchar2(4000);
+                  v_ec_desc_short  varchar2(4000);
+                                       
+                begin
+                
+                  if :EC_GLOBAL is not null then 
+                    open c_event_code;
+                    fetch c_event_code into v_ec_lab_url, v_ec_desc_short;
+                    close c_event_code;
+                  end if;
+                
+                  open c_workshop;
+                  fetch c_workshop into v_ws_lab_url, v_ws_name, v_ws_desc_short;
+                  close c_workshop;
+                  
+                  v_search := '$.'||case :P210_TYPE
+                                     when 1 then 'FREETIER_URL'
+                                     when 2 then 'ALWAYSFREE_URL'
+                                     when 3 then 'PAID_URL' end;
+                
+                  :P210_WORKSHOP := v_ws_name;
+                  :P210_WORKSHOP_LOCATION := nvl(JSON_VALUE(v_ec_lab_url, v_search), JSON_VALUE(v_ws_lab_url, v_search));
+                  :P210_DESC_SHORT := nvl(v_ec_desc_short, v_ws_desc_short);
+                
+                end;
+                
+                ```
+        }
+        execution {
+            sequence: 10
+            point: beforeHeader
+        }
+        advanced {
+            executionMappingIdentifier: 200593492197310051
+        }
+    )
+
+)
+

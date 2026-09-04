@@ -1,0 +1,105 @@
+page 10 (
+    name: Sign In
+    alias: SIGN-IN
+    title: Sign In
+    appearance {
+        pageTemplate: @standard-trustarc
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        authorizationScheme: mustNotBePublicUser
+        formAutoComplete: false
+    }
+
+    region new (
+        name: New
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    pageItem P10_ID (
+        type: hidden
+        layout {
+            sequence: 20
+            region: @new
+            slot: regionBody
+        }
+        source {
+            type: item
+            item: P180_ID
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P10_PAGE_ID (
+        type: hidden
+        layout {
+            sequence: 10
+            region: @new
+            slot: regionBody
+        }
+        source {
+            used: always
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    branch (
+        name: Return to sender
+        execution {
+            sequence: 20
+            point: beforeHeader
+        }
+        behavior {
+            target: {
+                page: &P10_PAGE_ID.
+            }
+        }
+    )
+
+    branch (
+        name: Branch To Page Identified By Item
+        execution {
+            sequence: 40
+            point: beforeHeader
+        }
+        behavior {
+            target: {
+                page: &P300_PAGE_ID.
+                clearCache: [
+                    &DEBUG.
+                    300
+                ]
+                request: &SESSION.
+            }
+        }
+    )
+
+)
+

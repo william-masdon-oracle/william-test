@@ -1,0 +1,1110 @@
+dataLoadDefinition Bulk_Emails (
+    name: Bulk Emails
+    target {
+        tableName: TEMP_EMAILS
+    }
+    dataProfile {
+        name: Bulk Emails
+        format: csv
+    }
+    advanced {
+        encoding: iso-8859-1
+        csvEnclosedBy: "
+    }
+
+    dataProfileColumn email (
+        columnName: EMAIL
+        source {
+            sequence: 1
+            dataType: varchar2
+            maxLength: 100
+        }
+        parsing {
+            selector: EMAIL
+        }
+    )
+
+)
+
+dataLoadDefinition Bulk_Upload_Reservations (
+    name: Bulk Upload Reservations
+    target {
+        tableName: LL_RESERVATIONS
+    }
+    dataProfile {
+        name: Bulk Upload Reservations
+        format: csv
+    }
+    advanced {
+        encoding: iso-8859-1
+        csvEnclosedBy: "
+    }
+
+    dataProfileColumn accessed (
+        columnName: ACCESSED
+        source {
+            sequence: 19
+            dataType: number
+        }
+        parsing {
+            selector: ACCESSED
+        }
+    )
+
+    dataProfileColumn active-flg (
+        columnName: ACTIVE_FLG
+        source {
+            sequence: 15
+            dataType: varchar2
+            maxLength: 1
+        }
+        parsing {
+            selector: ACTIVE_FLG
+        }
+    )
+
+    dataProfileColumn environments (
+        columnName: ENVIRONMENTS
+        source {
+            sequence: 11
+            dataType: number
+        }
+        parsing {
+            selector: ENVIRONMENTS
+        }
+    )
+
+    dataProfileColumn extended (
+        columnName: EXTENDED
+        source {
+            sequence: 18
+            dataType: number
+        }
+        parsing {
+            selector: EXTENDED
+        }
+    )
+
+    dataProfileColumn focus-area (
+        columnName: FOCUS_AREA
+        source {
+            sequence: 3
+            dataType: varchar2
+            maxLength: 50
+        }
+        parsing {
+            selector: FOCUS_AREA
+        }
+    )
+
+    dataProfileColumn owner (
+        columnName: OWNER1
+        source {
+            sequence: 4
+            dataType: varchar2
+            maxLength: 50
+        }
+        parsing {
+            selector: OWNER1
+        }
+    )
+
+    dataProfileColumn public-key (
+        columnName: PUBLIC_KEY
+        source {
+            sequence: 16
+            dataType: varchar2
+        }
+        parsing {
+            selector: PUBLIC_KEY
+        }
+    )
+
+    dataProfileColumn reason (
+        columnName: REASON
+        source {
+            sequence: 2
+            dataType: varchar2
+            maxLength: 50
+        }
+        parsing {
+            selector: REASON
+        }
+    )
+
+    dataProfileColumn region-id (
+        columnName: REGION_ID
+        source {
+            sequence: 5
+            dataType: number
+        }
+        parsing {
+            selector: REGION_ID
+        }
+    )
+
+    dataProfileColumn remarks (
+        columnName: REMARKS
+        source {
+            sequence: 14
+            dataType: varchar2
+        }
+        parsing {
+            selector: REMARKS
+        }
+    )
+
+    dataProfileColumn start-date (
+        columnName: START_DATE
+        source {
+            sequence: 7
+            dataType: date
+        }
+        parsing {
+            selector: START_DATE
+            formatMask: MM"/"DD"/"RR
+            hasTimeZone: false
+        }
+    )
+
+    dataProfileColumn start-time (
+        columnName: START_TIME
+        source {
+            sequence: 8
+            dataType: varchar2
+            maxLength: 50
+        }
+        parsing {
+            selector: START_TIME
+        }
+    )
+
+    dataProfileColumn start-timezone (
+        columnName: START_TIMEZONE
+        source {
+            sequence: 9
+            dataType: varchar2
+            maxLength: 50
+        }
+        parsing {
+            selector: START_TIMEZONE
+        }
+    )
+
+    dataProfileColumn stop-date (
+        columnName: STOP_DATE
+        source {
+            sequence: 10
+            dataType: date
+        }
+        parsing {
+            selector: STOP_DATE
+            hasTimeZone: false
+        }
+    )
+
+    dataProfileColumn stop-time (
+        columnName: STOP_TIME
+        source {
+            sequence: 17
+            dataType: varchar2
+            maxLength: 50
+        }
+        parsing {
+            selector: STOP_TIME
+        }
+    )
+
+    dataProfileColumn tenancy-id (
+        columnName: TENANCY_ID
+        source {
+            sequence: 12
+            dataType: number
+        }
+        parsing {
+            selector: TENANCY_ID
+        }
+    )
+
+    dataProfileColumn title (
+        columnName: TITLE
+        source {
+            sequence: 1
+            dataType: varchar2
+            maxLength: 50
+        }
+        parsing {
+            selector: TITLE
+        }
+    )
+
+    dataProfileColumn voucher-id (
+        columnName: VOUCHER_ID
+        source {
+            sequence: 20
+            dataType: number
+        }
+        parsing {
+            selector: VOUCHER_ID
+        }
+    )
+
+    dataProfileColumn workshop-id (
+        columnName: WORKSHOP_ID
+        source {
+            sequence: 6
+            dataType: number
+        }
+        parsing {
+            selector: WORKSHOP_ID
+        }
+    )
+
+)
+
+dataLoadDefinition CSV_EMAIL (
+    name: CSV_EMAIL
+    target {
+        type: collection
+        name: CSV_EMAIL
+    }
+    dataProfile {
+        name: CSV_EMAIL
+        format: csv
+    }
+    advanced {
+        encoding: iso-8859-1
+        csvEnclosedBy: "
+    }
+
+    dataProfileColumn c (
+        columnName: C001
+        source {
+            sequence: 1
+            dataType: varchar2
+        }
+        parsing {
+            selector: C1
+        }
+    )
+
+    dataProfileColumn c-2 (
+        columnName: C002
+        source {
+            sequence: 2
+            dataType: varchar2
+        }
+        parsing {
+            selector: MAIL11_MAIL_COM
+        }
+    )
+
+)
+
+dataLoadDefinition CSV_TEMP_EMAILS (
+    name: CSV_TEMP_EMAILS
+    target {
+        tableName: TEMP_EMAILS
+    }
+    dataProfile {
+        name: CSV_TEMP_EMAILS
+        format: csv
+    }
+    advanced {
+        encoding: utf-8
+        csvEnclosedBy: "
+    }
+
+    dataProfileColumn email (
+        columnName: EMAIL
+        source {
+            sequence: 1
+            dataType: varchar2
+            maxLength: 100
+        }
+        parsing {
+            selector: EMAILS
+        }
+    )
+
+)
+
+dataLoadDefinition LOAD_CSV_LL_WORKSHOP5 (
+    name: LOAD_CSV_LL_WORKSHOP5
+    target {
+        tableName: LL_WORKSHOPS
+    }
+    dataProfile {
+        name: LOAD_CSV_LL_WORKSHOP5
+        format: csv
+    }
+    advanced {
+        encoding: iso-8859-1
+        csvEnclosedBy: "
+    }
+
+    dataProfileColumn active-flg (
+        columnName: ACTIVE_FLG
+        source {
+            sequence: 12
+            dataType: varchar2
+            maxLength: 1
+        }
+        parsing {
+            selector: ACTIVE_FLG
+        }
+    )
+
+    dataProfileColumn approval-required (
+        columnName: APPROVAL_REQUIRED
+        source {
+            sequence: 11
+            dataType: varchar2
+            maxLength: 1
+        }
+        parsing {
+            selector: APPROVAL_REQUIRED
+        }
+    )
+
+    dataProfileColumn author-email (
+        columnName: AUTHOR_EMAIL
+        source {
+            sequence: 3
+            dataType: varchar2
+            maxLength: 50
+        }
+        parsing {
+            selector: AUTHOR_EMAIL
+        }
+    )
+
+    dataProfileColumn desc-long (
+        columnName: DESC_LONG
+        source {
+            sequence: 5
+            dataType: varchar2
+        }
+        parsing {
+            selector: DESC_LONG
+        }
+    )
+
+    dataProfileColumn desc-outcome (
+        columnName: DESC_OUTCOME
+        source {
+            sequence: 17
+            dataType: varchar2
+        }
+        parsing {
+            selector: DESC_OUTCOME
+        }
+    )
+
+    dataProfileColumn desc-outline (
+        columnName: DESC_OUTLINE
+        source {
+            sequence: 15
+            dataType: varchar2
+        }
+        parsing {
+            selector: DESC_OUTLINE
+        }
+    )
+
+    dataProfileColumn desc-prerequisites (
+        columnName: DESC_PREREQUISITES
+        source {
+            sequence: 16
+            dataType: varchar2
+        }
+        parsing {
+            selector: DESC_PREREQUISITES
+        }
+    )
+
+    dataProfileColumn desc-short (
+        columnName: DESC_SHORT
+        source {
+            sequence: 4
+            dataType: varchar2
+        }
+        parsing {
+            selector: DESC_SHORT
+        }
+    )
+
+    dataProfileColumn development-status (
+        columnName: DEVELOPMENT_STATUS
+        source {
+            sequence: 13
+            dataType: varchar2
+            maxLength: 50
+        }
+        parsing {
+            selector: DEVELOPMENT_STATUS
+        }
+    )
+
+    dataProfileColumn lab-url (
+        columnName: LAB_URL
+        source {
+            sequence: 14
+            dataType: varchar2
+        }
+        parsing {
+            selector: LAB_URL
+        }
+    )
+
+    dataProfileColumn max-parallel-non-ec (
+        columnName: MAX_PARALLEL_NON_EC
+        source {
+            sequence: 20
+            dataType: number
+        }
+        parsing {
+            selector: MAX_PARALLEL_NON_EC
+        }
+    )
+
+    dataProfileColumn name (
+        columnName: NAME
+        source {
+            sequence: 1
+            dataType: varchar2
+            maxLength: 200
+        }
+        parsing {
+            selector: NAME
+        }
+    )
+
+    dataProfileColumn package-type (
+        columnName: PACKAGE_TYPE
+        source {
+            sequence: 6
+            dataType: varchar2
+            maxLength: 50
+        }
+        parsing {
+            selector: PACKAGE_TYPE
+        }
+    )
+
+    dataProfileColumn program-code (
+        columnName: PROGRAM_CODE
+        source {
+            sequence: 9
+            dataType: varchar2
+            maxLength: 200
+        }
+        parsing {
+            selector: PROGRAM_CODE
+        }
+    )
+
+    dataProfileColumn tenancies-allowed (
+        columnName: TENANCIES_ALLOWED
+        source {
+            sequence: 19
+            dataType: varchar2
+            maxLength: 200
+        }
+        parsing {
+            selector: TENANCIES_ALLOWED
+        }
+    )
+
+    dataProfileColumn time-available (
+        columnName: TIME_AVAILABLE
+        source {
+            sequence: 8
+            dataType: number
+        }
+        parsing {
+            selector: TIME_AVAILABLE
+        }
+    )
+
+    dataProfileColumn time-in-hours (
+        columnName: TIME_IN_HOURS
+        source {
+            sequence: 7
+            dataType: number
+        }
+        parsing {
+            selector: TIME_IN_HOURS
+        }
+    )
+
+    dataProfileColumn tracking-url (
+        columnName: TRACKING_URL
+        source {
+            sequence: 10
+            dataType: varchar2
+        }
+        parsing {
+            selector: TRACKING_URL
+        }
+    )
+
+    dataProfileColumn workshop-json (
+        columnName: WORKSHOP_JSON
+        source {
+            sequence: 18
+            dataType: varchar2
+        }
+        parsing {
+            selector: WORKSHOP_JSON
+        }
+    )
+
+    dataProfileColumn workshop-uid (
+        columnName: WORKSHOP_UID
+        source {
+            sequence: 21
+            dataType: varchar2
+            maxLength: 10
+        }
+        parsing {
+            selector: WORKSHOP_UID
+        }
+    )
+
+    dataProfileColumn ws-owner-group (
+        columnName: WS_OWNER_GROUP
+        source {
+            sequence: 2
+            dataType: varchar2
+        }
+        parsing {
+            selector: WS_OWNER_GROUP
+        }
+    )
+
+)
+
+dataLoadDefinition LOAD_CSV_LL_WORKSHOPS2 (
+    name: LOAD_CSV_LL_WORKSHOPS2
+    target {
+        tableName: LL_WORKSHOPS
+    }
+    dataProfile {
+        name: LOAD_CSV_LL_WORKSHOPS2
+        format: csv
+    }
+    advanced {
+        encoding: iso-8859-1
+        csvEnclosedBy: "
+    }
+
+    dataProfileColumn active-flg (
+        columnName: ACTIVE_FLG
+        source {
+            sequence: 13
+            dataType: varchar2
+            maxLength: 1
+        }
+        parsing {
+            selector: ACTIVE_FLG
+        }
+    )
+
+    dataProfileColumn approval-required (
+        columnName: APPROVAL_REQUIRED
+        source {
+            sequence: 12
+            dataType: varchar2
+            maxLength: 1
+        }
+        parsing {
+            selector: APPROVAL_REQUIRED
+        }
+    )
+
+    dataProfileColumn author-email (
+        columnName: AUTHOR_EMAIL
+        source {
+            sequence: 4
+            dataType: varchar2
+            maxLength: 50
+        }
+        parsing {
+            selector: AUTHOR_EMAIL
+        }
+    )
+
+    dataProfileColumn desc-long (
+        columnName: DESC_LONG
+        source {
+            sequence: 6
+            dataType: varchar2
+        }
+        parsing {
+            selector: DESC_LONG
+        }
+    )
+
+    dataProfileColumn desc-outcome (
+        columnName: DESC_OUTCOME
+        source {
+            sequence: 18
+            dataType: varchar2
+        }
+        parsing {
+            selector: DESC_OUTCOME
+        }
+    )
+
+    dataProfileColumn desc-outline (
+        columnName: DESC_OUTLINE
+        source {
+            sequence: 16
+            dataType: varchar2
+        }
+        parsing {
+            selector: DESC_OUTLINE
+        }
+    )
+
+    dataProfileColumn desc-prerequisites (
+        columnName: DESC_PREREQUISITES
+        source {
+            sequence: 17
+            dataType: varchar2
+        }
+        parsing {
+            selector: DESC_PREREQUISITES
+        }
+    )
+
+    dataProfileColumn desc-short (
+        columnName: DESC_SHORT
+        source {
+            sequence: 5
+            dataType: varchar2
+        }
+        parsing {
+            selector: DESC_SHORT
+        }
+    )
+
+    dataProfileColumn development-status (
+        columnName: DEVELOPMENT_STATUS
+        source {
+            sequence: 14
+            dataType: varchar2
+            maxLength: 50
+        }
+        parsing {
+            selector: DEVELOPMENT_STATUS
+        }
+    )
+
+    dataProfileColumn id (
+        columnName: ID
+        source {
+            sequence: 1
+            dataType: number
+        }
+        parsing {
+            selector: ID
+        }
+    )
+
+    dataProfileColumn lab-url (
+        columnName: LAB_URL
+        source {
+            sequence: 15
+            dataType: varchar2
+        }
+        parsing {
+            selector: LAB_URL
+        }
+    )
+
+    dataProfileColumn max-parallel-non-ec (
+        columnName: MAX_PARALLEL_NON_EC
+        source {
+            sequence: 21
+            dataType: number
+        }
+        parsing {
+            selector: MAX_PARALLEL_NON_EC
+        }
+    )
+
+    dataProfileColumn name (
+        columnName: NAME
+        source {
+            sequence: 2
+            dataType: varchar2
+            maxLength: 200
+        }
+        parsing {
+            selector: NAME
+        }
+    )
+
+    dataProfileColumn package-type (
+        columnName: PACKAGE_TYPE
+        source {
+            sequence: 7
+            dataType: varchar2
+            maxLength: 50
+        }
+        parsing {
+            selector: PACKAGE_TYPE
+        }
+    )
+
+    dataProfileColumn program-code (
+        columnName: PROGRAM_CODE
+        source {
+            sequence: 10
+            dataType: varchar2
+            maxLength: 200
+        }
+        parsing {
+            selector: PROGRAM_CODE
+        }
+    )
+
+    dataProfileColumn tenancies-allowed (
+        columnName: TENANCIES_ALLOWED
+        source {
+            sequence: 20
+            dataType: varchar2
+            maxLength: 200
+        }
+        parsing {
+            selector: TENANCIES_ALLOWED
+        }
+    )
+
+    dataProfileColumn time-available (
+        columnName: TIME_AVAILABLE
+        source {
+            sequence: 9
+            dataType: number
+        }
+        parsing {
+            selector: TIME_AVAILABLE
+        }
+    )
+
+    dataProfileColumn time-in-hours (
+        columnName: TIME_IN_HOURS
+        source {
+            sequence: 8
+            dataType: number
+        }
+        parsing {
+            selector: TIME_IN_HOURS
+        }
+    )
+
+    dataProfileColumn tracking-url (
+        columnName: TRACKING_URL
+        source {
+            sequence: 11
+            dataType: varchar2
+        }
+        parsing {
+            selector: TRACKING_URL
+        }
+    )
+
+    dataProfileColumn workshop-json (
+        columnName: WORKSHOP_JSON
+        source {
+            sequence: 19
+            dataType: varchar2
+        }
+        parsing {
+            selector: WORKSHOP_JSON
+        }
+    )
+
+    dataProfileColumn workshop-uid (
+        columnName: WORKSHOP_UID
+        source {
+            sequence: 22
+            dataType: varchar2
+            maxLength: 10
+        }
+        parsing {
+            selector: WORKSHOP_UID
+        }
+    )
+
+    dataProfileColumn ws-owner-group (
+        columnName: WS_OWNER_GROUP
+        source {
+            sequence: 3
+            dataType: varchar2
+        }
+        parsing {
+            selector: WS_OWNER_GROUP
+        }
+    )
+
+)
+
+dataLoadDefinition LOAD_XLSX_LL_WORKSHOPS (
+    name: LOAD_XLSX_LL_WORKSHOPS
+    target {
+        tableName: LL_WORKSHOPS
+    }
+    dataProfile {
+        name: LOAD_XLSX_LL_WORKSHOPS
+        format: xlsx
+    }
+    advanced {
+        encoding: utf-8
+        defaultXlsxSheetName: sheet1.xml
+    }
+
+    dataProfileColumn active-flg (
+        columnName: ACTIVE_FLG
+        source {
+            sequence: 12
+            dataType: varchar2
+            maxLength: 1
+        }
+        parsing {
+            selector: ACTIVE_FLG
+        }
+    )
+
+    dataProfileColumn approval-required (
+        columnName: APPROVAL_REQUIRED
+        source {
+            sequence: 11
+            dataType: varchar2
+            maxLength: 1
+        }
+        parsing {
+            selector: APPROVAL_REQUIRED
+        }
+    )
+
+    dataProfileColumn author-email (
+        columnName: AUTHOR_EMAIL
+        source {
+            sequence: 3
+            dataType: varchar2
+            maxLength: 50
+        }
+        parsing {
+            selector: AUTHOR_EMAIL
+        }
+    )
+
+    dataProfileColumn desc-long (
+        columnName: DESC_LONG
+        source {
+            sequence: 5
+            dataType: varchar2
+        }
+        parsing {
+            selector: DESC_LONG
+        }
+    )
+
+    dataProfileColumn desc-outcome (
+        columnName: DESC_OUTCOME
+        source {
+            sequence: 17
+            dataType: varchar2
+        }
+        parsing {
+            selector: DESC_OUTCOME
+        }
+    )
+
+    dataProfileColumn desc-outline (
+        columnName: DESC_OUTLINE
+        source {
+            sequence: 15
+            dataType: varchar2
+        }
+        parsing {
+            selector: DESC_OUTLINE
+        }
+    )
+
+    dataProfileColumn desc-prerequisites (
+        columnName: DESC_PREREQUISITES
+        source {
+            sequence: 16
+            dataType: varchar2
+        }
+        parsing {
+            selector: DESC_PREREQUISITES
+        }
+    )
+
+    dataProfileColumn desc-short (
+        columnName: DESC_SHORT
+        source {
+            sequence: 4
+            dataType: varchar2
+        }
+        parsing {
+            selector: DESC_SHORT
+        }
+    )
+
+    dataProfileColumn development-status (
+        columnName: DEVELOPMENT_STATUS
+        source {
+            sequence: 13
+            dataType: varchar2
+            maxLength: 50
+        }
+        parsing {
+            selector: DEVELOPMENT_STATUS
+        }
+    )
+
+    dataProfileColumn lab-url (
+        columnName: LAB_URL
+        source {
+            sequence: 14
+            dataType: varchar2
+        }
+        parsing {
+            selector: LAB_URL
+        }
+    )
+
+    dataProfileColumn max-parallel-non-ec (
+        columnName: MAX_PARALLEL_NON_EC
+        source {
+            sequence: 20
+            dataType: number
+        }
+        parsing {
+            selector: MAX_PARALLEL_NON_EC
+        }
+    )
+
+    dataProfileColumn name (
+        columnName: NAME
+        source {
+            sequence: 1
+            dataType: varchar2
+            maxLength: 200
+        }
+        parsing {
+            selector: NAME
+        }
+    )
+
+    dataProfileColumn package-type (
+        columnName: PACKAGE_TYPE
+        source {
+            sequence: 6
+            dataType: varchar2
+            maxLength: 50
+        }
+        parsing {
+            selector: PACKAGE_TYPE
+        }
+    )
+
+    dataProfileColumn program-code (
+        columnName: PROGRAM_CODE
+        source {
+            sequence: 9
+            dataType: varchar2
+            maxLength: 200
+        }
+        parsing {
+            selector: PROGRAM_CODE
+        }
+    )
+
+    dataProfileColumn tenancies-allowed (
+        columnName: TENANCIES_ALLOWED
+        source {
+            sequence: 19
+            dataType: varchar2
+            maxLength: 200
+        }
+        parsing {
+            selector: TENANCIES_ALLOWED
+        }
+    )
+
+    dataProfileColumn time-available (
+        columnName: TIME_AVAILABLE
+        source {
+            sequence: 8
+            dataType: number
+        }
+        parsing {
+            selector: TIME_AVAILABLE
+        }
+    )
+
+    dataProfileColumn time-in-hours (
+        columnName: TIME_IN_HOURS
+        source {
+            sequence: 7
+            dataType: number
+        }
+        parsing {
+            selector: TIME_IN_HOURS
+        }
+    )
+
+    dataProfileColumn tracking-url (
+        columnName: TRACKING_URL
+        source {
+            sequence: 10
+            dataType: varchar2
+        }
+        parsing {
+            selector: TRACKING_URL
+        }
+    )
+
+    dataProfileColumn workshop-json (
+        columnName: WORKSHOP_JSON
+        source {
+            sequence: 18
+            dataType: varchar2
+        }
+        parsing {
+            selector: WORKSHOP_JSON
+        }
+    )
+
+    dataProfileColumn workshop-uid (
+        columnName: WORKSHOP_UID
+        source {
+            sequence: 21
+            dataType: varchar2
+            maxLength: 10
+        }
+        parsing {
+            selector: WORKSHOP_UID
+        }
+    )
+
+    dataProfileColumn ws-owner-group (
+        columnName: WS_OWNER_GROUP
+        source {
+            sequence: 2
+            dataType: varchar2
+        }
+        parsing {
+            selector: WS_OWNER_GROUP
+        }
+    )
+
+)
+

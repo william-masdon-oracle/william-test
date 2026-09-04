@@ -1,0 +1,1161 @@
+page 9402 (
+    name: PTS Reservation Details
+    alias: PTS-RESERVATION-DETAILS
+    title: PTS Reservation Details
+    appearance {
+        pageTemplate: @standard-trustarc
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    javaScript {
+        functionAndGlobalVariableDeclaration: var htmldb_delete_message='"DELETE_CONFIRM_MSG"';
+    }
+    security {
+        authorizationScheme: @superrrrr-user
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region attendees-who-have-used-the-eventcode (
+        name: Attendees who have used the eventcode
+        type: interactiveReport
+        source {
+            location: localDatabase
+            tableName: LL_VOUCHER_USERS
+            whereClause: voucher_id = :P9402_ID
+            pageItemsToSubmit: P9402_ID
+        }
+        layout {
+            sequence: 30
+            slot: contentBody
+        }
+        appearance {
+            template: @collapsible
+            templateOptions: [
+                #DEFAULT#
+                t-Region--hideShowIconsMath
+                is-expanded
+                t-Region--scrollBody
+            ]
+        }
+        pagination {
+            type: rowRangesXToY
+        }
+        messages {
+            whenNoDataFound: No data found.
+            whenMoreDataFound: The maximum row count for this report is #MAX_ROW_COUNT# rows.  Please apply a filter to reduce the number of records in your query.
+        }
+        actionsMenu {
+            subscription: false
+        }
+        advanced {
+            savedReportMappingIdentifier: 188175291160825811
+        }
+
+        column DATE_ENTERED (
+            type: plainText
+            heading {
+                heading: Date Entered
+            }
+            layout {
+                sequence: 4
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: D
+            }
+        )
+
+        column ID (
+            type: plainText
+            heading {
+                heading: Id
+                alignment: end
+            }
+            layout {
+                sequence: 1
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: A
+            }
+        )
+
+        column OWNER1 (
+            type: plainText
+            heading {
+                heading: Email
+            }
+            layout {
+                sequence: 3
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: C
+            }
+        )
+
+        column VOUCHER_ID (
+            type: plainText
+            heading {
+                heading: Voucher Id
+                alignment: end
+            }
+            layout {
+                sequence: 2
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: B
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: Attendees who have used the eventcode
+        }
+
+        savedReport 1881780 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn DATE_ENTERED (
+                sequence: 2
+            )
+
+            displayColumn OWNER1 (
+                sequence: 1
+            )
+
+        )
+
+    )
+
+    region environment-availability (
+        name: Environment Availability
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select c.workshop_id, 
+                       a.tenancy_id, 
+                       e.region_location||' ('||e.region_identifier||')' as region, 
+                       min(floor((a.num_provided - nvl(b.num_required,0)) / c.environments)) as env_available
+                from -- Resources num_available
+                     ( select tenancy_id, region_id, resource_id, num_available as num_provided from ll_res_tenancy_provides_vw ) a,
+                     -- Resources already scheduled through existing vouchers
+                     ( select llv.tenancy_id, llv.region_id, llwrr.resource_id, sum(llwrr.environments*llv.users_maximum) as num_required
+                       from ll_vouchers_vw llv, ll_ws_resources_required_vw llwrr 
+                       where llv.workshop_id = llwrr.workshop_id
+                       and (    :P9402_VALID_FROM between valid_from_gmt and valid_to_gmt
+                             or :P9402_VALID_TO between valid_from_gmt and valid_to_gmt
+                             or (valid_from_gmt < :P9402_VALID_FROM and valid_to_gmt > :P9402_VALID_TO)
+                           ) 
+                --       and llv.id <> :P9402_ID
+                       group by id, tenancy_id, region_id, resource_id ) b,
+                    -- Resources required per workshop
+                    ll_ws_resources_required_vw c,
+                    ll_workshop_regions d,
+                    ll_oci_regions e
+                where a.tenancy_id = b.tenancy_id(+)
+                and a.region_id = b.region_id(+)
+                and a.resource_id = b.resource_id(+)
+                and a.resource_id = c.resource_id
+                and c.workshop_id = :P9402_WORKSHOP_ID
+                and a.tenancy_id = d.tenancy_id
+                and a.region_id = d.region_id
+                and e.id = a.region_id
+                group by c.workshop_id, a.tenancy_id, e.region_location||' ('||e.region_identifier||')'
+                
+                ```
+            pageItemsToSubmit: [
+                P9402_WORKSHOP_ID
+                P9402_VALID_FROM
+                P9402_VALID_TO
+                P9402_VALID_TIMEZONE
+                P9402_ID
+            ]
+        }
+        layout {
+            sequence: 10
+            parentRegion: @oraclepartnersas-availability
+            slot: subRegions
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        pagination {
+            type: rowRangesXToY
+        }
+        messages {
+            whenNoDataFound: No data found.
+            whenMoreDataFound: The maximum row count for this report is #MAX_ROW_COUNT# rows.  Please apply a filter to reduce the number of records in your query.
+        }
+        actionsMenu {
+            subscription: false
+        }
+        advanced {
+            savedReportMappingIdentifier: 157106362203254087
+        }
+
+        column ENV_AVAILABLE (
+            type: plainText
+            heading {
+                heading: Env Available
+                alignment: end
+            }
+            layout {
+                sequence: 4
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: D
+            }
+        )
+
+        column REGION (
+            type: plainText
+            heading {
+                heading: Region
+                alignment: center
+            }
+            layout {
+                sequence: 14
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: E
+            }
+        )
+
+        column TENANCY_ID (
+            type: plainTextBasedOnLov
+            heading {
+                heading: Tenancy
+            }
+            lov {
+                lov: @ll-tenancies-2
+            }
+            layout {
+                sequence: 2
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: B
+            }
+        )
+
+        column WORKSHOP_ID (
+            type: hidden
+            heading {
+                heading: Workshop Id
+            }
+            layout {
+                sequence: 1
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: A
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: Environment Availability
+        }
+
+        savedReport 1568181 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn ENV_AVAILABLE (
+                sequence: 2
+            )
+
+            displayColumn REGION (
+                sequence: 1
+            )
+
+        )
+
+    )
+
+    region oraclepartnersas-availability (
+        name: OraclePartnerSas availability
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                The following report indicates how many environments can be build for the current workshop on OraclePartnerSas in the choosen period. Please refresh this report after making updates to be sure to get the most accurate values.<br><br>
+                <b>Be aware that this table is experimental and indication only</b><br><br>
+                ```
+        }
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @collapsible
+            templateOptions: [
+                #DEFAULT#
+                js-useLocalStorage
+                t-Region--hideShowIconsMath
+                is-expanded
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region pts-reservation-details (
+        name: PTS Reservation Details
+        type: form
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select ID,
+                       REASON,
+                       VOUCHER_CODE,
+                       replace(apex_util.host_url('NULL')||ll_pkg_apex.event_code_url(VOUCHER_CODE),'//','/') as voucher_link,
+                       EMAIL_CREATOR,
+                       EMAIL_REQUESTOR,
+                       VALID_FROM,
+                       VALID_TO,
+                       USERS_MAXIMUM,
+                       WORKSHOP_ID,
+                       ACTIVE_FLG,
+                       REMARKS,
+                       VALID_TIMEZONE,
+                       TENANCY_ID,
+                       REGION_ID,
+                       ALT_TIME_AVAILABLE,
+                       EVENT_JSON
+                  from LL_VOUCHERS
+                ```
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        edit {
+            enabled: true
+            allowedOperations: [
+                add
+                update
+                delete
+            ]
+        }
+    )
+
+    pageItem P9402_ACTIVE_FLG (
+        type: selectList
+        label {
+            label: Event Active
+            alignment: left
+        }
+        lov {
+            type: sharedComponent
+            lov: @active-flg
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 50
+            region: @pts-reservation-details
+            slot: regionBody
+            alignment: left
+            columnSpan: 1
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            formRegion: @pts-reservation-details
+            column: ACTIVE_FLG
+            dataType: varchar2
+        }
+        default {
+            type: static
+            staticValue: Y
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9402_ALT_TIME_AVAILABLE (
+        type: numberField
+        label {
+            label: Setup available in Hours
+            alignment: left
+        }
+        settings {
+            minValue: 1
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 160
+            region: @pts-reservation-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 2
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            valueRequired: true
+            maxLength: 255
+        }
+        source {
+            formRegion: @pts-reservation-details
+            column: ALT_TIME_AVAILABLE
+            dataType: number
+        }
+        default {
+            type: sqlQuerySingleValue
+            sqlQuerySingleValue:
+                ```sql
+                select time_available 
+                from ll_workshops
+                where id = :P9402_WORKSHOP_ID
+                ```
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9402_EMAIL_CREATOR (
+        type: displayOnly
+        label {
+            label: Email Creator
+            alignment: left
+        }
+        layout {
+            sequence: 30
+            region: @pts-reservation-details
+            slot: regionBody
+            alignment: left
+            columnSpan: 4
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @pts-reservation-details
+            column: EMAIL_CREATOR
+            dataType: varchar2
+        }
+        default {
+            type: expression
+            plsqlExpression: :app_user
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9402_EMAIL_REQUESTOR (
+        type: textField
+        label {
+            label: Other people that need to be informed; separate emails by comma
+            alignment: left
+        }
+        layout {
+            sequence: 40
+            region: @pts-reservation-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 60
+        }
+        validation {
+            maxLength: 4000
+        }
+        source {
+            formRegion: @pts-reservation-details
+            column: EMAIL_REQUESTOR
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9402_ID (
+        type: hidden
+        layout {
+            sequence: 10
+            region: @pts-reservation-details
+            slot: regionBody
+        }
+        source {
+            formRegion: @pts-reservation-details
+            column: ID
+            dataType: number
+            primaryKey: true
+        }
+        security {
+            sessionStateProtection: checksumRequiredSessionLevel
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9402_REASON (
+        type: textField
+        label {
+            label: Title of the event (will be displayed on the attendee page)
+            alignment: left
+        }
+        layout {
+            sequence: 60
+            region: @pts-reservation-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 60
+        }
+        validation {
+            valueRequired: true
+            maxLength: 200
+        }
+        source {
+            formRegion: @pts-reservation-details
+            column: REASON
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9402_REGION_ID (
+        type: popupLov
+        label {
+            label: Region
+            alignment: left
+        }
+        settings {
+            fetchOnSearch: true
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select Region_location||' ('||region_identifier||')', id
+                from ll_oci_regions
+                where id in (select region_id 
+                             from ll_workshop_regions
+                             where tenancy_id = :P9402_TENANCY_ID
+                               and workshop_id = :P9402_WORKSHOP_ID)
+                                                          
+                
+                ```
+            displayNullValue: false
+        }
+        cascadingLov {
+            parentItems: [
+                P9402_TENANCY_ID
+                P9402_WORKSHOP_ID
+            ]
+        }
+        layout {
+            sequence: 100
+            region: @pts-reservation-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 255
+        }
+        source {
+            formRegion: @pts-reservation-details
+            column: REGION_ID
+            dataType: number
+        }
+        sessionState {
+            storage: session
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9402_REMARKS (
+        type: hidden
+        layout {
+            sequence: 20
+            region: @pts-reservation-details
+            slot: regionBody
+        }
+        source {
+            formRegion: @pts-reservation-details
+            column: REMARKS
+            dataType: varchar2
+        }
+        default {
+            type: static
+            staticValue: Delivered by PTS
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9402_TENANCY_ID (
+        type: selectList
+        label {
+            label: Tenancy
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select tenancy_name, id
+                from ll_tenancies
+                where id in (select tenancy_id from ll_workshop_regions)
+                
+                ```
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 90
+            region: @pts-reservation-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            formRegion: @pts-reservation-details
+            column: TENANCY_ID
+            dataType: number
+        }
+        default {
+            type: sqlQuerySingleValue
+            sqlQuerySingleValue:
+                ```sql
+                select id
+                from ll_tenancies
+                where upper(tenancy_name) = 'ORACLEPARTNERSAS'
+                ```
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9402_USERS_MAXIMUM (
+        type: numberField
+        label {
+            label: Number of attendees
+            alignment: left
+        }
+        settings {
+            minValue: 1
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 70
+            region: @pts-reservation-details
+            slot: regionBody
+            alignment: left
+            columnSpan: 2
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            valueRequired: true
+            maxLength: 255
+        }
+        source {
+            formRegion: @pts-reservation-details
+            column: USERS_MAXIMUM
+            dataType: number
+        }
+        default {
+            type: static
+            staticValue: 1
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9402_VALID_FROM (
+        type: datePickerJquery
+        label {
+            label: Event Code enabled from
+            alignment: left
+        }
+        layout {
+            sequence: 130
+            region: @pts-reservation-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 255
+        }
+        source {
+            formRegion: @pts-reservation-details
+            column: VALID_FROM
+            dataType: date
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9402_VALID_TIMEZONE (
+        type: popupLov
+        label {
+            label: Timezone
+            alignment: left
+        }
+        settings {
+            fetchOnSearch: true
+        }
+        search {
+            minChars: 1
+        }
+        lov {
+            type: sharedComponent
+            lov: @timezones
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 150
+            region: @pts-reservation-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 50
+        }
+        source {
+            formRegion: @pts-reservation-details
+            column: VALID_TIMEZONE
+            dataType: varchar2
+        }
+        default {
+            type: static
+            staticValue: GMT
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9402_VALID_TO (
+        type: datePickerJquery
+        label {
+            label: Event code enabled until
+            alignment: left
+        }
+        layout {
+            sequence: 140
+            region: @pts-reservation-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 255
+        }
+        source {
+            formRegion: @pts-reservation-details
+            column: VALID_TO
+            dataType: date
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9402_VOUCHER_CODE (
+        type: displayOnly
+        label {
+            label: Voucher Code
+            alignment: left
+        }
+        layout {
+            sequence: 110
+            region: @pts-reservation-details
+            slot: regionBody
+            alignment: left
+            columnSpan: 2
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @pts-reservation-details
+            column: VOUCHER_CODE
+            dataType: varchar2
+            queryOnly: true
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P9402_VOUCHER_CODE
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9402_VOUCHER_LINK (
+        type: displayOnly
+        label {
+            label: Voucher Link
+            alignment: left
+        }
+        layout {
+            sequence: 120
+            region: @pts-reservation-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @pts-reservation-details
+            column: VOUCHER_LINK
+            dataType: varchar2
+            queryOnly: true
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P9402_VOUCHER_CODE
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9402_WORKSHOP_ID (
+        type: popupLov
+        label {
+            label: Workshop
+            alignment: left
+        }
+        settings {
+            fetchOnSearch: true
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select name, id
+                from ll_workshops 
+                where id in ( select workshop_id 
+                              from ll_workshop_regions
+                              where tenancy_id = (select id 
+                                                  from ll_tenancies  
+                                                  where upper(tenancy_name) = 'ORACLEPARTNERSAS'))
+                ```
+            displayExtraValues: false
+            nullDisplayValue: -
+        }
+        layout {
+            sequence: 80
+            region: @pts-reservation-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @required-floating
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            valueRequired: true
+            maxLength: 255
+        }
+        source {
+            formRegion: @pts-reservation-details
+            column: WORKSHOP_ID
+            dataType: number
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button cancel (
+        buttonName: CANCEL
+        label: Cancel
+        layout {
+            sequence: 10
+            region: @pts-reservation-details
+            slot: close
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 9401
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button create (
+        buttonName: CREATE
+        label: Create
+        layout {
+            sequence: 40
+            region: @pts-reservation-details
+            slot: create
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: insert
+        }
+        serverSideCondition {
+            type: itemIsNull
+            item: P9402_ID
+        }
+    )
+
+    button save (
+        buttonName: SAVE
+        label: Apply Changes
+        layout {
+            sequence: 30
+            region: @pts-reservation-details
+            slot: change
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: update
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P9402_ID
+        }
+    )
+
+    dynamicAction changenumber (
+        name: ChangeNumber
+        execution {
+            sequence: 20
+        }
+        when {
+            selectionType: items
+            items: P9402_USERS_MAXIMUM
+        }
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @environment-availability
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction wsid-changed (
+        name: WSID_CHANGED
+        execution {
+            sequence: 10
+        }
+        when {
+            selectionType: items
+            items: P9402_WORKSHOP_ID
+        }
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @environment-availability
+            }
+            execution {
+                sequence: 40
+                fireOnInit: false
+            }
+        )
+
+        action native-set-value (
+            action: setValue
+            settings {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select time_available 
+                    from ll_workshops
+                    where id = :P9402_WORKSHOP_ID
+                    ```
+                itemsToSubmit: P9402_WORKSHOP_ID
+            }
+            affectedElements {
+                selectionType: items
+                items: P9402_ALT_TIME_AVAILABLE
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    process initialize-form-pts-reservation-details (
+        name: Initialize form PTS Reservation Details
+        type: formInitialization
+        formRegion: @pts-reservation-details
+        execution {
+            sequence: 10
+            point: beforeHeader
+        }
+        advanced {
+            executionMappingIdentifier: 335949068407373525
+        }
+    )
+
+    process process-form-pts-reservation-details (
+        name: Process form PTS Reservation Details
+        type: formAutoRowProcessing
+        formRegion: @pts-reservation-details
+        execution {
+            sequence: 10
+        }
+        advanced {
+            executionMappingIdentifier: 335949459757373525
+        }
+    )
+
+    branch (
+        execution {
+            sequence: 1
+        }
+        behavior {
+            target: {
+                page: 9401
+            }
+        }
+    )
+
+)
+

@@ -1,0 +1,659 @@
+lov active-flg (
+    name: ACTIVE_FLG
+    source {
+        location: staticValues
+    }
+
+    entry n (
+        sequence: 2
+        display: No
+        return: N
+    )
+
+    entry y (
+        sequence: 1
+        display: Yes
+        return: Y
+    )
+
+)
+
+lov copy-of-ll-workshops-active (
+    name: COPY OF LL_WORKSHOPS_ACTIVE
+    source {
+        type: sqlQuery
+        sqlQuery:
+            ```sql
+            with combo as (
+                SELECT 
+                    name AS display_val,
+                    id,
+                    COALESCE(
+                        (SELECT par_link FROM ll_workshop_icons WHERE id = icon_id),
+                        ll_pkg_apex.getWorkshopCardIconPAR(id)
+                    ) AS par_link,
+                    featured_flg,
+                    pg_views
+                FROM ll_workshops
+                WHERE active_flg = 'Y'
+                UNION ALL
+                SELECT
+                    name as display_val, 
+                    id * -1 as id, 
+                    'https://c4u02.objectstorage.us-ashburn-1.oci.customer-oci.com/p/x98DkHyJNR5jQwArE-oPVJ0wPo5REH3qscX8wlXahgmFdp7UVwLEBDwsODjEHWDg/n/c4u02/b/WorkshopIcons/o/livestack.png' as par_link,
+                    'Y' as featured_flg,
+                    pg_views
+                FROM ll_livestacks
+                WHERE active_flg = 'Y'
+            )
+            SELECT 
+                display_val,
+                id,
+                par_link
+            FROM combo
+            ORDER BY featured_flg desc nulls last, pg_views desc nulls last;
+            ```
+    }
+    columnMapping {
+        return: ID
+        display: DISPLAY_VAL
+        icon: PAR_LINK
+    }
+
+    column DISPLAY_VAL (
+        heading {
+            heading: Display Val
+        }
+        layout {
+            sequence: 20
+        }
+        source {
+            dataType: varchar2
+        }
+    )
+
+    column ID (
+        show: false
+        layout {
+            sequence: 10
+        }
+        source {
+            dataType: number
+        }
+    )
+
+    column PAR_LINK (
+        show: false
+        heading {
+            heading: Par Link
+        }
+        layout {
+            sequence: 30
+        }
+        source {
+            dataType: varchar2
+        }
+        advanced {
+            searchable: false
+        }
+    )
+
+)
+
+lov feedback-rating (
+    name: FEEDBACK_RATING
+    source {
+        location: staticValues
+    }
+
+    entry lov_data (
+        sequence: 1
+        display: Positive
+        return: 3
+        globalization {
+            template: <span title="#DISPLAY_VALUE#" aria-label="#DISPLAY_VALUE#"><span class="fa fa-smile-o fa-2x feedback-positive" aria-hidden="true" ></span></span>
+        }
+    )
+
+    entry lov_data-2 (
+        sequence: 2
+        display: Neutral
+        return: 2
+        globalization {
+            template: <span title="#DISPLAY_VALUE#" aria-label="#DISPLAY_VALUE#"><span class="fa fa-emoji-neutral fa-2x feedback-neutral" aria-hidden="true" ></span></span>
+        }
+    )
+
+    entry lov_data-3 (
+        sequence: 3
+        display: Negative
+        return: 1
+        globalization {
+            template: <span title="#DISPLAY_VALUE#" aria-label="#DISPLAY_VALUE#"><span class="fa fa-frown-o fa-2x feedback-negative" aria-hidden="true" ></span></span>
+        }
+    )
+
+)
+
+lov feedback-status (
+    name: FEEDBACK_STATUS
+    source {
+        tableName: LL_KEYS
+        whereClause: KEY_TYPE='FEEDBACK_STATUS'
+    }
+    columnMapping {
+        return: KEY_VALUE
+        display: KEY_NAME
+        defaultSort: KEY_ORDER
+    }
+)
+
+lov feedback-type (
+    name: FEEDBACK_TYPE
+    source {
+        tableName: LL_KEYS
+        whereClause: KEY_TYPE='FEEDBACK_TYPE'
+    }
+    columnMapping {
+        return: KEY_VALUE
+        display: KEY_NAME
+        defaultSort: KEY_ORDER
+    }
+)
+
+lov instantiate-level (
+    name: INSTANTIATE_LEVEL
+    source {
+        type: sqlQuery
+        sqlQuery:
+            ```sql
+            select key_name, key_value
+            from ll_keys
+            where key_type='INSTANTIATE'
+            order by key_name
+            ```
+    }
+    columnMapping {
+        return: KEY_VALUE
+        display: KEY_NAME
+    }
+)
+
+lov ll-dynamic-menu (
+    name: LL_DYNAMIC_MENU
+    source {
+        tableName: LL_DYNAMIC_MENU
+    }
+    columnMapping {
+        return: ID
+        display: ITEM_NAME
+        defaultSort: ITEM_NAME
+    }
+)
+
+lov ll-email-template (
+    name: LL_EMAIL_TEMPLATE
+    source {
+        type: sqlQuery
+        sqlQuery:
+            ```sql
+            select name || ' (' || phase || ')', id
+            from ll_email_template
+            order by name
+            ```
+    }
+    columnMapping {
+        return: ID
+        display: NAME||'('||PHASE||')'
+    }
+)
+
+lov ll-flow-steps (
+    name: LL_FLOW_STEPS
+    source {
+        type: sqlQuery
+        sqlQuery:
+            ```sql
+            select name || '(' || step_code || ')' as display_value, id as return_value
+            from ll_flow_steps
+            order by case substr(step_code,1,3) when 'Grp' then 0 else 1 end, create_order
+            ```
+    }
+    columnMapping {
+        return: RETURN_VALUE
+        display: DISPLAY_VALUE
+    }
+)
+
+lov ll-images (
+    name: LL_IMAGES
+    source {
+        type: sqlQuery
+        sqlQuery:
+            ```sql
+            select name||case active_flg when 'N' then ' - Not active' end as name, id
+            from ll_images
+            order by active_flg desc, name
+            ```
+    }
+    columnMapping {
+        return: ID
+        display: NAME
+    }
+)
+
+lov ll-oci-region-endpoints (
+    name: LL_OCI_REGION_ENDPOINTS
+    source {
+        tableName: LL_OCI_REGION_ENDPOINTS
+    }
+    columnMapping {
+        return: ENDPOINT_TYPE
+        display: ENDPOINT_TYPE
+        defaultSort: ENDPOINT_TYPE
+    }
+)
+
+lov ll-ovw-compartments (
+    name: LL_OVW_COMPARTMENTS
+    source {
+        tableName: LL_OVW_COMPARTMENTS
+    }
+    columnMapping {
+        return: ID
+        display: NAME
+        defaultSort: NAME
+    }
+)
+
+lov ll-ovw-compartments-nested (
+    name: LL_OVW_COMPARTMENTS_NESTED
+    source {
+        tableName: LL_OVW_COMPARTMENTS
+    }
+    columnMapping {
+        return: ID
+        display: NESTED_PATH
+        defaultSort: NESTED_PATH
+    }
+)
+
+lov ll-policies (
+    name: LL_POLICIES
+    source {
+        type: sqlQuery
+        sqlQuery:
+            ```sql
+            select description || '(' || case restrict_region when 'R' then 'Region limited, ' else '' end || case nvl(active_flg,'Y') when 'Y' then '' else 'Inactive' end || ')' as display, id
+            from ll_policies
+            order by description
+            ```
+    }
+    columnMapping {
+        return: ID
+        display: DISPLAY
+    }
+)
+
+lov ll-region-keys (
+    name: LL_REGION_KEYS
+    source {
+        type: sqlQuery
+        sqlQuery:
+            ```sql
+            select master_region || ' - '|| region_key || ' - '||region_name as display_val, id as return_val
+            from ll_oci_regions
+            order by master_region, region_key
+            ```
+    }
+    columnMapping {
+        return: RETURN_VAL
+        display: DISPLAY_VAL
+    }
+)
+
+lov ll-regions (
+    name: LL_REGIONS
+    source {
+        type: sqlQuery
+        sqlQuery:
+            ```sql
+            select region_name||' ('||master_region||')' as display_val, id as return_val
+            from ll_oci_regions
+            order by master_region, region_name
+            ```
+    }
+    columnMapping {
+        return: RETURN_VAL
+        display: DISPLAY_VAL
+    }
+)
+
+lov ll-resource-groups (
+    name: LL_RESOURCE_GROUPS
+    source {
+        type: sqlQuery
+        sqlQuery:
+            ```sql
+            select name || 
+                     case nvl(description,'NotFilled') when 'NotFilled' then null else ' - ' || description end || 
+                     case is_group when 'Y' then ' (Group)' end ||
+                     case active_flg when 'N' then ' (Inactive)' end as display_value, 
+                   id as return_value
+            from LL_RESOURCES
+            where is_group='Y'
+            order by case is_group when 'Y' then 0 else 1 end, sort_order
+            ```
+    }
+    columnMapping {
+        return: RETURN_VALUE
+        display: DISPLAY_VALUE
+    }
+)
+
+lov ll-resources (
+    name: LL_RESOURCES
+    source {
+        type: sqlQuery
+        sqlQuery:
+            ```sql
+            select  case active_flg when 'N' then 'Inactive - ' end ||
+                    case nvl(description,'NotFilled') when 'NotFilled' then name || ' ('||id||') ' else description || ' (' || name || ', '||id|| ')' end as display_value, 
+                   id as return_value
+            from LL_RESOURCES
+            order by case active_flg when 'Y' then 0 else 1 end
+            ```
+    }
+    columnMapping {
+        return: RETURN_VALUE
+        display: DISPLAY_VALUE
+    }
+)
+
+lov ll-resources-for-images (
+    name: LL_RESOURCES FOR IMAGES
+    source {
+        type: sqlQuery
+        sqlQuery:
+            ```sql
+            select  case active_flg when 'N' then 'Inactive - ' end ||
+                    case nvl(description,'NotFilled') when 'NotFilled' then name else description || ' (' || name || ')' end as display_value, 
+                   id as return_value
+            from LL_RESOURCES
+            where quota_family like 'compute%'
+            order by case active_flg when 'Y' then 0 else 1 end, sort_order
+            ```
+    }
+    columnMapping {
+        return: RETURN_VALUE
+        display: DISPLAY_VALUE
+    }
+)
+
+lov ll-shape-groups (
+    name: LL_SHAPE_GROUPS
+    source {
+        type: sqlQuery
+        sqlQuery:
+            ```sql
+            select key_name ||case active_flg when 'N' then ' (not active)' end as display_val, to_number(key_value) as return_val
+            from ll_keys
+            where key_type='SHAPE GROUP'
+            order by active_flg desc, key_order asc
+            ```
+    }
+    columnMapping {
+        return: RETURN_VAL
+        display: DISPLAY_VAL
+    }
+)
+
+lov ll-tags (
+    name: LL_TAGS
+    source {
+        type: sqlQuery
+        sqlQuery:
+            ```sql
+            select level1||' - '||nvl(level3,level2) as name, id
+            from ll_tags
+            order by 1
+            ```
+    }
+    columnMapping {
+        return: ID
+        display: NAME
+    }
+)
+
+lov ll-tenancies (
+    name: LL_TENANCIES
+    source {
+        type: sqlQuery
+        sqlQuery:
+            ```sql
+            select tenancy_name||' ('||id||', '||user_name||')' as display_val, id as return_val
+            from ll_tenancies
+            order by tenancy_name
+            ```
+    }
+    columnMapping {
+        return: RETURN_VAL
+        display: DISPLAY_VAL
+    }
+)
+
+lov ll-workshops (
+    name: LL_WORKSHOPS
+    source {
+        type: sqlQuery
+        sqlQuery:
+            ```sql
+            select name||' ('||id||')' as display_val, id
+            from ll_workshops
+            order by name
+            ```
+    }
+    columnMapping {
+        return: ID
+        display: DISPLAY_VAL
+    }
+)
+
+lov ll-workshops-active (
+    name: LL_WORKSHOPS_ACTIVE
+    source {
+        type: sqlQuery
+        sqlQuery:
+            ```sql
+            select name as display_val, id
+            from ll_workshops
+            where active_flg='Y'
+            order by name
+            ```
+    }
+    columnMapping {
+        return: ID
+        display: DISPLAY_VAL
+    }
+)
+
+lov ll-workshops-for-event-codes (
+    name: LL_WORKSHOPS_FOR_EVENT_CODES
+    source {
+        type: sqlQuery
+        sqlQuery:
+            ```sql
+            select id||' - '||name||' (active='||active_flg||')' as display_val, id
+            from ll_workshops
+            where nvl(active_flg,'Y')<>'N'
+            order by name
+            ```
+    }
+    columnMapping {
+        return: ID
+        display: DISPLAY_VAL
+    }
+)
+
+lov login-remember-username (
+    name: LOGIN_REMEMBER_USERNAME
+    source {
+        location: staticValues
+    }
+
+    entry y (
+        sequence: 10
+        display: Remember username
+        return: Y
+    )
+
+)
+
+lov loglevel (
+    name: LOGLEVEL2
+    source {
+        type: sqlQuery
+        sqlQuery:
+            ```sql
+            select key_name, key_value
+            from ll_keys
+            where key_type='LOGLEVEL'
+            order by key_order
+            ```
+    }
+    columnMapping {
+        return: KEY_VALUE
+        display: KEY_NAME
+    }
+)
+
+lov loglevel-2 (
+    name: LOGLEVEL
+    source {
+        type: sqlQuery
+        sqlQuery:
+            ```sql
+            select key_name, key_value
+            from ll_keys
+            where key_type='LOGLEVEL'
+            order by key_order
+            ```
+    }
+    columnMapping {
+        return: KEY_VALUE
+        display: KEY_NAME
+    }
+)
+
+lov starttime (
+    name: STARTTIME
+    source {
+        type: sqlQuery
+        sqlQuery:
+            ```sql
+            select key_name, key_value
+            from ll_keys
+            where key_type='STARTTIME'
+            order by key_order
+            ```
+    }
+    columnMapping {
+        return: KEY_VALUE
+        display: KEY_NAME
+    }
+)
+
+lov timeframe-4-weeks (
+    name: TIMEFRAME (4 WEEKS)
+    source {
+        type: sqlQuery
+        sqlQuery:
+            ```sql
+            select disp,
+                  val as seconds
+             from table( apex_util.get_timeframe_lov_data )
+            order by insert_order
+            ```
+    }
+    columnMapping {
+        return: SECONDS
+        display: DISP
+    }
+)
+
+lov timezones (
+    name: TIMEZONES
+    source {
+        type: sqlQuery
+        sqlQuery:
+            ```sql
+            select key_name, key_value
+            from ll_keys
+            where key_type='TIMEZONE'
+            and active_flg='Y'
+            order by key_order, key_name
+            ```
+    }
+    columnMapping {
+        return: KEY_VALUE
+        display: KEY_NAME
+    }
+)
+
+lov view-as-report-chart (
+    name: VIEW_AS_REPORT_CHART
+    source {
+        location: staticValues
+    }
+
+    entry chart (
+        sequence: 2
+        display: Add Chart Page
+        return: CHART
+        globalization {
+            template: <span class="fa fa-pie-chart" aria-hidden="true"></span><span class="u-VisuallyHidden">#DISPLAY_VALUE#</span>
+        }
+    )
+
+    entry report (
+        sequence: 1
+        display: Add Report Page
+        return: REPORT
+        globalization {
+            template: <span class="fa fa-table" aria-hidden="true"></span><span class="u-VisuallyHidden">#DISPLAY_VALUE#</span>
+        }
+    )
+
+)
+
+lov wmasdon-event-code-tenancies (
+    name: WMASDON_EVENT_CODE_TENANCIES
+    source {
+        type: sqlQuery
+        sqlQuery:
+            ```sql
+            select tenancy_name||' ('||id||', '||user_name||')' as display_val, id as return_val
+            from ll_tenancies
+            where active_flg='Y'
+            order by tenancy_name
+            ```
+    }
+    columnMapping {
+        return: RETURN_VAL
+        display: DISPLAY_VAL
+    }
+)
+
+lov workshop-owner-group (
+    name: WORKSHOP_OWNER_GROUP
+    source {
+        tableName: LL_KEYS
+        whereClause: key_type = 'OWNER_GROUP'
+    }
+    columnMapping {
+        return: KEY_VALUE
+        display: KEY_NAME
+        defaultSort: KEY_ORDER
+    }
+)
+

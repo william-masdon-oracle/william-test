@@ -1,0 +1,539 @@
+page 19 (
+    name: Batch Provisioning - Event Details
+    title: Provide Event Details
+    pageGroup: @administration
+    appearance {
+        pageTemplate: @standard-trustarc
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region batch-provisioning-event-details (
+        name: Batch Provisioning - Event Details
+        type: list
+        source {
+            list: @batch-provision
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @wizard-container
+            templateOptions: [
+                #DEFAULT#
+                t-Wizard--hideStepsXSmall
+            ]
+        }
+        componentAppearance {
+            listTemplate: @wizard-progress
+        }
+    )
+
+    region batch-provisioning-event-details-2 (
+        name: Batch Provisioning - Event Details
+        type: staticContent
+        layout {
+            sequence: 10
+            parentRegion: @batch-provisioning-event-details
+            slot: wizardSubRegions
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    region demo-details (
+        name: Demo Details
+        title: Schedule the Batch Reservations
+        type: staticContent
+        layout {
+            sequence: 60
+            parentRegion: @batch-provisioning-event-details-2
+            slot: regionBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--accent1
+                t-Region--scrollBody
+                margin-bottom-md
+            ]
+        }
+    )
+
+    region event-details (
+        name: Event Details
+        title: Select an Event
+        type: staticContent
+        layout {
+            sequence: 10
+            parentRegion: @batch-provisioning-event-details-2
+            slot: regionBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--accent1
+                t-Region--scrollBody
+                margin-bottom-lg
+            ]
+        }
+    )
+
+    region hidden-items (
+        name: Hidden Items
+        type: staticContent
+        layout {
+            sequence: 70
+            parentRegion: @batch-provisioning-event-details-2
+            slot: regionBody
+        }
+    )
+
+    pageItem P19_BATCH_SIZE (
+        type: numberField
+        label {
+            label: Max Batch Size
+            alignment: left
+        }
+        settings {
+            minValue: 1
+            virtualKeyboard: numeric
+        }
+        layout {
+            sequence: 60
+            region: @demo-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @required-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            valueRequired: true
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            helpText: "How many environments are to be reserved at once? "
+        }
+    )
+
+    pageItem P19_BATCH_TIME_INTERVAL (
+        type: numberField
+        label {
+            label: Batch Time Interval (Minutes)
+            alignment: left
+        }
+        settings {
+            minValue: 1
+            virtualKeyboard: numeric
+        }
+        layout {
+            sequence: 70
+            region: @demo-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @required-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            valueRequired: true
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            helpText: How many minutes should be between each batch?
+        }
+    )
+
+    pageItem P19_CURRENT_DAY (
+        type: hidden
+        layout {
+            sequence: 10
+            region: @demo-details
+            slot: regionBody
+        }
+        default {
+            type: sqlQuerySingleValue
+            sqlQuerySingleValue: select to_char(sysdate, 'YYYYMMDDHH24MI') from dual;
+        }
+    )
+
+    pageItem P19_EVENT_CODE_ID (
+        type: popupLov
+        label {
+            label: Event
+            alignment: left
+        }
+        settings {
+            fetchOnSearch: true
+            additionalOutputs: WORKSHOP_ID:P19_WORKSHOP_ID,WORKSHOP_NAME:P19_WORKSHOP_TITLE
+        }
+        lov {
+            type: sharedComponent
+            lov: @ll-event-codes
+        }
+        layout {
+            sequence: 20
+            region: @event-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required-floating
+            templateOptions: #DEFAULT#
+            width: 15
+        }
+        validation {
+            valueRequired: true
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P19_NEXT_URL (
+        type: hidden
+        layout {
+            sequence: 10
+            region: @hidden-items
+            slot: regionBody
+        }
+    )
+
+    pageItem P19_RESERVATION_SIZE (
+        type: numberField
+        label {
+            label: Reservation Size
+            alignment: left
+        }
+        settings {
+            minValue: 1
+            virtualKeyboard: numeric
+        }
+        layout {
+            sequence: 50
+            region: @demo-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            valueRequired: true
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            helpText: How many total environments are to be reserved?
+        }
+    )
+
+    pageItem P19_SSH_KEY (
+        type: textField
+        label {
+            label: SSH Key
+            alignment: left
+        }
+        layout {
+            sequence: 60
+            region: @event-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        serverSideCondition {
+            type: expression
+            plsqlExpression: ll_pkg_apex.requires_pub_key (p_workshop_id => :P19_WORKSHOP_ID) = 'Y'
+        }
+    )
+
+    pageItem P19_START_DATE (
+        type: datePicker
+        label {
+            label: Start Date
+            alignment: left
+        }
+        settings {
+            minDate: item
+            minItem: P19_CURRENT_DAY
+            multipleMonths: 5
+        }
+        layout {
+            sequence: 20
+            region: @demo-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            valueRequired: true
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P19_START_TIME (
+        type: popupLov
+        label {
+            label: Start Time
+            alignment: left
+        }
+        lov {
+            type: sharedComponent
+            lov: @starttime
+        }
+        layout {
+            sequence: 30
+            region: @demo-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @required-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            valueRequired: true
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P19_TENANCY_FILTER (
+        type: selectMany
+        label {
+            label: Tenancy Filter
+            alignment: left
+        }
+        settings {
+            infiniteScroll: false
+        }
+        lov {
+            type: sharedComponent
+            lov: @ll-active-tenancies
+        }
+        multipleValues {
+            separator: ,
+        }
+        layout {
+            sequence: 80
+            region: @demo-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            width: 30
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P19_TIME_ZONE (
+        type: popupLov
+        label {
+            label: Time Zone
+            alignment: left
+        }
+        lov {
+            type: sharedComponent
+            lov: @timezones
+        }
+        layout {
+            sequence: 40
+            region: @demo-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @required-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            valueRequired: true
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P19_WORKSHOP_ID (
+        type: displayOnly
+        label {
+            label: Workshop ID
+            alignment: left
+        }
+        layout {
+            sequence: 50
+            region: @event-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery: select workshop_id from ll_vouchers where id = :P19_EVENT_CODE_ID
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P19_WORKSHOP_TITLE (
+        type: displayOnly
+        label {
+            label: Workshop Title
+            alignment: left
+        }
+        layout {
+            sequence: 40
+            region: @event-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery: select name from ll_workshops where id = (select workshop_id from ll_vouchers where id = :P19_EVENT_CODE_ID);
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button cancel (
+        buttonName: CANCEL
+        label: Cancel
+        layout {
+            sequence: 10
+            region: @batch-provisioning-event-details
+            slot: close
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 1
+                clearCache: [
+                    19
+                    20
+                    23
+                ]
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button next (
+        buttonName: NEXT
+        label: Next
+        layout {
+            sequence: 30
+            region: @batch-provisioning-event-details
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @text-with-icon
+            hot: true
+            templateOptions: t-Button--iconRight
+            icon: fa-chevron-right
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    validation validate-ssh-key (
+        name: Validate SSH Key
+        execution {
+            sequence: 10
+        }
+        validation {
+            plsqlExpression: ll_pkg_reservation.validate_public_key(:P320_PUBLIC_KEY) = 'Y'
+            alwaysExecute: true
+        }
+        error {
+            errorMessage:
+                ```
+                This is not a valid public key of the SSH-RSA type. Please follow the link below the SSH key field for information on how to generate a public/private key set.
+                <br><a href="https://oracle.github.io/learning-library/common/labs/generate-ssh-key/" target="_blank">Create SSH Keys</a>
+                ```
+            associatedItem: @P19_SSH_KEY
+        }
+        serverSideCondition {
+            whenButtonPressed: @next
+            type: expression
+            plsqlExpression: ll_pkg_apex.requires_pub_key (p_workshop_id => :P320_WORKSHOP_ID) = 'Y' and :P320_PUBLIC_KEY is not null
+        }
+    )
+
+    branch (
+        name: Go To Page 20
+        execution {
+            sequence: 30
+            point: afterSubmit
+        }
+        behavior {
+            target: {
+                page: 20
+                clearCache: 20
+            }
+        }
+        serverSideCondition {
+            whenButtonPressed: @next
+        }
+    )
+
+)
+

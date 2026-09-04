@@ -1,0 +1,990 @@
+page 28 (
+    name: View Listing Info
+    alias: VIEW-LISTING-INFO
+    title: View Listing Info
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @modal-dialog
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region buttons (
+        name: Buttons
+        type: staticContent
+        layout {
+            sequence: 30
+            parentRegion: @view-listing-info
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--scrollBody
+                margin-top-sm
+                margin-bottom-none
+            ]
+        }
+        settings {
+            outputAs: text
+        }
+    )
+
+    region listing-images (
+        name: Listing Images
+        type: staticContent
+        layout {
+            sequence: 30
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--accent1
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    region view-all-listing-images (
+        name: View All Listing Images
+        type: interactiveReport
+        source {
+            location: localDatabase
+            tableName: LL_IMAGES
+            whereClause: LISTING_ID = :P28_ID
+        }
+        layout {
+            sequence: 10
+            parentRegion: @listing-images
+            slot: subRegions
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        link {
+            linkColumn: customTarget
+            target: {
+                page: 33
+                items: {
+                    P33_ID: #ID#
+                }
+            }
+            linkIcon: <span role="img" aria-label="Edit" class="fa fa-edit" title="Edit"></span>
+        }
+        pagination {
+            type: rowRangesXToY
+        }
+        performance {
+            maxRowsToProcess: 1000000
+        }
+        advanced {
+            savedReportMappingIdentifier: 9561550713035360
+        }
+
+        column ACTIVE_FLG (
+            type: hidden
+            heading {
+                heading: Active Flg
+            }
+            layout {
+                sequence: 40
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: D
+            }
+        )
+
+        column ADDED_BY (
+            type: plainText
+            heading {
+                heading: Added By
+            }
+            layout {
+                sequence: 150
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: O
+            }
+        )
+
+        column ADDED_ON (
+            type: plainText
+            heading {
+                heading: Added On
+            }
+            layout {
+                sequence: 140
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: N
+            }
+        )
+
+        column DATABASE_VERSION (
+            type: plainText
+            heading {
+                heading: Database Version
+            }
+            layout {
+                sequence: 120
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: L
+            }
+        )
+
+        column ID (
+            type: plainText
+            heading {
+                heading: ID
+            }
+            layout {
+                sequence: 10
+            }
+            source {
+                primaryKey: true
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: A
+            }
+        )
+
+        column IMAGE_OCID (
+            type: plainText
+            heading {
+                heading: Image OCID
+            }
+            layout {
+                sequence: 170
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: Q
+            }
+        )
+
+        column IMAGE_REQ (
+            type: hidden
+            heading {
+                heading: Image Req
+            }
+            layout {
+                sequence: 90
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: I
+            }
+        )
+
+        column INSTANCE_PREFIX (
+            type: hidden
+            heading {
+                heading: Instance Prefix
+            }
+            layout {
+                sequence: 70
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: G
+            }
+        )
+
+        column LISTING_ID (
+            type: hidden
+            heading {
+                heading: Listing Id
+            }
+            layout {
+                sequence: 130
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: M
+            }
+        )
+
+        column NOVNC_ENABLED (
+            type: plainText
+            heading {
+                heading: Novnc Enabled
+            }
+            layout {
+                sequence: 110
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: K
+            }
+        )
+
+        column OCPU_REQUIRED (
+            type: hidden
+            heading {
+                heading: Ocpu Required
+            }
+            layout {
+                sequence: 60
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: F
+            }
+        )
+
+        column PUBKEY_REQ (
+            type: hidden
+            heading {
+                heading: Pubkey Req
+            }
+            layout {
+                sequence: 100
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: J
+            }
+        )
+
+        column REGION_ID (
+            type: hidden
+            heading {
+                heading: Region Id
+            }
+            layout {
+                sequence: 190
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: S
+            }
+        )
+
+        column REMARKS (
+            type: hidden
+            heading {
+                heading: Remarks
+            }
+            layout {
+                sequence: 50
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: E
+            }
+        )
+
+        column RESOURCE_ID (
+            type: hidden
+            heading {
+                heading: Resource ID
+            }
+            layout {
+                sequence: 30
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: C
+            }
+        )
+
+        column SECLIST_REQ (
+            type: hidden
+            heading {
+                heading: Seclist Req
+            }
+            layout {
+                sequence: 80
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: H
+            }
+        )
+
+        column TENANCY_ID (
+            type: hidden
+            heading {
+                heading: Tenancy Id
+            }
+            layout {
+                sequence: 180
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: R
+            }
+        )
+
+        column VERSION (
+            type: plainText
+            heading {
+                heading: Version
+            }
+            layout {
+                sequence: 160
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: P
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+
+        savedReport 27829 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn ACTIVE_FLG (
+                sequence: 3
+            )
+
+            displayColumn ADDED_BY (
+                sequence: 14
+            )
+
+            displayColumn ADDED_ON (
+                sequence: 13
+            )
+
+            displayColumn DATABASE_VERSION (
+                sequence: 11
+            )
+
+            displayColumn ID (
+                sequence: 1
+            )
+
+            displayColumn IMAGE_OCID (
+                sequence: 16
+            )
+
+            displayColumn IMAGE_REQ (
+                sequence: 8
+            )
+
+            displayColumn INSTANCE_PREFIX (
+                sequence: 6
+            )
+
+            displayColumn LISTING_ID (
+                sequence: 12
+            )
+
+            displayColumn NOVNC_ENABLED (
+                sequence: 10
+            )
+
+            displayColumn OCPU_REQUIRED (
+                sequence: 5
+            )
+
+            displayColumn PUBKEY_REQ (
+                sequence: 9
+            )
+
+            displayColumn REGION_ID (
+                sequence: 18
+            )
+
+            displayColumn REMARKS (
+                sequence: 4
+            )
+
+            displayColumn RESOURCE_ID (
+                sequence: 2
+            )
+
+            displayColumn SECLIST_REQ (
+                sequence: 7
+            )
+
+            displayColumn TENANCY_ID (
+                sequence: 17
+            )
+
+            displayColumn VERSION (
+                sequence: 15
+            )
+
+        )
+
+    )
+
+    region view-listing-info (
+        name: View Listing Info
+        type: form
+        source {
+            location: localDatabase
+            tableName: OMP_LISTINGS
+            whereClause: id = :P28_ID
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--accent1
+                t-Region--scrollBody
+            ]
+        }
+        edit {
+            enabled: true
+            allowedOperations: [
+                add
+                update
+                delete
+            ]
+        }
+    )
+
+    pageItem P28_ADDED_BY (
+        type: displayOnly
+        label {
+            label: Added By
+            alignment: left
+        }
+        layout {
+            sequence: 60
+            region: @view-listing-info
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @view-listing-info
+            column: ADDED_BY
+            dataType: varchar2
+        }
+    )
+
+    pageItem P28_ADDED_ON (
+        type: displayOnly
+        label {
+            label: Added On
+            alignment: left
+        }
+        layout {
+            sequence: 70
+            region: @view-listing-info
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @view-listing-info
+            column: ADDED_ON
+            dataType: timestamp
+        }
+    )
+
+    pageItem P28_APP_CATALOG_OCID (
+        type: textarea
+        label {
+            label: App Catalog OCID
+            alignment: left
+        }
+        layout {
+            sequence: 40
+            region: @view-listing-info
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 60
+            height: 1
+        }
+        validation {
+            valueRequired: true
+            maxLength: 4000
+        }
+        source {
+            formRegion: @view-listing-info
+            column: APP_CATALOG_OCID
+            dataType: varchar2
+        }
+    )
+
+    pageItem P28_ID (
+        type: hidden
+        layout {
+            sequence: 10
+            region: @view-listing-info
+            slot: regionBody
+        }
+        source {
+            formRegion: @view-listing-info
+            column: ID
+            dataType: number
+            queryOnly: true
+            primaryKey: true
+        }
+        security {
+            sessionStateProtection: checksumRequiredSessionLevel
+        }
+    )
+
+    pageItem P28_LISTING_NAME (
+        type: textarea
+        label {
+            label: Listing Name
+            alignment: left
+        }
+        layout {
+            sequence: 20
+            region: @view-listing-info
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 60
+            height: 1
+        }
+        validation {
+            valueRequired: true
+            maxLength: 4000
+        }
+        source {
+            formRegion: @view-listing-info
+            column: LISTING_NAME
+            dataType: varchar2
+        }
+    )
+
+    pageItem P28_LISTING_OCID (
+        type: textarea
+        label {
+            label: Listing OCID
+            alignment: left
+        }
+        layout {
+            sequence: 30
+            region: @view-listing-info
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 60
+            height: 1
+        }
+        validation {
+            valueRequired: true
+            maxLength: 4000
+        }
+        source {
+            formRegion: @view-listing-info
+            column: LISTING_OCID
+            dataType: varchar2
+        }
+    )
+
+    pageItem P28_SUPPORT_CONTACTS (
+        type: textarea
+        label {
+            label: Support Contacts
+            alignment: left
+        }
+        layout {
+            sequence: 50
+            region: @view-listing-info
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 60
+        }
+        validation {
+            valueRequired: true
+            maxLength: 4000
+        }
+        source {
+            formRegion: @view-listing-info
+            column: SUPPORT_CONTACTS
+            dataType: varchar2
+        }
+        default {
+            type: expression
+            plsqlExpression: v('APP_USER')
+        }
+    )
+
+    button cancel (
+        buttonName: CANCEL
+        label: Cancel
+        layout {
+            sequence: 10
+            region: @buttons
+            slot: previous
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button create (
+        buttonName: CREATE
+        label: Create
+        layout {
+            sequence: 40
+            region: @buttons
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+        }
+        serverSideCondition {
+            type: itemIsNull
+            item: P28_ID
+        }
+    )
+
+    button delete (
+        buttonName: DELETE
+        label: Delete
+        layout {
+            sequence: 20
+            region: @buttons
+            slot: previous
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            executeValidations: false
+            warnOnUnsavedChanges: doNotCheck
+            requiresConfirmation: true
+        }
+        confirmation {
+            message: &APP_TEXT$DELETE_MSG!RAW.
+            style: danger
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P28_ID
+        }
+    )
+
+    button save (
+        buttonName: SAVE
+        label: Apply Changes
+        layout {
+            sequence: 30
+            region: @buttons
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P28_ID
+        }
+    )
+
+    dynamicAction cancel-dialog (
+        name: Cancel Dialog
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @cancel
+        }
+
+        action native-dialog-cancel (
+            action: cancelDialog
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    validation p28-added-on-must-be-timestamp (
+        name: P28_ADDED_ON must be timestamp
+        execution {
+            sequence: 60
+        }
+        validation {
+            type: itemIsAValidTimestamp
+            item: P28_ADDED_ON
+        }
+        error {
+            errorMessage: #LABEL# must be a valid timestamp.
+            associatedItem: @P28_ADDED_ON
+        }
+    )
+
+    process close-dialog (
+        name: Close Dialog
+        type: closeDialog
+        execution {
+            sequence: 90
+        }
+        advanced {
+            executionMappingIdentifier: 3984045843626932
+        }
+        serverSideCondition {
+            type: requestIsContainedInValue
+            value: CREATE,SAVE,DELETE
+        }
+    )
+
+    process create-listing (
+        name: Create Listing
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                DECLARE
+                    v_errm clob;
+                BEGIN
+                    INSERT INTO OMP_LISTINGS (
+                        LISTING_NAME,
+                        LISTING_OCID,
+                        ADDED_BY,
+                        ADDED_ON,
+                        APP_CATALOG_OCID,
+                        SUPPORT_CONTACTS
+                    ) VALUES (
+                        :P28_LISTING_NAME,
+                        :P28_LISTING_OCID,
+                        :APP_USER,
+                        SYSTIMESTAMP,
+                        :P28_APP_CATALOG_OCID,
+                        :P28_SUPPORT_CONTACTS
+                    )
+                    RETURNING ID INTO :P28_ID;
+                
+                    -- Call your sync job by passing the newly created listing ID
+                    ll_pkg_ords.createListing(:P28_ID);
+                
+                    -- Log success
+                    ll_pkg_log.log(60, 'Successfully inserted listing: ID=' || :P28_ID || ', NAME=' || :P28_LISTING_NAME);
+                
+                EXCEPTION
+                    WHEN OTHERS THEN
+                        v_errm := SQLERRM;
+                        ll_pkg_log.log(60, 'Insert error for listing NAME=' || :P28_LISTING_NAME || ': ' || V_ERRM);
+                        apex_error.add_error(
+                            p_message          => 'Error during listing insert or sync: ' || V_ERRM,
+                            p_display_location => 'ON_PAGE'
+                        );
+                        RAISE;
+                END;
+                ```
+        }
+        execution {
+            sequence: 60
+        }
+        advanced {
+            executionMappingIdentifier: 3982884349626932
+        }
+        serverSideCondition {
+            whenButtonPressed: @create
+        }
+    )
+
+    process delete-listing (
+        name: Delete Listing
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                DECLARE
+                    v_errm clob;
+                BEGIN
+                    DELETE FROM OMP_LISTINGS WHERE ID = :P28_ID;
+                
+                    ll_pkg_ords.deleteListing(:P28_ID);
+                
+                    ll_pkg_log.log(60, 'Successfully deleted listing: ID=' || :P28_ID);
+                
+                EXCEPTION
+                    WHEN OTHERS THEN
+                        v_errm := SQLERRM;
+                        ll_pkg_log.log(60, 'Delete error for listing ID=' || :P28_ID || ': ' || v_errm);
+                        apex_error.add_error(
+                            p_message          => 'Error during listing deletion: ' || v_errm,
+                            p_display_location => 'ON_PAGE'
+                        );
+                        RAISE;
+                END;
+                ```
+        }
+        execution {
+            sequence: 80
+        }
+        advanced {
+            executionMappingIdentifier: 3983601503626932
+        }
+        serverSideCondition {
+            whenButtonPressed: @delete
+        }
+    )
+
+    process initialize-form-view-listing-info (
+        name: Initialize form View Listing Info
+        type: formInitialization
+        formRegion: @view-listing-info
+        execution {
+            sequence: 10
+            point: beforeHeader
+        }
+        advanced {
+            executionMappingIdentifier: 3979992070626931
+        }
+    )
+
+    process update-listing (
+        name: Update Listing
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                DECLARE
+                    v_errm clob;
+                BEGIN
+                    UPDATE OMP_LISTINGS
+                    SET
+                        LISTING_NAME      = :P28_LISTING_NAME,
+                        LISTING_OCID      = :P28_LISTING_OCID,
+                        APP_CATALOG_OCID  = :P28_APP_CATALOG_OCID,
+                        SUPPORT_CONTACTS  = :P28_SUPPORT_CONTACTS
+                    WHERE
+                        ID = :P28_ID;
+                
+                    IF SQL%ROWCOUNT = 0 THEN
+                        ll_pkg_log.log(60, 'Update attempt: No listing found for ID=' || :P28_ID);
+                        apex_error.add_error(
+                            p_message          => 'No listing record found to update.',
+                            p_display_location => 'ON_PAGE'
+                        );
+                        RETURN;
+                    END IF;
+                
+                    -- Call your sync job by passing the updated listing ID
+                    ll_pkg_ords.updateListing(:P28_ID);
+                
+                    -- Log success
+                    ll_pkg_log.log(60, 'Successfully updated listing: ID=' || :P28_ID || ', NAME=' || :P28_LISTING_NAME);
+                
+                EXCEPTION
+                    WHEN OTHERS THEN
+                        v_errm := SQLERRM;
+                        ll_pkg_log.log(60, 'Update error for listing ID=' || :P28_ID || ', NAME=' || :P28_LISTING_NAME || ': ' || v_errm);
+                        apex_error.add_error(
+                            p_message          => 'Error during listing update or sync: ' || v_errm,
+                            p_display_location => 'ON_PAGE'
+                        );
+                        RAISE;
+                END;
+                ```
+        }
+        execution {
+            sequence: 70
+        }
+        advanced {
+            executionMappingIdentifier: 3983204455626932
+        }
+        serverSideCondition {
+            whenButtonPressed: @save
+        }
+    )
+
+)
+

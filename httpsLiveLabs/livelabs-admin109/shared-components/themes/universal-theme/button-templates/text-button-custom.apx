@@ -1,0 +1,12 @@
+buttonTemplate text-button-custom (
+    name: Text Button (Custom)
+    templateClass: button
+    button {
+        normal: <button onclick="#JAVASCRIPT#" class="t-Button #BUTTON_CSS_CLASSES#" type="button" #BUTTON_ATTRIBUTES# id="#BUTTON_ID#" style="background-color: #3D3A37;color:white"><span class="t-Button-label">#LABEL#</span></button>
+        hot: <button onclick="#JAVASCRIPT#" class="t-Button t-Button--hot #BUTTON_CSS_CLASSES#" type="button" #BUTTON_ATTRIBUTES# id="#BUTTON_ID#"><span class="t-Button-label">#LABEL#</span></button>
+    }
+    advanced {
+        identifier: TEXT_BUTTON_CUSTOM
+    }
+)
+

@@ -1,0 +1,261 @@
+page 18 (
+    name: Banners
+    alias: BANNERS
+    title: Banners
+    appearance {
+        pageTemplate: @standard-trustarc
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region breadcrumb (
+        name: Breadcrumb
+        type: breadcrumb
+        source {
+            breadcrumb: @breadcrumb
+        }
+        layout {
+            sequence: 10
+            slot: breadcrumbBar
+        }
+        appearance {
+            template: @title-bar
+            templateOptions: [
+                #DEFAULT#
+                t-BreadcrumbRegion--useBreadcrumbTitle
+            ]
+        }
+        componentAppearance {
+            breadcrumbTemplate: @breadcrumb
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    region buttons (
+        name: Buttons
+        type: staticContent
+        layout {
+            sequence: 30
+            slot: contentBody
+            startNewRow: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    region new-banner (
+        name: New Banner
+        type: form
+        source {
+            location: localDatabase
+            tableName: LL_BANNERS
+        }
+        layout {
+            sequence: 20
+            slot: contentBody
+            startNewRow: false
+            newColumn: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    pageItem P18_DESCRIPTION (
+        type: textarea
+        label {
+            label: Description
+            alignment: left
+        }
+        layout {
+            sequence: 30
+            region: @new-banner
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+            height: 5
+        }
+        validation {
+            maxLength: 500
+        }
+        source {
+            formRegion: @new-banner
+            column: DESCRIPTION
+            dataType: varchar2
+        }
+    )
+
+    pageItem P18_HOME_PG_BANNER_HEIGHT (
+        type: textField
+        label {
+            label: Home Pg Banner Width
+            alignment: left
+        }
+        layout {
+            sequence: 50
+            slot: contentBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery: select value from ll_system_parameters where name = 'HOME_PG_BANNER_HEIGHT'
+        }
+    )
+
+    pageItem P18_HOME_PG_BANNER_WIDTH (
+        type: textField
+        label {
+            label: Home Pg Banner Width
+            alignment: left
+        }
+        layout {
+            sequence: 40
+            slot: contentBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery: select value from ll_system_parameters where name = 'HOME_PG_BANNER_WIDTH'
+        }
+    )
+
+    pageItem P18_ID (
+        type: hidden
+        layout {
+            sequence: 10
+            region: @new-banner
+            slot: regionBody
+        }
+        source {
+            formRegion: @new-banner
+            column: ID
+            dataType: number
+            queryOnly: true
+            primaryKey: true
+        }
+        security {
+            sessionStateProtection: checksumRequiredSessionLevel
+        }
+    )
+
+    pageItem P18_IMAGE (
+        type: imageUpload
+        label {
+            label: Image
+            alignment: left
+        }
+        layout {
+            sequence: 40
+            region: @new-banner
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        source {
+            formRegion: @new-banner
+            column: IMAGE
+            dataType: blob
+        }
+        help {
+            inlineHelpText: Ensure all images are created with dimensions &P18_HOME_PG_BANNER_WIDTH. x &P18_HOME_PG_BANNER_HEIGHT. (WxH).
+        }
+    )
+
+    pageItem P18_POSITION (
+        type: popupLov
+        label {
+            label: Position
+            alignment: left
+        }
+        lov {
+            type: sharedComponent
+            lov: @ll-home-pg-banner-positions
+        }
+        layout {
+            sequence: 20
+            region: @new-banner
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            maxLength: 50
+        }
+        source {
+            formRegion: @new-banner
+            column: POSITION
+            dataType: varchar2
+        }
+    )
+
+    button submit (
+        buttonName: Submit
+        label: Submit
+        layout {
+            sequence: 10
+            region: @buttons
+            slot: regionBody
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: insert
+        }
+    )
+
+    process initialize-form-banners (
+        name: Initialize form Banners
+        type: formInitialization
+        formRegion: @new-banner
+        execution {
+            sequence: 10
+            point: beforeHeader
+        }
+        advanced {
+            executionMappingIdentifier: 320989833592135926
+        }
+    )
+
+)
+

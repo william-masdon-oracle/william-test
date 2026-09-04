@@ -1,0 +1,224 @@
+page 15 (
+    name: Image Utilization
+    alias: IMAGE-UTILIZATION
+    title: Image Utilization
+    appearance {
+        pageTemplate: @standard-trustarc
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region image-utilization (
+        name: Image Utilization
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                
+                
+                select im.id image_id,im.name image_name,to_char(r.start_date,'yyyy-mm') monthyear,w.active_flg workshop_status,  count(r.id) reservations_made
+                ,LISTAGG(distinct w.id, ',') WITHIN GROUP (ORDER BY w.id) as workshops_using 
+                from ll_workshop_images i
+                join ll_reservations r on r.workshop_id = i.workshop_id
+                join ll_workshops w on w.id = i.workshop_id
+                join ll_images im on im.id = i.image_id
+                where r.start_date > SYSDATE - NUMTOYMINTERVAL(1, 'year')
+                group by w.id, w.active_flg,im.id, to_char(r.start_date,'yyyy-mm'), im.name
+                ```
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        pagination {
+            type: rowRangesXToY
+        }
+        messages {
+            whenNoDataFound: No data found.
+            whenMoreDataFound: The maximum row count for this report is #MAX_ROW_COUNT# rows.  Please apply a filter to reduce the number of records in your query.
+        }
+        advanced {
+            savedReportMappingIdentifier: 615918544198296692
+        }
+
+        column IMAGE_ID (
+            type: plainText
+            heading {
+                heading: Image Id
+                alignment: end
+            }
+            layout {
+                sequence: 3
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: C
+            }
+        )
+
+        column IMAGE_NAME (
+            type: plainText
+            heading {
+                heading: Image Name
+            }
+            layout {
+                sequence: 15
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: F
+            }
+        )
+
+        column MONTHYEAR (
+            type: plainText
+            heading {
+                heading: Monthyear
+            }
+            layout {
+                sequence: 4
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: D
+            }
+        )
+
+        column RESERVATIONS_MADE (
+            type: plainText
+            heading {
+                heading: Reservations Made
+                alignment: end
+            }
+            layout {
+                sequence: 5
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: E
+            }
+        )
+
+        column WORKSHOPS_USING (
+            type: plainText
+            heading {
+                heading: Workshops Using
+            }
+            layout {
+                sequence: 25
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: G
+            }
+        )
+
+        column WORKSHOP_STATUS (
+            type: plainText
+            heading {
+                heading: Workshop Status
+            }
+            layout {
+                sequence: 2
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: B
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: Image Utilization
+        }
+
+        savedReport 6162051 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn IMAGE_ID (
+                sequence: 1
+            )
+
+            displayColumn IMAGE_NAME (
+                sequence: 2
+            )
+
+            displayColumn MONTHYEAR (
+                sequence: 3
+            )
+
+            displayColumn RESERVATIONS_MADE (
+                sequence: 5
+            )
+
+            displayColumn WORKSHOPS_USING (
+                sequence: 6
+            )
+
+            displayColumn WORKSHOP_STATUS (
+                sequence: 4
+            )
+
+            sort (
+                column: MONTHYEAR
+                sort {
+                    sequence: 1
+                }
+            )
+
+            sort (
+                column: IMAGE_ID
+                sort {
+                    sequence: 2
+                }
+            )
+
+            aggregate (
+                column: RESERVATIONS_MADE
+            )
+
+            controlBreak (
+                column: IMAGE_ID
+                layout {
+                    sequence: 1
+                }
+            )
+
+        )
+
+    )
+
+)
+

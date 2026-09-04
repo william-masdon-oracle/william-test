@@ -1,0 +1,102 @@
+page 9162 (
+    name: QR for event code
+    alias: QR-FOR-EC
+    title: QR for Event Code
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @modal-dialog
+        templateOptions: #DEFAULT#
+    }
+    dialog {
+        width: 400
+        resizable: false
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region qr-code (
+        name: QR Code
+        type: plSqlDynamicContent
+        source {
+            plsqlCode:
+                ```plsql
+                declare
+                  v_url  varchar2(2000) := ll_pkg_apex.voucher_qr_url(:P9162_VOUCHER_CODE);
+                
+                begin
+                  htp.p('<a href="'||v_url||'" target="_blank">'||v_url||'</a>');
+                --htp.p('Test');
+                  --htp.p(v_url);
+                end;
+                ```
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noBorder
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    pageItem P9162_VOUCHER_CODE (
+        type: hidden
+        layout {
+            sequence: 10
+            region: @qr-code
+            slot: regionBody
+        }
+        source {
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9162_VOUCHER_QR (
+        type: plugin/qrCode
+        label {
+            alignment: left
+        }
+        settings {
+            errorCorrectionLevel: mMedium15OfData
+            displayType: bmpImage
+            imageSize: 200
+            margines: true
+        }
+        layout {
+            sequence: 30
+            region: @qr-code
+            slot: regionBody
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            type: expression
+            plsqlExpression: ll_pkg_apex.voucher_qr_url(:P9162_VOUCHER_CODE);
+            used: always
+        }
+    )
+
+)
+

@@ -1,0 +1,541 @@
+page 9151 (
+    name: Workshops
+    alias: WORKSHOPS
+    title: Workshops
+    appearance {
+        pageTemplate: @standard-trustarc
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        authorizationScheme: @superrrrr-user
+        formAutoComplete: false
+    }
+
+    region report (
+        name: Report 1
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select ID,
+                       NAME,
+                       WS_OWNER_GROUP,
+                       AUTHOR_EMAIL,
+                       DESC_SHORT,
+                       DESC_LONG,
+                       PACKAGE_TYPE,
+                       TIME_IN_HOURS,
+                       TIME_AVAILABLE,
+                       PROGRAM_CODE,
+                       TRACKING_URL,
+                       APPROVAL_REQUIRED,
+                       ACTIVE_FLG,
+                       DEVELOPMENT_STATUS,
+                       LAB_URL,
+                       DESC_OUTLINE,
+                       DESC_PREREQUISITES,
+                       WORKSHOP_JSON,
+                       TENANCIES_ALLOWED,
+                       MAX_PARALLEL_NON_EC,
+                       icon_id,
+                       (select count(*) from ll_reservations_vw where workshop_id = LLW.id and voucher_id is null and sysdate between start_gmt and stop_gmt and active_flg='Y') as PARALLEL_NON_EC_RUNNING
+                  from LL_WORKSHOPS LLW
+                ```
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        link {
+            linkColumn: customTarget
+            target: {
+                page: 9152
+                items: {
+                    P9152_ID: \#ID#\
+                }
+                action: resetPagination
+            }
+            linkIcon: <span aria-label="Edit"><span class="fa fa-edit" aria-hidden="true" title="Edit"></span></span>
+        }
+        componentAppearance {
+            showNullValuesAs: -
+        }
+        pagination {
+            type: rowRangesXToY
+        }
+        messages {
+            whenNoDataFound: No data found.
+            whenMoreDataFound: The maximum row count for this report is #MAX_ROW_COUNT# rows.  Please apply a filter to reduce the number of records in your query.
+        }
+        actionsMenu {
+            subscription: false
+        }
+        advanced {
+            savedReportMappingIdentifier: 105714279735408630
+        }
+
+        column ACTIVE_FLG (
+            type: plainText
+            heading {
+                heading: Active Flg
+            }
+            layout {
+                sequence: 14
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: N
+            }
+        )
+
+        column APPROVAL_REQUIRED (
+            type: plainText
+            heading {
+                heading: Approval Required
+                alignment: center
+            }
+            layout {
+                sequence: 44
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: Q
+            }
+        )
+
+        column AUTHOR_EMAIL (
+            type: plainText
+            heading {
+                heading: Author Email
+            }
+            layout {
+                sequence: 4
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: D
+            }
+        )
+
+        column DESC_LONG (
+            type: plainText
+            heading {
+                heading: Desc Long
+            }
+            layout {
+                sequence: 6
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: F
+            }
+        )
+
+        column DESC_OUTLINE (
+            type: plainText
+            heading {
+                heading: Desc Outline
+                alignment: center
+            }
+            layout {
+                sequence: 84
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: U
+            }
+        )
+
+        column DESC_PREREQUISITES (
+            type: plainText
+            heading {
+                heading: Desc Prerequisites
+                alignment: center
+            }
+            layout {
+                sequence: 94
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: V
+            }
+        )
+
+        column DESC_SHORT (
+            type: plainText
+            heading {
+                heading: Desc Short
+            }
+            layout {
+                sequence: 5
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: E
+            }
+        )
+
+        column DEVELOPMENT_STATUS (
+            type: plainText
+            heading {
+                heading: Development Status
+                alignment: center
+            }
+            layout {
+                sequence: 64
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: S
+            }
+        )
+
+        column ICON_ID (
+            type: plainText
+            heading {
+                heading: Icon ID
+                alignment: end
+            }
+            layout {
+                sequence: 164
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: AC
+            }
+        )
+
+        column ID (
+            type: plainText
+            heading {
+                heading: Id
+                alignment: center
+            }
+            layout {
+                sequence: 0
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: A
+            }
+        )
+
+        column LAB_URL (
+            type: plainText
+            heading {
+                heading: Lab Url
+                alignment: center
+            }
+            layout {
+                sequence: 74
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: T
+            }
+        )
+
+        column MAX_PARALLEL_NON_EC (
+            type: plainText
+            heading {
+                heading: Max Parallel Non Ec
+                alignment: center
+            }
+            layout {
+                sequence: 144
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: AA
+            }
+            serverSideCondition {
+                type: never
+            }
+        )
+
+        column NAME (
+            type: plainText
+            heading {
+                heading: Name
+            }
+            layout {
+                sequence: 2
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: B
+            }
+        )
+
+        column PACKAGE_TYPE (
+            type: plainText
+            heading {
+                heading: Package Type
+                alignment: center
+            }
+            layout {
+                sequence: 24
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: O
+            }
+        )
+
+        column PARALLEL_NON_EC_RUNNING (
+            type: plainText
+            heading {
+                heading: Parallel Non Ec Running
+                alignment: center
+            }
+            layout {
+                sequence: 154
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: AB
+            }
+            serverSideCondition {
+                type: never
+            }
+        )
+
+        column PROGRAM_CODE (
+            type: plainText
+            heading {
+                heading: Program Code
+            }
+            layout {
+                sequence: 10
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: J
+            }
+        )
+
+        column TENANCIES_ALLOWED (
+            type: plainText
+            heading {
+                heading: Tenancies Allowed
+                alignment: center
+            }
+            layout {
+                sequence: 124
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: Y
+            }
+        )
+
+        column TIME_AVAILABLE (
+            type: plainText
+            heading {
+                heading: Time Available
+                alignment: center
+            }
+            layout {
+                sequence: 34
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: P
+            }
+        )
+
+        column TIME_IN_HOURS (
+            type: plainText
+            heading {
+                heading: Time In Hours
+                alignment: end
+            }
+            layout {
+                sequence: 9
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: I
+            }
+        )
+
+        column TRACKING_URL (
+            type: plainText
+            heading {
+                heading: Tracking Url
+            }
+            layout {
+                sequence: 11
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: K
+            }
+        )
+
+        column WORKSHOP_JSON (
+            type: plainText
+            heading {
+                heading: Workshop Json
+                alignment: center
+            }
+            layout {
+                sequence: 114
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: X
+            }
+        )
+
+        column WS_OWNER_GROUP (
+            type: plainTextBasedOnLov
+            heading {
+                heading: Ws Owner Group
+                alignment: center
+            }
+            lov {
+                lov: @workshop-owner-group
+            }
+            layout {
+                sequence: 134
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: Z
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+
+        savedReport 584789 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn ACTIVE_FLG (
+                sequence: 3
+            )
+
+            displayColumn ID (
+                sequence: 1
+            )
+
+            displayColumn MAX_PARALLEL_NON_EC (
+                sequence: 6
+            )
+
+            displayColumn NAME (
+                sequence: 2
+            )
+
+            displayColumn PARALLEL_NON_EC_RUNNING (
+                sequence: 7
+            )
+
+            displayColumn TIME_AVAILABLE (
+                sequence: 4
+            )
+
+            displayColumn WS_OWNER_GROUP (
+                sequence: 5
+            )
+
+            sort (
+                column: ID
+                sort {
+                    sequence: 1
+                }
+            )
+
+        )
+
+    )
+
+    button create (
+        buttonName: CREATE
+        label: Create
+        layout {
+            sequence: 30
+            region: @report
+            slot: rightOfInteractiveReportSearchBar
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 9152
+                clearCache: 9152
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+)
+

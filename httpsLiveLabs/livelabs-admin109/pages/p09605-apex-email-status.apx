@@ -1,0 +1,896 @@
+page 9605 (
+    name: Apex Email status
+    alias: APEX-EMAIL-STATUS
+    title: Apex Email status
+    appearance {
+        pageTemplate: @standard-trustarc
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        authorizationScheme: @superrrrr-user
+        formAutoComplete: false
+    }
+
+    region apex-email-log (
+        name: Apex Email Log
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery: select * from apex_mail_log
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @collapsible
+            templateOptions: [
+                #DEFAULT#
+                is-expanded
+                t-Region--scrollBody
+            ]
+        }
+        pagination {
+            type: rowRangesXToY
+        }
+        messages {
+            whenNoDataFound: No data found.
+            whenMoreDataFound: The maximum row count for this report is #MAX_ROW_COUNT# rows.  Please apply a filter to reduce the number of records in your query.
+        }
+        actionsMenu {
+            subscription: false
+        }
+        advanced {
+            savedReportMappingIdentifier: 59644229591217592
+        }
+
+        column APP_ID (
+            type: plainText
+            heading {
+                heading: App Id
+                alignment: end
+            }
+            layout {
+                sequence: 18
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: R
+            }
+        )
+
+        column LAST_UPDATED_ON (
+            type: plainText
+            heading {
+                heading: Last Updated On
+            }
+            layout {
+                sequence: 17
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: Q
+            }
+        )
+
+        column MAIL_ATTACHMENT_COUNT (
+            type: plainText
+            heading {
+                heading: Mail Attachment Count
+                alignment: end
+            }
+            layout {
+                sequence: 14
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: N
+            }
+        )
+
+        column MAIL_ATTACHMENT_SIZE (
+            type: plainText
+            heading {
+                heading: Mail Attachment Size
+                alignment: end
+            }
+            layout {
+                sequence: 15
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: O
+            }
+        )
+
+        column MAIL_BCC (
+            type: plainText
+            heading {
+                heading: Mail Bcc
+            }
+            layout {
+                sequence: 8
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: H
+            }
+        )
+
+        column MAIL_BODY_HTML_SIZE (
+            type: plainText
+            heading {
+                heading: Mail Body Html Size
+                alignment: end
+            }
+            layout {
+                sequence: 13
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: M
+            }
+        )
+
+        column MAIL_BODY_SIZE (
+            type: plainText
+            heading {
+                heading: Mail Body Size
+                alignment: end
+            }
+            layout {
+                sequence: 12
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: L
+            }
+        )
+
+        column MAIL_CC (
+            type: plainText
+            heading {
+                heading: Mail Cc
+            }
+            layout {
+                sequence: 7
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: G
+            }
+        )
+
+        column MAIL_FROM (
+            type: plainText
+            heading {
+                heading: Mail From
+            }
+            layout {
+                sequence: 4
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: D
+            }
+        )
+
+        column MAIL_ID (
+            type: plainText
+            heading {
+                heading: Mail Id
+                alignment: end
+            }
+            layout {
+                sequence: 1
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: A
+            }
+        )
+
+        column MAIL_MESSAGE_CREATED (
+            type: plainText
+            heading {
+                heading: Mail Message Created
+            }
+            layout {
+                sequence: 9
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: I
+            }
+        )
+
+        column MAIL_MESSAGE_ID (
+            type: plainText
+            heading {
+                heading: Mail Message Id
+            }
+            layout {
+                sequence: 2
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: B
+            }
+        )
+
+        column MAIL_MESSAGE_SEND_BEGIN (
+            type: plainText
+            heading {
+                heading: Mail Message Send Begin
+            }
+            layout {
+                sequence: 10
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: J
+            }
+        )
+
+        column MAIL_MESSAGE_SEND_END (
+            type: plainText
+            heading {
+                heading: Mail Message Send End
+            }
+            layout {
+                sequence: 11
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: K
+            }
+        )
+
+        column MAIL_REPLYTO (
+            type: plainText
+            heading {
+                heading: Mail Replyto
+            }
+            layout {
+                sequence: 5
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: E
+            }
+        )
+
+        column MAIL_SEND_ERROR (
+            type: plainText
+            heading {
+                heading: Mail Send Error
+            }
+            layout {
+                sequence: 16
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: P
+            }
+        )
+
+        column MAIL_SUBJ (
+            type: plainText
+            heading {
+                heading: Mail Subj
+            }
+            layout {
+                sequence: 6
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: F
+            }
+        )
+
+        column MAIL_TO (
+            type: plainText
+            heading {
+                heading: Mail To
+            }
+            layout {
+                sequence: 3
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: C
+            }
+        )
+
+        column WORKSPACE_ID (
+            type: plainText
+            heading {
+                heading: Workspace Id
+                alignment: end
+            }
+            layout {
+                sequence: 19
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: S
+            }
+        )
+
+        column WORKSPACE_NAME (
+            type: plainText
+            heading {
+                heading: Workspace Name
+            }
+            layout {
+                sequence: 20
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: T
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: Apex Email Log
+        }
+
+        savedReport 596532 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn LAST_UPDATED_ON (
+                sequence: 10
+            )
+
+            displayColumn MAIL_BCC (
+                sequence: 3
+            )
+
+            displayColumn MAIL_BODY_HTML_SIZE (
+                sequence: 8
+            )
+
+            displayColumn MAIL_BODY_SIZE (
+                sequence: 7
+            )
+
+            displayColumn MAIL_MESSAGE_CREATED (
+                sequence: 4
+            )
+
+            displayColumn MAIL_MESSAGE_SEND_BEGIN (
+                sequence: 5
+            )
+
+            displayColumn MAIL_MESSAGE_SEND_END (
+                sequence: 6
+            )
+
+            displayColumn MAIL_SEND_ERROR (
+                sequence: 9
+            )
+
+            displayColumn MAIL_SUBJ (
+                sequence: 2
+            )
+
+            displayColumn MAIL_TO (
+                sequence: 1
+            )
+
+            sort (
+                column: MAIL_MESSAGE_CREATED
+                sort {
+                    direction: desc
+                    sequence: 1
+                }
+            )
+
+        )
+
+    )
+
+    region apex-email-queue (
+        name: Apex Email Queue
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery: SELECT * from APEX_MAIL_QUEUE
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @collapsible
+            templateOptions: [
+                #DEFAULT#
+                is-expanded
+                t-Region--scrollBody
+            ]
+        }
+        pagination {
+            type: rowRangesXToY
+        }
+        messages {
+            whenNoDataFound: No data found.
+            whenMoreDataFound: The maximum row count for this report is #MAX_ROW_COUNT# rows.  Please apply a filter to reduce the number of records in your query.
+        }
+        actionsMenu {
+            subscription: false
+        }
+        advanced {
+            savedReportMappingIdentifier: 59635823957211573
+        }
+
+        column APP_ID (
+            type: plainText
+            heading {
+                heading: App Id
+                alignment: end
+            }
+            layout {
+                sequence: 16
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: P
+            }
+        )
+
+        column ID (
+            type: plainText
+            heading {
+                heading: Id
+                alignment: end
+            }
+            layout {
+                sequence: 1
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: A
+            }
+        )
+
+        column LAST_UPDATED_BY (
+            type: plainText
+            heading {
+                heading: Last Updated By
+            }
+            layout {
+                sequence: 12
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: L
+            }
+        )
+
+        column LAST_UPDATED_ON (
+            type: plainText
+            heading {
+                heading: Last Updated On
+            }
+            layout {
+                sequence: 13
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: M
+            }
+        )
+
+        column MAIL_BCC (
+            type: plainText
+            heading {
+                heading: Mail Bcc
+            }
+            layout {
+                sequence: 7
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: G
+            }
+        )
+
+        column MAIL_BODY (
+            type: plainText
+            heading {
+                heading: Mail Body
+            }
+            layout {
+                sequence: 8
+            }
+            source {
+                dataType: STRING
+            }
+            columnFilter {
+                type: none
+            }
+            advanced {
+                endUserAlias: H
+            }
+            enableUsersTo {
+                sort: false
+                controlBreak: false
+                aggregate: false
+                compute: false
+                chart: false
+                groupBy: false
+                pivot: false
+            }
+        )
+
+        column MAIL_BODY_HTML (
+            type: plainText
+            heading {
+                heading: Mail Body Html
+            }
+            layout {
+                sequence: 9
+            }
+            source {
+                dataType: STRING
+            }
+            columnFilter {
+                type: none
+            }
+            advanced {
+                endUserAlias: I
+            }
+            enableUsersTo {
+                sort: false
+                controlBreak: false
+                aggregate: false
+                compute: false
+                chart: false
+                groupBy: false
+                pivot: false
+            }
+        )
+
+        column MAIL_CC (
+            type: plainText
+            heading {
+                heading: Mail Cc
+            }
+            layout {
+                sequence: 6
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: F
+            }
+        )
+
+        column MAIL_FROM (
+            type: plainText
+            heading {
+                heading: Mail From
+            }
+            layout {
+                sequence: 3
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: C
+            }
+        )
+
+        column MAIL_MESSAGE_CREATED (
+            type: plainText
+            heading {
+                heading: Mail Message Created
+            }
+            layout {
+                sequence: 14
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: N
+            }
+        )
+
+        column MAIL_MESSAGE_CREATED_BY (
+            type: plainText
+            heading {
+                heading: Mail Message Created By
+            }
+            layout {
+                sequence: 15
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: O
+            }
+        )
+
+        column MAIL_REPLYTO (
+            type: plainText
+            heading {
+                heading: Mail Replyto
+            }
+            layout {
+                sequence: 4
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: D
+            }
+        )
+
+        column MAIL_SEND_COUNT (
+            type: plainText
+            heading {
+                heading: Mail Send Count
+                alignment: end
+            }
+            layout {
+                sequence: 10
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: J
+            }
+        )
+
+        column MAIL_SEND_ERROR (
+            type: plainText
+            heading {
+                heading: Mail Send Error
+            }
+            layout {
+                sequence: 11
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: K
+            }
+        )
+
+        column MAIL_SUBJ (
+            type: plainText
+            heading {
+                heading: Mail Subj
+            }
+            layout {
+                sequence: 5
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: E
+            }
+        )
+
+        column MAIL_TO (
+            type: plainText
+            heading {
+                heading: Mail To
+            }
+            layout {
+                sequence: 2
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: B
+            }
+        )
+
+        column WORKSPACE_ID (
+            type: plainText
+            heading {
+                heading: Workspace Id
+                alignment: end
+            }
+            layout {
+                sequence: 17
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: Q
+            }
+        )
+
+        column WORKSPACE_NAME (
+            type: plainText
+            heading {
+                heading: Workspace Name
+            }
+            layout {
+                sequence: 18
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: R
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: Apex Email Queue
+        }
+
+        savedReport 596526 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn APP_ID (
+                sequence: 16
+            )
+
+            displayColumn ID (
+                sequence: 1
+            )
+
+            displayColumn LAST_UPDATED_BY (
+                sequence: 12
+            )
+
+            displayColumn LAST_UPDATED_ON (
+                sequence: 13
+            )
+
+            displayColumn MAIL_BCC (
+                sequence: 7
+            )
+
+            displayColumn MAIL_BODY (
+                sequence: 8
+            )
+
+            displayColumn MAIL_BODY_HTML (
+                sequence: 9
+            )
+
+            displayColumn MAIL_CC (
+                sequence: 6
+            )
+
+            displayColumn MAIL_FROM (
+                sequence: 3
+            )
+
+            displayColumn MAIL_MESSAGE_CREATED (
+                sequence: 14
+            )
+
+            displayColumn MAIL_MESSAGE_CREATED_BY (
+                sequence: 15
+            )
+
+            displayColumn MAIL_REPLYTO (
+                sequence: 4
+            )
+
+            displayColumn MAIL_SEND_COUNT (
+                sequence: 10
+            )
+
+            displayColumn MAIL_SEND_ERROR (
+                sequence: 11
+            )
+
+            displayColumn MAIL_SUBJ (
+                sequence: 5
+            )
+
+            displayColumn MAIL_TO (
+                sequence: 2
+            )
+
+            displayColumn WORKSPACE_ID (
+                sequence: 17
+            )
+
+            displayColumn WORKSPACE_NAME (
+                sequence: 18
+            )
+
+        )
+
+    )
+
+)
+

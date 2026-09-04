@@ -1,0 +1,614 @@
+list activity-reports (
+    name: Activity Reports
+    config {
+        buildOption: @feature-activity-reporting
+    }
+)
+
+list application-configuration (
+    name: Application Configuration
+    config {
+        buildOption: @feature-configuration-options
+    }
+)
+
+list desktop-nav-menu-available-workshops (
+    name: Desktop Nav Menu - Available Workshops
+    source {
+        type: sqlQuery
+        sqlQuery:
+            ```sql
+            SELECT null, 
+                   ITEM_NAME label, 
+                   apex_util.host_url('NULL') || ITEM_FILTER target, 
+                   'YES' is_current 
+            FROM  LL_DYNAMIC_MENU 
+            ORDER BY ITEM_PARENT
+            ```
+    }
+)
+
+list desktop-navigation-bar (
+    name: Desktop Navigation Bar
+
+    entry app-user (
+        label: &APP_USER.
+        icon {
+            imageIconCssClasses: fa-user
+        }
+        layout {
+            sequence: 60
+        }
+        link {
+            target: {
+                type: url
+                url: #
+            }
+        }
+        userDefinedAttributes {
+            2: has-username
+        }
+        serverSideCondition {
+            type: userIsAuthenticated
+        }
+    )
+
+    entry dashboard (
+        label: Dashboard
+        icon {
+            imageIconCssClasses: fa-dashboard
+        }
+        layout {
+            sequence: 220
+            parentEntry: @app-user
+        }
+        link {
+            target: {
+                page: 9500
+            }
+        }
+        serverSideCondition {
+            type: expression
+            plsqlExpression: instr(upper(:app_user),'@ORACLE.COM')>0
+        }
+        security {
+            authorizationScheme: mustNotBePublicUser
+        }
+    )
+
+    entry event-code (
+        label: Event Code
+        icon {
+            imageIconCssClasses: fa-qrcode
+        }
+        layout {
+            sequence: 10
+        }
+        link {
+            target: {
+                page: 150
+                action: resetPagination
+            }
+        }
+    )
+
+    entry faq (
+        label: FAQ
+        icon {
+            imageIconCssClasses: fa-question-circle-o
+        }
+        layout {
+            sequence: 210
+            parentEntry: @app-user
+        }
+        link {
+            target: {
+                page: 10041
+            }
+        }
+        userDefinedAttributes {
+            2: icon-only
+        }
+        config {
+            buildOption: @feature-about-page
+        }
+    )
+
+    entry feedback (
+        label: Feedback
+        icon {
+            imageIconCssClasses: fa-comments-o
+        }
+        layout {
+            sequence: 215
+            parentEntry: @app-user
+        }
+        link {
+            target: {
+                page: 110
+                action: resetPagination
+            }
+        }
+    )
+
+    entry list_item (
+        label: ---
+        layout {
+            sequence: 200
+            parentEntry: @app-user
+        }
+        link {
+            target: {
+                type: url
+                url: separator
+            }
+        }
+        serverSideCondition {
+            type: expression
+            plsqlExpression: instr(upper(:app_user),'@ORACLE.COM')>0
+        }
+        security {
+            authorizationScheme: mustNotBePublicUser
+        }
+    )
+
+    entry list_item-2 (
+        label: ---
+        layout {
+            sequence: 300
+            parentEntry: @app-user
+        }
+        link {
+            target: {
+                type: url
+                url: separator
+            }
+        }
+    )
+
+    entry my-livestacks (
+        label: My LiveStacks
+        icon {
+            imageIconCssClasses: fa-layers
+        }
+        layout {
+            sequence: 110
+            parentEntry: @app-user
+        }
+        link {
+            target: {
+                page: 430
+            }
+        }
+        serverSideCondition {
+            type: userIsAuthenticated
+        }
+    )
+
+    entry my-reservations (
+        label: My Reservations
+        icon {
+            imageIconCssClasses: fa-flask
+        }
+        layout {
+            sequence: 100
+            parentEntry: @app-user
+        }
+        link {
+            target: {
+                page: 300
+            }
+        }
+        serverSideCondition {
+            type: userIsAuthenticated
+        }
+    )
+
+    entry search (
+        label: Search
+        icon {
+            imageIconCssClasses: fa-search
+        }
+        layout {
+            sequence: 5
+        }
+        link {
+            target: {
+                type: url
+                url: #
+            }
+        }
+        userDefinedAttributes {
+            2: icon-only header-search-item
+        }
+    )
+
+    entry sign-in (
+        label: Sign In
+        icon {
+            imageIconCssClasses: fa-sign-in
+        }
+        layout {
+            sequence: 90
+        }
+        link {
+            target: {
+                page: 10
+                items: {
+                    P10_PAGE_ID: &APP_PAGE_ID.
+                }
+            }
+        }
+        serverSideCondition {
+            type: userIsPublicUser
+        }
+    )
+
+    entry sign-out (
+        label: Sign Out
+        icon {
+            imageIconCssClasses: fa-sign-out
+        }
+        layout {
+            sequence: 999
+            parentEntry: @app-user
+        }
+        link {
+            target: {
+                type: url
+                url: &LOGOUT_URL.
+            }
+        }
+        serverSideCondition {
+            type: userIsAuthenticated
+        }
+    )
+
+)
+
+list desktop-navigation-menu (
+    name: Desktop Navigation Menu
+
+    entry administration (
+        label: Administration
+        icon {
+            imageIconCssClasses: fa-registered
+        }
+        layout {
+            sequence: 9000
+        }
+        serverSideCondition {
+            type: expression
+            language: sql
+            sqlExpression:
+                ```sql
+                ll_pkg_security.am_i_allowed(p_apex_user => :APP_USER, p_access_type => 'MENU', p_access_value => 'Roberts Menu') = 'Y'
+                
+                ```
+        }
+    )
+
+    entry configuration (
+        label: Configuration
+        layout {
+            sequence: 9200
+            parentEntry: @administration
+        }
+    )
+
+    entry debugging (
+        label: Debugging
+        layout {
+            sequence: 9400
+            parentEntry: @administration
+        }
+    )
+
+    entry faq (
+        label: FAQ
+        layout {
+            sequence: 300
+        }
+        link {
+            target: {
+                page: 10041
+            }
+        }
+    )
+
+    entry feedback-management (
+        label: Feedback Management
+        layout {
+            sequence: 8000
+        }
+        link {
+            target: {
+                page: 9951
+                action: resetPagination
+            }
+        }
+        serverSideCondition {
+            type: expression
+            plsqlExpression:
+                ```plsql
+                ll_pkg_security.am_i_allowed(p_apex_user => :app_user, p_access_type => 'PAGE', p_access_value => '9951') = 'Y'
+                  
+                ```
+        }
+    )
+
+    entry home (
+        label: Home
+        icon {
+            imageIconCssClasses: fa-home
+        }
+        layout {
+            sequence: 10
+        }
+        link {
+            target: {
+                page: 1
+            }
+        }
+    )
+
+    entry livelabs-feedback (
+        label: LiveLabs Feedback
+        layout {
+            sequence: 9060
+            parentEntry: @administration
+        }
+        isCurrent {
+            type: pages
+            pages: [
+                9951
+                9952
+            ]
+        }
+        link {
+            target: {
+                page: 9951
+            }
+        }
+    )
+
+    entry my-reservations (
+        label: My Reservations
+        layout {
+            sequence: 200
+        }
+        link {
+            target: {
+                page: 300
+                items: {
+                    P300_PAGE_ID: 300
+                }
+            }
+        }
+    )
+
+    entry resource-groups (
+        label: Resource Groups
+        layout {
+            sequence: 9220
+            parentEntry: @configuration
+        }
+        link {
+            target: {
+                page: 9181
+                action: resetPagination
+            }
+        }
+    )
+
+    entry support (
+        label: Support
+        layout {
+            sequence: 9100
+            parentEntry: @administration
+        }
+    )
+
+    entry user-management (
+        label: User Management
+        layout {
+            sequence: 9300
+            parentEntry: @administration
+        }
+    )
+
+)
+
+list feedback (
+    name: Feedback
+    config {
+        buildOption: @feature-feedback
+    }
+)
+
+list homepage-categories (
+    name: Homepage Categories
+
+    entry apex (
+        label: APEX
+        icon {
+            imageIconCssClasses: fa-tools
+        }
+        layout {
+            sequence: 10
+        }
+        link {
+            target: {
+            }
+        }
+    )
+
+    entry autonomous-database (
+        label: Autonomous Database
+        icon {
+            imageIconCssClasses: fa-car
+        }
+        layout {
+            sequence: 20
+        }
+        link {
+            target: {
+            }
+        }
+    )
+
+)
+
+list livelabs-dynamic-menu (
+    name: LiveLabs Dynamic Menu
+    source {
+        type: sqlQuery
+        sqlQuery:
+            ```sql
+            SELECT LEVEL as menu_level, ITEM_NAME as label, target_url as target, null as is_current, null as image
+            from ( select distinct id, item_name, target_url, item_parent, item_order
+                   from ll_dynamic_menu_vw b
+                   start with id in ( select id 
+                                      from ll_dynamic_menu c
+                                      where is_public='Y'
+                                         or ll_pkg_security.am_i_allowed(:APP_USER, 'PAGE', page_id) = 'Y')
+                   connect by id = prior item_parent )
+            START WITH ITEM_PARENT IS NULL
+            CONNECT BY PRIOR ID = ITEM_PARENT
+            ORDER SIBLINGS BY ITEM_ORDER
+            
+            ```
+    }
+)
+
+list livelabs-side-navigation-menu (
+    name: LiveLabs Side Navigation Menu
+
+    entry home (
+        label: Home
+        icon {
+            imageIconCssClasses: fa-home
+        }
+        layout {
+            sequence: 10
+        }
+        link {
+            target: {
+                page: 1
+            }
+        }
+    )
+
+    entry workshops-sprints (
+        label: Workshops & Sprints
+        icon {
+            imageIconCssClasses: fa-flask
+        }
+        layout {
+            sequence: 20
+        }
+        isCurrent {
+            type: pages
+            pages: 100
+        }
+        link {
+            target: {
+                page: 100
+            }
+        }
+    )
+
+)
+
+list wizard-progress-list (
+    name: Wizard Progress List
+
+    entry finish (
+        label: Finish
+        layout {
+            sequence: 70
+        }
+        link {
+            target: {
+                page: 9217
+            }
+        }
+    )
+
+    entry workshop-br-emails (
+        label: Workshop<br>Emails
+        layout {
+            sequence: 60
+        }
+        link {
+            target: {
+                page: 9216
+            }
+        }
+    )
+
+    entry workshop-br-images (
+        label: Workshop<br>Images
+        layout {
+            sequence: 20
+        }
+        link {
+            target: {
+                page: 9212
+            }
+        }
+    )
+
+    entry workshop-br-policies (
+        label: Workshop<br>Policies
+        layout {
+            sequence: 30
+        }
+        link {
+            target: {
+                page: 9213
+            }
+        }
+    )
+
+    entry workshop-br-requirements (
+        label: Workshop<br>Requirements
+        layout {
+            sequence: 40
+        }
+        link {
+            target: {
+                page: 9214
+            }
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    entry workshop-br-steps (
+        label: Workshop<br>Steps
+        layout {
+            sequence: 10
+        }
+        link {
+            target: {
+                page: 9211
+            }
+        }
+    )
+
+    entry workshop-br-tags (
+        label: Workshop<br>Tags
+        layout {
+            sequence: 50
+        }
+        link {
+            target: {
+                page: 9215
+            }
+        }
+    )
+
+)
+

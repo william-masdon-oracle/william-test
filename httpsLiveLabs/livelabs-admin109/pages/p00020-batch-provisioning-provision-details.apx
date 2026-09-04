@@ -1,0 +1,995 @@
+page 20 (
+    name: Batch Provisioning - Provision Details
+    alias: BATCH-PROVISIONING-PROVISION-DETAILS
+    title: Select a Provision Plan
+    appearance {
+        pageTemplate: @standard-trustarc
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    css {
+        inline:
+            ```css
+            #avail-environments-report .t-Region-body{
+                display: flex;
+                justify-content: center;
+            }
+            
+            #P20_PROVISION_PLAN {
+                padding-top: 0px;
+            }
+            
+            
+            .t-Report {
+                display: flex;
+                justify-content: center;
+            }
+            ```
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region available-environments (
+        name: Available Environments
+        title: Select from Available Environments
+        type: staticContent
+        layout {
+            sequence: 20
+            parentRegion: @batch-provisioning-provision-details-2
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--accent1
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            htmlDomId: avail-environments-report
+        }
+    )
+
+    region available-environments-2 (
+        name: Available Environments
+        type: classicReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select tenancy_id, region_id, environments, preference_points
+                from JSON_TABLE ( :P20_ENVIRONMENTS_JSON, '$[*]' COLUMNS (tenancy_id, region_id, environments, preference_points))            
+                  
+                
+                
+                
+                ```
+        }
+        layout {
+            sequence: 30
+            parentRegion: @available-environments
+            slot: regionBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--accent1
+                t-Region--noUI
+                t-Region--scrollBody
+                t-Form--noPadding
+            ]
+        }
+        serverSideCondition {
+            type: never
+        }
+        componentAppearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Report--altRowsDefault
+                t-Report--rowHighlight
+                t-Report--hideNoPagination
+            ]
+        }
+        performance {
+            maxRowsToProcess: 500
+        }
+        messages {
+            whenNoDataFound: no data found
+        }
+        componentAdvanced {
+            stripHtml: true
+        }
+
+        column ENVIRONMENTS (
+            reportColumnQueryId: 3
+            derivedColumn: N
+            heading {
+                heading: Environments
+                alignment: center
+            }
+            layout {
+                sequence: 30
+            }
+        )
+
+        column PREFERENCE_POINTS (
+            reportColumnQueryId: 4
+            derivedColumn: N
+            heading {
+                heading: Preference Points
+                alignment: center
+            }
+            layout {
+                sequence: 40
+            }
+        )
+
+        column REGION_ID (
+            reportColumnQueryId: 2
+            derivedColumn: N
+            type: plainTextBasedOnLov
+            heading {
+                heading: Region
+                alignment: center
+            }
+            lov {
+                type: sharedComponent
+                lov: @ll-regions-3
+            }
+            layout {
+                sequence: 20
+            }
+        )
+
+        column TENANCY_ID (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            type: plainTextBasedOnLov
+            heading {
+                heading: Tenancy
+                alignment: center
+            }
+            lov {
+                type: sharedComponent
+                lov: @ll-tenancies-2
+            }
+            layout {
+                sequence: 10
+            }
+        )
+
+    )
+
+    region batch-provisioning-provision-details (
+        name: Batch Provisioning - Provision Details
+        type: list
+        source {
+            list: @batch-provision
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @wizard-container
+            templateOptions: [
+                #DEFAULT#
+                t-Wizard--hideStepsXSmall
+            ]
+        }
+        advanced {
+            htmlDomId: provision-schedule-region
+        }
+        componentAppearance {
+            listTemplate: @wizard-progress
+        }
+    )
+
+    region batch-provisioning-provision-details-2 (
+        name: Batch Provisioning - Provision Details
+        type: staticContent
+        layout {
+            sequence: 30
+            parentRegion: @batch-provisioning-provision-details
+            slot: wizardSubRegions
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    region default-schedule (
+        name: Default Schedule
+        type: classicReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                    select to_number(batch_number) batch_number,
+                           start_date,
+                           start_time,
+                           batch_size,
+                           (select tenancy_name from ll_tenancies where id = tenancy_id) tenancy,
+                           (select region_name from ll_oci_regions where id = region_id) region,
+                           preference_points
+                    from JSON_TABLE (:P20_PROVISION_SCHEDULE_JSON, '$[*]' 
+                            COLUMNS (batch_number, 
+                                    start_time,
+                                    start_date,
+                                    batch_size, 
+                                    tenancy_id,
+                                    region_id,  
+                                    preference_points));
+                ```
+            pageItemsToSubmit: P20_PROVISION_SCHEDULE_JSON
+        }
+        layout {
+            sequence: 10
+            parentRegion: @review-the-provision-schedule
+            slot: regionBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--scrollBody
+            ]
+        }
+        componentAppearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Report--altRowsDefault
+                t-Report--rowHighlight
+            ]
+        }
+
+        column BATCH_NUMBER (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            heading {
+                heading: Batch Number
+                alignment: center
+            }
+            layout {
+                sequence: 10
+                columnAlignment: center
+            }
+        )
+
+        column BATCH_SIZE (
+            reportColumnQueryId: 4
+            derivedColumn: N
+            heading {
+                heading: Batch Size
+                alignment: center
+            }
+            layout {
+                sequence: 40
+                columnAlignment: center
+            }
+        )
+
+        column PREFERENCE_POINTS (
+            reportColumnQueryId: 7
+            derivedColumn: N
+            heading {
+                heading: Preference Points
+                alignment: center
+            }
+            layout {
+                sequence: 70
+                columnAlignment: center
+            }
+        )
+
+        column REGION (
+            reportColumnQueryId: 6
+            derivedColumn: N
+            heading {
+                heading: Region
+                alignment: center
+            }
+            layout {
+                sequence: 60
+            }
+        )
+
+        column START_DATE (
+            reportColumnQueryId: 2
+            derivedColumn: N
+            heading {
+                heading: Start Date
+            }
+            layout {
+                sequence: 20
+            }
+        )
+
+        column START_TIME (
+            reportColumnQueryId: 3
+            derivedColumn: N
+            heading {
+                heading: Start Time
+            }
+            layout {
+                sequence: 30
+            }
+        )
+
+        column TENANCY (
+            reportColumnQueryId: 5
+            derivedColumn: N
+            heading {
+                heading: Tenancy
+                alignment: center
+            }
+            layout {
+                sequence: 50
+                columnAlignment: center
+            }
+        )
+
+    )
+
+    region hidden-items (
+        name: Hidden Items
+        type: staticContent
+        layout {
+            sequence: 10
+            parentRegion: @batch-provisioning-provision-details
+            slot: wizardSubRegions
+        }
+    )
+
+    region no-available-environments-error-message (
+        name: No Available Environments Error Message
+        type: staticContent
+        source {
+            htmlCode: There are no available environments for this workshop. Please assign the event to a different workshop or request support from a LiveLabs administrator.
+        }
+        layout {
+            sequence: 10
+            parentRegion: @available-environments
+            slot: subRegions
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+        serverSideCondition {
+            type: itemIsNull
+            item: P20_ENVIRONMENTS_JSON
+        }
+    )
+
+    region no-filtered-environments-error-message (
+        name: No Filtered Environments Error Message
+        type: staticContent
+        source {
+            htmlCode: "There are no available environments for the tenancies you've selected. "
+        }
+        layout {
+            sequence: 20
+            parentRegion: @available-environments
+            slot: subRegions
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+        serverSideCondition {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                declare
+                    v_filtered_options number;
+                    v_all_options number;
+                begin
+                
+                    if :P19_TENANCY_FILTER is not null then 
+                        select count(*) into v_filtered_options from JSON_TABLE (:P20_ENVIRONMENTS_JSON, '$[*]' COLUMNS (tenancy_id, region_id, environments, preference_points)) where tenancy_id in (select column_value
+                                    FROM TABLE( APEX_STRING.SPLIT(''|| :P19_TENANCY_FILTER ||'', ',')));
+                        if v_filtered_options = 0 then
+                            return true;
+                        else 
+                            return false;
+                        end if;
+                    else 
+                        return false;
+                    end if;
+                
+                end;
+                ```
+        }
+    )
+
+    region review-the-provision-schedule (
+        name: Review the Provision Schedule
+        type: staticContent
+        layout {
+            sequence: 30
+            parentRegion: @batch-provisioning-provision-details-2
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--accent1
+                t-Region--scrollBody
+                t-Form--slimPadding
+            ]
+        }
+        advanced {
+            htmlDomId: provision-schedule-region
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P20_ENVIRONMENT_SELECTIONS
+        }
+    )
+
+    pageItem P20_ENVIRONMENTS_JSON (
+        type: hidden
+        layout {
+            sequence: 30
+            region: @hidden-items
+            slot: regionBody
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                declare
+                  v_tenancy_id number;
+                  v_region_id  number;
+                  v_available  clob;
+                begin
+                    ll_pkg_reservation.find_available_tenancy(p_tenancy_id => v_tenancy_id, p_region_id => v_region_id, p_available_json => v_available, p_workshop_id => :P20_WORKSHOP_ID);
+                
+                    if v_available = '[]' then
+                        return null;
+                	else 
+                        return (v_available);
+                    end if;
+                end;
+                ```
+            used: always
+        }
+        default {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                declare
+                  v_tenancy_id number;
+                  v_region_id  number;
+                  v_available  clob;
+                begin
+                    ll_pkg_reservation.find_available_tenancy(p_tenancy_id => v_tenancy_id, p_region_id => v_region_id, p_available_json => v_available, p_workshop_id => :P20_WORKSHOP_ID);
+                
+                    if v_available = '[]' then
+                        return null;
+                	else 
+                        return (v_available);
+                    end if;
+                end;
+                ```
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P20_ENVIRONMENT_SELECTIONS (
+        type: checkboxGroup
+        label {
+            label: Select from Available Environments
+            alignment: left
+        }
+        settings {
+            noOfCols: 3
+        }
+        lov {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                begin
+                
+                    if :P19_TENANCY_FILTER is null then 
+                        return 'select upper((select tenancy_name from ll_tenancies where id = tenancy_id) ||'' | ''|| (select region_name from ll_oci_regions where id = region_id) || '' | '' || preference_points || '' pts'') d,
+                        tenancy_id||''-''||region_id r 
+                        from JSON_TABLE (:P20_ENVIRONMENTS_JSON, ''$[*]'' COLUMNS (tenancy_id, region_id, environments, preference_points))';
+                    else 
+                        return 'select upper((select tenancy_name from ll_tenancies where id = tenancy_id) ||'' | ''|| (select region_name from ll_oci_regions where id = region_id) || '' | '' || preference_points || '' pts'') d,
+                        tenancy_id||''-''||region_id r 
+                        from JSON_TABLE (:P20_ENVIRONMENTS_JSON, ''$[*]'' COLUMNS (tenancy_id, region_id, environments, preference_points)) where tenancy_id in (select column_value
+                                    FROM TABLE( APEX_STRING.SPLIT('''|| :P19_TENANCY_FILTER ||''', '','')))';
+                    end if;
+                end;
+                ```
+            displayExtraValues: false
+        }
+        multipleValues {
+            separator: ,
+        }
+        layout {
+            sequence: 10
+            region: @available-environments
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required-floating
+            templateOptions: #DEFAULT#
+        }
+        validation {
+            valueRequired: true
+        }
+        default {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                declare
+                v_preferred_environments varchar2(4000);
+                v_max_points number := ll_pkg_batch.get_max_preference_points(:P20_ENVIRONMENTS_JSON);
+                
+                begin
+                    if :P19_TENANCY_FILTER is null then
+                        select listagg(tenancy_id||'-'||region_id, ',') into v_preferred_environments
+                                    from JSON_TABLE (:P20_ENVIRONMENTS_JSON, '$[*]' COLUMNS (tenancy_id, region_id, environments, preference_points)) where preference_points = v_max_points;
+                        return v_preferred_environments;
+                
+                    else      
+                        select listagg(tenancy_id||'-'||region_id, ',') into v_preferred_environments
+                                    from JSON_TABLE (:P20_ENVIRONMENTS_JSON, '$[*]' COLUMNS (tenancy_id, region_id, environments, preference_points)) where tenancy_id in (select column_value
+                                    FROM TABLE( APEX_STRING.SPLIT(''||:P19_TENANCY_FILTER||'', ',')));
+                        return v_preferred_environments;
+                    end if;
+                end;
+                ```
+        }
+        serverSideCondition {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                declare
+                    v_filtered_options number;
+                    v_all_options number;
+                begin
+                
+                    if :P19_TENANCY_FILTER is not null then 
+                        select count(*) into v_filtered_options from JSON_TABLE (:P20_ENVIRONMENTS_JSON, '$[*]' COLUMNS (tenancy_id, region_id, environments, preference_points)) where tenancy_id in (select column_value
+                                    FROM TABLE( APEX_STRING.SPLIT(''||:P19_TENANCY_FILTER||'', ',')));
+                        if v_filtered_options = 0 then
+                            return false;
+                        else 
+                            return true;
+                        end if;
+                    else
+                        if :P20_ENVIRONMENTS_JSON is null then
+                            return false;
+                        else 
+                            return true;
+                        end if;
+                
+                    end if;
+                
+                end;
+                ```
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            helpText: The most preferred environments are selected by default.
+        }
+    )
+
+    pageItem P20_NEXT_URL (
+        type: hidden
+        layout {
+            sequence: 40
+            region: @hidden-items
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P20_PROVISION_SCHEDULE_JSON (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 20
+            region: @available-environments
+            slot: regionBody
+        }
+        default {
+            type: expression
+            plsqlExpression:
+                ```plsql
+                    case when :P20_ENVIRONMENTS_JSON is null then
+                        null
+                    else  ll_pkg_batch.create_default_schedule(p_workshop_id => :P20_WORKSHOP_ID,
+                                                                p_reservation_size => :P19_RESERVATION_SIZE, 
+                                                                p_batch_size => :P19_BATCH_SIZE, 
+                                                                p_interval => :P19_BATCH_TIME_INTERVAL, 
+                                                                p_start_time => TO_DATE(:P19_START_DATE||' '||:P19_START_TIME, 'MM/DD/YYYY HH24:MI'),
+                                                                p_environments => :P20_ENVIRONMENT_SELECTIONS) 
+                    end
+                ```
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P20_ENVIRONMENTS_JSON
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P20_WORKSHOP_ID (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 10
+            region: @hidden-items
+            slot: regionBody
+        }
+        default {
+            type: sqlQuerySingleValue
+            sqlQuerySingleValue: select workshop_id from ll_vouchers where id = :P19_EVENT_CODE_ID
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P20_WORKSHOP_TITLE (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 20
+            region: @hidden-items
+            slot: regionBody
+        }
+        default {
+            type: sqlQuerySingleValue
+            sqlQuerySingleValue: select name from ll_workshops where id = (select workshop_id from ll_vouchers where id = :P19_EVENT_CODE_ID)
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button cancel (
+        buttonName: CANCEL
+        label: Cancel
+        layout {
+            sequence: 10
+            region: @batch-provisioning-provision-details
+            slot: close
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 1
+                clearCache: [
+                    19
+                    20
+                    23
+                ]
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button next (
+        buttonName: NEXT
+        label: Next
+        layout {
+            sequence: 30
+            region: @batch-provisioning-provision-details
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @text-with-icon
+            hot: true
+            templateOptions: t-Button--iconRight
+            icon: fa-chevron-right
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 23
+            }
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: insert
+        }
+        serverSideCondition {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                declare
+                    v_filtered_options number;
+                    v_all_options number;
+                begin
+                
+                    if :P19_TENANCY_FILTER is not null then 
+                        select count(*) into v_filtered_options from JSON_TABLE (:P20_ENVIRONMENTS_JSON, '$[*]' COLUMNS (tenancy_id, region_id, environments, preference_points)) where tenancy_id in (select column_value
+                                    FROM TABLE( APEX_STRING.SPLIT(''||:P19_TENANCY_FILTER||'', ',')));
+                        if v_filtered_options = 0 then
+                            return false;
+                        else 
+                            return true;
+                        end if;
+                    else
+                        if :P20_ENVIRONMENTS_JSON is null then
+                            return false;
+                        else 
+                            return true;
+                        end if;
+                
+                    end if;
+                
+                end;
+                ```
+        }
+    )
+
+    button previous (
+        buttonName: PREVIOUS
+        label: Previous
+        layout {
+            sequence: 20
+            region: @batch-provisioning-provision-details
+            slot: previous
+        }
+        appearance {
+            buttonTemplate: @icon
+            templateOptions: #DEFAULT#
+            icon: fa-chevron-left
+        }
+        behavior {
+            executeValidations: false
+            showProcessing: true
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    dynamicAction on-change (
+        name: On Change
+        execution {
+            sequence: 20
+        }
+        when {
+            selectionType: items
+            items: P20_ENVIRONMENT_SELECTIONS
+        }
+        clientSideCondition {
+            type: itemIsNotNull
+            item: P20_ENVIRONMENTS_JSON
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P20_ENVIRONMENTS_JSON
+        }
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @default-schedule
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+        action native-set-value (
+            action: setValue
+            settings {
+                type: plsqlExpression
+                plsqlExpression:
+                    ```plsql
+                        case when :P20_ENVIRONMENTS_JSON is null then
+                            null
+                        else  ll_pkg_batch.create_default_schedule(p_workshop_id => :P20_WORKSHOP_ID,
+                                                                    p_reservation_size => :P19_RESERVATION_SIZE, 
+                                                                    p_batch_size => :P19_BATCH_SIZE, 
+                                                                    p_interval => :P19_BATCH_TIME_INTERVAL, 
+                                                                    p_start_time => TO_DATE(:P19_START_DATE||' '||:P19_START_TIME, 'MM/DD/YYYY HH24:MI'),
+                                                                    p_environments => :P20_ENVIRONMENT_SELECTIONS) 
+                        end
+                    ```
+                itemsToSubmit: [
+                    P20_ENVIRONMENT_SELECTIONS
+                    P20_ENVIRONMENTS_JSON
+                    :P20_WORKSHOP_ID
+                ]
+                escapeSpecialChars: false
+            }
+            affectedElements {
+                selectionType: items
+                items: P20_PROVISION_SCHEDULE_JSON
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+            clientSideCondition {
+                type: itemIsNotNull
+                item: P20_ENVIRONMENTS_JSON
+            }
+            serverSideCondition {
+                type: itemIsNotNull
+                item: P20_ENVIRONMENTS_JSON
+            }
+        )
+
+    )
+
+    dynamicAction on-click (
+        name: On Click
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @next
+        }
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    DECLARE
+                        l_url varchar2(2000);
+                        l_app number := v('APP_ID');
+                        l_session number := v('APP_SESSION');
+                    BEGIN
+                        :P20_NEXT_URL := APEX_UTIL.PREPARE_URL(
+                            p_url => 'f?p=' || l_app || ':23:'||l_session||'::NO::::',
+                            p_checksum_type => 'SESSION');
+                    END;
+                    
+                    
+                    ```
+                itemsToReturn: P20_NEXT_URL
+                showProcessing: true
+            }
+            execution {
+                sequence: 40
+                fireOnInit: false
+            }
+        )
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode: window.location.href = $v("P20_NEXT_URL");
+            }
+            execution {
+                sequence: 50
+                fireOnInit: false
+            }
+        )
+
+        action native-set-value (
+            action: setValue
+            settings {
+                type: plsqlFunctionBody
+                plsqlFunctionBody:
+                    ```plsql
+                    begin 
+                        return ll_pkg_batch.create_default_schedule(p_workshop_id => :P20_WORKSHOP_ID,
+                                                                    p_reservation_size => :P19_RESERVATION_SIZE, 
+                                                                    p_batch_size => :P19_BATCH_SIZE, 
+                                                                    p_interval => :P19_BATCH_TIME_INTERVAL, 
+                                                                    p_start_time => TO_DATE(:P19_START_DATE||' '||:P19_START_TIME, 'MM/DD/YYYY HH24:MI'),
+                                                                    p_environments => :P20_ENVIRONMENT_SELECTIONS); 
+                    end;
+                    ```
+                itemsToSubmit: [
+                    P20_ENVIRONMENT_SELECTIONS
+                    P20_PROVISION_SCHEDULE_JSON
+                ]
+                escapeSpecialChars: false
+            }
+            affectedElements {
+                selectionType: items
+                items: P20_PROVISION_SCHEDULE_JSON
+            }
+            execution {
+                sequence: 10
+            }
+            clientSideCondition {
+                type: itemIsNotNull
+                item: P20_ENVIRONMENTS_JSON
+            }
+        )
+
+        action native-submit-page (
+            action: submitPage
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    computation p20-environments-json (
+        itemName: P20_ENVIRONMENTS_JSON
+        execution {
+            sequence: 10
+            point: beforeHeader
+        }
+        computation {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                declare
+                  v_tenancy_id number;
+                  v_region_id  number;
+                  v_available  clob;
+                begin
+                    ll_pkg_reservation.find_available_tenancy (p_tenancy_id => v_tenancy_id, p_region_id => v_region_id, p_available_json => v_available, p_workshop_id => :P20_WORKSHOP_ID);
+                	return (v_available);
+                end;
+                ```
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    branch (
+        name: Go To Page 19
+        execution {
+            sequence: 10
+            point: validating
+        }
+        behavior {
+            target: {
+                page: 19
+                clearCache: 20
+            }
+        }
+        serverSideCondition {
+            whenButtonPressed: @previous
+        }
+    )
+
+)
+

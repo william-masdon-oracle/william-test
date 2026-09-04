@@ -1,0 +1,234 @@
+appProcess log-page-visit (
+    name: LOG_PAGE_VISIT
+    type: executeCode
+    source {
+        plsqlCode:
+            ```plsql
+            BEGIN
+              apex_json.parse(p_source => apex_application.g_x01);
+            
+              if (apex_json.get_varchar2(p_path => 'url') is not null or apex_json.get_varchar2(p_path => 'referrer') is not null) then
+            
+                  INSERT INTO LL_APEXAPPS_LOG (
+                    ENTRY_DATE,
+                    URL,
+                    PREV_URL,
+                    APP_SESSION
+                  ) VALUES (
+                    SYSTIMESTAMP,
+                    apex_json.get_varchar2(p_path => 'url'),
+                    apex_json.get_varchar2(p_path => 'referrer'),
+                    APEX_APPLICATION.GET_SESSION_ID
+                  );
+            
+                  apex_json.open_object;
+                  apex_json.write('status', 'ok');
+                  apex_json.close_object;
+              end if;
+            END;
+            ```
+    }
+    execution {
+        sequence: 1
+        point: ajaxCallback
+    }
+)
+
+appProcess redirect-invalid-workshop-or-event (
+    name: Redirect Invalid Workshop or Event
+    type: executeCode
+    source {
+        plsqlCode:
+            ```plsql
+            declare
+                v_hold number;
+                e_apex_engine_stop exception;
+                pragma exception_init(e_apex_engine_stop, -20876);
+            begin 
+                if :WID is null and :WEC is null then 
+                    apex_util.redirect_url (
+                        p_url => apex_util.host_url() || apex_page.get_url(p_page => 1,
+                                                                            p_items => 'P1_BADURL', 
+                                                                            p_values => 'Y'));
+                else 
+                    if :WEC is not null then 
+                        begin
+                            select 1 into v_hold from ll_vouchers where voucher_code = :WEC;
+                        exception when others then 
+                            apex_util.redirect_url (
+                                p_url => apex_util.host_url() || apex_page.get_url(p_page => 1,
+                                                                            p_items => 'P1_INVALID_EVENT_CODE', 
+                                                                            p_values => :WEC));
+                        end;
+                    elsif :WID is not null then 
+                        begin
+                            select 1 into v_hold from ll_workshops where id = :WID;
+                        exception when others then 
+                            ll_pkg_log.log(1, 'inside WID exception: ' || :WID);
+                            apex_util.redirect_url (
+                                p_url => apex_util.host_url() || apex_page.get_url(p_page => 1,
+                                                                            p_items => 'P1_INVALID_WORKSHOP_ID', 
+                                                                            p_values => :WID));
+                        end;
+                    end if;
+                end if;
+            exception 
+                when e_apex_engine_stop then
+                    raise; -- Re-raise to allow APEX redirect to complete
+                when others then 
+                    ll_pkg_log.log(1, 'inside outside exception: ' || sqlerrm);
+                    apex_util.redirect_url (
+                        p_url => apex_util.host_url() || apex_page.get_url(p_page => 1,
+                                                                            p_items => 'P1_BADURL', 
+                                                                            p_values => 'Y'));
+            end;
+            ```
+    }
+    execution {
+        sequence: 10
+    }
+    serverSideCondition {
+        type: currentPage=page
+        page: 180
+    }
+)
+
+appProcess redirect-page-210-invalid-url (
+    name: Redirect Page 210 Invalid URL
+    type: executeCode
+    source {
+        plsqlCode:
+            ```plsql
+            begin
+            if :P210_TYPE is not null then 
+                apex_util.redirect_url (
+                p_url => apex_util.host_url() || apex_page.get_url(p_page => 1,
+                                                                    p_items => 'P1_BADURL', 
+                                                                    P_VALUES => 'Y'));
+            end if;
+            exception when others then
+            apex_util.redirect_url (
+                p_url => apex_util.host_url() || apex_page.get_url(p_page => 1,
+                                                                    p_items => 'P1_BADURL', 
+                                                                    P_VALUES => 'Y'));
+            end;
+            ```
+    }
+    execution {
+        sequence: 10
+    }
+    serverSideCondition {
+        type: currentPage=page
+        page: 210
+    }
+)
+
+appProcess workshop-metadata-for-seo (
+    name: workshop metadata for SEO
+    type: executeCode
+    source {
+        plsqlCode:
+            ```plsql
+            declare 
+            -- defaults
+                    l_metadata    varchar2(32000);
+                    l_site_name varchar2(128) := 'Oracle LiveLabs';
+                    l_title varchar2(128) := 'Oracle LiveLabs';
+                    l_url varchar2(128) := apex_util.host_url() || '/pls/apex/dbpm/r/livelabs/';
+                    l_image varchar2(4000) :=  apex_util.host_url() || '/pls/apex/#APP_FILES#icons/app-icon-192.png';
+                    l_image_mime varchar2(128) := null;
+                    l_ws_title varchar2(4000) := null;
+                    l_ws_description varchar2(4000) := '';
+                    l_twitter varchar2(128) := 'Oracle_LiveLabs';
+                    l_image_alt varchar2(128) := 'Oracle LiveLabs'; 
+                    l_robots varchar2(128) := 'all';
+                    l_canonical varchar2(128) := 'https://apex.oracle.com/ideas';
+                    l_workshop_time varchar2(100) := null;
+            
+            begin
+                if :APP_PAGE_ID=210 or :APP_PAGE_ID=180 then
+                    begin -- get actual workshop details 
+                        select replace(name,'"','''') || ' - Oracle LiveLabs', 
+                            substr(replace(rtrim(regexp_replace(desc_short, '!\[\]+\S*')),chr(13)||chr(10)),1, 512) || 
+                            case when length(replace(rtrim(regexp_replace(desc_short, '!\[\]+\S*')),chr(13)||chr(10)))>512 
+                                then '..' end ,
+                                 ll_pkg_admin.hours_readable(time_in_hours, 'SHORT')
+                            into l_ws_title, l_ws_description, l_workshop_time from ll_workshops where id= case when :APP_PAGE_ID = 210 then :P210_WID else :WID end;
+                       exception when others then
+                           null; -- safe to do here to avoid any error
+                    end;
+            
+                    l_url := l_url || 'view-workshop?wid=' || case when :APP_PAGE_ID = 210 then :P210_WID else :WID end;
+            
+                  /*  begin -- get the first image in the IDEA DESCRIPTION, if one exists
+                        select  APEX_UTIL.HOST_URL() || '/pls/apex/apex_pm/fr/files/'  || FILE_NAME_UNIQUE, MIME_TYPE  
+                            into l_image, l_image_mime
+                            from fr_files where nvl(PUBLISHED_YN,'Y')<>'N' 
+                                and instr(
+                                        (
+                                            select description from fr_features where row_key=:IDEA and nvl(published_yn,'Y')='Y' and nvl(deleted_yn,'Y')='Y' fetch first 1 rows only
+                                        ) -- images are not keyed to FR, they are included in the text description
+                                            ,FILE_NAME_UNIQUE)>0
+                                            order by created asc
+                                            fetch first 1 rows only; -- get only the 1st pic; if they edit the FR and the order changes, then this won't get the true first pic
+                        exception when others then
+                           null; -- safe to do here to avoid any error
+                    end;
+                    */
+                end if;
+                l_metadata :=
+                    apex_string.format
+                      ( p_message => '<meta property="og:type" content="website" />'              ||
+                                     '<meta property="og:locale" content="%0" />'                 ||
+                                     '<meta property="og:site_name" content="%1" />'              ||
+                                     '<meta property="og:title" content="%2" />'                  ||
+                                     '<meta property="og:url" content="%3" />'                    ||
+                                     '<meta property="og:image" content="%4" />'                  ||
+                                     '<meta property="og:image:alt" content="%8" />'              ||
+                                     '<meta property="og:image:type" content="image/%5" />'       ||
+                                     '<meta property="og:description" content="%6" />'            ||
+                                     '<meta name="description" content="%6" />'                   ||
+                                     '<meta name="twitter:card" content="%6" />'                  ||
+                                     '<meta name="twitter:image" content="%4" />'                 ||
+                                     '<meta name="twitter:image:alt" content="%8" />'             ||
+                                     '<meta name="twitter:site" content="%7" />'                  ||
+                                     '<meta name="twitter:creator" content="%7" />'               ||
+                                        case when l_workshop_time is null then '' else
+                                             '<meta name="twitter:label1" content="Workshop Time" />'     ||
+                                             '<meta name="twitter:data1" content="%9" />' 
+                                        end
+                      , p0        => :BROWSER_LANGUAGE
+                      , p1        => l_site_name
+                      , p2        => case when l_ws_title is null then l_title else l_ws_title end
+                      , p3        => l_url
+                      , p4        => l_image
+                      , p5        => CASE WHEN l_image like '%png' then 'png' else case when l_image_mime is null then 'jpg' else trim(substr(l_image_mime,7)) end end
+                      , p6        => APEX_ESCAPE.HTML(l_ws_description)
+                      , p7        => l_twitter
+                      , p8        => l_image_alt
+                      , p9        => l_workshop_time
+                      )
+                ;
+                
+                if l_robots is not null
+                then
+                    l_metadata := l_metadata || '<meta name="robots" content="'||l_robots||'" />';
+                end if;
+                
+                if l_canonical is not null
+                then
+                    l_metadata := l_metadata || '<link rel="canonical" href="'||l_canonical||'" />';
+                end if;
+                
+                apex_application.g_head := apex_application.g_head || l_metadata;
+            
+            -- fix for dynamic image path wrt favicon
+                :WS_APP_FILES:= APEX_MAIL.GET_INSTANCE_URL || :APP_FILES;
+                end;
+            ```
+    }
+    execution {
+        sequence: 1
+    }
+)
+

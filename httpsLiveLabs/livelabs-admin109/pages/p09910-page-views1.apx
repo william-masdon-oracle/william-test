@@ -1,0 +1,538 @@
+page 9910 (
+    name: Page views
+    alias: PAGE-VIEWS1
+    title: Page views
+    appearance {
+        pageTemplate: @standard-trustarc
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region charts (
+        name: Charts
+        type: chart
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @collapsible
+            templateOptions: [
+                #DEFAULT#
+                js-useLocalStorage
+                t-Region--hideShowIconsMath
+                is-expanded
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        title {
+            title: Pageviews per hour
+        }
+        chartLayout {
+            height: 400
+        }
+        legend {
+            title: Page IDs
+        }
+
+        series pageviews (
+            name: Pageviews
+            execution {
+                sequence: 10
+            }
+            source {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select b.ref_order, substr(b.ref_date,1,11) as ref_date, count(a.page_id) as mycount
+                    from (select page_id, workshop_id, substr(to_char(entry_date,'DD-MM HH24:MI'),1,8) list_date from ll_page_visits) a,
+                          JSON_TABLE ( ll_pkg_apex.json_list_dates (p_start_date => trunc(sysdate-2) + (1/24), p_minutes_apart => 60 ), '$[*]' columns (ref_date, ref_order) ) b
+                    where substr(b.ref_date,1,8) = a.list_date(+)
+                    group by b.ref_order, b.ref_date
+                    order by to_number(b.ref_order)
+                    
+                    
+                    ```
+            }
+            columnMapping {
+                label: REF_DATE
+                value: MYCOUNT
+            }
+        )
+
+        series pageviews-per-page (
+            name: Pageviews per page
+            execution {
+                sequence: 20
+            }
+            source {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select b.ref_order, page_id, substr(b.ref_date,1,11) as ref_date, count(a.page_id) as mycount
+                    from (select page_id, workshop_id, substr(to_char(entry_date,'DD-MM HH24:MI'),1,8) list_date from ll_page_visits) a,
+                          JSON_TABLE ( ll_pkg_apex.json_list_dates (p_start_date => trunc(sysdate-2) + (1/24), p_minutes_apart => 60 ), '$[*]' columns (ref_date, ref_order) ) b
+                    where substr(b.ref_date,1,8) = a.list_date(+)
+                    and a.page_id is not null
+                    group by b.ref_order, page_id, b.ref_date
+                    order by to_number(b.ref_order)
+                    
+                    
+                    ```
+            }
+            columnMapping {
+                seriesName: PAGE_ID
+                label: REF_DATE
+                value: MYCOUNT
+            }
+        )
+
+        axis x (
+            name: x
+            title: Pageviews
+            value {
+                format: timeShort
+                pattern: DD-MM-YYYY HH24
+            }
+            minorTicks {
+                show: false
+            }
+        )
+
+        axis y (
+            name: y
+            value {
+                format: decimal
+                decimalPlaces: 0
+                formatScaling: none
+            }
+            minorTicks {
+                show: false
+            }
+        )
+
+    )
+
+    region page-views (
+        name: Page views
+        type: interactiveReport
+        source {
+            location: localDatabase
+            tableName: LL_PAGE_VISITS
+        }
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @collapsible
+            templateOptions: [
+                #DEFAULT#
+                js-useLocalStorage
+                t-Region--hideShowIconsMath
+                is-expanded
+                i-h480
+                t-Region--scrollBody
+            ]
+        }
+        pagination {
+            type: rowRangesXToY
+        }
+        messages {
+            whenNoDataFound: No data found.
+            whenMoreDataFound: The maximum row count for this report is #MAX_ROW_COUNT# rows.  Please apply a filter to reduce the number of records in your query.
+        }
+        actionsMenu {
+            subscription: false
+        }
+        advanced {
+            savedReportMappingIdentifier: 100861233506792986
+        }
+
+        column APP_SESSION (
+            type: plainText
+            heading {
+                heading: App Session
+            }
+            layout {
+                sequence: 4
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: D
+            }
+        )
+
+        column ENTRY_DATE (
+            type: plainText
+            heading {
+                heading: Entry Date
+            }
+            layout {
+                sequence: 3
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: C
+            }
+        )
+
+        column PAGE_ID (
+            type: plainText
+            heading {
+                heading: Page Id
+                alignment: end
+            }
+            layout {
+                sequence: 1
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: A
+            }
+        )
+
+        column WORKSHOP_ID (
+            type: plainText
+            heading {
+                heading: Workshop Id
+                alignment: end
+            }
+            layout {
+                sequence: 2
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: B
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: Page views
+        }
+
+        savedReport 1008653 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn APP_SESSION (
+                sequence: 4
+            )
+
+            displayColumn ENTRY_DATE (
+                sequence: 3
+            )
+
+            displayColumn PAGE_ID (
+                sequence: 1
+            )
+
+            displayColumn WORKSHOP_ID (
+                sequence: 2
+            )
+
+        )
+
+    )
+
+    region page-views-per-hour (
+        name: Page views per hour
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select page_id, trunc(entry_date) + ll_pkg_admin.hours_to_days(to_number(to_char(entry_date,'HH24'))) as date_hour, count(*)
+                from ll_page_visits
+                group by page_id, trunc(entry_date) + ll_pkg_admin.hours_to_days(to_number(to_char(entry_date,'HH24')))
+                ```
+        }
+        layout {
+            sequence: 30
+            slot: contentBody
+        }
+        appearance {
+            template: @collapsible
+            templateOptions: [
+                #DEFAULT#
+                js-useLocalStorage
+                t-Region--hideShowIconsMath
+                is-expanded
+                i-h480
+                t-Region--scrollBody
+            ]
+        }
+        pagination {
+            type: rowRangesXToY
+        }
+        messages {
+            whenNoDataFound: No data found.
+            whenMoreDataFound: The maximum row count for this report is #MAX_ROW_COUNT# rows.  Please apply a filter to reduce the number of records in your query.
+        }
+        actionsMenu {
+            subscription: false
+        }
+        advanced {
+            savedReportMappingIdentifier: 100863746130809464
+        }
+
+        column "COUNT(*)" (
+            type: plainText
+            heading {
+                heading: Count(*)
+                alignment: end
+            }
+            layout {
+                sequence: 3
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: C
+            }
+        )
+
+        column DATE_HOUR (
+            type: plainText
+            heading {
+                heading: Date Hour
+            }
+            layout {
+                sequence: 2
+            }
+            appearance {
+                formatMask: DD Mon YYYY - HH24
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: B
+            }
+        )
+
+        column PAGE_ID (
+            type: plainText
+            heading {
+                heading: Page Id
+                alignment: end
+            }
+            layout {
+                sequence: 1
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: A
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: Page views per hour
+        }
+
+        savedReport 1008659 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn "COUNT(*)" (
+                sequence: 3
+            )
+
+            displayColumn DATE_HOUR (
+                sequence: 2
+            )
+
+            displayColumn PAGE_ID (
+                sequence: 1
+            )
+
+        )
+
+    )
+
+    region workshop-views-per-hour (
+        name: Workshop views per hour
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select workshop_id, workshop_id as ID_display, trunc(entry_date) + ll_pkg_admin.hours_to_days(to_number(to_char(entry_date,'HH24'))) as date_hour, count(*)
+                from ll_page_visits
+                group by workshop_id, trunc(entry_date) + ll_pkg_admin.hours_to_days(to_number(to_char(entry_date,'HH24')))
+                ```
+        }
+        layout {
+            sequence: 40
+            slot: contentBody
+        }
+        appearance {
+            template: @collapsible
+            templateOptions: [
+                #DEFAULT#
+                js-useLocalStorage
+                t-Region--hideShowIconsMath
+                is-expanded
+                i-h480
+                t-Region--scrollBody
+            ]
+        }
+        pagination {
+            type: rowRangesXToY
+        }
+        messages {
+            whenNoDataFound: No data found.
+            whenMoreDataFound: The maximum row count for this report is #MAX_ROW_COUNT# rows.  Please apply a filter to reduce the number of records in your query.
+        }
+        actionsMenu {
+            subscription: false
+        }
+        advanced {
+            savedReportMappingIdentifier: 100984225296249706
+        }
+
+        column "COUNT(*)" (
+            type: plainText
+            heading {
+                heading: Count(*)
+                alignment: end
+            }
+            layout {
+                sequence: 40
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: B
+            }
+        )
+
+        column DATE_HOUR (
+            type: plainText
+            heading {
+                heading: Date Hour
+            }
+            layout {
+                sequence: 10
+            }
+            appearance {
+                formatMask: DD Mon YYYY - HH24
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: A
+            }
+        )
+
+        column ID_DISPLAY (
+            type: plainText
+            heading {
+                heading: ID
+            }
+            layout {
+                sequence: 20
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: D
+            }
+        )
+
+        column WORKSHOP_ID (
+            type: plainTextBasedOnLov
+            heading {
+                heading: Workshop Id
+            }
+            lov {
+                lov: @ll-workshops
+            }
+            layout {
+                sequence: 30
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: C
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: Workshop views per hour
+        }
+
+        savedReport 1008698 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn "COUNT(*)" (
+                sequence: 2
+            )
+
+            displayColumn DATE_HOUR (
+                sequence: 1
+            )
+
+            displayColumn ID_DISPLAY (
+                sequence: 4
+            )
+
+            displayColumn WORKSHOP_ID (
+                sequence: 3
+            )
+
+        )
+
+    )
+
+)
+

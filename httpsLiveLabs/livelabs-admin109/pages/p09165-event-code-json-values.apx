@@ -1,0 +1,269 @@
+page 9165 (
+    name: Event Code Json values
+    alias: EVENT-CODE-JSON-VALUES
+    title: Event Code Json values
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @modal-dialog
+        templateOptions: #DEFAULT#
+    }
+    dialog {
+        resizable: false
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region event-items (
+        name: Event Items
+        type: plSqlDynamicContent
+        source {
+            plsqlCode:
+                ```plsql
+                declare
+                  cursor c_json_keys is select item_label, sort_order, json_values, restrict_values, json_key
+                                        from ll_json_keys
+                                        where source_type like '%EVENT%';
+                
+                  cursor c_event is select EVENT_JSON
+                                      from ll_vouchers
+                                      where id = :P9165_EVENT_ID;
+                
+                  v_event_json   clob; 
+                  v_json_search  varchar2(200);
+                  v_json_value   varchar2(200);                                             
+                begin
+                
+                  open c_event;
+                  fetch c_event into v_event_json;
+                  close c_event;
+                
+                  htp.tableOpen(cattributes => 'CELLPADDING="3"');
+                  for x in c_json_keys loop
+                    v_json_search := replace('$.'||x.json_key,' ','');
+                    v_json_value := JSON_VALUE(v_event_json, v_json_search);
+                
+                    :P9165_HIDDEN := v_json_value;
+                
+                    htp.tableRowOpen;
+                    htp.tableData(x.item_label);
+                    if x.restrict_values = 'Y' then
+                      htp.tableData(APEX_ITEM.SELECT_LIST( p_idx => x.sort_order, 
+                                                           p_value => v_json_value,
+                                                           p_list_values => x.json_values,
+                                                           p_item_label => x.item_label,
+                                                           p_item_id => x.item_label));
+                    else
+                      htp.tableData(APEX_ITEM.TEXT( p_idx => x.sort_order,
+                                                    p_value => v_json_value,
+                                                    p_size => 50,
+                                                    p_item_label => x.item_label,
+                                                    p_item_id => x.item_label));
+                    end if;
+                    htp.tableRowClose;                                 
+                  end loop;
+                  htp.tableClose;
+                end;                          
+                
+                
+                ```
+        }
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+            renderComponents: belowContent
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    pageItem P9165_EVENT_ID (
+        type: hidden
+        layout {
+            sequence: 30
+            region: @event-items
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9165_HIDDEN (
+        type: hidden
+        layout {
+            sequence: 40
+            region: @event-items
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button cancel (
+        buttonName: Cancel
+        label: Cancel
+        layout {
+            sequence: 10
+            region: @event-items
+            slot: regionBody
+            startNewRow: false
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+            executeValidations: false
+        }
+    )
+
+    button submit (
+        buttonName: Submit
+        label: Submit
+        layout {
+            sequence: 20
+            region: @event-items
+            slot: regionBody
+            startNewRow: false
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    dynamicAction cancelpressed (
+        name: CancelPressed
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @cancel
+        }
+
+        action native-dialog-close (
+            action: closeDialog
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    process closedialog (
+        name: CloseDialog
+        type: closeDialog
+        settings {
+            showSuccessMessages: false
+        }
+        execution {
+            sequence: 20
+            point: afterSubmit
+        }
+        advanced {
+            executionMappingIdentifier: 205573929798521142
+        }
+    )
+
+    process savevalues (
+        name: SaveValues
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                declare
+                  cursor c_json is select *
+                                   from ll_json_keys
+                                   where source_type like '%EVENT%'
+                                   order by sort_order;
+                
+                  v_json_result  clob;
+                  v_json_key     varchar2(200);
+                  v_json_value   varchar2(200);
+                
+                begin
+                  v_json_result := '{';
+                
+                  for x in c_json loop
+                
+                    case x.sort_order
+                      
+                      when 1 then v_json_value := apex_application.g_f01(1);
+                      when 2 then v_json_value := apex_application.g_f02(1);
+                      when 3 then v_json_value := apex_application.g_f03(1);
+                      when 4 then v_json_value := apex_application.g_f04(1);
+                      when 5 then v_json_value := apex_application.g_f05(1);
+                      when 6 then v_json_value := apex_application.g_f06(1);
+                      when 7 then v_json_value := apex_application.g_f07(1);
+                      when 8 then v_json_value := apex_application.g_f08(1);
+                      when 9 then v_json_value := apex_application.g_f09(1);
+                      when 10 then v_json_value := apex_application.g_f10(1);
+                      when 11 then v_json_value := apex_application.g_f11(1);
+                      when 12 then v_json_value := apex_application.g_f12(1);
+                      when 13 then v_json_value := apex_application.g_f13(1);
+                      when 14 then v_json_value := apex_application.g_f14(1);
+                      when 15 then v_json_value := apex_application.g_f15(1);
+                      when 16 then v_json_value := apex_application.g_f16(1);
+                      when 17 then v_json_value := apex_application.g_f17(1);
+                      when 18 then v_json_value := apex_application.g_f18(1);
+                      when 19 then v_json_value := apex_application.g_f19(1);
+                      when 20 then v_json_value := apex_application.g_f20(1);
+                      when 21 then v_json_value := apex_application.g_f21(1);
+                      when 22 then v_json_value := apex_application.g_f22(1);
+                      when 23 then v_json_value := apex_application.g_f23(1);
+                      when 24 then v_json_value := apex_application.g_f24(1);
+                      when 25 then v_json_value := apex_application.g_f25(1);
+                      else
+                        v_json_value := '';
+                
+                    end case;
+                
+                    if v_json_value is not null then
+                      if v_json_result <> '{' then
+                        v_json_result := v_json_result ||',';
+                      end if;
+                      v_json_result := v_json_result || '"'||x.json_key||'" : "'||v_json_value||'"';
+                    end if;
+                    
+                  end loop;
+                
+                  v_json_result := v_json_result || '}';
+                
+                  update ll_vouchers set event_json = v_json_result where id=:P9165_EVENT_ID;
+                
+                end;
+                  
+                ```
+        }
+        execution {
+            sequence: 10
+            point: afterSubmit
+        }
+        advanced {
+            executionMappingIdentifier: 204896957553869183
+        }
+    )
+
+)
+

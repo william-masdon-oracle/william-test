@@ -1,0 +1,764 @@
+page 9606 (
+    name: Apex Jobs
+    alias: APEX-JOBS
+    title: Apex Jobs
+    appearance {
+        pageTemplate: @standard-trustarc
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        authorizationScheme: @superrrrr-user
+        formAutoComplete: false
+    }
+
+    region jobs-log (
+        name: Jobs log
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery: "select * from user_scheduler_job_log "
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @collapsible
+            templateOptions: [
+                #DEFAULT#
+                is-expanded
+                t-Region--scrollBody
+            ]
+        }
+        pagination {
+            type: rowRangesXToY
+        }
+        messages {
+            whenNoDataFound: No data found.
+            whenMoreDataFound: The maximum row count for this report is #MAX_ROW_COUNT# rows.  Please apply a filter to reduce the number of records in your query.
+        }
+        actionsMenu {
+            subscription: false
+        }
+        advanced {
+            savedReportMappingIdentifier: 59683414171250046
+        }
+
+        column ADDITIONAL_INFO (
+            type: plainText
+            heading {
+                heading: Additional Info
+            }
+            layout {
+                sequence: 16
+            }
+            source {
+                dataType: STRING
+            }
+            columnFilter {
+                type: none
+            }
+            advanced {
+                endUserAlias: P
+            }
+            enableUsersTo {
+                sort: false
+                controlBreak: false
+                aggregate: false
+                compute: false
+                chart: false
+                groupBy: false
+                pivot: false
+            }
+        )
+
+        column CLIENT_ID (
+            type: plainText
+            heading {
+                heading: Client Id
+            }
+            layout {
+                sequence: 10
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: J
+            }
+        )
+
+        column CREDENTIAL_NAME (
+            type: plainText
+            heading {
+                heading: Credential Name
+            }
+            layout {
+                sequence: 13
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: M
+            }
+        )
+
+        column CREDENTIAL_OWNER (
+            type: plainText
+            heading {
+                heading: Credential Owner
+            }
+            layout {
+                sequence: 12
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: L
+            }
+        )
+
+        column DESTINATION (
+            type: plainText
+            heading {
+                heading: Destination
+            }
+            layout {
+                sequence: 15
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: O
+            }
+        )
+
+        column DESTINATION_OWNER (
+            type: plainText
+            heading {
+                heading: Destination Owner
+            }
+            layout {
+                sequence: 14
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: N
+            }
+        )
+
+        column GLOBAL_UID (
+            type: plainText
+            heading {
+                heading: Global Uid
+            }
+            layout {
+                sequence: 11
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: K
+            }
+        )
+
+        column JOB_CLASS (
+            type: plainText
+            heading {
+                heading: Job Class
+            }
+            layout {
+                sequence: 6
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: F
+            }
+        )
+
+        column JOB_NAME (
+            type: plainText
+            heading {
+                heading: Job Name
+            }
+            layout {
+                sequence: 4
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: D
+            }
+        )
+
+        column JOB_SUBNAME (
+            type: plainText
+            heading {
+                heading: Job Subname
+            }
+            layout {
+                sequence: 5
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: E
+            }
+        )
+
+        column LOG_DATE (
+            type: plainText
+            heading {
+                heading: Log Date
+            }
+            layout {
+                sequence: 2
+            }
+            appearance {
+                formatMask: DD Mon HH24:MI:SS
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: B
+            }
+        )
+
+        column LOG_ID (
+            type: plainText
+            heading {
+                heading: Log Id
+                alignment: end
+            }
+            layout {
+                sequence: 1
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: A
+            }
+        )
+
+        column OPERATION (
+            type: plainText
+            heading {
+                heading: Operation
+            }
+            layout {
+                sequence: 7
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: G
+            }
+        )
+
+        column OWNER (
+            type: plainText
+            heading {
+                heading: Owner
+            }
+            layout {
+                sequence: 3
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: C
+            }
+        )
+
+        column STATUS (
+            type: plainText
+            heading {
+                heading: Status
+            }
+            layout {
+                sequence: 8
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: H
+            }
+        )
+
+        column USER_NAME (
+            type: plainText
+            heading {
+                heading: User Name
+            }
+            layout {
+                sequence: 9
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: I
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: Jobs log
+        }
+
+        savedReport 596918 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn JOB_NAME (
+                sequence: 2
+            )
+
+            displayColumn LOG_DATE (
+                sequence: 1
+            )
+
+            displayColumn STATUS (
+                sequence: 3
+            )
+
+            sort (
+                column: LOG_DATE
+                sort {
+                    direction: desc
+                    sequence: 1
+                }
+            )
+
+        )
+
+    )
+
+    region scheduled-jobs (
+        name: Scheduled Jobs
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select Job_Name, 
+                       Client_Id,
+                       Job_Action,
+                       Schedule_Type,
+                       Start_Date,
+                       Repeat_Interval,
+                       Enabled,
+                       State,
+                       Run_Count,
+                       Failure_Count,
+                       Max_Failures,
+                       Retry_Count,
+                       Last_Start_Date,
+                       to_char(extract(HOUR   FROM last_run_duration), 'fm00') || ':' ||
+                       to_char(extract(MINUTE FROM last_run_duration), 'fm00') || ':' ||
+                       to_char(extract(SECOND FROM last_run_duration), 'fm00') as Last_Run_Duration,
+                       Next_Run_Date,
+                       ll_pkg_admin.hours_readable (p_hours => (cast(next_run_date as date) - sysdate) * 24, p_size=>'SHORT', p_seconds => 'Y') as time_before_next
+                from user_scheduler_jobs
+                order by start_date
+                ```
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @collapsible
+            templateOptions: [
+                #DEFAULT#
+                is-expanded
+                t-Region--scrollBody
+            ]
+        }
+        pagination {
+            type: rowRangesXToY
+        }
+        messages {
+            whenNoDataFound: No data found.
+            whenMoreDataFound: The maximum row count for this report is #MAX_ROW_COUNT# rows.  Please apply a filter to reduce the number of records in your query.
+        }
+        actionsMenu {
+            subscription: false
+        }
+        advanced {
+            savedReportMappingIdentifier: 59656115790244908
+        }
+
+        column CLIENT_ID (
+            type: plainText
+            heading {
+                heading: Client Id
+            }
+            layout {
+                sequence: 5
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: E
+            }
+        )
+
+        column ENABLED (
+            type: plainText
+            heading {
+                heading: Enabled
+            }
+            layout {
+                sequence: 26
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: Z
+            }
+        )
+
+        column FAILURE_COUNT (
+            type: plainText
+            heading {
+                heading: Failure Count
+                alignment: end
+            }
+            layout {
+                sequence: 35
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: AI
+            }
+        )
+
+        column JOB_ACTION (
+            type: plainText
+            heading {
+                heading: Job Action
+            }
+            layout {
+                sequence: 10
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: J
+            }
+        )
+
+        column JOB_NAME (
+            type: plainText
+            heading {
+                heading: Job Name
+            }
+            layout {
+                sequence: 1
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: A
+            }
+        )
+
+        column LAST_RUN_DURATION (
+            type: plainText
+            heading {
+                heading: Last Run Duration
+                alignment: center
+            }
+            layout {
+                sequence: 51
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AP
+            }
+        )
+
+        column LAST_START_DATE (
+            type: plainText
+            heading {
+                heading: Last Start Date
+            }
+            layout {
+                sequence: 39
+            }
+            appearance {
+                formatMask: DD-Mon HH24:MI:SS
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: AM
+            }
+        )
+
+        column MAX_FAILURES (
+            type: plainText
+            heading {
+                heading: Max Failures
+                alignment: end
+            }
+            layout {
+                sequence: 37
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: AK
+            }
+        )
+
+        column NEXT_RUN_DATE (
+            type: plainText
+            heading {
+                heading: Next Run Date
+            }
+            layout {
+                sequence: 41
+            }
+            appearance {
+                formatMask: DD-Mon HH24:MI:SS
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: AO
+            }
+        )
+
+        column REPEAT_INTERVAL (
+            type: plainText
+            heading {
+                heading: Repeat Interval
+            }
+            layout {
+                sequence: 16
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: P
+            }
+        )
+
+        column RETRY_COUNT (
+            type: plainText
+            heading {
+                heading: Retry Count
+                alignment: end
+            }
+            layout {
+                sequence: 38
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: AL
+            }
+        )
+
+        column RUN_COUNT (
+            type: plainText
+            heading {
+                heading: Run Count
+                alignment: end
+            }
+            layout {
+                sequence: 32
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: AF
+            }
+        )
+
+        column SCHEDULE_TYPE (
+            type: plainText
+            heading {
+                heading: Schedule Type
+            }
+            layout {
+                sequence: 14
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: N
+            }
+        )
+
+        column START_DATE (
+            type: plainText
+            heading {
+                heading: Start Date
+            }
+            layout {
+                sequence: 15
+            }
+            appearance {
+                formatMask: DD-Mon HH24:MI:SS
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: O
+            }
+        )
+
+        column STATE (
+            type: plainText
+            heading {
+                heading: State
+            }
+            layout {
+                sequence: 30
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AD
+            }
+        )
+
+        column TIME_BEFORE_NEXT (
+            type: plainText
+            heading {
+                heading: Time Before Next
+                alignment: center
+            }
+            layout {
+                sequence: 61
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AQ
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: Scheduled Jobs
+        }
+
+        savedReport 596912 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn ENABLED (
+                sequence: 7
+            )
+
+            displayColumn FAILURE_COUNT (
+                sequence: 10
+            )
+
+            displayColumn JOB_ACTION (
+                sequence: 4
+            )
+
+            displayColumn JOB_NAME (
+                sequence: 3
+            )
+
+            displayColumn LAST_RUN_DURATION (
+                sequence: 13
+            )
+
+            displayColumn LAST_START_DATE (
+                sequence: 12
+            )
+
+            displayColumn NEXT_RUN_DATE (
+                sequence: 1
+            )
+
+            displayColumn REPEAT_INTERVAL (
+                sequence: 6
+            )
+
+            displayColumn RUN_COUNT (
+                sequence: 9
+            )
+
+            displayColumn SCHEDULE_TYPE (
+                sequence: 5
+            )
+
+            displayColumn START_DATE (
+                sequence: 11
+            )
+
+            displayColumn STATE (
+                sequence: 8
+            )
+
+            displayColumn TIME_BEFORE_NEXT (
+                sequence: 2
+            )
+
+        )
+
+    )
+
+)
+

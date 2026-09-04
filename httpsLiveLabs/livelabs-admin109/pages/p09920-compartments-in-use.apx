@@ -1,0 +1,382 @@
+page 9920 (
+    name: Compartments in use
+    alias: COMPARTMENTS-IN-USE
+    title: Compartments in use
+    appearance {
+        pageTemplate: @standard-trustarc
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        authorizationScheme: @superrrrr-user
+        formAutoComplete: false
+    }
+
+    region compartments-in-use (
+        name: Compartments in use
+        type: interactiveGrid
+        source {
+            location: localDatabase
+            tableName: LL_COMPARTMENTS_USED
+            includeRowidColumn: true
+        }
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        edit {
+            enabled: true
+            allowedOperations: [
+                add
+                update
+                delete
+            ]
+        }
+        toolbar {
+            controls: [
+                searchCol
+                searchField
+                actionsMenu
+                resetButton
+                saveButton
+            ]
+        }
+        download {
+            formats: [
+                csv
+                html
+                pdf
+                excel
+            ]
+        }
+        advanced {
+            savedReportMappingIdentifier: 65275725707050103
+        }
+
+        savedReport 652762 (
+            visibility: primary
+            view {
+                default: grid
+            }
+            singleRowView {
+                displayedColumns: true
+            }
+
+            displayColumn (
+                column: @STATUS
+                layout {
+                    sequence: 5
+                }
+            )
+
+            displayColumn (
+                column: @TENANCY_ID
+                layout {
+                    sequence: 6
+                }
+            )
+
+            displayColumn (
+                column: @TARGET_COMPARTMENT_OCID
+                layout {
+                    sequence: 7
+                }
+            )
+
+            displayColumn (
+                column: @PRIORITY
+                layout {
+                    sequence: 8
+                }
+            )
+
+            displayColumn (
+                column: @ATTEMPTS
+                layout {
+                    sequence: 9
+                }
+            )
+
+            displayColumn (
+                column: @APEX$ROW_ACTION
+                layout {
+                    sequence: 0
+                }
+            )
+
+            displayColumn (
+                column: @ROWID
+                layout {
+                    sequence: 1
+                }
+            )
+
+            displayColumn (
+                column: @COMPARTMENT_OCID
+                layout {
+                    sequence: 2
+                }
+            )
+
+            displayColumn (
+                column: @RESERVATION_ID
+                layout {
+                    sequence: 3
+                }
+            )
+
+            displayColumn (
+                column: @DATE_ALLOCATED
+                layout {
+                    sequence: 4
+                }
+            )
+
+        )
+
+        column APEX$ROW_ACTION (
+            type: actionsMenu
+            layout {
+                sequence: 20
+            }
+        )
+
+        column APEX$ROW_SELECTOR (
+            type: rowSelector
+            layout {
+                sequence: 10
+            }
+        )
+
+        column ATTEMPTS (
+            type: numberField
+            heading {
+                heading: Attempts
+                alignment: end
+            }
+            settings {
+                numberAlignment: end
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 110
+                columnAlignment: end
+            }
+            source {
+                databaseColumn: ATTEMPTS
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column COMPARTMENT_OCID (
+            type: textField
+            heading {
+                heading: Compartment Ocid
+            }
+            layout {
+                sequence: 40
+            }
+            validation {
+                maxLength: 200
+            }
+            source {
+                databaseColumn: COMPARTMENT_OCID
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+        )
+
+        column DATE_ALLOCATED (
+            type: datePickerJquery
+            heading {
+                heading: Date Allocated
+            }
+            layout {
+                sequence: 60
+            }
+            source {
+                databaseColumn: DATE_ALLOCATED
+                dataType: date
+            }
+        )
+
+        column PRIORITY (
+            type: numberField
+            heading {
+                heading: Priority
+                alignment: end
+            }
+            settings {
+                numberAlignment: end
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 100
+                columnAlignment: end
+            }
+            source {
+                databaseColumn: PRIORITY
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column RESERVATION_ID (
+            type: textField
+            heading {
+                heading: Reservation Id
+            }
+            layout {
+                sequence: 50
+            }
+            source {
+                databaseColumn: RESERVATION_ID
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column ROWID (
+            type: hidden
+            layout {
+                sequence: 30
+            }
+            source {
+                databaseColumn: ROWID
+                dataType: rowid
+                primaryKey: true
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column STATUS (
+            type: selectList
+            heading {
+                heading: Status
+            }
+            lov {
+                type: staticValues
+                staticValues: STATIC:READY_FOR_MOVE;READY_FOR_MOVE,MOVING;MOVING,DONE;DONE
+                displayExtraValues: false
+                displayNullValue: false
+            }
+            layout {
+                sequence: 70
+            }
+            source {
+                databaseColumn: STATUS
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: useLov
+            }
+        )
+
+        column TARGET_COMPARTMENT_OCID (
+            type: selectList
+            heading {
+                heading: "Target Compartment "
+            }
+            lov {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select tenancy_name||' - Live compartment', default_compartment_ocid from ll_tenancies
+                    union all
+                    select tenancy_name||' - Recyclebin compartment', recyclebin_ocid from ll_tenancies
+                    union all
+                    select tenancy_name||' - Available compartment', available_ocid from ll_tenancies
+                    
+                    
+                    ```
+            }
+            layout {
+                sequence: 90
+            }
+            validation {
+                valueRequired: true
+            }
+            source {
+                databaseColumn: TARGET_COMPARTMENT_OCID
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: useLov
+            }
+        )
+
+        column TENANCY_ID (
+            type: textField
+            heading {
+                heading: Tenancy Id
+            }
+            layout {
+                sequence: 80
+            }
+            source {
+                databaseColumn: TENANCY_ID
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: Compartments in use
+        }
+    )
+
+    process compartments-in-use-save-interactive-grid-data (
+        name: Compartments in use - Save Interactive Grid Data
+        type: interactiveGridAutoRowProcessing
+        editableRegion: @compartments-in-use
+        execution {
+            sequence: 10
+        }
+        advanced {
+            executionMappingIdentifier: 244215858960503257
+        }
+    )
+
+)
+

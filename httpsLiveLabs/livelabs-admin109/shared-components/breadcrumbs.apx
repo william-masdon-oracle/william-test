@@ -1,0 +1,157 @@
+breadcrumb breadcrumb (
+    name: Breadcrumb
+
+    entry administration (
+        name: Administration
+        pageNumber: 10000
+        execution {
+            sequence: 10
+        }
+        link {
+            target: {
+                page: 10000
+            }
+        }
+    )
+
+    entry banners (
+        name: Banners
+        pageNumber: 18
+        execution {
+            sequence: 10
+        }
+        appearance {
+            parentEntry: @administration
+        }
+        link {
+            target: {
+                page: 18
+            }
+        }
+    )
+
+    entry batch-reservations (
+        name: Batch Reservations
+        pageNumber: 5
+        execution {
+            sequence: 10
+        }
+        link {
+            target: {
+                page: 5
+            }
+        }
+    )
+
+    entry blacklist (
+        name: Blacklist
+        pageNumber: 17
+        execution {
+            sequence: 10
+        }
+        link {
+            target: {
+                page: 17
+            }
+        }
+    )
+
+    entry email-template-details (
+        name: Email template details
+        pageNumber: 9141
+        execution {
+            sequence: 10
+        }
+        appearance {
+            parentEntry: @email-templates
+        }
+        link {
+            target: {
+                page: 9141
+            }
+        }
+    )
+
+    entry email-templates (
+        name: Email Templates
+        pageNumber: 9140
+        execution {
+            sequence: 10
+        }
+        link {
+            target: {
+                page: 9140
+            }
+        }
+    )
+
+    entry home (
+        name: Home
+        pageNumber: 1
+        execution {
+            sequence: 10
+        }
+        link {
+            target: {
+                page: 1
+            }
+        }
+    )
+
+    entry home-page-banners (
+        name: Home Page Banners
+        pageNumber: 21
+        execution {
+            sequence: 10
+        }
+        appearance {
+            parentEntry: @administration
+        }
+        link {
+            target: {
+                page: 21
+            }
+        }
+    )
+
+    entry livestack-details (
+        name: LiveStack Details
+        pageNumber: 9800
+        execution {
+            sequence: 10
+        }
+        link {
+            target: {
+                page: 9800
+            }
+        }
+    )
+
+    entry policies (
+        name: Policies
+        pageNumber: 9171
+        execution {
+            sequence: 10
+        }
+        link {
+            target: {
+                page: 9171
+            }
+        }
+    )
+
+    entry workshop-icons (
+        name: Workshop Icons
+        pageNumber: 29
+        execution {
+            sequence: 10
+        }
+        link {
+            target: {
+                page: 29
+            }
+        }
+    )
+
+)
+

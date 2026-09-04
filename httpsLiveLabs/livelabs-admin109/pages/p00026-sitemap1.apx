@@ -1,0 +1,153 @@
+page 26 (
+    name: Sitemap
+    alias: SITEMAP1
+    title: Sitemap
+    appearance {
+        pageTemplate: @standard-trustarc
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region sitemap (
+        name: Sitemap
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                
+                        SELECT id AS loc, 
+                        name,
+                        TO_CHAR(CREATED_DATE, 'YYYY-MM-DD') AS lastmod
+                        FROM ll_workshops
+                        WHERE active_flg = 'Y' ;
+                ```
+        }
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        headerAndFooter {
+            headerText:
+                ```html
+                These are the workshops included in our Google Sitemap and are updated daily. If you want to see where they're stored:
+                <ul>
+                  <li><a href="https://livelabs.oracle.com/cdn/files/dev_sitemap.xml" target="_blank">Dev</a></li>
+                  <li><a href="https://livelabs.oracle.com/cdn/files/stg_sitemap.xml" target="_blank">Stage</a></li>
+                  <li><a href="https://livelabs.oracle.com/cdn/files/sitemap.xml" target="_blank">Prod</a></li>
+                </ul>
+                
+                ```
+        }
+        pagination {
+            type: rowRangesXToY
+        }
+        messages {
+            whenNoDataFound: No data found.
+            whenMoreDataFound: The maximum row count for this report is #MAX_ROW_COUNT# rows.  Please apply a filter to reduce the number of records in your query.
+        }
+        advanced {
+            savedReportMappingIdentifier: 700474270077965666
+        }
+
+        column LASTMOD (
+            type: plainText
+            heading {
+                heading: Lastmod
+            }
+            layout {
+                sequence: 3
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: C
+            }
+        )
+
+        column LOC (
+            type: plainText
+            heading {
+                heading: Loc
+                alignment: end
+            }
+            layout {
+                sequence: 1
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: A
+            }
+        )
+
+        column NAME (
+            type: plainText
+            heading {
+                heading: Name
+            }
+            layout {
+                sequence: 2
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: B
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: Sitemap
+        }
+
+        savedReport 6354056 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 100000
+            }
+
+            displayColumn LASTMOD (
+                sequence: 3
+            )
+
+            displayColumn LOC (
+                sequence: 1
+            )
+
+            displayColumn NAME (
+                sequence: 2
+            )
+
+            sort (
+                column: LOC
+                sort {
+                    direction: desc
+                    sequence: 1
+                }
+            )
+
+        )
+
+    )
+
+)
+

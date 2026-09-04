@@ -1,0 +1,153 @@
+customAttribute attribute_01 (
+    apexlangName: errorCorrectionLevel
+    attribute: 1
+    name: Error correction level
+    type: selectList
+    validation {
+        required: true
+    }
+    appearance {
+        sequence: 10
+    }
+    default {
+        value: L
+    }
+    supports {
+        components: [
+            pageItems
+            interactiveGridColumns
+        ]
+    }
+
+    entry hHigh30OfData (
+        sequence: 40
+        display: H - High (30% of data)
+        return: H
+    )
+
+    entry lLow7OfData (
+        sequence: 10
+        display: L - Low (7% of data)
+        return: L
+    )
+
+    entry mMedium15OfData (
+        sequence: 20
+        display: M - Medium (15% of data)
+        return: M
+    )
+
+    entry qQuartile25OfData (
+        sequence: 30
+        display: Q - Quartile (25% of data)
+        return: Q
+    )
+
+)
+
+customAttribute attribute_02 (
+    apexlangName: displayType
+    attribute: 2
+    name: Display Type
+    type: selectList
+    validation {
+        required: true
+    }
+    appearance {
+        sequence: 20
+    }
+    default {
+        value: HTML
+    }
+    supports {
+        components: [
+            pageItems
+            interactiveGridColumns
+        ]
+    }
+
+    entry bmpImage (
+        sequence: 20
+        display: BMP Image
+        return: BMP
+    )
+
+    entry htmlTable (
+        sequence: 10
+        display: HTML Table
+        return: HTML
+    )
+
+)
+
+customAttribute attribute_03 (
+    apexlangName: moduleSize
+    attribute: 3
+    name: Module size
+    type: number
+    validation {
+        required: true
+        maxLength: 2
+    }
+    appearance {
+        sequence: 30
+    }
+    builder {
+        unit: pixels
+        displayWidth: 5
+    }
+    default {
+        value: 8
+    }
+    supports {
+        components: [
+            pageItems
+            interactiveGridColumns
+        ]
+    }
+    dependingOn {
+        attribute: @attribute_02/component
+        conditionType: =
+        value: HTML
+    }
+)
+
+customAttribute attribute_04 (
+    apexlangName: imageSize
+    attribute: 4
+    name: Image size
+    type: number
+    validation {
+        required: true
+        maxLength: 4
+    }
+    appearance {
+        sequence: 40
+    }
+    builder {
+        unit: pixels
+        displayWidth: 5
+    }
+    dependingOn {
+        attribute: @attribute_02/component
+        conditionType: =
+        value: BMP
+    }
+)
+
+customAttribute attribute_05 (
+    apexlangName: margines
+    attribute: 5
+    name: Margines
+    type: yesNo
+    appearance {
+        sequence: 50
+    }
+    supports {
+        components: [
+            pageItems
+            interactiveGridColumns
+        ]
+    }
+)
+

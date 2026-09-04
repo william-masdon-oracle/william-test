@@ -1,0 +1,3685 @@
+page 9450 (
+    name: Event Bulk Email Uploads
+    alias: EVENT-BULK-EMAIL-UPLOADS
+    title: Event Bulk Email Uploads
+    appearance {
+        pageTemplate: @standard-trustarc
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region alternative-workshop-information (
+        name: Alternative Workshop Information
+        type: staticContent
+        layout {
+            sequence: 110
+            slot: contentBody
+        }
+        appearance {
+            template: @collapsible
+            templateOptions: [
+                #DEFAULT#
+                t-Region--hideShowIconsMath
+                is-collapsed
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P9450_FILE
+        }
+    )
+
+    region button-bar (
+        name: Button Bar
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @buttons-container
+            templateOptions: [
+                #DEFAULT#
+                t-ButtonRegion--noUI
+            ]
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P9450_FILE
+        }
+        settings {
+            outputAs: text
+        }
+    )
+
+    region data-source (
+        name: Data Source
+        type: staticContent
+        layout {
+            sequence: 30
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--hideHeader
+                t-Region--noUI
+                t-Region--scrollBody
+            ]
+        }
+        settings {
+            outputAs: text
+        }
+    )
+
+    region event-code-details (
+        name: Event Code Details
+        type: staticContent
+        layout {
+            sequence: 100
+            slot: contentBody
+        }
+        appearance {
+            template: @collapsible
+            templateOptions: [
+                #DEFAULT#
+                t-Region--hideShowIconsMath
+                is-expanded
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P9450_FILE
+        }
+    )
+
+    region event-details (
+        name: Event details
+        type: staticContent
+        layout {
+            sequence: 120
+            slot: contentBody
+        }
+        appearance {
+            template: @inline-dialog
+            templateOptions: [
+                js-dialog-autoheight
+                js-modal
+                js-draggable
+                js-dialog-size720x480
+            ]
+        }
+        headerAndFooter {
+            headerText: <p><b>It is highly recommended that event creators check their final event pages thoroughly, including all Launch buttons, to make sure the layout is good with the content provided, and that all workshop content launched off an event page is as expected. See the (?) buttons next to each field below for details.</b></p>
+        }
+    )
+
+    region events-calendar (
+        name: Events Calendar
+        type: calendar
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery: "select REASON, EMAIL_REQUESTOR, VALID_FROM, VALID_TO, VOUCHER_CODE , WORKSHOP_ID from ll_vouchers  "
+        }
+        layout {
+            sequence: 70
+            slot: contentBody
+            startNewRow: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        serverSideCondition {
+            type: itemIsNull
+            item: P9450_FILE
+        }
+        settings {
+            displayColumn: REASON
+            startDateColumn: VALID_FROM
+            endDateColumn: VALID_TO
+            pkColumn: VOUCHER_CODE
+            additionalCalendarViews: [
+                list
+                navigation
+            ]
+        }
+    )
+
+    region loaded-file (
+        name: Loaded File
+        type: staticContent
+        layout {
+            sequence: 40
+            parentRegion: @data-source
+            slot: subRegions
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P9450_FILE
+        }
+        settings {
+            outputAs: text
+        }
+    )
+
+    region number-of-reservations-v-s-future-date (
+        name: Number of Reservations v/s Future Date
+        type: chart
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select ResCount, START_DATE   from 
+                (
+                    select distinct count(START_DATE) as ResCount, START_DATE from LL_RESERVATIONS 
+                    where to_char(START_DATE,'yyyy/MM/dd')  > to_char(sysdate,'yyyy/MM/dd') group by START_DATE  
+                )
+                ```
+        }
+        layout {
+            sequence: 60
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        serverSideCondition {
+            type: itemIsNull
+            item: P9450_FILE
+        }
+        chartLayout {
+            height: 400
+        }
+        legend {
+            show: false
+        }
+
+        series new (
+            name: New
+            execution {
+                sequence: 10
+            }
+            source {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select Reservation_Count,   to_char(START_DATE,'dd/Mon/yyyy') as Start_Date   from 
+                    (
+                        select distinct count(START_DATE) as Reservation_Count, START_DATE from LL_RESERVATIONS where to_char(START_DATE,'yyyy/MM/dd')  > to_char(sysdate,'yyyy/MM/dd') group by START_DATE  
+                    )
+                    
+                    ```
+            }
+            columnMapping {
+                label: START_DATE
+                value: RESERVATION_COUNT
+            }
+        )
+
+        axis x (
+            name: x
+            minorTicks {
+                show: false
+            }
+        )
+
+        axis y (
+            name: y
+            value {
+                format: decimal
+                decimalPlaces: 0
+                formatScaling: none
+            }
+            minorTicks {
+                show: false
+            }
+        )
+
+    )
+
+    region preview-csv-data (
+        name: "Preview CSV Data  "
+        type: classicReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select p.line_number, p.col001, p.col002, p.col003, p.col004, p.col005, p.col006, p.col007, p.col008, p.col009, p.col010
+                       -- add more columns (col011 to col300) here.
+                  from apex_application_temp_files f, 
+                       table( apex_data_parser.parse(
+                                  p_content          => f.blob_content,
+                                  p_file_name        => f.filename,
+                                  p_add_headers_row   => 'Y',
+                                  p_csv_enclosed      => '"',
+                                  p_file_charset      => 'WE8ISO8859P1',
+                                  p_max_rows         => 10 ) ) p
+                 where f.name = :P9450_FILE AND p.line_number > 1
+                ```
+        }
+        layout {
+            sequence: 80
+            slot: contentBody
+        }
+        appearance {
+            template: @collapsible
+            templateOptions: [
+                #DEFAULT#
+                t-Region--hideShowIconsMath
+                is-collapsed
+                t-Region--scrollBody
+            ]
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P9450_FILE
+        }
+        reportLayout {
+            numberOfRows: 50
+        }
+        componentAppearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Report--stretch
+                t-Report--staticRowColors
+                t-Report--rowHighlight
+                t-Report--horizontalBorders
+                t-Report--hideNoPagination
+            ]
+        }
+        pagination {
+            type: nextAndPreviousLinks
+        }
+        performance {
+            maxRowsToProcess: 500
+        }
+        messages {
+            whenNoDataFound: no data found
+        }
+        heading {
+            type: none
+        }
+
+        column COL001 (
+            reportColumnQueryId: 2
+            derivedColumn: N
+            heading {
+                heading: Col001
+            }
+            layout {
+                sequence: 2
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column COL002 (
+            reportColumnQueryId: 3
+            derivedColumn: N
+            heading {
+                heading: Col002
+            }
+            layout {
+                sequence: 3
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column COL003 (
+            reportColumnQueryId: 4
+            derivedColumn: N
+            heading {
+                heading: Col003
+            }
+            layout {
+                sequence: 4
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column COL004 (
+            reportColumnQueryId: 5
+            derivedColumn: N
+            heading {
+                heading: Col004
+            }
+            layout {
+                sequence: 5
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column COL005 (
+            reportColumnQueryId: 6
+            derivedColumn: N
+            heading {
+                heading: Col005
+            }
+            layout {
+                sequence: 6
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column COL006 (
+            reportColumnQueryId: 7
+            derivedColumn: N
+            heading {
+                heading: Col006
+            }
+            layout {
+                sequence: 7
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column COL007 (
+            reportColumnQueryId: 8
+            derivedColumn: N
+            heading {
+                heading: Col007
+            }
+            layout {
+                sequence: 8
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column COL008 (
+            reportColumnQueryId: 9
+            derivedColumn: N
+            heading {
+                heading: Col008
+            }
+            layout {
+                sequence: 9
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column COL009 (
+            reportColumnQueryId: 10
+            derivedColumn: N
+            heading {
+                heading: Col009
+            }
+            layout {
+                sequence: 10
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column COL010 (
+            reportColumnQueryId: 11
+            derivedColumn: N
+            heading {
+                heading: Col010
+            }
+            layout {
+                sequence: 11
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column LINE_NUMBER (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            heading {
+                heading: Line Number
+                alignment: end
+            }
+            layout {
+                sequence: 1
+                columnAlignment: end
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+    )
+
+    region select-workshop-and-enter-reservation-details (
+        name: Select Workshop and Enter Reservation Details
+        type: staticContent
+        layout {
+            sequence: 90
+            slot: contentBody
+        }
+        appearance {
+            template: @collapsible
+            templateOptions: [
+                #DEFAULT#
+                t-Region--hideShowIconsMath
+                is-expanded
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P9450_FILE
+        }
+    )
+
+    region upload-a-file (
+        name: Upload a File
+        type: staticContent
+        layout {
+            sequence: 30
+            parentRegion: @data-source
+            slot: subRegions
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+        serverSideCondition {
+            type: itemIsNull
+            item: P9450_FILE
+        }
+        settings {
+            outputAs: text
+        }
+    )
+
+    region upload-helper (
+        name: Upload Helper
+        type: plSqlDynamicContent
+        source {
+            plsqlCode:
+                ```plsql
+                Begin
+                   
+                      Htp.p(  '<table border=0 cellspacing=2 cellpadding=2 width=100%>' );
+                      Htp.p(  '<tr>' );
+                        Htp.p(  '<td>' );
+                            Htp.p(  '<a href="https://objectstorage.us-ashburn-1.oraclecloud.com/p/CKDlni1QlsCK66ZH_Xe6MVSO9X9552vRtSM3NMU6eur9eHSdoIiMzhmgxgqpkdwZ/n/c4u04/b/workshop-terraform-src/o/sample_reservation_mailids.csv" target="_new">Download Sample Reservation CSV</a>' );
+                        Htp.p(  '</td>' );
+                        Htp.p(  '<td>' );
+                          Htp.p(  '<a href="https://objectstorage.us-ashburn-1.oraclecloud.com/p/IRJq2Ox2EJMgPDWY9fpx6jC8EDnEYDKM9Sgtfi1wZerA1EEEB4y4FViaeMolCjN_/n/c4u04/b/workshop-terraform-src/o/sample_workshop_list.csv" target="_new">Download Sample Workshop CSV</a>' );
+                        Htp.p(  '</td>' );
+                      Htp.p(  '</tr>' ); 
+                      Htp.p(  '<tr>' );
+                        Htp.p(  '<td colspan=2>' );
+                          Htp.p(  '<br/><i>Please Note: first row in the CSV file is always DB Table Column Name </i>'  );
+                        Htp.p(  '</td>' );
+                      Htp.p(  '</tr>' );
+                      Htp.p(  '</table>' );
+                      
+                End;
+                ```
+        }
+        layout {
+            sequence: 50
+            slot: contentBody
+            startNewRow: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        serverSideCondition {
+            type: itemIsNull
+            item: P9450_FILE
+        }
+    )
+
+    region wait (
+        name: Wait
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <style>
+                h1 {text-align: center;}
+                </style>
+                <h1><img src="https://i.stack.imgur.com/hzk6C.gif"></h1>
+                
+                ```
+        }
+        layout {
+            sequence: 140
+            slot: contentBody
+        }
+        appearance {
+            template: @inline-popup
+            templateOptions: [
+                #DEFAULT#
+                js-dialog-autoheight
+                t-DialogRegion--noPadding
+                js-dialog-size480x320
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region workshop-lab-details (
+        name: Workshop Lab Details
+        type: staticContent
+        layout {
+            sequence: 130
+            slot: contentBody
+        }
+        appearance {
+            template: @inline-dialog
+            templateOptions: [
+                js-dialog-autoheight
+                js-modal
+                js-draggable
+                js-dialog-size720x480
+            ]
+        }
+    )
+
+    pageItem P9450_ACTIVE_FLG (
+        type: selectList
+        label {
+            label: Active
+            alignment: left
+        }
+        lov {
+            type: sharedComponent
+            lov: @active-flg
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 40
+            region: @event-code-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 1
+        }
+        appearance {
+            template: @required-floating
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        default {
+            type: static
+            staticValue: Y
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            helpText: To disable event code, click here.
+        }
+    )
+
+    pageItem P9450_ALT_DESC_LONG (
+        type: textarea
+        label {
+            label: Event Long Description
+            alignment: left
+        }
+        layout {
+            sequence: 40
+            region: @alternative-workshop-information
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 60
+            height: 1
+        }
+        validation {
+            maxLength: 4000
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            helpText: Keep empty to use original description from the original workshop.
+        }
+    )
+
+    pageItem P9450_ALT_DESC_OUTLINE (
+        type: richTextEditor
+        label {
+            label: "Alternative Outline "
+            alignment: left
+        }
+        settings {
+            format: html
+            toolbar: basic
+            minHeight: 100
+            maxHeight: 400
+        }
+        layout {
+            sequence: 50
+            region: @alternative-workshop-information
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            inlineHelpText: Have a different outline to display on your page?  Enter it here.
+        }
+    )
+
+    pageItem P9450_ALT_DESC_PREREQUISITES (
+        type: richTextEditor
+        label {
+            label: Alternative Prerequisites
+            alignment: left
+        }
+        settings {
+            format: html
+            toolbar: basic
+            minHeight: 100
+            maxHeight: 400
+        }
+        layout {
+            sequence: 60
+            region: @alternative-workshop-information
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            inlineHelpText: Have different prerequisites for your event?  Enter it here.
+        }
+    )
+
+    pageItem P9450_ALT_TIME_AVAILABLE (
+        type: numberField
+        label {
+            label: Time Available
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 30
+            region: @alternative-workshop-information
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 1
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            inlineHelpText: Green Button Only
+            helpText: LiveLabs registered tenancy ONLY.  This is the amount of time the system will wait before the tenancy is reset.
+        }
+    )
+
+    pageItem P9450_ALT_TIME_HOURS (
+        type: numberField
+        label {
+            label: Duration
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 20
+            region: @alternative-workshop-information
+            slot: regionBody
+            alignment: left
+            columnSpan: 1
+        }
+        appearance {
+            template: @required-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            inlineHelpText: in hours
+            helpText: "This is the workshop duration that will show on the Event page "
+        }
+    )
+
+    pageItem P9450_ALT_URL (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 110
+            region: @alternative-workshop-information
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            inlineHelpText: Change using the LAB URL button
+        }
+    )
+
+    pageItem P9450_ALT_URL_DISPLAY (
+        type: displayOnly
+        label {
+            label: Lab URLS for this event
+            alignment: left
+        }
+        settings {
+            sendOnPageSubmit: false
+        }
+        layout {
+            sequence: 90
+            region: @alternative-workshop-information
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        source {
+            type: item
+            item: P9450_ALT_URL
+            used: always
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9450_CLONE_ID (
+        type: hidden
+        layout {
+            sequence: 30
+            region: @event-code-details
+            slot: regionBody
+        }
+        source {
+            used: always
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9450_DELAY (
+        type: selectList
+        label {
+            label: Delay (seconds)
+            alignment: left
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC2:0;0,5;5,10;10,15;15,20;20,25;25,30;30,35;35,40;40,45;45,50;50,55;55,60;60
+        }
+        layout {
+            sequence: 60
+            region: @select-workshop-and-enter-reservation-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 1
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        default {
+            type: static
+            staticValue: 0
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9450_DISPLAY_TAGS (
+        type: selectList
+        label {
+            label: Display tags ?
+            alignment: left
+        }
+        lov {
+            type: sharedComponent
+            lov: @active-flg
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 150
+            region: @event-code-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 2
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        default {
+            type: static
+            staticValue: Y
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9450_EMAIL_CREATOR (
+        type: displayOnly
+        label {
+            label: Event Requestor
+            alignment: left
+        }
+        layout {
+            sequence: 60
+            region: @event-code-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 3
+        }
+        appearance {
+            template: @required-above
+            templateOptions: #DEFAULT#
+        }
+        default {
+            type: expression
+            plsqlExpression: :APP_USER
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9450_EMAIL_REQUESTOR (
+        type: textField
+        label {
+            label: Who else should be notified?
+            alignment: left
+        }
+        settings {
+            trimSpaces: none
+        }
+        layout {
+            sequence: 70
+            region: @event-code-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 4000
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            inlineHelpText: Oracle Emails ONLY, comma separated
+            helpText: Enter comma separated values for Oracle emails
+        }
+    )
+
+    pageItem P9450_ERROR_ROW_COUNT (
+        type: hidden
+        layout {
+            sequence: 20
+            region: @upload-a-file
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9450_EVENT_JSON (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 130
+            region: @alternative-workshop-information
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9450_EVENT_JSON_DISPLAY (
+        type: displayOnly
+        label {
+            label: Event specific information
+            alignment: left
+        }
+        settings {
+            format: htmlUnsafe
+            sendOnPageSubmit: false
+        }
+        layout {
+            sequence: 120
+            region: @alternative-workshop-information
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            type: item
+            item: P9450_EVENT_JSON
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9450_FILE (
+        type: fileUpload
+        label {
+            label: Choose CSV File
+            alignment: left
+        }
+        display {
+            displayAs: blockDropzone
+            dropzoneTitle: Choose CSV File to Upload
+        }
+        storage {
+            type: appTempFiles
+            maxFileSize: 10000
+        }
+        layout {
+            sequence: 10
+            region: @upload-a-file
+            slot: regionBody
+            alignment: left
+            labelColumnSpan: 0
+        }
+        appearance {
+            template: @hidden
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+        }
+    )
+
+    pageItem P9450_FILE_NAME (
+        type: hidden
+        layout {
+            sequence: 20
+            region: @loaded-file
+            slot: regionBody
+        }
+        default {
+            type: static
+            staticValue: Pasted Data
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9450_ID (
+        type: displayOnly
+        label {
+            label: Voucher ID
+            alignment: left
+        }
+        layout {
+            sequence: 20
+            region: @event-code-details
+            slot: regionBody
+            alignment: left
+            columnSpan: 1
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P9450_ID
+        }
+        security {
+            sessionStateProtection: checksumRequiredSessionLevel
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9450_JSON_ADVERT_DATE (
+        type: textField
+        label {
+            label: Advert Date
+            alignment: left
+        }
+        layout {
+            sequence: 180
+            region: @event-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 15
+        }
+        validation {
+            maxLength: 15
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            helpText: Free text - date or dates of the event in the advert. Please keep it short, e.g. 21 - 23 Dec
+        }
+    )
+
+    pageItem P9450_JSON_ADVERT_ICON_LINK (
+        type: textField
+        label {
+            label: Advert Icon URL
+            alignment: left
+        }
+        layout {
+            sequence: 160
+            region: @event-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            helpText:
+                ```html
+                <p>URL of image to appear on the left of the advert. Images need to have a transparent background and be white/light in color to stand out from the background of the advert. Images need to also be of high enough resolution that they look good on the page.</p>
+                <p>Default is the Oracle "O" icon</p>
+                ```
+        }
+    )
+
+    pageItem P9450_JSON_ADVERT_LINK (
+        type: textField
+        label {
+            label: Advert Link
+            alignment: left
+        }
+        layout {
+            sequence: 150
+            region: @event-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: [
+                #DEFAULT#
+                margin-top-md
+            ]
+            width: 120
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            helpText: Enter the URL required for "Click here to find out more" link in the advert.
+        }
+    )
+
+    pageItem P9450_JSON_ADVERT_LOCATION (
+        type: textField
+        label {
+            label: Advert Location
+            alignment: left
+        }
+        layout {
+            sequence: 190
+            region: @event-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 20
+        }
+        validation {
+            maxLength: 20
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            helpText: The location of the event being advertised. If online, use "Virtual", "Online" or "via Zoom" etc. Keep these locations short as they're just an indicator.
+        }
+    )
+
+    pageItem P9450_JSON_ADVERT_PRESENTER (
+        type: textField
+        label {
+            label: Advert Presenter
+            alignment: left
+        }
+        layout {
+            sequence: 200
+            region: @event-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 25
+        }
+        validation {
+            maxLength: 25
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            helpText: Free text - for the presenter. Please keep this short, no job titles, if multiple people consider using "Oracle" or the partner name instead of individuals. Remember, all the actual event details will be available through the URL you provide for the advert.
+        }
+    )
+
+    pageItem P9450_JSON_ADVERT_THEME (
+        type: textField
+        label {
+            label: Advert Theme
+            alignment: left
+        }
+        layout {
+            sequence: 170
+            region: @event-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            maxLength: 30
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            helpText: Free text for the theme or subject of the event being advertised. Shorter is better.
+        }
+    )
+
+    pageItem P9450_JSON_ALWAYSFREE_URL (
+        type: textField
+        label {
+            label: Always Free URL
+            alignment: left
+        }
+        layout {
+            sequence: 30
+            region: @workshop-lab-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9450_JSON_DESKTOP_APP1_URL (
+        type: textField
+        label {
+            label: Desktop App 1 URL
+            alignment: left
+        }
+        layout {
+            sequence: 60
+            region: @workshop-lab-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9450_JSON_DESKTOP_APP2_URL (
+        type: textField
+        label {
+            label: Desktop App 2 URL
+            alignment: left
+        }
+        layout {
+            sequence: 70
+            region: @workshop-lab-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9450_JSON_DESKTOP_GUIDE_URL (
+        type: textField
+        label {
+            label: Desktop Guide URL
+            alignment: left
+        }
+        layout {
+            sequence: 50
+            region: @workshop-lab-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9450_JSON_DISP_OCI_INSTR (
+        type: switch
+        label {
+            label: Display OCI Instructions
+            alignment: left
+        }
+        settings {
+            useDefaults: false
+            onValue: Y
+            onLabel: Yes
+            offValue: N
+            offLabel: No
+        }
+        layout {
+            sequence: 130
+            region: @event-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        validation {
+            valueRequired: true
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            used: always
+        }
+        default {
+            type: static
+            staticValue: N
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            helpText: Should the default instruction on how to login to OCI be displayed ?
+        }
+    )
+
+    pageItem P9450_JSON_ENABLE_ADVERT (
+        type: switch
+        label {
+            label: Enable Advert
+            alignment: left
+        }
+        settings {
+            useDefaults: false
+            onValue: Y
+            onLabel: Yes
+            offValue: N
+            offLabel: No
+        }
+        layout {
+            sequence: 140
+            region: @event-details
+            slot: regionBody
+            alignment: left
+            columnSpan: 2
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: [
+                #DEFAULT#
+                margin-top-sm
+            ]
+        }
+        validation {
+            valueRequired: true
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            used: always
+        }
+        default {
+            type: static
+            staticValue: N
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            helpText: Displays the advert region at the bottom of the event page.
+        }
+    )
+
+    pageItem P9450_JSON_ENABLE_ALWAYSFREE (
+        type: switch
+        label {
+            label: Enable Always Free URL
+            alignment: left
+        }
+        settings {
+            useDefaults: false
+            onValue: Y
+            onLabel: Yes
+            offValue: N
+            offLabel: No
+        }
+        layout {
+            sequence: 90
+            region: @event-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        validation {
+            valueRequired: true
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            used: always
+        }
+        default {
+            type: static
+            staticValue: Y
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9450_JSON_ENABLE_FREETIER (
+        type: switch
+        label {
+            label: Enable Freetier URL
+            alignment: left
+        }
+        settings {
+            useDefaults: false
+            onValue: Y
+            onLabel: Yes
+            offValue: N
+            offLabel: No
+        }
+        layout {
+            sequence: 100
+            region: @event-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        validation {
+            valueRequired: true
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            used: always
+        }
+        default {
+            type: static
+            staticValue: Y
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9450_JSON_ENABLE_LIVELABS (
+        type: switch
+        label {
+            label: Enable Livelabs Green Button
+            alignment: left
+        }
+        settings {
+            useDefaults: false
+            onValue: Y
+            onLabel: Yes
+            offValue: N
+            offLabel: No
+        }
+        layout {
+            sequence: 120
+            region: @event-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        validation {
+            valueRequired: true
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            used: always
+        }
+        default {
+            type: static
+            staticValue: Y
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9450_JSON_ENABLE_PAID (
+        type: switch
+        label {
+            label: Enable Paid Tenancy URL
+            alignment: left
+        }
+        settings {
+            useDefaults: false
+            onValue: Y
+            onLabel: Yes
+            offValue: N
+            offLabel: No
+        }
+        layout {
+            sequence: 110
+            region: @event-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        validation {
+            valueRequired: true
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            used: always
+        }
+        default {
+            type: static
+            staticValue: Y
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9450_JSON_EVENT_DATE (
+        type: textField
+        label {
+            label: Event Date
+            alignment: left
+        }
+        layout {
+            sequence: 20
+            region: @event-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            helpText: <p>Note this is free text - so you can add a date range if needed. If left bank it will default to the date the event page is being viewed.</p>
+        }
+    )
+
+    pageItem P9450_JSON_EVENT_ICON_URL (
+        type: textField
+        label {
+            label: Event Icon URL
+            alignment: left
+        }
+        layout {
+            sequence: 30
+            region: @event-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            helpText:
+                ```html
+                <p>For "Event" event types you can specify a graphic to be used on the orange panel on the left of the event page.</p>
+                <p>When adding an image URL, only use images with transparent backgrounds, and are white/light in color so they stand out from the background. Also, images should be of a high enough resolution that they do not pixelate when scaled to fit the page.</p>
+                <p>Default image is the ORACLE logo - white with transparent background.</p>
+                ```
+        }
+    )
+
+    pageItem P9450_JSON_EVENT_LOCATION (
+        type: textField
+        label {
+            label: Event Location
+            alignment: left
+        }
+        layout {
+            sequence: 70
+            region: @event-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            helpText: Only applies to Get-Togethers events. Free text.
+        }
+    )
+
+    pageItem P9450_JSON_EVENT_ORGANIZER (
+        type: textField
+        label {
+            label: Event Organizer
+            alignment: left
+        }
+        layout {
+            sequence: 60
+            region: @event-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9450_JSON_EVENT_TC_VALUE (
+        type: textField
+        label {
+            label: Event (Marketing) code
+            alignment: left
+        }
+        layout {
+            sequence: 80
+            region: @event-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            helpText: Only applies to Get-Togethers events. Free text.
+        }
+    )
+
+    pageItem P9450_JSON_EVENT_TYPE (
+        type: selectList
+        label {
+            label: Event Type
+            alignment: left
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC2:Event;Event,GetTogether;GetTogether,PTS;PTS,AskTom;AskTom
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 10
+            region: @event-details
+            slot: regionBody
+            alignment: left
+            columnSpan: 4
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            helpText: <p>Use the event type "Event" unless specifically creating a Get-Togethers, AskTom, or PTS event as the latter all have specific fixed branding.</p>
+        }
+    )
+
+    pageItem P9450_JSON_FREETIER_URL (
+        type: textField
+        label {
+            label: Freetier URL
+            alignment: left
+        }
+        layout {
+            sequence: 10
+            region: @workshop-lab-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9450_JSON_LIVELABS_URL (
+        type: textField
+        label {
+            label: Livelabs URL
+            alignment: left
+        }
+        layout {
+            sequence: 20
+            region: @workshop-lab-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9450_JSON_PAID_URL (
+        type: textField
+        label {
+            label: Paid URL
+            alignment: left
+        }
+        layout {
+            sequence: 40
+            region: @workshop-lab-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9450_JSON_YOUTUBE_LINK (
+        type: textField
+        label {
+            label: YouTube Link
+            alignment: left
+        }
+        layout {
+            sequence: 50
+            region: @event-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            helpText:
+                ```html
+                <p>This is the embed URL from the Share dialog on YouTube - it's important the URL includes "embed"</p>
+                <p>URL format: https://www.youtube.com/embed/<i><b>video_code_goes_here</i></b></p>
+                <p>For example: https://www.youtube.com/embed/Q78rFt76s</p>
+                ```
+        }
+    )
+
+    pageItem P9450_NUM_ENVIRONMENTS (
+        type: numberField
+        label {
+            label: # Environments
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 40
+            region: @select-workshop-and-enter-reservation-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 1
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        default {
+            type: static
+            staticValue: 5
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9450_PREFIX (
+        type: textField
+        label {
+            label: Prefix
+            alignment: left
+        }
+        layout {
+            sequence: 30
+            region: @select-workshop-and-enter-reservation-details
+            slot: regionBody
+            alignment: left
+            columnSpan: 3
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9450_REASON (
+        type: textField
+        label {
+            label: Event Title
+            alignment: left
+        }
+        layout {
+            sequence: 80
+            region: @event-code-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required-floating
+            templateOptions: #DEFAULT#
+            width: 60
+        }
+        validation {
+            maxLength: 200
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            helpText: Title for event
+        }
+    )
+
+    pageItem P9450_REGION_ID (
+        type: popupLov
+        label {
+            label: Region (only used when tenancy is selected)
+            alignment: left
+        }
+        settings {
+            fetchOnSearch: true
+        }
+        lov {
+            type: sharedComponent
+            lov: @ll-regions-3
+            displayExtraValues: false
+        }
+        cascadingLov {
+            parentItems: P9450_TENANCY_ID
+        }
+        layout {
+            sequence: 170
+            region: @event-code-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            inlineHelpText: Green Button Only
+            helpText: Registered LiveLabs tenancies ONLY.  If you don't need to run on a specific tenancy, leave this blank, the system will choose for you.
+        }
+    )
+
+    pageItem P9450_REMARKS (
+        type: textarea
+        label {
+            label: Internal Remarks for the LiveLabs Admin Team
+            alignment: left
+        }
+        layout {
+            sequence: 180
+            region: @event-code-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 60
+            height: 1
+        }
+        validation {
+            maxLength: 4000
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9450_SSH_KEY (
+        type: textarea
+        label {
+            label: Ssh Key
+            alignment: left
+        }
+        layout {
+            sequence: 70
+            region: @select-workshop-and-enter-reservation-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+            height: 5
+        }
+        default {
+            type: sqlQuerySingleValue
+            sqlQuerySingleValue:
+                ```sql
+                select public_key
+                from ll_reservations
+                where id = (select max(id) 
+                            from ll_reservations
+                            where owner1=:app_user
+                            and public_key is not null)
+                ```
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9450_START_DATE (
+        type: datePickerJquery
+        label {
+            label: Start Date
+            alignment: left
+        }
+        layout {
+            sequence: 80
+            region: @select-workshop-and-enter-reservation-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 255
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9450_START_NUMBER (
+        type: numberField
+        label {
+            label: Start Number
+            alignment: left
+        }
+        settings {
+            minValue: 1
+            maxValue: 99
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 50
+            region: @select-workshop-and-enter-reservation-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 1
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        default {
+            type: static
+            staticValue: 1
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9450_START_TIME (
+        type: selectList
+        label {
+            label: Start Time
+            alignment: left
+        }
+        lov {
+            type: sharedComponent
+            lov: @starttime
+            displayNullValue: false
+        }
+        layout {
+            sequence: 90
+            region: @select-workshop-and-enter-reservation-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9450_START_TIMEZONE (
+        type: selectList
+        label {
+            label: Start Timezone
+            alignment: left
+        }
+        lov {
+            type: sharedComponent
+            lov: @timezones
+            displayNullValue: false
+        }
+        layout {
+            sequence: 100
+            region: @select-workshop-and-enter-reservation-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 3
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9450_TENANCY_ID (
+        type: popupLov
+        label {
+            label: Select a Tenancy
+            alignment: left
+        }
+        settings {
+            fetchOnSearch: true
+        }
+        lov {
+            type: sharedComponent
+            lov: @ll-tenancies-2
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 160
+            region: @event-code-details
+            slot: regionBody
+            alignment: left
+            columnSpan: 2
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            inlineHelpText: Green Button Only
+            helpText: Registered LiveLabs tenancies ONLY.  If you don't need to run on a specific tenancy, leave this blank, the system will choose for you.
+        }
+    )
+
+    pageItem P9450_USERS_CONCURRENT (
+        type: numberField
+        label {
+            label: Concurrent Users
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 100
+            region: @event-code-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 1
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 10
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            inlineHelpText: Green Button Only
+            helpText: LiveLabs Green Button ONLY.  This field will only be used when you select the Green Button to run on a tenancy registered with LiveLabs.
+        }
+    )
+
+    pageItem P9450_USERS_MAXIMUM (
+        type: numberField
+        label {
+            label: Max Users
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 90
+            region: @event-code-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 1
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 10
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            inlineHelpText: Green Button Only
+            helpText: LiveLabs Green Button ONLY.  This field will only be used when you select the Green Button to run on a tenancy registered with LiveLabs.
+        }
+    )
+
+    pageItem P9450_VALID_FROM (
+        type: datePickerJquery
+        label {
+            label: Start Date
+            alignment: left
+        }
+        layout {
+            sequence: 110
+            region: @event-code-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 1
+        }
+        appearance {
+            template: @required-floating
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 255
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9450_VALID_TIMEZONE (
+        type: popupLov
+        label {
+            label: Timezone
+            alignment: left
+        }
+        settings {
+            fetchOnSearch: true
+        }
+        lov {
+            type: sharedComponent
+            lov: @timezones
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 130
+            region: @event-code-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 3
+        }
+        appearance {
+            template: @required-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9450_VALID_TO (
+        type: datePickerJquery
+        label {
+            label: End Date
+            alignment: left
+        }
+        layout {
+            sequence: 120
+            region: @event-code-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 1
+        }
+        appearance {
+            template: @required-floating
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 255
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9450_VOUCHER_CODE (
+        type: displayOnly
+        label {
+            label: Event Code
+            alignment: left
+        }
+        layout {
+            sequence: 50
+            region: @event-code-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 2
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P9450_VOUCHER_CODE
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9450_WORKSHOP_ID (
+        type: popupLov
+        label {
+            label: Workshop
+            alignment: left
+        }
+        settings {
+            fetchOnSearch: true
+        }
+        lov {
+            type: sharedComponent
+            lov: @ll-workshops
+        }
+        layout {
+            sequence: 20
+            region: @select-workshop-and-enter-reservation-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button altlaburl (
+        buttonName: AltLabUrl
+        label: Edit Lab URLs
+        layout {
+            sequence: 70
+            region: @alternative-workshop-information
+            slot: regionBody
+            columnSpan: 2
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--large
+                t-Button--gapTop
+            ]
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button build-environments (
+        buttonName: Build-Environments
+        label: Build environments Now
+        layout {
+            sequence: 20
+            region: @button-bar
+            slot: belowBox
+        }
+        appearance {
+            buttonTemplate: @text-with-icon
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--iconRight
+            ]
+            cssClasses: u-danger
+            icon: fa-traffic-light
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button canceleventjson (
+        buttonName: CancelEventJson
+        label: Cancel
+        layout {
+            sequence: 20
+            region: @event-details
+            slot: belowBox
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button cancellaburl (
+        buttonName: CancelLabURL
+        label: Cancel
+        layout {
+            sequence: 80
+            region: @workshop-lab-details
+            slot: regionBody
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button clear (
+        buttonName: CLEAR
+        label: Clear Page Data
+        layout {
+            sequence: 10
+            region: @button-bar
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            executeValidations: false
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button create-workshops (
+        buttonName: Create_Workshops
+        label: Create Workshops
+        layout {
+            sequence: 50
+            region: @button-bar
+            slot: belowBox
+        }
+        appearance {
+            buttonTemplate: @text-with-icon
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--iconRight
+            ]
+            cssClasses: u-info
+            icon: fa-files-o
+        }
+        behavior {
+            executeValidations: false
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button eventjson (
+        buttonName: EventJSON
+        label: Edit Event Page Details
+        layout {
+            sequence: 100
+            region: @alternative-workshop-information
+            slot: regionBody
+            columnSpan: 2
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--large
+                t-Button--gapTop
+            ]
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button load (
+        buttonName: LOAD
+        label: Load Data
+        layout {
+            sequence: 30
+            region: @button-bar
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    button load-event-data (
+        buttonName: Load_Event_Data
+        label: Save Event and Create Reservations for Future
+        layout {
+            sequence: 40
+            region: @button-bar
+            slot: belowBox
+        }
+        appearance {
+            buttonTemplate: @text-button-custom
+            hot: true
+            templateOptions: #DEFAULT#
+            icon: fa-gear
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button prefill (
+        buttonName: Prefill
+        label: Click HERE to prefill fields with default values from Workshop setup (only if fields are empty)
+        layout {
+            sequence: 10
+            region: @alternative-workshop-information
+            slot: regionBody
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--stretch
+            ]
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button submit (
+        buttonName: Submit
+        label: Submit
+        layout {
+            sequence: 90
+            region: @workshop-lab-details
+            slot: regionBody
+            startNewRow: false
+            newColumn: false
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button submiteventjson (
+        buttonName: SubmitEventJson
+        label: Submit
+        layout {
+            sequence: 10
+            region: @event-details
+            slot: belowBox
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    dynamicAction alturlpressed (
+        name: AltURLPressed
+        execution {
+            sequence: 30
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @altlaburl
+        }
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    :P9450_JSON_FREETIER_URL     := JSON_VALUE (:P9450_ALT_URL, '$.FREETIER_URL');
+                    :P9450_JSON_LIVELABS_URL     := JSON_VALUE (:P9450_ALT_URL, '$.LIVELABS_URL');
+                    :P9450_JSON_ALWAYSFREE_URL   := JSON_VALUE (:P9450_ALT_URL, '$.ALWAYSFREE_URL');
+                    :P9450_JSON_PAID_URL         := JSON_VALUE (:P9450_ALT_URL, '$.PAID_URL'); 
+                    :P9450_JSON_DESKTOP_GUIDE_URL   := JSON_VALUE (:P9450_ALT_URL, '$.DESKTOP_GUIDE_URL');
+                    :P9450_JSON_DESKTOP_APP1_URL    := JSON_VALUE (:P9450_ALT_URL, '$.DESKTOP_APP1_URL');
+                    :P9450_JSON_DESKTOP_APP2_URL    := JSON_VALUE (:P9450_ALT_URL, '$.DESKTOP_APP2_URL');
+                    ```
+                itemsToSubmit: P9450_ALT_URL
+                itemsToReturn: [
+                    P9450_JSON_FREETIER_URL
+                    P9450_JSON_LIVELABS_URL
+                    P9450_JSON_DESKTOP_GUIDE_URL
+                    P9450_JSON_ALWAYSFREE_URL
+                    P9450_JSON_PAID_URL
+                    P9450_JSON_DESKTOP_APP1_URL
+                    P9450_JSON_DESKTOP_APP2_URL
+                ]
+                showProcessing: true
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+        action native-open-region (
+            action: openRegion
+            affectedElements {
+                selectionType: region
+                region: @workshop-lab-details
+            }
+            execution {
+                sequence: 30
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction build (
+        name: Build
+        execution {
+            sequence: 90
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @build-environments
+        }
+
+        action native-close-region (
+            action: closeRegion
+            affectedElements {
+                selectionType: region
+                region: @wait
+            }
+            execution {
+                sequence: 70
+                fireOnInit: false
+            }
+        )
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    begin
+                    
+                      ll_pkg_admin.stress_test_build (p_workshop_id       => :P9450_WORKSHOP_ID,
+                                                      p_prefix            => :P9450_PREFIX,
+                                                      p_num_environments  => :P9450_NUM_ENVIRONMENTS,
+                                                      p_delay             => :P9450_DELAY,
+                                                      p_start_number      => :P9450_START_NUMBER,
+                                                      p_ssh_key           => :P9450_SSH_KEY);
+                    
+                      apex_util.pause(15);
+                    
+                    end;                                  
+                    
+                    ```
+                itemsToSubmit: [
+                    P9450_WORKSHOP_ID
+                    P9450_PREFIX
+                    P9450_NUM_ENVIRONMENTS
+                    P9450_START_NUMBER
+                    P9450_DELAY
+                    P9450_SSH_KEY
+                ]
+            }
+            execution {
+                sequence: 50
+                fireOnInit: false
+            }
+        )
+
+        action native-open-region (
+            action: openRegion
+            affectedElements {
+                selectionType: region
+                region: @wait
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+        action native-submit-page (
+            action: submitPage
+            execution {
+                sequence: 60
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction cancelpressed (
+        name: CancelPressed
+        execution {
+            sequence: 50
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @cancellaburl
+        }
+
+        action native-close-region (
+            action: closeRegion
+            affectedElements {
+                selectionType: region
+                region: @workshop-lab-details
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction eventjson (
+        name: EventJson
+        execution {
+            sequence: 40
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @eventjson
+        }
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    :P9450_JSON_EVENT_TYPE         := JSON_VALUE (:P9450_EVENT_JSON, '$.EventType');
+                    :P9450_JSON_EVENT_DATE         := JSON_VALUE (:P9450_EVENT_JSON, '$.EventDate');
+                    :P9450_JSON_EVENT_ICON_URL     := JSON_VALUE (:P9450_EVENT_JSON, '$.EventIconLink');
+                    :P9450_JSON_YOUTUBE_LINK       := JSON_VALUE (:P9450_EVENT_JSON, '$.YoutubeLink');
+                    :P9450_JSON_EVENT_ORGANIZER    := JSON_VALUE (:P9450_EVENT_JSON, '$.EventOrganizer');
+                    :P9450_JSON_EVENT_LOCATION     := JSON_VALUE (:P9450_EVENT_JSON, '$.EventLocation');
+                    :P9450_JSON_EVENT_TC_VALUE     := JSON_VALUE (:P9450_EVENT_JSON, '$.EventTcValue');
+                    
+                    :P9450_JSON_DISP_OCI_INSTR     := JSON_VALUE (:P9450_EVENT_JSON, '$.DisplayOciInstructions');
+                    :P9450_JSON_ENABLE_ALWAYSFREE  := JSON_VALUE (:P9450_EVENT_JSON, '$.AlwaysFreeEnabled');
+                    :P9450_JSON_ENABLE_FREETIER    := JSON_VALUE (:P9450_EVENT_JSON, '$.FreeTierEnabled');
+                    :P9450_JSON_ENABLE_PAID        := JSON_VALUE (:P9450_EVENT_JSON, '$.PaidTenancyEnabled');
+                    :P9450_JSON_ENABLE_LIVELABS    := JSON_VALUE (:P9450_EVENT_JSON, '$.LiveLabsGreenEnabled');
+                    
+                    :P9450_JSON_ENABLE_ADVERT      := JSON_VALUE (:P9450_EVENT_JSON, '$.AdvertEnabled');
+                    :P9450_JSON_ADVERT_LINK        := JSON_VALUE (:P9450_EVENT_JSON, '$.AdvertLink');
+                    :P9450_JSON_ADVERT_ICON_LINK   := JSON_VALUE (:P9450_EVENT_JSON, '$.AdvertIcon');
+                    :P9450_JSON_ADVERT_THEME       := JSON_VALUE (:P9450_EVENT_JSON, '$.AdvertTheme');
+                    :P9450_JSON_ADVERT_DATE        := JSON_VALUE (:P9450_EVENT_JSON, '$.AdvertDate');
+                    :P9450_JSON_ADVERT_LOCATION    := JSON_VALUE (:P9450_EVENT_JSON, '$.AdvertLocation');
+                    :P9450_JSON_ADVERT_PRESENTER   := JSON_VALUE (:P9450_EVENT_JSON, '$.AdvertPresenter');
+                    ```
+                itemsToSubmit: P9450_EVENT_JSON
+                itemsToReturn: [
+                    P9450_JSON_EVENT_TYPE
+                    P9450_JSON_EVENT_DATE
+                    P9450_JSON_EVENT_ICON_URL
+                    P9450_JSON_YOUTUBE_LINK
+                    P9450_JSON_EVENT_ORGANIZER
+                    P9450_JSON_EVENT_LOCATION
+                    P9450_JSON_ENABLE_ALWAYSFREE
+                    P9450_JSON_ENABLE_FREETIER
+                    P9450_JSON_ENABLE_PAID
+                    P9450_JSON_ENABLE_LIVELABS
+                    P9450_JSON_ENABLE_ADVERT
+                    P9450_JSON_ADVERT_LINK
+                    P9450_JSON_ADVERT_ICON_LINK
+                    P9450_JSON_ADVERT_THEME
+                    P9450_JSON_ADVERT_DATE
+                    P9450_JSON_ADVERT_LOCATION
+                    P9450_JSON_ADVERT_PRESENTER
+                    P9450_JSON_EVENT_TC_VALUE
+                    P9450_JSON_DISP_OCI_INSTR
+                ]
+                showProcessing: true
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+        action native-open-region (
+            action: openRegion
+            affectedElements {
+                selectionType: region
+                region: @event-details
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction evnetjsoncancelled (
+        name: EvnetJsonCancelled
+        execution {
+            sequence: 80
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @canceleventjson
+        }
+
+        action native-close-region (
+            action: closeRegion
+            affectedElements {
+                selectionType: region
+                region: @event-details
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction prefilleventaction (
+        name: PrefillEventAction
+        execution {
+            sequence: 20
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @prefill
+        }
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    declare
+                      cursor c_workshop is select *
+                                           from ll_workshops
+                                           where id = :P9450_WORKSHOP_ID;
+                    
+                    begin
+                    
+                      for x in c_workshop loop 
+                        if :P9450_ALT_TIME_HOURS is null then :P9450_ALT_TIME_HOURS := x.time_in_hours; end if;
+                        if :P9450_ALT_TIME_AVAILABLE is null then :P9450_ALT_TIME_AVAILABLE := x.time_available; end if;
+                        if :P9450_ALT_URL is null then :P9450_ALT_URL := x.lab_url; end if;
+                        if :P9450_ALT_DESC_LONG is null then :P9450_ALT_DESC_LONG := x.desc_long; end if;
+                        if :P9450_ALT_DESC_OUTLINE is null then :P9450_ALT_DESC_OUTLINE := x.desc_outline; end if;
+                        if :P9450_ALT_DESC_PREREQUISITES is null then :P9450_ALT_DESC_PREREQUISITES := x.desc_prerequisites; end if;
+                        
+                      end loop;
+                    
+                    end;
+                    ```
+                itemsToSubmit: [
+                    P9450_ALT_TIME_HOURS
+                    P9450_ALT_TIME_AVAILABLE
+                    P9450_ALT_URL
+                    P9450_ALT_DESC_LONG
+                    P9450_ALT_DESC_OUTLINE
+                    P9450_ALT_DESC_PREREQUISITES
+                    P9450_WORKSHOP_ID
+                ]
+                itemsToReturn: [
+                    P9450_ALT_TIME_HOURS
+                    P9450_ALT_TIME_AVAILABLE
+                    P9450_ALT_URL
+                    P9450_ALT_DESC_LONG
+                    P9450_ALT_DESC_OUTLINE
+                    P9450_ALT_DESC_PREREQUISITES
+                ]
+                showProcessing: true
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction submiteventclicked (
+        name: SubmitEventClicked
+        execution {
+            sequence: 70
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @submiteventjson
+        }
+
+        action native-close-region (
+            action: closeRegion
+            affectedElements {
+                selectionType: region
+                region: @event-details
+            }
+            execution {
+                sequence: 30
+                fireOnInit: false
+            }
+        )
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    declare
+                    
+                    -- EVENT JSON DETAILS
+                    
+                      v_new_json  varchar2(2000);
+                    begin
+                      v_new_json := JSON_OBJECT ('EventType'              value :P9450_JSON_EVENT_TYPE         ,  
+                                                 'EventDate'              value :P9450_JSON_EVENT_DATE         ,
+                                                 'EventIconLink'          value :P9450_JSON_EVENT_ICON_URL     ,
+                                                 'YoutubeLink'            value :P9450_JSON_YOUTUBE_LINK       ,
+                                                 'EventOrganizer'         value :P9450_JSON_EVENT_ORGANIZER    ,
+                                                 'EventLocation'          value :P9450_JSON_EVENT_LOCATION     ,
+                                                 'EventTcValue'           value :P9450_JSON_EVENT_TC_VALUE     ,
+                                                 'DisplayOciInstructions' value :P9450_JSON_DISP_OCI_INSTR     ,
+                                                 'AlwaysFreeEnabled'      value :P9450_JSON_ENABLE_ALWAYSFREE  ,
+                                                 'FreeTierEnabled'        value :P9450_JSON_ENABLE_FREETIER    ,
+                                                 'PaidTenancyEnabled'     value :P9450_JSON_ENABLE_PAID        ,
+                                                 'LiveLabsGreenEnabled'   value :P9450_JSON_ENABLE_LIVELABS    ,
+                                                 'AdvertEnabled'          value :P9450_JSON_ENABLE_ADVERT      ,
+                                                 'AdvertLink'             value :P9450_JSON_ADVERT_LINK        ,
+                                                 'AdvertIcon'             value :P9450_JSON_ADVERT_ICON_LINK   ,
+                                                 'AdvertTheme'            value :P9450_JSON_ADVERT_THEME       ,
+                                                 'AdvertDate'             value :P9450_JSON_ADVERT_DATE        ,
+                                                 'AdvertLocation'         value :P9450_JSON_ADVERT_LOCATION    ,
+                                                 'AdvertPresenter'        value :P9450_JSON_ADVERT_PRESENTER
+                                                  ABSENT ON NULL );
+                    
+                      v_new_json := replace(v_new_json,'{}','');
+                    
+                      if nvl(:P9450_EVENT_JSON,'X') <> nvl(v_new_json,'X') then 
+                        :P9450_EVENT_JSON := v_new_json;
+                      end if;
+                    
+                    end;
+                    
+                    ```
+                itemsToSubmit: [
+                    P9450_JSON_EVENT_TYPE
+                    P9450_JSON_EVENT_DATE
+                    P9450_JSON_EVENT_ICON_URL
+                    P9450_JSON_YOUTUBE_LINK
+                    P9450_JSON_EVENT_ORGANIZER
+                    P9450_JSON_EVENT_LOCATION
+                    P9450_JSON_ENABLE_ALWAYSFREE
+                    P9450_JSON_ENABLE_FREETIER
+                    P9450_JSON_ENABLE_PAID
+                    P9450_JSON_ENABLE_LIVELABS
+                    P9450_JSON_ENABLE_ADVERT
+                    P9450_JSON_ADVERT_LINK
+                    P9450_JSON_ADVERT_ICON_LINK
+                    P9450_JSON_ADVERT_THEME
+                    P9450_JSON_ADVERT_DATE
+                    P9450_JSON_ADVERT_LOCATION
+                    P9450_JSON_ADVERT_PRESENTER
+                    P9450_JSON_EVENT_TC_VALUE
+                    P9450_JSON_DISP_OCI_INSTR
+                ]
+                itemsToReturn: P9450_EVENT_JSON
+                showProcessing: true
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: items
+                items: P9450_EVENT_JSON_DISPLAY
+            }
+            execution {
+                sequence: 40
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction submitpressed (
+        name: SubmitPressed
+        execution {
+            sequence: 60
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @submit
+        }
+
+        action native-close-region (
+            action: closeRegion
+            affectedElements {
+                selectionType: region
+                region: @workshop-lab-details
+            }
+            execution {
+                sequence: 30
+                fireOnInit: false
+            }
+        )
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    declare
+                      v_new_lab_url  varchar2(2000);
+                    begin
+                      v_new_lab_url := JSON_OBJECT ('FREETIER_URL'          value :P9450_JSON_FREETIER_URL,
+                                                    'LIVELABS_URL'          value :P9450_JSON_LIVELABS_URL,
+                                                    'ALWAYSFREE_URL'        value :P9450_JSON_ALWAYSFREE_URL,
+                                                    'PAID_URL'              value :P9450_JSON_PAID_URL,
+                                                    'DESKTOP_GUIDE_URL'     value :P9450_JSON_DESKTOP_GUIDE_URL,
+                                                    'DESKTOP_APP1_URL'      value :P9450_JSON_DESKTOP_APP1_URL,
+                                                    'DESKTOP_APP2_URL'      value :P9450_JSON_DESKTOP_APP2_URL
+                                                    ABSENT ON NULL  );
+                    
+                      v_new_lab_url := replace(v_new_lab_url,'{}','');
+                    
+                      if nvl(:P9450_ALT_URL,'X') <> nvl(v_new_lab_url,'X') then 
+                        :P9450_ALT_URL := v_new_lab_url;
+                      end if;
+                    
+                    end;
+                    
+                    ```
+                itemsToSubmit: [
+                    P9450_JSON_FREETIER_URL
+                    P9450_JSON_LIVELABS_URL
+                    P9450_JSON_DESKTOP_GUIDE_URL
+                    P9450_JSON_ALWAYSFREE_URL
+                    P9450_JSON_PAID_URL
+                    P9450_JSON_DESKTOP_APP1_URL
+                    P9450_JSON_DESKTOP_APP2_URL
+                ]
+                itemsToReturn: P9450_ALT_URL
+                showProcessing: true
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: items
+                items: P9450_ALT_URL_DISPLAY
+            }
+            execution {
+                sequence: 40
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction upload-a-file (
+        name: Upload a File
+        execution {
+            sequence: 10
+        }
+        when {
+            selectionType: items
+            items: P9450_FILE
+        }
+        clientSideCondition {
+            type: itemIsNotNull
+            item: P9450_FILE
+        }
+
+        action native-submit-page (
+            action: submitPage
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    validation is-valid-file-type (
+        name: Is valid file type
+        execution {
+            sequence: 10
+        }
+        validation {
+            type: functionBodyReturningBoolean
+            plsqlFunctionBody:
+                ```plsql
+                if apex_data_parser.assert_file_type(
+                       p_file_name => :P9450_FILE_NAME,
+                       p_file_type => apex_data_parser.c_file_type_csv )
+                then
+                    return true;
+                else
+                    :P9450_FILE := null;
+                    return false;
+                end if;
+                ```
+        }
+        error {
+            errorMessage: Invalid file type. Supported file types CSV, TXT.
+            associatedItem: @P9450_FILE
+        }
+    )
+
+    validation resinfuturedate (
+        name: resInFutureDate
+        execution {
+            sequence: 20
+        }
+        validation {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                if :P9450_START_DATE < trunc(sysdate) then
+                   return ('Date has to be larger or equal to today''s date');
+                end if;
+                ```
+        }
+        error {
+            associatedItem: @P9450_START_DATE
+        }
+        serverSideCondition {
+            whenButtonPressed: @load-event-data
+        }
+    )
+
+    computation p9450-file-name (
+        itemName: P9450_FILE_NAME
+        execution {
+            sequence: 10
+            point: afterSubmit
+        }
+        computation {
+            sqlQuery:
+                ```sql
+                select filename
+                  from apex_application_temp_files 
+                 where name = :P9450_FILE
+                ```
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P9450_FILE
+        }
+    )
+
+    process clear-cache (
+        name: Clear Cache
+        type: clearSessionState
+        execution {
+            sequence: 20
+        }
+        advanced {
+            executionMappingIdentifier: 267747721639739069
+        }
+        serverSideCondition {
+            type: expression
+            plsqlExpression: :REQUEST = 'CLEAR' or :P9450_ERROR_ROW_COUNT = 0
+        }
+    )
+
+    process create-workshop-process (
+        name: Create Workshop Process
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                DECLARE
+                    l_file blob;
+                    l_load_result apex_data_loading.t_data_load_result;
+                BEGIN
+                    SELECT blob_content
+                      INTO l_file
+                      FROM apex_application_temp_files
+                     WHERE name = :P9450_FILE;
+                
+                      l_load_result := apex_data_loading.load_data (
+                                             p_static_id    => 'LOAD_CSV_LL_WORKSHOPS2',
+                                             p_data_to_load => l_file );
+                                             
+                    ---CSV_Load_Nomination
+                    /*
+                    if :P3_FILE_TYPE = apex_data_parser.c_file_type_csv then
+                        l_load_result := apex_data_loading.load_data (
+                                             p_static_id    => 'CSV_Load',
+                                             p_data_to_load => l_file );
+                                             */
+                
+                    
+                       
+                     
+                    /*
+                    elsif :P3_FILE_TYPE = apex_data_parser.c_file_type_xml then
+                        l_load_result := apex_data_loading.load_data (
+                                             p_static_id    => 'Load_XML_Nominations',
+                                             p_data_to_load => l_file );
+                    elsif :P3_FILE_TYPE = apex_data_parser.c_file_type_json then
+                        l_load_result := apex_data_loading.load_data (
+                                             p_static_id    => 'Load_JSON_Nominations',
+                                             p_data_to_load => l_file );
+                                             
+                                              
+                    end if;
+                    */
+                
+                    --:P3_ERROR_ROW_COUNT := l_load_result.error_rows;
+                    --:P3_PROCESSED_ROW_COUNT := l_load_result.processed_rows;
+                END;
+                ```
+        }
+        execution {
+            sequence: 40
+        }
+        advanced {
+            executionMappingIdentifier: 267897652120802138
+        }
+        serverSideCondition {
+            whenButtonPressed: @create-workshops
+        }
+    )
+
+    process load-data (
+        name: Load Data
+        type: dataLoading
+        dataLoading {
+            dataLoadDefinition: @LOAD_CSV_LL_WORKSHOPS2
+        }
+        sourceData {
+            fileBrowseItem: P9450_FILE
+        }
+        processingResult {
+            errorRowCountItem: P9450_ERROR_ROW_COUNT
+        }
+        execution {
+            sequence: 10
+        }
+        advanced {
+            executionMappingIdentifier: 267747386908739069
+        }
+        serverSideCondition {
+            whenButtonPressed: @load
+        }
+    )
+
+    process load-event-data (
+        name: Load Event Data
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                DECLARE
+                    l_file blob;
+                    l_load_result apex_data_loading.t_data_load_result;
+                    l_email varchar2(100);
+                    l_x number := 1;
+                    l_now varchar2(10);
+                    l_msg varchar2(200) := 'Reservations created Successfully ';
+                
+                    Cursor C1 Is
+                      Select distinct email
+                      From   TEMP_EMAILS ;
+                
+                
+                BEGIN
+                    -- Insert CSV Data into TEMP_EMAILS Table -- 
+                        SELECT blob_content
+                        INTO l_file
+                        FROM apex_application_temp_files
+                        WHERE name = :P9450_FILE;
+                
+                    
+                    l_load_result := apex_data_loading.load_data (
+                                            p_static_id    => 'Bulk_Emails',
+                                             p_data_to_load => l_file );
+                     
+                
+                    -- Insert CSV Data into TEMP_EMAILS Table -- 
+                    -- Insert Event code --- 
+                    
+                    insert into LL_VOUCHERS
+                    (
+                    REASON,VOUCHER_CODE,EMAIL_CREATOR,EMAIL_REQUESTOR,VALID_FROM,
+                    VALID_TO,USERS_MAXIMUM,WORKSHOP_ID,ALT_DESC_LONG,ALT_DESC_OUTLINE,
+                    ALT_DESC_PREREQUISITES,ACTIVE_FLG,REMARKS,VALID_TIMEZONE,
+                    ALT_URL,TENANCY_ID,REGION_ID,USERS_CONCURRENT,
+                    ALT_TIME_HOURS,ALT_TIME_AVAILABLE,DISPLAY_TAGS,EVENT_JSON
+                    )
+                    values
+                    (
+                    :P9450_REASON,:P9450_VOUCHER_CODE,:P9450_EMAIL_CREATOR,:P9450_EMAIL_REQUESTOR,:P9450_VALID_FROM,
+                    :P9450_VALID_TO,:P9450_USERS_MAXIMUM,:P9450_WORKSHOP_ID,:P9450_ALT_DESC_LONG,:P9450_ALT_DESC_OUTLINE,
+                    :P9450_ALT_DESC_PREREQUISITES,:P9450_ACTIVE_FLG,:P9450_REMARKS,:P9450_VALID_TIMEZONE,
+                    :P9450_ALT_URL_DISPLAY,:P9450_TENANCY_ID,:P9450_REGION_ID,:P9450_USERS_CONCURRENT,
+                    :P9450_ALT_TIME_HOURS,:P9450_ALT_TIME_AVAILABLE,:P9450_DISPLAY_TAGS,:P9450_EVENT_JSON
+                    ); 
+                    
+                    -- Insert Event Code ----
+                 
+                    -- Insert Reservation for all ids email list CSV  ---- 
+                      
+                     For row_1 In C1 Loop
+                            l_email := upper ( row_1.email );
+                            insert into ll_reservations
+                            (REASON,
+                            OWNER1, WORKSHOP_ID, START_DATE, START_TIME, START_TIMEZONE,
+                            ACTIVE_FLG ,  PUBLIC_KEY, TENANCY_ID, REGION_ID)
+                            values
+                             ( replace('AUTOGEN-'||:P9450_PREFIX||'-'||to_char(l_x,'000'),' ','') ,
+                            l_email ,:P9450_WORKSHOP_ID, :P9450_START_DATE, :P9450_START_TIME, :P9450_START_TIMEZONE,
+                            'Y' , :P9450_SSH_KEY, :P9450_TENANCY_ID, :P9450_REGION_ID );
+                            l_x := l_x + 1;
+                     End Loop;
+                      
+                     -- Insert Reservation for all ids email list CSV  ---- 
+                 
+                    -- Clean Up TEMP_EMAILS Table -- 
+                    delete from temp_emails;
+                    
+                
+                END;
+                
+                ```
+        }
+        execution {
+            sequence: 30
+        }
+        advanced {
+            executionMappingIdentifier: 267746958581739067
+        }
+        serverSideCondition {
+            whenButtonPressed: @load-event-data
+        }
+    )
+
+    branch (
+        name: After Loading Reservation Data
+        execution {
+            sequence: 10
+        }
+        behavior {
+            target: {
+                page: 9451
+                items: {
+                    P9451_PREFIX: &P9450_PREFIX.
+                    P9451_REASON: &P9450_REASON.
+                    P9451_VALID_FROM: &P9450_VALID_FROM.
+                    P9451_VALID_TO: &P9450_VALID_TO.
+                    P9451_WORKSHOP_ID: &P9450_WORKSHOP_ID.
+                    P9451_START_DATE: &P9450_START_DATE.
+                    P9451_START_TIME: &P9450_START_TIME.
+                }
+            }
+        }
+        serverSideCondition {
+            whenButtonPressed: @load-event-data
+        }
+    )
+
+    branch (
+        name: After Workshop Created
+        execution {
+            sequence: 20
+        }
+        behavior {
+            target: {
+                page: 9451
+                items: {
+                    P9451_PREFIX: WORKSHOP
+                }
+            }
+        }
+        serverSideCondition {
+            whenButtonPressed: @create-workshops
+        }
+    )
+
+)
+

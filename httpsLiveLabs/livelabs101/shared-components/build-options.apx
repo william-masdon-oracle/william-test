@@ -1,0 +1,67 @@
+buildOption feature-about-page (
+    name: Feature: About Page
+    status {
+        status: include
+    }
+    advanced {
+        featureIdentifier: APPLICATION_ABOUT_PAGE
+    }
+    comments {
+        comments: About this application page.
+    }
+)
+
+buildOption feature-activity-reporting (
+    name: Feature: Activity Reporting
+    status {
+        status: include
+    }
+    advanced {
+        featureIdentifier: APPLICATION_ACTIVITY_REPORTING
+    }
+    comments {
+        comments: Include numerous reports and charts on end user activity.
+    }
+)
+
+buildOption feature-configuration-options (
+    name: Feature: Configuration Options
+    status {
+        status: include
+    }
+    advanced {
+        featureIdentifier: APPLICATION_CONFIGURATION
+    }
+    comments {
+        comments: Allow application administrators to enable or disable specific functionality, associated with an Application Express build option, from within the application.
+    }
+)
+
+buildOption feature-feedback (
+    name: Feature: Feedback
+    status {
+        status: include
+    }
+    advanced {
+        featureIdentifier: APPLICATION_FEEDBACK
+    }
+    comments {
+        comments: Provide a mechanism for end users to post general comments back to the application administrators and developers.
+    }
+)
+
+buildOption infinity-code-dev (
+    name: Infinity Code - Dev
+    status {
+        defaultOnExport: exclude
+    }
+)
+
+buildOption infinity-code-prod (
+    name: Infinity Code - Prod
+    status {
+        status: include
+        defaultOnExport: include
+    }
+)
+

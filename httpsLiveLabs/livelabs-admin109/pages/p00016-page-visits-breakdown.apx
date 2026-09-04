@@ -1,0 +1,254 @@
+page 16 (
+    name: Page Visits Breakdown
+    alias: PAGE-VISITS-BREAKDOWN
+    title: Page Visits Breakdown
+    appearance {
+        pageTemplate: @standard-trustarc
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        authorizationScheme: @administration-rights
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region page-visits-breakdown (
+        name: Page Visits Breakdown
+        type: interactiveGrid
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select unique homep.app_session, homep.page_id as home_page, searchp.page_id as search_page, wsp.page_id as workshop_page, runp1.page_id as green_button, runp2.page_id as brown_button
+                from ll_page_visits searchp, ll_page_visits wsp, ll_page_visits runp1, ll_page_visits runp2, ll_page_visits homep
+                where homep.app_session = wsp.app_session (+)
+                and homep.app_session = runp1.app_session(+)
+                and homep.app_session = runp2.app_session(+)
+                and homep.app_session = searchp.app_session(+)
+                and searchp.page_id(+)= 100 
+                and wsp.page_id (+)= 180
+                and runp1.page_id (+)= 200
+                and runp2.page_id(+) = 210
+                and homep.page_id = 1 ;
+                ```
+        }
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        pagination {
+            type: page
+        }
+        toolbar {
+            controls: [
+                searchCol
+                searchField
+                actionsMenu
+                resetButton
+                saveButton
+            ]
+        }
+        download {
+            formats: [
+                csv
+                html
+                pdf
+                excel
+            ]
+        }
+        advanced {
+            savedReportMappingIdentifier: 199007223879642615
+        }
+
+        savedReport 1990077 (
+            visibility: primary
+            view {
+                default: grid
+            }
+            singleRowView {
+                displayedColumns: true
+            }
+
+            displayColumn (
+                column: @APP_SESSION
+                layout {
+                    sequence: 1
+                }
+            )
+
+            displayColumn (
+                column: @HOME_PAGE
+                layout {
+                    sequence: 2
+                }
+            )
+
+            displayColumn (
+                column: @SEARCH_PAGE
+                layout {
+                    sequence: 3
+                }
+            )
+
+            displayColumn (
+                column: @WORKSHOP_PAGE
+                layout {
+                    sequence: 4
+                }
+            )
+
+            displayColumn (
+                column: @GREEN_BUTTON
+                layout {
+                    sequence: 5
+                }
+            )
+
+            displayColumn (
+                column: @BROWN_BUTTON
+                layout {
+                    sequence: 6
+                }
+            )
+
+        )
+
+        column APP_SESSION (
+            type: textField
+            heading {
+                heading: App Session
+            }
+            layout {
+                sequence: 10
+            }
+            validation {
+                maxLength: 100
+            }
+            source {
+                databaseColumn: APP_SESSION
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column BROWN_BUTTON (
+            type: numberField
+            heading {
+                heading: Brown Button
+                alignment: end
+            }
+            layout {
+                sequence: 60
+                columnAlignment: end
+            }
+            source {
+                databaseColumn: BROWN_BUTTON
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column GREEN_BUTTON (
+            type: numberField
+            heading {
+                heading: Green Button
+                alignment: end
+            }
+            layout {
+                sequence: 50
+                columnAlignment: end
+            }
+            source {
+                databaseColumn: GREEN_BUTTON
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column HOME_PAGE (
+            type: numberField
+            heading {
+                heading: Home Page
+                alignment: end
+            }
+            layout {
+                sequence: 20
+                columnAlignment: end
+            }
+            source {
+                databaseColumn: HOME_PAGE
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column SEARCH_PAGE (
+            type: numberField
+            heading {
+                heading: Search Page
+                alignment: end
+            }
+            layout {
+                sequence: 30
+                columnAlignment: end
+            }
+            source {
+                databaseColumn: SEARCH_PAGE
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column WORKSHOP_PAGE (
+            type: numberField
+            heading {
+                heading: Workshop Page
+                alignment: end
+            }
+            layout {
+                sequence: 40
+                columnAlignment: end
+            }
+            source {
+                databaseColumn: WORKSHOP_PAGE
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: Page Visits Breakdown
+        }
+    )
+
+)
+

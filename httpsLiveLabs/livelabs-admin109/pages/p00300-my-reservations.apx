@@ -1,0 +1,762 @@
+page 300 (
+    name: My Reservations
+    alias: MY-RESERVATIONS
+    title: LiveLabs - My Reservations
+    appearance {
+        pageTemplate: @standard-trustarc
+        templateOptions: #DEFAULT#
+        cssClasses: page-w1280p
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+        warnOnUnsavedChanges: false
+    }
+    css {
+        inline:
+            ```css
+            body  {
+                margin: 0 auto;
+                background-image: url(#APP_IMAGES#ll_bg_tile.png);
+                background-repeat: repeat;
+            }
+            
+            /* Content row actions */
+            .t-ContentRow-actions span {
+                font-size: 22px;
+                padding: 12px;
+            }
+            
+            .t-ContentRow-actions {
+                font-size: 15px;
+                line-height: 3;
+            }
+            ```
+    }
+    security {
+        authorizationScheme: @superrrrr-user
+        formAutoComplete: false
+    }
+
+    region multi-user-reservations (
+        name: Multi-user Reservations
+        type: classicReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select llr.ID,
+                       null view_reservation,
+                       (select llw.name from ll_workshops llw where llw.id = llr.workshop_id) WORKSHOP_NAME,
+                       ll_pkg_reservation.reservation_status(p_reservation_id => llr.ID) STATUS,
+                       llr.TITLE,
+                       llr.REASON,
+                       llr.FOCUS_AREA,
+                       llr.OWNER1,
+                       llr.OWNER2,
+                       llr.WORKSHOP_ID,
+                       llr.START_DATE,
+                       llr.START_TIME,
+                       llr.START_TIMEZONE,
+                       llr.STOP_DATE,
+                       llr.ENVIRONMENTS,
+                       llr.ACTIVE_FLG,
+                       llr.STOP_TIME,
+                       null forget_this_res
+                  from LL_RESERVATIONS llr
+                where owner1 = v('APP_USER')
+                and ACTIVE_FLG = 'Y'
+                and llr.ENVIRONMENTS > 1; 
+                ```
+        }
+        layout {
+            sequence: 40
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--accent9
+                t-Region--scrollBody
+            ]
+        }
+        serverSideCondition {
+            type: never
+        }
+        componentAppearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Report--altRowsDefault
+                t-Report--rowHighlight
+            ]
+        }
+        pagination {
+            type: nextAndPreviousLinks
+        }
+
+        column ACTIVE_FLG (
+            reportColumnQueryId: 16
+            derivedColumn: N
+            heading {
+                heading: Active Flg
+                alignment: center
+            }
+            layout {
+                sequence: 16
+            }
+        )
+
+        column ENVIRONMENTS (
+            reportColumnQueryId: 15
+            derivedColumn: N
+            heading {
+                heading: Environments
+                alignment: center
+            }
+            layout {
+                sequence: 15
+            }
+        )
+
+        column FOCUS_AREA (
+            reportColumnQueryId: 7
+            derivedColumn: N
+            heading {
+                heading: Focus Area
+                alignment: center
+            }
+            layout {
+                sequence: 7
+            }
+        )
+
+        column FORGET_THIS_RES (
+            reportColumnQueryId: 18
+            derivedColumn: N
+            heading {
+                heading: Forget This Res
+                alignment: center
+            }
+            layout {
+                sequence: 18
+            }
+        )
+
+        column ID (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 1
+            }
+        )
+
+        column OWNER1 (
+            reportColumnQueryId: 8
+            derivedColumn: N
+            heading {
+                heading: Owner1
+                alignment: center
+            }
+            layout {
+                sequence: 8
+            }
+        )
+
+        column OWNER2 (
+            reportColumnQueryId: 9
+            derivedColumn: N
+            heading {
+                heading: Owner2
+                alignment: center
+            }
+            layout {
+                sequence: 9
+            }
+        )
+
+        column REASON (
+            reportColumnQueryId: 6
+            derivedColumn: N
+            heading {
+                heading: Reason
+                alignment: center
+            }
+            layout {
+                sequence: 6
+            }
+        )
+
+        column START_DATE (
+            reportColumnQueryId: 11
+            derivedColumn: N
+            heading {
+                heading: Start Date
+                alignment: center
+            }
+            layout {
+                sequence: 11
+            }
+        )
+
+        column START_TIME (
+            reportColumnQueryId: 12
+            derivedColumn: N
+            heading {
+                heading: Start Time
+                alignment: center
+            }
+            layout {
+                sequence: 12
+            }
+        )
+
+        column START_TIMEZONE (
+            reportColumnQueryId: 13
+            derivedColumn: N
+            heading {
+                heading: Start Timezone
+                alignment: center
+            }
+            layout {
+                sequence: 13
+            }
+        )
+
+        column STATUS (
+            reportColumnQueryId: 4
+            derivedColumn: N
+            heading {
+                heading: Status
+                alignment: center
+            }
+            layout {
+                sequence: 4
+            }
+        )
+
+        column STOP_DATE (
+            reportColumnQueryId: 14
+            derivedColumn: N
+            heading {
+                heading: Stop Date
+                alignment: center
+            }
+            layout {
+                sequence: 14
+            }
+        )
+
+        column STOP_TIME (
+            reportColumnQueryId: 17
+            derivedColumn: N
+            heading {
+                heading: Stop Time
+                alignment: center
+            }
+            layout {
+                sequence: 17
+            }
+        )
+
+        column TITLE (
+            reportColumnQueryId: 5
+            derivedColumn: N
+            heading {
+                heading: Title
+                alignment: center
+            }
+            layout {
+                sequence: 5
+            }
+        )
+
+        column VIEW_RESERVATION (
+            reportColumnQueryId: 2
+            derivedColumn: N
+            heading {
+                heading: View/Edit
+                alignment: center
+            }
+            layout {
+                sequence: 2
+            }
+        )
+
+        column WORKSHOP_ID (
+            reportColumnQueryId: 10
+            derivedColumn: N
+            heading {
+                heading: Workshop Id
+                alignment: center
+            }
+            layout {
+                sequence: 10
+            }
+        )
+
+        column WORKSHOP_NAME (
+            reportColumnQueryId: 3
+            derivedColumn: N
+            heading {
+                heading: Workshop Name
+                alignment: center
+            }
+            layout {
+                sequence: 3
+            }
+        )
+
+    )
+
+    region report-for-multi-user-if-not-null-for-app-user (
+        name: Report for multi-user (if not null for app_user)
+        type: staticContent
+        layout {
+            sequence: 50
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noUI
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    region span-style-font-weight-200-my-span-span-style-font-weight-400-reservations-span (
+        name: <span style="font-weight: 200">My</span> <span style="font-weight: 400">Reservations</span>
+        type: classicReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select llr.ID,
+                       null view_reservation,
+                       NVL((select llw.name from ll_workshops llw where llw.id = llr.workshop_id),llr.title) as title,
+                       ll_pkg_reservation.date_full (p_start_gmt => llr.START_GMT, p_timezone => START_TIMEZONE) as description,
+                       '<b>Status:</b> ' || ll_pkg_reservation.reservation_status(p_reservation_id => llr.ID) misc, 
+                       llr.REASON,
+                       llr.FOCUS_AREA,
+                       llr.OWNER1,
+                       llr.WORKSHOP_ID, 
+                       llr.STOP_DATE,
+                       llr.ENVIRONMENTS,
+                       llr.ACTIVE_FLG,
+                       llr.STOP_TIME,
+                       '<img src="#APP_IMAGES#livelabs_icon_dark_heavy.png" alt="LiveLabs Icon" height="32px">' icon_html,
+                       ll_pkg_apex.my_reservation_links( p_workshop_id => llr.WORKSHOP_ID, 
+                                                         p_reservation_id => llr.ID, 
+                                                         p_status => ll_pkg_reservation.reservation_status(p_reservation_id => llr.ID), 
+                                                         p_voucher_code => llv.voucher_code ) as actions
+                  from LL_RESERVATIONS_VW llr, LL_VOUCHERS LLV
+                where llr.voucher_id = llv.id (+)
+                and llr.owner1 = v('APP_USER')
+                and llr.ACTIVE_FLG = 'Y'
+                order by case ll_pkg_reservation.reservation_status(p_reservation_id => llr.ID) 
+                                   when 'Scheduled' then 10
+                                   when 'Completed' then 99
+                                   else 1 end, 
+                         case ll_pkg_reservation.reservation_status(p_reservation_id => llr.ID) 
+                                   when 'Scheduled' then (start_gmt - sysdate)
+                                   else (sysdate - start_gmt) end 
+                ```
+        }
+        layout {
+            sequence: 30
+            slot: contentBody
+        }
+        appearance {
+            template: @content-block
+            templateOptions: [
+                #DEFAULT#
+                t-ContentBlock--padded
+                t-ContentBlock--h1
+                t-ContentBlock--lightBG
+            ]
+        }
+        headerAndFooter {
+            headerText:
+                ```html
+                <p style="margin-left: 20px; margin-right: 20px">All your current workshop reservations are shown below. You can edit active or pending reservations, view workshop details, attend an available workshop, or delete a reservation.</p>
+                <p style="margin-left: 20px; margin-right: 20px"><strong>Note:</strong> The status of your reservations will be emailed to you. Check your mail for any status updates.</p>
+                
+                ```
+        }
+        componentAppearance {
+            template: @content-row
+            templateOptions: [
+                #DEFAULT#
+                t-ContentRow--hideSelection
+            ]
+            cssClasses: t-ContentRow--hideSelection
+        }
+        pagination {
+            type: nextAndPreviousLinks
+        }
+
+        column ACTIONS (
+            reportColumnQueryId: 15
+            derivedColumn: N
+            heading {
+                heading: Actions
+                alignment: center
+            }
+            layout {
+                sequence: 51
+            }
+            sorting {
+                sortable: false
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column ACTIVE_FLG (
+            reportColumnQueryId: 12
+            derivedColumn: N
+            heading {
+                heading: Active Flg
+                alignment: center
+            }
+            layout {
+                sequence: 10
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column DESCRIPTION (
+            reportColumnQueryId: 4
+            derivedColumn: N
+            heading {
+                heading: Description
+                alignment: center
+            }
+            layout {
+                sequence: 31
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column ENVIRONMENTS (
+            reportColumnQueryId: 11
+            derivedColumn: N
+            heading {
+                heading: Environments
+                alignment: center
+            }
+            layout {
+                sequence: 9
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column FOCUS_AREA (
+            reportColumnQueryId: 7
+            derivedColumn: N
+            heading {
+                heading: Focus Area
+                alignment: center
+            }
+            layout {
+                sequence: 5
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column ICON_HTML (
+            reportColumnQueryId: 14
+            derivedColumn: N
+            heading {
+                heading: Icon Html
+                alignment: center
+            }
+            layout {
+                sequence: 21
+            }
+            sorting {
+                sortable: false
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column ID (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            heading {
+                heading: Id
+                alignment: center
+            }
+            layout {
+                sequence: 1
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column MISC (
+            reportColumnQueryId: 5
+            derivedColumn: N
+            heading {
+                heading: Misc
+                alignment: center
+            }
+            layout {
+                sequence: 41
+            }
+            sorting {
+                sortable: false
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column OWNER1 (
+            reportColumnQueryId: 8
+            derivedColumn: N
+            heading {
+                heading: Owner1
+                alignment: center
+            }
+            layout {
+                sequence: 6
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column REASON (
+            reportColumnQueryId: 6
+            derivedColumn: N
+            heading {
+                heading: Reason
+                alignment: center
+            }
+            layout {
+                sequence: 4
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column STOP_DATE (
+            reportColumnQueryId: 10
+            derivedColumn: N
+            heading {
+                heading: Stop Date
+                alignment: center
+            }
+            layout {
+                sequence: 8
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column STOP_TIME (
+            reportColumnQueryId: 13
+            derivedColumn: N
+            heading {
+                heading: Stop Time
+                alignment: center
+            }
+            layout {
+                sequence: 11
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column TITLE (
+            reportColumnQueryId: 3
+            derivedColumn: N
+            heading {
+                heading: Title
+                alignment: center
+            }
+            layout {
+                sequence: 3
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column VIEW_RESERVATION (
+            reportColumnQueryId: 2
+            derivedColumn: N
+            heading {
+                heading: View Reservation
+                alignment: center
+            }
+            layout {
+                sequence: 2
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column WORKSHOP_ID (
+            reportColumnQueryId: 9
+            derivedColumn: N
+            heading {
+                heading: Workshop Id
+                alignment: center
+            }
+            layout {
+                sequence: 7
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+    )
+
+    pageItem P300_PAGE_ID (
+        type: hidden
+        layout {
+            sequence: 10
+            region: @span-style-font-weight-200-my-span-span-style-font-weight-400-reservations-span
+            slot: regionBody
+        }
+        source {
+            used: always
+        }
+        default {
+            type: static
+            staticValue: 300
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    dynamicAction dialog-close (
+        name: Dialog Close
+        execution {
+            sequence: 10
+        }
+        when {
+            event: apexafterclosedialog
+            selectionType: region
+            region: @span-style-font-weight-200-my-span-span-style-font-weight-400-reservations-span
+        }
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @span-style-font-weight-200-my-span-span-style-font-weight-400-reservations-span
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction pending-creation-auto-refresh-reservations (
+        name: Pending Creation - Auto Refresh Reservations
+        execution {
+            sequence: 30
+        }
+        when {
+            event: apexafterrefresh
+            selectionType: region
+            region: @span-style-font-weight-200-my-span-span-style-font-weight-400-reservations-span
+        }
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    let refreshTimer = 1 * 60 * 1000,  // 1 minute
+                        regionId     = this.affectedElements[0].id;
+                    
+                    function refresh() {
+                        apex.region(regionId).refresh();
+                    }
+                    
+                    // if there's one lab pending creation, add an auto-refresh on the region
+                    if ($('.pending_creation').length > 0 ) {
+                        setTimeout(refresh, refreshTimer);
+                    }
+                    ```
+            }
+            affectedElements {
+                selectionType: region
+                region: @span-style-font-weight-200-my-span-span-style-font-weight-400-reservations-span
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    dynamicAction set-page-id (
+        name: Set Page Id
+        execution {
+            sequence: 20
+        }
+        when {
+            event: ready
+        }
+        clientSideCondition {
+            type: itemIsNull
+            item: P300_PAGE_ID
+        }
+
+        action native-set-value (
+            action: setValue
+            settings {
+                value: 300
+            }
+            affectedElements {
+                selectionType: items
+                items: P300_PAGE_ID
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+)
+

@@ -1,0 +1,3310 @@
+page 1 (
+    name: Home
+    alias: HOME
+    title: Oracle LiveLabs
+    appearance {
+        pageTemplate: @standard-trustarc
+        templateOptions: #DEFAULT#
+        cssClasses: page-w1280p
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+        warnOnUnsavedChanges: false
+    }
+    css {
+        inline:
+            ```css
+            body  {
+                margin: 0 auto;
+                background-image: url(#APP_IMAGES#ll_bg_tile.png);
+                background-repeat: repeat;
+            }
+            
+            .t-Card-info { 
+                line-height: unset;
+            }
+            .t-Card-info a {
+                font-size: 12px;
+            }
+            
+            .custom_card_color {
+                border: 2px;
+                border-color: #4c4642;
+                color: #f5ead6;
+                
+            }
+            
+            #PERS2{
+                display: none;
+            }
+            
+            #LLHEAD{
+                color: white;
+                background: url(#APP_IMAGES#ll_region_bg_green.png);
+            }
+            
+            #SPRINTBOX{
+                color: white;
+                background: url(#APP_FILES#sprints_bg.png);
+                border-radius: 5px;
+            }
+            
+            .sprintbutton {  
+                padding:10px 15px 10px 15px;
+                border-radius:5px;
+                border:2px solid #000;
+                background-color: #8dab86;
+                color: #fff;
+                box-shadow: 2px 2px 4px black;
+            }
+            
+            button.sprintbutton:hover {
+                background:#40553b; 
+                color: #fff;
+                border:2px solid #Fff;
+                box-shadow: none;
+                cursor: pointer;
+            }
+            
+            #SPRINTBOX2{
+                display: none;
+            }
+            
+            #SPRINTBOX3{
+                display: none;
+            }
+            
+            #SPRINTBOX4{
+                display: none;
+            }
+            
+            .reserve-W {  
+                font-size:0.9em;
+                font-weight:600;
+                background-color: #8dab86; // #719668;
+                color:#FCFBFA; //JR: was #776f6b; //    color: #4c4642; // #FCFBFA;
+                border:0.5px #776f6b solid;
+                border-radius:5px;
+                padding:5px 10px 5px 10px; //JR: was 5px
+            }
+            
+            a.reserve-W:hover {
+                background:#40553b; //JR: was #eae7e5;
+                color:#FCFBFA; //JR: was #776f6b;
+                font-weight: 600;
+                box-shadow: none;
+            }
+            
+            .details-W {  
+                background-color: gray;
+                color: white;
+                padding: 10px;
+            }
+            
+            a.details-W:hover {
+                background-color: dimgray;
+                color: #FCFBFA;
+                box-shadow: none;
+            }
+            //.reserve-W {  
+            //    background-color: #759C6C;
+            //    color: white;
+            //    padding: 10px;
+            //}
+            //
+            //a.reserve-W:hover {
+            //    background-color: #719668;
+            //    color: #FCFBFA;
+            //    box-shadow: none;
+            //}
+            //
+            //.details-W {  
+            //    background-color: gray;
+            //    color: white;
+            //    padding: 10px;
+            //}
+            //
+            //a.details-W:hover {
+            //    background-color: dimgray;
+            //    color: #FCFBFA;
+            //    box-shadow: none;
+            //}
+            //
+            //*search bar hidden */
+            #SEARCH {
+                display:none;
+            }
+            
+            /* change expand collapse icons
+            .a-icon.a-Collapsible-icon:before{
+                background-image: fa fa-chevron-right;
+            }
+            
+            .a-icon.a-Collapsible-icon:after{
+                background-image: fa fa-chevron-right;    
+            }
+            */
+            
+            /* Set background color for page 
+            body, html{
+                height: 100%;
+                background-color: #46423F;
+                background-image: url(	#APP_IMAGES#rw_dots_bg_wht.png);
+                background-position: center;
+                background-repeat: repeat;
+                background-size: cover;
+            }
+            */
+            
+            .card_ribbon{
+                //style for ribbon
+            }
+            
+            .card_ribbon:empty{
+                display: none;
+            }
+            
+            
+            .t-Region--carousel .a-Region-carouselNavItem.a-Tabs-selected .a-Region-carouselLink {
+                background-color: #fafafa;
+            }
+            
+            .t-Region--carousel .a-Region-carouselLink {
+                background-color: rgba(0,0,0,.15);
+                border-radius: 100%;
+                box-shadow: 0 0 0 1px #fcfbfa inset;
+            }
+            
+            .t-Region--carousel .t-Region-body {
+                height: 220px;
+            }
+            
+            
+            #TITLEBAR{
+                color: white;
+                background: url(#APP_IMAGES#ll_region_bg_green.png);
+                min-height: 100%;
+                margin: 0px 40px 20px 30px;
+                padding: 20px 40px 20px 20px;
+                border-radius: 0;
+            }
+            
+            @media (max-width: 1280px){
+              #SPRINTBOX{
+                  display: none;
+                }
+            
+              #SPRINTBOX2{
+                display: flex;
+                color: white;
+                background: url(#APP_FILES#sprints_bg.png);
+                border-radius: 5px;
+                }
+            }
+            
+              @media (max-width: 1100px) {
+              /* CSS that should be displayed if width is equal to or less than 800px goes here */
+              #ODW_FOOTER{
+                  display: none;
+              }
+            
+              #SPRINTBOX2{
+                  display: none;
+                }
+            
+              #SPRINTBOX3{
+                display: flex;
+                color: white;
+                background: url(#APP_FILES#sprints_bg.png);
+                border-radius: 5px;
+                }
+            
+              #LLHEAD{
+                  display: none;
+              }
+              #PERS1{
+                  display: none;
+              }
+              #PERS2{
+                  display: contents;
+              }
+              } 
+            
+              @media (max-width: 980px){
+                  #PERS2{
+                      display: none;
+                  }
+              }
+            
+              @media (max-width: 415px){
+                  #PERS2{
+                      display: none;
+                  }
+                #SPRINTBOX3{
+                  display: none;
+                }
+            
+              #SPRINTBOX4{
+                display: flex;
+                color: white;
+                background: url(#APP_FILES#sprints_bg.png);
+                border-radius: 5px;
+                }
+              }
+                /*
+            body  {
+                margin: 0 auto;
+                background-image: url(#APP_IMAGES#ll_bg_tile.png);
+                background-repeat: repeat;
+            }
+            
+            .t-Card-info { 
+                line-height: unset;
+                font-size: 12px;
+            }
+            
+            .t-Card-info a {
+                font-size: 12px;
+            }
+            
+            .t-Card-title {
+                font-size: 12px;
+            }
+            
+            .reserve-W {  
+                background-color: #759C6C;
+                color: white;
+                padding: 10px;
+            }
+            
+            a.reserve-W:hover {
+                background-color: #719668;
+                color: #FCFBFA;
+                box-shadow: none;
+            }
+            
+            .details-W {  
+                background-color: gray;
+                color: white;
+                padding: 10px;
+            }
+            
+            a.details-W:hover {
+                background-color: dimgray;
+                color: #FCFBFA;
+                box-shadow: none;
+            
+            }
+            */
+            ```
+    }
+    htmlHeader {
+        htmlHeader:
+            ```html
+            <style>
+                #ABOUTLL{
+                    background: url(#APP_IMAGES#ll_region_bg.png);
+                }
+                #LLHEAD{
+                    color: white;
+                    background: url(#APP_IMAGES#ll_region_bg_green.png);
+                    min-height: 100%;
+                }
+            
+              background-image: url(#APP_IMAGES#ll_bg_tile.png);
+              background-repeat: repeat;
+            
+            </style>
+            ```
+    }
+    security {
+        authorizationScheme: @superrrrr-user
+        formAutoComplete: false
+    }
+
+    region appdev (
+        name: appdev
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <div align="center" style="font-weight:600">
+                <a href="&P1_APPDEV_URL.">
+                <img src="#APP_IMAGES#app_dev.png" alt="Application Developer" max-width="100px"><br>
+                Application Developer
+                </a>
+                </div>
+                ```
+        }
+        layout {
+            sequence: 10
+            parentRegion: @personas
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--hiddenOverflow
+                t-Form--noPadding
+            ]
+        }
+    )
+
+    region appdev-2 (
+        name: appdev
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <div align="center" style="font-weight:600">
+                <a href="&P1_APPDEV_URL.">
+                <img src="#APP_IMAGES#app_dev.png" alt="Application Developer" max-width="150px"><br>
+                Application Developer
+                </a>
+                </div>
+                ```
+        }
+        layout {
+            sequence: 20
+            parentRegion: @livelabs-personas
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--hiddenOverflow
+                t-Form--noPadding
+                margin-left-lg
+            ]
+        }
+    )
+
+    region cloud-world-banner (
+        name: Cloud World Banner
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <div style="display:float;float:left;padding:20px 0px 0px 40px;">
+                    <p><img src=#APP_FILES#cloudworld_white.png alt="CloudWorld" width="150px"></p>
+                </div>
+                <div style="display:float;float:right;padding:38px 180px 0px 00px;color:white;font-size:2.2em;color:#fcbf37">
+                    <p>Save the date!</p>
+                </div>
+                <div style="font-size:1.2em;display:float;float:right;padding:10px 40px 5px 40px;color:white;font-size:1.1em;">
+                    <p>Las Vegas, here we come. Get ready for <b>Oracle</b> <i><span style="color:#fcbf37">CloudWorld</span></i>, our new global conference created for our customers and partners, running October 16–20, 2022.</p>
+                </div>   
+                <div style="font-size:1.1em;display:float;float:left;margin-left:5px;padding:5px 50px 5px 30px">
+                    <p>
+                        <button type="button" class="sprintbutton" title="Get Oracle Cloud Updates" aria-label="Get Oracle Cloud Updates" onclick="window.open(href='https://www.oracle.com/cloudworld/'); return false;">Get <b>Oracle</b> <i><span style="color:#ffe7b6">CloudWorld</span> </i>Updates
+                        </button>
+                    </p>
+                </div> 
+                ```
+        }
+        layout {
+            sequence: 40
+            parentRegion: @homepage-advert-carousel
+            slot: slides
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--scrollBody
+            ]
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    region current-workshops (
+        name: Current workshops
+        type: cards
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select 
+                "ID"
+                , null header  -- this is the repeating header
+                ,"NAME" card_title
+                -- , null card_subtitle
+                ,ll_pkg_admin.cut_off_at_space (DESC_SHORT, 100) card_text --anything you want for the card text
+                ,ll_pkg_admin.hours_readable (TIME_IN_HOURS, 'SHORT', 'N') card_subtext
+                , null card_icon --any icon, as appropriate
+                , APEX_PAGE.GET_URL (
+                      p_page   => 180,
+                      p_items  => 'WID',
+                      p_values => ID )  card_link --card link for drill through
+                , (select 
+                       CASE
+                           WHEN count(*) < 500 THEN ''
+                           ELSE count(*) || ' Views'
+                        END
+                    from LL_PAGE_VISITS llpv where llpv.WORKSHOP_ID = ID) card_views   
+                , (select 
+                       CASE
+                           WHEN count(*) < 500 THEN ''
+                           ELSE 'fa fa-eye'
+                        END
+                    from LL_PAGE_VISITS llpv where llpv.WORKSHOP_ID = ID) card_views_eye   
+                --,'#APP_IMAGES#ll_region_bg_green.png' card_image
+                , null card_image
+                , 't-Cards--animRaiseCard t-Cards t-Cards--animColorFill
+                u-colors t-Cards--displaySubtitle t-Cards--featured 
+                t-Cards--block force-fa-lg t-Cards--displayIcons t-Cards--cols 
+                t-Cards--5cols' card_list_modifiers -- this is to modify look and feel of cards, see below..
+                ,null as bookmark_enable -- RP: use 'fa fa-bookmark-o' if we use bookmarks
+                ,ll_pkg_apex.user_attended_ws (p_workshop_id => id, p_username => :app_user) as workshop_attended -- RP: use 'fa fa-check-circle-o' for workshop not attended - null for nobody
+                ,ll_pkg_apex.card_ribbon ( p_workshop_id => id, p_username => :app_user) as card_ribbon -- RP: null if no ribbon needed
+                ,(select key_value from ll_keys where key_type='CARD_RIBBON' and key_name=ll_pkg_apex.card_ribbon ( p_workshop_id => llw.id, p_username => :app_user)) as card_ribbon_color -- RP: if ribbon card_ribbon not null, use this color for the ribbon
+                /*,ll_pkg_apex.ws_star_rating(p_workshop_id => id, p_type => 'IMAGE') as star_rating -- RP: png filename star_0_0.png through star_3_5.png to star_5_0.png
+                ,CASE 
+                        ll_pkg_apex.ws_star_rating(p_workshop_id => id, p_type => 'COUNT')         WHEN '0' then '' 
+                        ELSE ll_pkg_apex.ws_star_rating(p_workshop_id => id, p_type => 'COUNT')
+                        END  as star_votes*/ -- RP: --  RD: remove start rating until feature is fully enabled -- 20210415
+                /*,'star_0_0.png' star_rating*/
+                ,null star_votes
+                ,nvl2(TIME_IN_HOURS, 'fa fa-clock-o', null) as time_display
+                from LL_WORKSHOPS LLW
+                where ACTIVE_FLG='Y'
+                 and ID in (select workshop_id 
+                           from ll_workshop_tags 
+                           where tag_id in (select id 
+                                            from ll_tags 
+                                            where level1='Featured') )
+                order by dbms_random.value                            
+                fetch first 4 rows only
+                
+                
+                
+                ```
+            pageItemsToSubmit: [
+                P1_ROLE
+                P1_SALES_FOCUS
+                P1_SALES_PLAY
+                P1_FOCUS_AREA
+                P1_PRODUCT
+                P1_LEVEL
+                P1_WORKSHOP_TYPE
+                P1_CERTIFICATION
+            ]
+        }
+        layout {
+            sequence: 10
+            parentRegion: @span-style-margin-left-15px-featured-workshops-span
+            slot: subRegions
+        }
+        appearance {
+            template: @blank-with-attributes-no-grid
+            templateOptions: [
+                #DEFAULT#
+                t-Form--slimPadding
+                margin-left-md
+            ]
+            icon: fa-button
+        }
+        advanced {
+            htmlDomId: RATE_WK_210
+        }
+        componentAppearance {
+            gridColumns: 4
+        }
+        card {
+            primaryKeyColumn1: ID
+            primaryKeyColumn2: ID
+        }
+        title {
+            advancedFormatting: true
+            htmlExpression:
+                ```html
+                <div style="float:left;position:absolute">
+                    <p style="font-size:0.8em;font-weight:600;margin:-5px 0px 5px -16px">
+                        <span style="padding:3px 5px 3px 5px;border-radius:0px 5px 5px 0px;background:&CARD_RIBBON_COLOR.;color:white" class="card_ribbon">
+                            &CARD_RIBBON.
+                        </span>
+                    </p>
+                </div>
+                
+                <p style="font-size:1.0em;font-weight:600;line-height:1.3em;padding:20px 0px 0px 0px">
+                    &CARD_TITLE.
+                </p>
+                
+                <p style="font-size:0.85em;font-weight:400;line-height:1.15em;padding:0px 0px 5px 0px">
+                    &CARD_TEXT.
+                </p>
+                
+                <div style="color:darkgrey;font-size:0.9em;position: absolute;top: 15px;right: 10px;">
+                    <span style="float:right;text-align:right;vertical-align:baseline;color: #776f6b">
+                        <!-- <span style="float:right;text-align:right;margin:-10px 0px 20px 0px:10px;color: #776f6b;"> -->
+                        <!-- <span style="margin-top:-20px"><img src=#APP_IMAGES#&STAR_RATING. style="align:top"></span> -->
+                        <span style="font-size:0.9em;font-weight:400;margin:-5px 10px 0px 0px;padding:-10px 0px 0px 0px;vertical-align:top">  &STAR_VOTES.</span>
+                        <span class="&WORKSHOP_ATTENDED." style="color:#719668;"></span>
+                        <span class="&BOOKMARK_ENABLE."></span>
+                    </span>
+                </div>
+                
+                
+                
+                <!-- Old version
+                <div style="float:left;position:absolute">
+                    <p style="font-size:0.8em;font-weight:600;margin:-5px 0px 5px -16px"><span style="padding:3px 5px 3px 5px;border-radius:0px 5px 5px 0px;background:&CARD_RIBBON_COLOR.;color:white" class="card_ribbon">&CARD_RIBBON.</span></p>
+                </div>
+                <p style="font-size:1.0em;font-weight:600;line-height:1.3em;padding:20px 0px 0px 0px">&CARD_TITLE.</p>
+                <p style="font-size:0.85em;font-weight:400;line-height:1.15em;padding:0px 0px 15px 0px">&CARD_TEXT.</p>
+                
+                <div style="color:darkgrey;font-size:0.9em;position: absolute;top: 15px;right: 20px">
+                    <span style="float:right;text-align:right;vertical-align:baseline;color: #c74634 ">
+                        <span class="&WORKSHOP_ATTENDED." style="color:#719668;"></span>
+                        <span class="&BOOKMARK_ENABLE."></span>
+                    </span>
+                </div>
+                -->
+                ```
+        }
+        body {
+            advancedFormatting: true
+            htmlExpression:
+                ```html
+                <div style="color:darkgrey;font-size:0.9em;position: absolute;bottom: 5px;">
+                    <a class="reserve-W" href=&CARD_LINK.>Launch</a> 
+                        <span style="color:black;font-size:0.8em;font-weight:400;line-height:0.7em;margin:-10px 0px 10px 10px;">
+                            <i>
+                                <!-- <span class="&CARD_VIEWS_EYE." style="color:darkgray;padding: 5px 3px 0px 0px"></span> -->
+                                &CARD_VIEWS.
+                            </i>
+                        </span>
+                        <p style="line-height:0.3em;margin:5px 0px 10px 0px;"></p>
+                </div>
+                <div style="font-size:0.9em;position: absolute;bottom: 15px;right: 10px">
+                    <span style="float:right;text-align:right;vertical-align:top">
+                            <span style="font-weight:400;font-size:0.8em;margin:-20px 0px 20px 0px;">
+                                <span class="&TIME_DISPLAY." style="font-size:1em;vertical-align:baseline;"></span>&nbsp;&nbsp;&CARD_SUBTEXT.
+                    </span>
+                </div>
+                
+                <!-- Old version
+                <div style="color:darkgrey;font-size:0.9em;position: absolute;bottom: 5px;">
+                    <a class="reserve-W" href=&CARD_LINK.>Launch</a> 
+                        <span style="color:black;font-size:0.8em;font-weight:300;line-height:0.7em;margin:-10px 0px 10px 10px;">
+                            <i><span class="&CARD_VIEWS_EYE" style="color:darkgray;padding: 5px 3px 0px 0px"></span>&CARD_VIEWS.</i>
+                        </span>
+                        <p style="line-height:0.3em;margin:5px 0px 10px 0px;"></p>
+                        <span style=";vertical-align:middle;margin:20px 0px 0px 0px:10px;color: #776f6b;font-size:0.7em;font-weight:400">
+                            <span style="margin:3px 0px 0px 0px"><img src="#APP_IMAGES#&STAR_RATING." style="vertical-align:middle"> &STAR_VOTES.</span>
+                        </span>
+                </div>
+                <div style="color:darkgrey;font-size:0.9em;position: absolute;bottom: 5px;right: 20px">
+                    <span style="float:right;text-align:right;">
+                            <span style="font-weight:400;font-size:0.8em;margin:-10px 0px 10px 0px;color:#776f6b">
+                                <span class="&TIME_DISPLAY." style="font-size:1em;vertical-align:baseline;color:#776f6b"></span>&nbsp;&nbsp;&CARD_SUBTEXT.
+                    </span>
+                </div>
+                -->
+                ```
+        }
+    )
+
+    region database-world (
+        name: Database World
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <div style="display:float;float:right;padding:0px 0px 0px 0px;">
+                    <p><img src=#APP_FILES#dbw-logo-trans.png alt="CloudWorld" height="215px"></p>
+                </div>
+                <div style="display:float;float:left;padding:20px 0px 0px 30px;color:white;font-size:1.8em;color:#fcbf37">
+                    <p><b>Oracle Database World 2022</b></p>
+                </div>
+                <div style="font-size:1.0em;display:float;float:left;padding:20px 0px 5px 30px;color:white;font-size:1.2em;">
+                    <p><b>Americas</b> April 26th
+                     <br><b>EMEA</b> April 28th
+                     <br>
+                    <b>JAPAC</b> June 8th</p>
+                </div>   
+                 
+                <div style="font-size:1.0em;display:float;float:left;margin-left:0px;padding:20px 0px 5px 30px">
+                    <p>
+                        <button type="button" class="sprintbutton" title="Register for Database World" aria-label="Register for Database World" onclick="window.open(href='https://www.oracle.com/database/database-world/?source=:ow:occ:cpo::::RC_WWMK220210P00044:LiveLabs&intcmp=:ow:occ:cpo::::RC_WWMK220210P00044:LiveLabs'); return false;"><b>Register</b> for <i><span style="color:#ffe7b6">Database World</span> </i>
+                        </button>
+                    </p>
+                </div> 
+                ```
+        }
+        layout {
+            sequence: 50
+            parentRegion: @homepage-advert-carousel
+            slot: slides
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    region datasci (
+        name: datasci
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <div align="center" style="font-weight:600">
+                <a href="&P1_DATASCI_URL.">
+                <img src="#APP_IMAGES#data_sci.png" alt="Data Scientist" max-width="100px"><br>
+                Data Scientist
+                </a>
+                </div>
+                ```
+        }
+        layout {
+            sequence: 50
+            parentRegion: @personas
+            slot: subRegions
+            startNewRow: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--hiddenOverflow
+                t-Form--noPadding
+            ]
+        }
+    )
+
+    region datasci-2 (
+        name: datasci
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <div align="center" style="font-weight:600">
+                <a href="&P1_DATASCI_URL.">
+                <img src="#APP_IMAGES#data_sci.png" alt="Data Scientist" max-width="150px"><br>
+                Data Scientist
+                </a>
+                </div>
+                ```
+        }
+        layout {
+            sequence: 40
+            parentRegion: @livelabs-personas
+            slot: subRegions
+            startNewRow: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--hiddenOverflow
+                t-Form--noPadding
+            ]
+        }
+    )
+
+    region dba (
+        name: dba
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <div align="center" style="font-weight:600">
+                <a href="&P1_DBA_URL.">
+                <img src="#APP_IMAGES#dba.png" alt="DBA" max-width="100px"><br>
+                DBA
+                </a>
+                </div>
+                ```
+        }
+        layout {
+            sequence: 70
+            parentRegion: @personas
+            slot: subRegions
+            startNewRow: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--hiddenOverflow
+                t-Form--noPadding
+            ]
+        }
+    )
+
+    region dba-2 (
+        name: dba
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <div align="center" style="font-weight:600">
+                <a href="&P1_DBA_URL.">
+                <img src="#APP_IMAGES#dba.png" alt="DBA" max-width="150px"><br>
+                DBA
+                </a>
+                </div>
+                ```
+        }
+        layout {
+            sequence: 60
+            parentRegion: @livelabs-personas
+            slot: subRegions
+            startNewRow: false
+            columnSpan: 2
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--hiddenOverflow
+                t-Form--noPadding
+            ]
+        }
+    )
+
+    region developer-banner (
+        name: Developer Banner
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <div style="display:float;float:right;padding:0px 0px 0px 0px;">
+                    <p><img src=#APP_FILES#Live-Labs-Developer-Resource-Center.png alt="CloudWorld" height="215px"></p>
+                </div>
+                
+                 
+                <div style="font-size:1.0em;position:absolute;bottom:40px;left:120px;margin-left:0px;">
+                    <p>
+                        <button type="button" class="sprintbutton" title="Explore Developer Resources" aria-label="Explorer Developer Resources" onclick="window.open(href='https://developer.oracle.com'); return false;">Explore Developer Resources
+                        </button>
+                    </p>
+                </div> 
+                ```
+        }
+        layout {
+            sequence: 70
+            parentRegion: @homepage-advert-carousel
+            slot: slides
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    region devops (
+        name: devops
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <div align="center" style="font-weight:600">
+                <a href="&P1_DEVOPS_URL.">
+                <img src="#APP_IMAGES#it.png" alt="DevOps Engineer" max-width="100px"><br>
+                DevOps Engineer
+                </a>
+                </div>
+                ```
+        }
+        layout {
+            sequence: 60
+            parentRegion: @personas
+            slot: subRegions
+            startNewRow: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--hiddenOverflow
+                t-Form--noPadding
+            ]
+        }
+    )
+
+    region devops-2 (
+        name: devops
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <div align="center" style="font-weight:600">
+                <a href="&P1_DEVOPS_URL.">
+                <img src="#APP_IMAGES#it.png" alt="DevOps Engineer" max-width="150px"><br>
+                DevOps Engineer
+                </a>
+                </div>
+                ```
+        }
+        layout {
+            sequence: 50
+            parentRegion: @livelabs-personas
+            slot: subRegions
+            startNewRow: false
+            columnSpan: 2
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--hiddenOverflow
+                t-Form--noPadding
+            ]
+        }
+    )
+
+    region featured-workshops-report (
+        name: Featured workshops report
+        type: classicReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select
+                  "ID",
+                  "NAME" CARD_TITLE,
+                  'Workshop Duration: ' || ll_pkg_admin.hours_readable (TIME_IN_HOURS, 'SHORT', 'N') 
+                --  || ' (Lease Time: '|| ll_pkg_admin.hours_readable (TIME_AVAILABLE, 'SHORT', 'N') || ')'  
+                  CARD_SUBTITLE,
+                  "DESC_SHORT" CARD_TEXT,
+                --    NVL2(json_value(lab_url,'$.GITHUB_URL'),
+                --    '<a class="reserve-W" href="'
+                --    ||
+                --    APEX_PAGE.GET_URL (
+                --      p_page   => 320,
+                --      p_items  => 'P320_WORKSHOP_ID',
+                --      p_values => ID )
+                --      ||
+                --      '">Reserve</a>', null) 
+                --    ||
+                    '<a class="reserve-W" href="'||
+                    APEX_PAGE.GET_URL (
+                      p_page   => 180,
+                      p_items  => 'WID',
+                      p_values => ID )
+                      ||
+                      '">Launch Workshop</a>&nbsp;&nbsp;&nbsp;&nbsp;' ||   
+                      (select 
+                           CASE
+                               WHEN count(*) < 10 THEN '<i>New!</i>'
+                               ELSE '<i>' || count(*) || ' Views</i>'
+                            END
+                       from LL_PAGE_VISITS llpv where llpv.WORKSHOP_ID = ID) CARD_SUBTEXT,
+                  'fa-flask' CARD_ICON,
+                  null CARD_LINK, 
+                  null CARD_MODIFIERS,
+                  null CARD_COLOR,
+                  "ACTIVE_FLG",
+                  "TIME_IN_HOURS",
+                  "TIME_IN_HOURS" as WORKSHOP_TIME,
+                  "NAME",
+                  "DESC_LONG"
+                --  "LEVEL_TAG",
+                --  "DEPLOYMENT_TAG",
+                --  "ROLE_TAG",
+                --  "SALESPLAY_TAG",
+                --  "FOCUS_TAG",
+                --  "PRODUCT_TAG"
+                from LL_WORKSHOPS
+                where ACTIVE_FLG='Y'
+                and ID in (select workshop_id 
+                           from ll_workshop_tags 
+                           where tag_id in (select id 
+                                            from ll_tags 
+                                            where level1='Featured') )
+                order by dbms_random.value                            
+                fetch first 5 rows only
+                
+                ```
+        }
+        layout {
+            sequence: 20
+            parentRegion: @span-style-margin-left-15px-featured-workshops-span
+            slot: subRegions
+        }
+        appearance {
+            template: @blank-with-attributes-no-grid
+            templateOptions: [
+                #DEFAULT#
+                margin-left-md
+            ]
+        }
+        serverSideCondition {
+            type: never
+        }
+        componentAppearance {
+            template: @cards
+            templateOptions: [
+                #DEFAULT#
+                u-colors
+                t-Cards--displaySubtitle
+                t-Cards--compact
+                t-Cards--5cols
+                t-Cards--desc-3ln
+                t-Cards--iconsRounded
+                t-Cards--animColorFill
+                t-Report--hideNoPagination
+            ]
+        }
+        pagination {
+            type: nextAndPreviousLinks
+        }
+
+        column ACTIVE_FLG (
+            reportColumnQueryId: 10
+            derivedColumn: N
+            heading {
+                heading: Active Flg
+                alignment: center
+            }
+            layout {
+                sequence: 10
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column CARD_COLOR (
+            reportColumnQueryId: 9
+            derivedColumn: N
+            heading {
+                heading: Card Color
+                alignment: center
+            }
+            layout {
+                sequence: 9
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column CARD_ICON (
+            reportColumnQueryId: 6
+            derivedColumn: N
+            heading {
+                heading: Card Icon
+                alignment: center
+            }
+            layout {
+                sequence: 6
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column CARD_LINK (
+            reportColumnQueryId: 7
+            derivedColumn: N
+            heading {
+                heading: Card Link
+                alignment: center
+            }
+            layout {
+                sequence: 7
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column CARD_MODIFIERS (
+            reportColumnQueryId: 8
+            derivedColumn: N
+            heading {
+                heading: Card Modifiers
+                alignment: center
+            }
+            layout {
+                sequence: 8
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column CARD_SUBTEXT (
+            reportColumnQueryId: 5
+            derivedColumn: N
+            heading {
+                heading: Card Subtext
+                alignment: center
+            }
+            layout {
+                sequence: 5
+            }
+            sorting {
+                sortable: false
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column CARD_SUBTITLE (
+            reportColumnQueryId: 3
+            derivedColumn: N
+            heading {
+                heading: Card Subtitle
+                alignment: center
+            }
+            layout {
+                sequence: 3
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column CARD_TEXT (
+            reportColumnQueryId: 4
+            derivedColumn: N
+            heading {
+                heading: Card Text
+                alignment: center
+            }
+            layout {
+                sequence: 4
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column CARD_TITLE (
+            reportColumnQueryId: 2
+            derivedColumn: N
+            heading {
+                heading: Card Title
+                alignment: center
+            }
+            layout {
+                sequence: 2
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column DESC_LONG (
+            reportColumnQueryId: 14
+            derivedColumn: N
+            heading {
+                heading: Desc Long
+                alignment: center
+            }
+            layout {
+                sequence: 14
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column ID (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            heading {
+                heading: Id
+                alignment: center
+            }
+            layout {
+                sequence: 1
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column NAME (
+            reportColumnQueryId: 13
+            derivedColumn: N
+            heading {
+                heading: Name
+                alignment: center
+            }
+            layout {
+                sequence: 13
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column TIME_IN_HOURS (
+            reportColumnQueryId: 11
+            derivedColumn: N
+            heading {
+                heading: Time In Hours
+                alignment: center
+            }
+            layout {
+                sequence: 11
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column WORKSHOP_TIME (
+            reportColumnQueryId: 12
+            derivedColumn: N
+            heading {
+                heading: Workshop Time
+                alignment: center
+            }
+            layout {
+                sequence: 12
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+    )
+
+    region find-a (
+        name: Find a...
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <p>Find the workshop you want to try, then launch it. We’ll guide you through the process from end to end.</p>
+                
+                ```
+        }
+        layout {
+            sequence: 90
+            parentRegion: @personas
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--hiddenOverflow
+                margin-top-sm
+                margin-bottom-none
+                margin-left-sm
+                margin-right-md
+            ]
+        }
+    )
+
+    region find-a-2 (
+        name: Find a...
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <p style="left-padding:60px">Find the workshop you want to try, then launch it. We’ll guide you through the process from end to end.</p>
+                
+                ```
+        }
+        layout {
+            sequence: 80
+            parentRegion: @livelabs-personas
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--hiddenOverflow
+                margin-top-sm
+                margin-bottom-none
+                margin-left-lg
+                margin-right-md
+            ]
+        }
+    )
+
+    region footer (
+        name: footer
+        type: staticContent
+        source {
+            htmlCode: <div align="center"><span style="color:white">© 2020 Oracle  |  Privacy/Do Not Sell My Info. | Cookie Preferences | Ad Choices</span></div>
+        }
+        layout {
+            sequence: 60
+            parentRegion: @footer-with-links
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--scrollBody
+            ]
+            renderComponents: belowContent
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    region footer-with-links (
+        name: Footer with links
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: footer
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--accent14
+                t-Region--noUI
+                t-Region--hiddenOverflow
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    region homepage-advert-carousel (
+        name: Homepage Advert Carousel
+        type: staticContent
+        layout {
+            sequence: 80
+            slot: contentBody
+        }
+        appearance {
+            template: @carousel-container
+            templateOptions: [
+                t-Region--noPadding
+                js-cycle10s
+                t-Region--removeHeader
+                t-Region--noBorder
+                t-Region--hiddenOverflow
+                t-Form--noPadding
+                margin-left-lg
+            ]
+        }
+        advanced {
+            htmlDomId: SPRINTBOX
+        }
+    )
+
+    region how-oracle-livelabs-works (
+        name: How Oracle LiveLabs works
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <table>
+                <tr><td>
+                <div align="center"><img src="#APP_IMAGES#ll_flow.png" width="90%"></div>
+                </td></tr>
+                <tr><td>
+                <p> Find the workshop you want to try, then either start it now or reserve a time to work through it later. We’ll guide you through the process from end to end.</p> 
+                </td></tr>
+                </table>
+                ```
+        }
+        layout {
+            sequence: 120
+            slot: contentBody
+            startNewRow: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noUI
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            htmlDomId: HowWorks
+            regionDisplaySelector: true
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    region links-col (
+        name: Links_col_3
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <span style="color:white">
+                <h3>Solutions for</h3>
+                <a href="https://www.oracle.com/artificial-intelligence/">Artificial Intelligence</a>
+                <br>
+                <a href="https://www.oracle.com/internet-of-things/">Internet of Things</a>
+                <br>
+                <a href="https://www.oracle.com/blockchain/">Blockchain</a>
+                </span>
+                ```
+        }
+        layout {
+            sequence: 30
+            parentRegion: @footer-with-links
+            slot: subRegions
+            startNewRow: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    region links-col-2 (
+        name: Links_col_2
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <span style="color:white">
+                <h3>Partners for</h3>
+                <a href="https://www.oracle.com/partnernetwork/">Oracle PartnerNetwork</a>
+                <br>
+                <a href="https://partner-finder.oracle.com/">Find a Partner</a>
+                <br>
+                <a href="https://www.oracle.com/opn/index.html">Log in to OPN</a>
+                </span>
+                ```
+        }
+        layout {
+            sequence: 20
+            parentRegion: @footer-with-links
+            slot: subRegions
+            startNewRow: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    region links-col-3 (
+        name: Links_col_1
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <span style="color:white">
+                <h3>Resources for</h3>
+                <a href="https://developer.oracle.com">Developers</a><br>
+                <a href="https://www.oracle.com/startup/">Startups</a><br>
+                <a href="https://academy.oracle.com/en/oa-web-overview.html">Students &amp; Educators</a>
+                </span>
+                ```
+        }
+        layout {
+            sequence: 10
+            parentRegion: @footer-with-links
+            slot: subRegions
+            column: 2
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    region links-col-4 (
+        name: Links_col_4
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <span style="color:white">
+                <h3>What's New</h3>
+                <a href="https://www.oracle.com/corporate/covid-19.html">Oracle’s response to COVID-19</a>
+                <br>
+                <a href="https://www.oracle.com/java/technologies/javase-downloads.html">Java SE14 download</a>
+                <br>
+                <a href="https://www.oracle.com/cloud/free/">Try Oracle Cloud Free Tier</a>
+                </span>
+                ```
+        }
+        layout {
+            sequence: 40
+            parentRegion: @footer-with-links
+            slot: subRegions
+            startNewRow: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    region links-col-5 (
+        name: Links_col_5
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <span style="color:white">
+                <h3>Contact Us</h3>
+                <a href="tel:18006330738">US Sales: +1.800.633.0738</a>
+                <br>
+                <a href="https://www.oracle.com/corporate/contact/">How can we help?</a>
+                <br>
+                <a href="https://go.oracle.com/subscriptions">Subscribe to emails</a>
+                </span>
+                ```
+        }
+        layout {
+            sequence: 50
+            parentRegion: @footer-with-links
+            slot: subRegions
+            startNewRow: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    region livelabs-banner (
+        name: LiveLabs Banner
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <div style="display:float;float:left;padding:20px 20px 0px 40px;color:white;">
+                    <p><img src=#APP_FILES#ll_rw_icon_light.png alt="New ribbon" width="70px"></p>
+                </div>
+                <div style="display:float;float:left;padding:45px 20px 0px 0px;color:white;font-size:2.0em;">
+                    <p>About <b>LiveLabs</b></p>
+                </div>
+                <div style="display:float;float:right;padding:10px 20px 10px 40px;color:white;font-size:1.1em">
+                    <p>Oracle LiveLabs gives you access to Oracle's tools and technologies to run a wide variety of labs and workshops.</p>
+                    <p><b>Experience Oracle's best technology, live!</b></p>
+                    </p>
+                </div>   
+                
+                
+                
+                ```
+        }
+        layout {
+            sequence: 80
+            parentRegion: @homepage-advert-carousel
+            slot: slides
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    region livelabs-feedback (
+        name: LiveLabs Feedback
+        type: form
+        source {
+            location: localDatabase
+            tableName: LL_FEEDBACK
+        }
+        layout {
+            sequence: 150
+            slot: contentBody
+        }
+        appearance {
+            template: @inline-dialog
+            templateOptions: [
+                #DEFAULT#
+                js-dialog-autoheight
+                js-dialog-size720x480
+            ]
+        }
+        advanced {
+            htmlDomId: FEEDBACK_PANEL
+        }
+        edit {
+            enabled: true
+            allowedOperations: [
+                add
+                update
+                delete
+            ]
+        }
+    )
+
+    region livelabs-personas (
+        name: LiveLabs Personas
+        type: staticContent
+        layout {
+            sequence: 70
+            parentRegion: @personas-full
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    region lowcode (
+        name: lowcode
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <div align="center" style="font-weight:600">
+                <a href="&P1_LOWCODE_URL.">
+                <img src="#APP_IMAGES#low_code.png" alt="Low Code Developer" max-width="100px"><br>
+                Low Code Developer
+                </a>
+                </div>
+                ```
+        }
+        layout {
+            sequence: 30
+            parentRegion: @personas
+            slot: subRegions
+            startNewRow: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--hiddenOverflow
+                t-Form--noPadding
+            ]
+        }
+    )
+
+    region lowcode-2 (
+        name: lowcode
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <div align="center" style="font-weight:600">
+                <a href="&P1_LOWCODE_URL.">
+                <img src="#APP_IMAGES#low_code.png" alt="Low Code Developer" max-width="150px"><br>
+                Low Code Developer
+                </a>
+                </div>
+                ```
+        }
+        layout {
+            sequence: 30
+            parentRegion: @livelabs-personas
+            slot: subRegions
+            startNewRow: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--hiddenOverflow
+                t-Form--noPadding
+            ]
+        }
+    )
+
+    region maintenance-window (
+        name: Maintenance Window
+        type: helpText
+        layout {
+            sequence: 160
+            slot: contentBody
+        }
+        appearance {
+            template: @inline-popup
+            templateOptions: [
+                #DEFAULT#
+                js-dialog-size600x400
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        headerAndFooter {
+            headerText: System is in maintenance - please try later.
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    region odw (
+        name: ODW
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <div align="center" style="font-weight:600">
+                <a href="https://www.oracle.com/database/database-world/">
+                <img src="#APP_IMAGES#odw_ll_footer.png">
+                </a>
+                </div>
+                
+                ```
+        }
+        layout {
+            sequence: 170
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--hiddenOverflow
+                t-Form--noPadding
+                margin-left-lg
+            ]
+        }
+        advanced {
+            htmlDomId: ODW_FOOTER
+            regionDisplaySelector: true
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    region personas (
+        name: Personas
+        type: staticContent
+        layout {
+            sequence: 90
+            slot: contentBody
+            startNewRow: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--hiddenOverflow
+                t-Form--noPadding
+                margin-top-md
+                margin-bottom-md
+                margin-left-md
+            ]
+        }
+        advanced {
+            htmlDomId: PERS1
+            regionDisplaySelector: true
+        }
+        headerAndFooter {
+            headerText: <div align="center">
+            footerText: </div>
+        }
+    )
+
+    region personas-full (
+        name: Personas-full
+        type: staticContent
+        layout {
+            sequence: 100
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--hiddenOverflow
+                t-Form--noPadding
+                margin-top-md
+                margin-bottom-md
+                margin-left-md
+            ]
+        }
+        advanced {
+            htmlDomId: PERS2
+            regionDisplaySelector: true
+        }
+        headerAndFooter {
+            headerText: <div align="center">
+            footerText: </div>
+        }
+    )
+
+    region shortcuts (
+        name: Shortcuts
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <div style="color:black;">
+                <b>Shortcuts:</b> 
+                <a href="&P1_BASICPAGEURL." style="font-weight:600">View All Workshops & Sprints</a> | 
+                <a href="&P1_AF_URL." style="font-weight:600">Try an Always Free Workshop</a>
+                </div>
+                ```
+        }
+        layout {
+            sequence: 10
+            parentRegion: @shortcuts-and-tech-links
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--hiddenOverflow
+                t-Form--noPadding
+                margin-top-none
+                margin-bottom-sm
+            ]
+            icon: fa-external-link
+        }
+    )
+
+    region shortcuts-and-tech-links (
+        name: Shortcuts and tech links
+        type: staticContent
+        layout {
+            sequence: 130
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--hiddenOverflow
+                t-Form--noPadding
+                margin-top-none
+                margin-bottom-none
+                margin-left-lg
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region span-style-color-white-about-oracle-livelabs-span (
+        name: <span style="color: white;">About Oracle LiveLabs</span>
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <span style="color: white;">
+                <p>
+                <div style="display: flex;  align-items:center;">
+                <img src=#APP_IMAGES#livelabs_icon_white.png height="80px" style="padding-right:20px">
+                There's no better way to find out about a tool or product than by using it yourself. Oracle LiveLabs gives you access to Oracle's tools and technologies to run a wide variety of labs and workshops. Experience Oracle's best technology, live!
+                </div>
+                </p>
+                <p>&nbsp;</p>
+                </span>
+                ```
+        }
+        layout {
+            sequence: 110
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--textContent
+                t-Region--scrollBody
+                t-Form--noPadding
+                margin-left-lg
+            ]
+        }
+        advanced {
+            htmlDomId: ABOUTLL
+            regionDisplaySelector: true
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    region span-style-color-white-margin-left-10px-about-livelabs-span (
+        name: <span style="color:white;margin-left:10px">About LiveLabs</span>
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <table>
+                    <tr>
+                        <td style="padding:0px 20px 20px 20px">
+                            <img src=#APP_IMAGES#ll_rw_logo.png alt="About LiveLabs" width="100%"> 
+                        </td>
+                        <td>
+                            <p style="color:white;font-size:1.1em;padding:0px 40px 0px 0px;">Oracle LiveLabs gives you access to Oracle's tools and technologies to run a wide variety of labs and workshops.</p>
+                            <p style="color:white;font-weight:600;font-size:1.1em;">Experience Oracle's best technology, live!</p><br>
+                        <td>
+                    </tr>
+                </table>
+                
+                
+                ```
+        }
+        layout {
+            sequence: 70
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--textContent
+                t-Region--hiddenOverflow
+                t-Form--noPadding
+                margin-left-lg
+            ]
+        }
+        advanced {
+            htmlDomId: LLHEAD
+            regionDisplaySelector: true
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    region span-style-font-weight-200-welcome-to-span-span-style-font-weight-400-oracle-livelabs-span (
+        name: <span style="font-weight: 200">Welcome to </span><span style="font-weight: 400">Oracle LiveLabs!</span>
+        type: staticContent
+        layout {
+            sequence: 60
+            slot: contentBody
+        }
+        appearance {
+            template: @title-bar
+            templateOptions: [
+                #DEFAULT#
+                t-BreadcrumbRegion--useRegionTitle
+                margin-left-md
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region span-style-margin-left-15px-featured-workshops-span (
+        name: <span style="margin-left:15px">Featured Workshops</span>
+        type: staticContent
+        layout {
+            sequence: 140
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--noUI
+                t-Region--scrollBody
+                margin-top-none
+                margin-left-md
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region sprint-banner (
+        name: Sprint Banner 3
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <div style="display:float;float:left;padding:0px 0px 0px 0px;">
+                    <p><img src=#APP_FILES#sprints_new.png alt="New ribbon" width="50px"></p>
+                </div>
+                <div style="display:float;float:left;padding:30px 20px 0px 0px;color:white;font-size:1.8em;">
+                    <p>Introducing <b>LiveLabs</b> <i><span style="color:#fcbf37">Sprints</span></i></p>
+                </div>
+                <div style="display:float;float:left;padding:30px 20px 0px 20px;color:white;font-size:1.2em">
+                    <p>Simplify how you learn cloud skills!</p>
+                </div>
+                <div style="font-size:1.2em;display:float;float:right;padding:20px 20px 20px 0px">
+                    <p>
+                        <button type="button" class="sprintbutton" title="Try LiveLabs Sprints" aria-label="Try LiveLabs Sprints" onclick="window.location.href='&P1_SPRINTS_URL.'">Try <b>LiveLabs</b> <i><span style="color:#ffe7b6">Sprints</span></i>
+                        </button>
+                    </p>
+                </div>   
+                  
+                ```
+        }
+        layout {
+            sequence: 40
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noBorder
+                t-Region--scrollBody
+                margin-left-lg
+            ]
+        }
+        advanced {
+            htmlDomId: SPRINTBOX3
+            regionDisplaySelector: true
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    region sprint-banner-2 (
+        name: Sprint Banner
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <div style="display:float;float:left;padding:0px 0px 0px 0px;">
+                    <p><img src=#APP_FILES#sprints_new.png alt="New ribbon" width="50px"></p>
+                </div>
+                <div style="display:float;float:left;padding:30px 20px 0px 0px;color:white;font-size:1.8em;">
+                    <p>Introducing <b>LiveLabs</b> <i><span style="color:#fcbf37">Sprints</span></i></p>
+                </div>
+                <div style="display:float;float:left;padding:30px 20px 0px 20px;color:white;font-size:1.2em">
+                    <p>Simplify how you learn cloud skills!</p>
+                </div>
+                <div style="font-size:1.2em;display:float;float:right;padding:20px 20px 20px 0px">
+                    <p>
+                        <button type="button" class="sprintbutton" title="Try LiveLabs Sprints" aria-label="Try LiveLabs Sprints" onclick="window.location.href='&P1_SPRINTS_URL.'">Try <b>LiveLabs</b> <i><span style="color:#ffe7b6">Sprints</span></i>
+                        </button>
+                    </p>
+                </div>        
+                <div style="font-size:1.2em;display:float;float:right;padding:20px 20px 20px 10px">
+                    <p>
+                        <img src=#APP_FILES#sprints_cars.png alt="LiveLabs Sprints race car" width="250px" style="padding:-10px 20px 0px 0px;margin-right:20px" align="middle"> 
+                    </p>
+                </div>        
+                
+                ```
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noBorder
+                t-Region--scrollBody
+                margin-left-lg
+            ]
+        }
+        advanced {
+            htmlDomId: SPRINTBOX
+            regionDisplaySelector: true
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    region sprint-banner-3 (
+        name: Sprint Banner 2
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <div style="display:float;float:left;padding:0px 0px 0px 0px;">
+                    <p><img src=#APP_FILES#sprints_new.png alt="New ribbon" width="50px"></p>
+                </div>
+                <div style="display:float;float:left;padding:30px 20px 0px 0px;color:white;font-size:1.8em;">
+                    <p>Introducing <b>LiveLabs</b> <i><span style="color:#fcbf37">Sprints</span></i></p>
+                </div>
+                <div style="display:float;float:left;padding:30px 20px 0px 20px;color:white;font-size:1.2em">
+                    <p>Simplify how you learn cloud skills!</p>
+                </div>
+                <div style="font-size:1.2em;display:float;float:right;padding:20px 20px 20px 0px">
+                    <p>
+                        <button type="button" class="sprintbutton" title="Try LiveLabs Sprints" aria-label="Try LiveLabs Sprints" onclick="window.location.href='&P1_SPRINTS_URL.'">Try <b>LiveLabs</b> <i><span style="color:#ffe7b6">Sprints</span></i>
+                        </button>
+                    </p>
+                </div>   
+                <div style="font-size:1.2em;display:float;float:right;padding:20px 20px 20px 10px">
+                    <p>
+                        <img src=#APP_FILES#sprints_car.png alt="LiveLabs Sprints race car" width="150px" style="padding:-10px 20px 0px 0px;margin-right:20px" align="middle"> 
+                    </p>
+                </div>        
+                ```
+        }
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noBorder
+                t-Region--scrollBody
+                margin-left-lg
+            ]
+        }
+        advanced {
+            htmlDomId: SPRINTBOX2
+            regionDisplaySelector: true
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    region sprint-banner-4 (
+        name: Sprint Banner 4
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <div style="display:float;float:left;padding:0px 0px 0px 0px;">
+                    <p><img src=#APP_FILES#sprints_new.png alt="New ribbon" width="50px"></p>
+                </div>
+                <div style="display:float;float:left;padding:30px 20px 10px 5px;color:white;font-size:1.2em;">
+                    <p>Introducing <b>LiveLabs</b> <i><span style="color:#fcbf37">Sprints</span></i></p>
+                </div>
+                <div style="font-size:1.2em;display:float;float:right;padding:20px 20px 20px 10px">
+                    <p>
+                        <button type="button" class="sprintbutton" title="Try LiveLabs Sprints" aria-label="Try LiveLabs Sprints" onclick="window.location.href='&P1_SPRINTS_URL.'">Try <b>LiveLabs</b> <i><span style="color:#ffe7b6">Sprints</span></i>
+                        </button>
+                    </p>
+                </div>   
+                  
+                ```
+        }
+        layout {
+            sequence: 30
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noBorder
+                t-Region--scrollBody
+                margin-top-md
+                margin-left-lg
+            ]
+        }
+        advanced {
+            htmlDomId: SPRINTBOX4
+            regionDisplaySelector: true
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    region sprint-banner-5 (
+        name: Sprint Banner
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <div style="display:float;float:left;padding:0px 0px 0px 0px;">
+                    <p><img src=#APP_FILES#sprints_new.png alt="New ribbon" width="50px"></p>
+                </div>
+                
+                <div style="display:float;float:left;padding:30px 0px 0px 0px;color:white;font-size:2.2em;">
+                    <p>Introducing <b>LiveLabs</b> <i><span style="color:#fcbf37">Sprints</span></i></p>
+                </div>
+                
+                <div style="display:float;float:left;padding:20px 0px 0px 0px;color:white;font-size:1.4em">
+                    <p>Now you can find answers to your technical questions. </p>
+                </div>
+                
+                <div style="display:float;float:left;padding:10px 0px 0px 50px;color:white;font-size:1.4em;color:#fcbf37">
+                    <i><b>Blazingly fast!</b></i>
+                </div>
+                
+                <div style="font-size:1.1em;display:float;float:right;padding:60px 50px 0px 0px">
+                    <p>
+                        <img src=#APP_FILES#sprints_cars.png alt="LiveLabs Sprints race car" width="250px" style="margin-right:10px" align="middle"> 
+                    </p>
+                </div>        
+                <div style="font-size:1.1em;display:float;float:left;padding:25px 0px 20px 50px">
+                    <p>
+                        <button type="button" class="sprintbutton" title="Try LiveLabs Sprints" aria-label="Try LiveLabs Sprints" onclick="window.location.href='&P1_SPRINTS_URL.'">Try <b>LiveLabs</b> <i><span style="color:#ffe7b6">Sprints</span></i>
+                        </button>
+                    </p>
+                </div>  
+                ```
+        }
+        layout {
+            sequence: 30
+            parentRegion: @homepage-advert-carousel
+            slot: slides
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    region technology-shortcuts (
+        name: Technology Shortcuts
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <b>Technology workshops:</b> 
+                <a href="&P1_DATABASE_URL." style="font-weight:600">Database</a> | 
+                <a href="&P1_ANALYTICS_URL." style="font-weight:600">Analytics</a> | 
+                <a href="&P1_OCI_URL." style="font-weight:600">OCI</a> | 
+                <a href="&P1_SECURITY_URL." style="font-weight:600">Security | 
+                <a href="&P1_AIML_URL." style="font-weight:600">AI/ML</a>
+                </div>
+                </p>
+                </span>
+                ```
+        }
+        layout {
+            sequence: 20
+            parentRegion: @shortcuts-and-tech-links
+            slot: subRegions
+            startNewRow: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--hiddenOverflow
+                t-Form--noPadding
+                margin-top-none
+                margin-bottom-none
+                margin-left-sm
+            ]
+            icon: fa-external-link
+        }
+    )
+
+    pageItem P1_AF_URL (
+        type: hidden
+        layout {
+            sequence: 120
+            region: @shortcuts
+            slot: regionBody
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                declare
+                  v_url     varchar2(4000); 
+                    
+                begin
+                
+                    v_url := substr( APEX_PAGE.GET_URL ( p_page   => 100,
+                                                         p_items  => 'p100_workshop_type,me',
+                                                       p_values => '116,90'
+                                                                    ),2);
+                                                       
+                    v_url := replace(v_url,'%3A',':'); 
+                    v_url := substr(v_url,1,instr(v_url,'&session')-1);
+                
+                    return apex_util.host_url('NULL') || v_url;
+                end;
+                ```
+            used: always
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P1_AIML_URL (
+        type: hidden
+        layout {
+            sequence: 190
+            region: @shortcuts
+            slot: regionBody
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                declare
+                  v_url     varchar2(4000); 
+                    
+                begin
+                
+                    v_url := substr( APEX_PAGE.GET_URL ( p_page   => 100,
+                                                         p_items  => 'p100_focus_area,me',
+                                                       p_values => '27,109'
+                                                                    ),2);
+                                                       
+                    v_url := replace(v_url,'%3A',':'); 
+                    v_url := substr(v_url,1,instr(v_url,'&session')-1);
+                
+                    return apex_util.host_url('NULL') || v_url;
+                end;
+                ```
+            used: always
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P1_ANALYTICS_URL (
+        type: hidden
+        layout {
+            sequence: 210
+            region: @shortcuts
+            slot: regionBody
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                declare
+                  v_url     varchar2(4000); 
+                    
+                begin
+                
+                    v_url := substr( APEX_PAGE.GET_URL ( p_page   => 100,
+                                                         p_items  => 'p100_focus_area,me',
+                                                       p_values => '28,117'
+                                                                    ),2);
+                                                       
+                    v_url := replace(v_url,'%3A',':'); 
+                    v_url := substr(v_url,1,instr(v_url,'&session')-1);
+                
+                    return apex_util.host_url('NULL') || v_url;
+                end;
+                ```
+            used: always
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P1_APPDEV_URL (
+        type: hidden
+        layout {
+            sequence: 130
+            region: @shortcuts
+            slot: regionBody
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                declare
+                  v_url     varchar2(4000); 
+                    
+                begin
+                
+                    v_url := substr( APEX_PAGE.GET_URL ( p_page   => 100,
+                                                         p_items  => 'p100_role,me',
+                                                       p_values => '12,111'
+                                                                    ),2);
+                                                       
+                    v_url := replace(v_url,'%3A',':'); 
+                    v_url := substr(v_url,1,instr(v_url,'&session')-1);
+                
+                    return apex_util.host_url('NULL') || v_url;
+                end;
+                ```
+            used: always
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P1_BASICPAGEURL (
+        type: hidden
+        layout {
+            sequence: 110
+            region: @shortcuts
+            slot: regionBody
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            type: functionBody
+            plsqlFunctionBody: return apex_util.host_url('NULL') || :p1_basicurl;
+            used: always
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P1_BASICURL (
+        type: hidden
+        layout {
+            sequence: 90
+            region: @shortcuts
+            slot: regionBody
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                declare
+                  v_url     varchar2(4000); 
+                    
+                begin
+                
+                  v_url := substr( APEX_PAGE.GET_URL ( p_page   => 100,
+                                                         p_items  => 'C',
+                                                       p_values => 'Y'
+                                                                    ),2);
+                                                       
+                  v_url := replace(v_url,'%3A',':'); 
+                  v_url := substr(v_url,1,instr(v_url,'&session')-1);
+                
+                  return(v_url);
+                end;
+                ```
+            used: always
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P1_DATABASE_URL (
+        type: hidden
+        layout {
+            sequence: 200
+            region: @shortcuts
+            slot: regionBody
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                declare
+                  v_url     varchar2(4000); 
+                    
+                begin
+                
+                    v_url := substr( APEX_PAGE.GET_URL ( p_page   => 100,
+                                                         p_items  => 'p100_focus_area,me',
+                                                       p_values => '141,110'
+                                                                    ),2);
+                                                       
+                    v_url := replace(v_url,'%3A',':'); 
+                    v_url := substr(v_url,1,instr(v_url,'&session')-1);
+                
+                    return apex_util.host_url('NULL') || v_url;
+                end;
+                ```
+            used: always
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P1_DATASCI_URL (
+        type: hidden
+        layout {
+            sequence: 150
+            region: @shortcuts
+            slot: regionBody
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                declare
+                  v_url     varchar2(4000); 
+                    
+                begin
+                
+                    v_url := substr( APEX_PAGE.GET_URL ( p_page   => 100,
+                                                         p_items  => 'p100_role,me',
+                                                       p_values => '16,113'
+                                                                    ),2);
+                                                       
+                    v_url := replace(v_url,'%3A',':'); 
+                    v_url := substr(v_url,1,instr(v_url,'&session')-1);
+                
+                    return apex_util.host_url('NULL') || v_url;
+                end;
+                ```
+            used: always
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P1_DBA_URL (
+        type: hidden
+        layout {
+            sequence: 160
+            region: @shortcuts
+            slot: regionBody
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                declare
+                  v_url     varchar2(4000); 
+                    
+                begin
+                
+                    v_url := substr( APEX_PAGE.GET_URL ( p_page   => 100,
+                                                         p_items  => 'p100_role,me',
+                                                       p_values => '139,114'
+                                                                    ),2);
+                                                       
+                    v_url := replace(v_url,'%3A',':'); 
+                    v_url := substr(v_url,1,instr(v_url,'&session')-1);
+                
+                    return apex_util.host_url('NULL') || v_url;
+                end;
+                ```
+            used: always
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P1_DEVOPS_URL (
+        type: hidden
+        layout {
+            sequence: 170
+            region: @shortcuts
+            slot: regionBody
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                declare
+                  v_url     varchar2(4000); 
+                    
+                begin
+                
+                    v_url := substr( APEX_PAGE.GET_URL ( p_page   => 100,
+                                                         p_items  => 'p100_role,me',
+                                                       p_values => '18,115'
+                                                                    ),2);
+                                                       
+                    v_url := replace(v_url,'%3A',':'); 
+                    v_url := substr(v_url,1,instr(v_url,'&session')-1);
+                
+                    return apex_util.host_url('NULL') || v_url;
+                end;
+                ```
+            used: always
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P1_EMAIL (
+        type: textField
+        label {
+            label: Please provide your email address if you want a response to this feedback
+            alignment: left
+        }
+        layout {
+            sequence: 70
+            region: @livelabs-feedback
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            maxLength: 200
+        }
+        advanced {
+            cssClasses: u-textLower
+        }
+        source {
+            formRegion: @livelabs-feedback
+            column: EMAIL_SUBMITTER
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P1_FEEDBACK (
+        type: hidden
+        layout {
+            sequence: 10
+            region: @livelabs-feedback
+            slot: regionBody
+        }
+        source {
+            used: always
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P1_FEEDBACK_COMMENTS (
+        type: markdownEditor
+        label {
+            label: Feedback Comments
+            alignment: left
+        }
+        layout {
+            sequence: 60
+            region: @livelabs-feedback
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required-floating
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @livelabs-feedback
+            column: FEEDBACK_COMMENTS
+            dataType: varchar2
+        }
+    )
+
+    pageItem P1_FEEDBACK_TYPE (
+        type: radioGroup
+        label {
+            label: Feedback Type
+            alignment: left
+        }
+        settings {
+            noOfCols: 4
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC2:Workshop Content;Workshop Content,Cloud Account;Cloud Account,LiveLabs Platform;LiveLabs Platform,Other Feedback;Other Feedback
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 30
+            region: @livelabs-feedback
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required-floating
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @livelabs-feedback
+            column: FEEDBACK_TYPE
+            dataType: varchar2
+        }
+    )
+
+    pageItem P1_ID (
+        type: hidden
+        layout {
+            sequence: 20
+            region: @livelabs-feedback
+            slot: regionBody
+        }
+        source {
+            formRegion: @livelabs-feedback
+            column: ID
+            dataType: number
+            primaryKey: true
+        }
+    )
+
+    pageItem P1_LAB_NAME (
+        type: textField
+        label {
+            label: Lab Name or Number
+            alignment: left
+        }
+        layout {
+            sequence: 50
+            region: @livelabs-feedback
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 60
+        }
+        validation {
+            maxLength: 200
+        }
+        source {
+            formRegion: @livelabs-feedback
+            column: LAB_NAME
+            dataType: varchar2
+        }
+    )
+
+    pageItem P1_LOWCODE_URL (
+        type: hidden
+        layout {
+            sequence: 140
+            region: @shortcuts
+            slot: regionBody
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                declare
+                  v_url     varchar2(4000); 
+                    
+                begin
+                
+                    v_url := substr( APEX_PAGE.GET_URL ( p_page   => 100,
+                                                         p_items  => 'p100_role,me',
+                                                       p_values => '140,112'
+                                                                    ),2);
+                                                       
+                    v_url := replace(v_url,'%3A',':'); 
+                    v_url := substr(v_url,1,instr(v_url,'&session')-1);
+                
+                    return apex_util.host_url('NULL') || v_url;
+                end;
+                ```
+            used: always
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P1_OCI_URL (
+        type: hidden
+        layout {
+            sequence: 220
+            region: @shortcuts
+            slot: regionBody
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                declare
+                  v_url     varchar2(4000); 
+                    
+                begin
+                
+                    v_url := substr( APEX_PAGE.GET_URL ( p_page   => 100,
+                                                         p_items  => 'p100_focus_area,me',
+                                                       p_values => '125,108'
+                                                                    ),2);
+                                                       
+                    v_url := replace(v_url,'%3A',':'); 
+                    v_url := substr(v_url,1,instr(v_url,'&session')-1);
+                
+                    return apex_util.host_url('NULL') || v_url;
+                end;
+                ```
+            used: always
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P1_PAGEURL (
+        type: hidden
+        layout {
+            sequence: 100
+            region: @shortcuts
+            slot: regionBody
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            type: functionBody
+            plsqlFunctionBody: return apex_util.host_url('NULL') || :p1_shareurl;
+            used: always
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P1_SECURITY_URL (
+        type: hidden
+        layout {
+            sequence: 180
+            region: @shortcuts
+            slot: regionBody
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                declare
+                  v_url     varchar2(4000); 
+                    
+                begin
+                
+                    v_url := substr( APEX_PAGE.GET_URL ( p_page   => 100,
+                                                         p_items  => 'p100_focus_area,me',
+                                                       p_values => '43,98'
+                                                                    ),2);
+                                                       
+                    v_url := replace(v_url,'%3A',':'); 
+                    v_url := substr(v_url,1,instr(v_url,'&session')-1);
+                
+                    return apex_util.host_url('NULL') || v_url;
+                end;
+                ```
+            used: always
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P1_SHAREURL (
+        type: hidden
+        layout {
+            sequence: 80
+            region: @shortcuts
+            slot: regionBody
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                declare
+                  v_url     varchar2(4000); 
+                    
+                begin
+                
+                  v_url := substr( APEX_PAGE.GET_URL ( p_page   => 100,
+                                                         p_items  => 'WID',
+                                                       p_values => ''
+                                                                    ),2);
+                                                       
+                  v_url := replace(v_url,'%3A',':'); 
+                  v_url := substr(v_url,1,instr(v_url,'&session')-1);
+                
+                  return(v_url);
+                end;
+                ```
+            used: always
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P1_SPRINTS_URL (
+        type: hidden
+        layout {
+            sequence: 230
+            region: @shortcuts
+            slot: regionBody
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                declare
+                  v_url     varchar2(4000); 
+                    
+                begin
+                
+                    v_url := substr( APEX_PAGE.GET_URL ( p_page   => 100,
+                                                         p_items  => 'p100_workshop_type,me',
+                                                       p_values => '225,141'
+                                                                    ),2);
+                                                       
+                    v_url := replace(v_url,'&session','&clear=100&session');
+                    --v_url := replace(v_url,'%3A',':'); 
+                    --v_url := substr(v_url,1,instr(v_url,'&session')-1);
+                
+                    return apex_util.host_url('NULL') || v_url;
+                end;
+                ```
+            used: always
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P1_WORKSHOP_NAME (
+        type: selectList
+        label {
+            label: Workshop Name
+            alignment: left
+        }
+        lov {
+            type: sharedComponent
+            lov: @ll-workshops-active
+            nullDisplayValue: - select the workshop name, if applicable -
+        }
+        layout {
+            sequence: 40
+            region: @livelabs-feedback
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            formRegion: @livelabs-feedback
+            column: WORKSHOP_ID
+            dataType: number
+        }
+    )
+
+    button cancel (
+        buttonName: Cancel
+        label: Cancel
+        layout {
+            sequence: 20
+            region: @livelabs-feedback
+            slot: previous
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button cancel-2 (
+        buttonName: Cancel2
+        label: Cancel2
+        layout {
+            sequence: 10
+            region: @maintenance-window
+            slot: belowBox
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button submit-feedback (
+        buttonName: Submit-Feedback
+        label: Submit Feedback
+        layout {
+            sequence: 10
+            region: @livelabs-feedback
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: insert
+        }
+    )
+
+    button view-available-workshops (
+        buttonName: View_available_workshops
+        label: View All Available Workshops
+        layout {
+            sequence: 10
+            region: @span-style-color-white-about-oracle-livelabs-span
+            slot: bottom
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: [
+                #DEFAULT#
+                t-Button--large
+                t-Button--gapTop
+            ]
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 100
+                clearCache: 100
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    dynamicAction cancel-dialog (
+        name: cancel-dialog
+        execution {
+            sequence: 20
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @cancel
+        }
+
+        action native-dialog-cancel (
+            action: cancelDialog
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction close-maint-window (
+        name: close maint window
+        execution {
+            sequence: 60
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @cancel-2
+        }
+
+        action native-dialog-close (
+            action: closeDialog
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction new (
+        name: New
+        execution {
+            sequence: 30
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @submit-feedback
+        }
+
+        action native-submit-page (
+            action: submitPage
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction show-feedback (
+        name: show feedback
+        execution {
+            sequence: 10
+        }
+        when {
+            event: ready
+        }
+        clientSideCondition {
+            type: item=value
+            item: P1_FEEDBACK
+            value: 1
+        }
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode: javascript:openModal('FEEDBACK_PANEL');
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    computation p1-id (
+        itemName: P1_ID
+        execution {
+            sequence: 10
+        }
+        computation {
+            type: expression
+            language: sql
+            sqlExpression: NULL
+        }
+    )
+
+    process close-dialog (
+        name: Close dialog
+        type: closeDialog
+        settings {
+            showSuccessMessages: false
+        }
+        execution {
+            sequence: 20
+        }
+        advanced {
+            executionMappingIdentifier: 11213225736241745288
+        }
+        serverSideCondition {
+            type: requestIsContainedInValue
+            value: CREATE,SAVE,DELETE
+        }
+    )
+
+    process send-feedback (
+        name: Send Feedback
+        type: formAutoRowProcessing
+        formRegion: @livelabs-feedback
+        execution {
+            sequence: 10
+        }
+        successMessage {
+            successMessage: Thank you for your feedback!
+        }
+        advanced {
+            executionMappingIdentifier: 11213225186322745282
+        }
+        serverSideCondition {
+            whenButtonPressed: @submit-feedback
+        }
+    )
+
+)
+

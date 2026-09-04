@@ -1,0 +1,505 @@
+page 435 (
+    name: Edit LiveStack
+    alias: EDIT-LIVESTACK
+    title: Edit LiveStack
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @/modal-dialog
+        templateOptions: #DEFAULT#
+    }
+    dialog {
+        resizable: false
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    css {
+        inline:
+            ```css
+            .ui-dialog-content {
+                position: relative !important;
+            }
+            ```
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region delete-options (
+        name: Delete Options
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <div id="EDIT_LIVESTACK" style="padding: 20px; max-width: 700px; margin: 0 auto;">
+                    
+                    <div style="display: flex; flex-direction: column; gap: 12px;">
+                        
+                        <!-- Mark Completed Option -->
+                        <div id="mark-complete-option" class="action-card" style="display: none; align-items: center; gap: 20px; border: 2px solid #d0d0d0; border-radius: 4px; padding: 20px; background-color: #ffffff; cursor: pointer; transition: all 0.2s ease;"
+                             onmouseover="this.style.borderColor='#287f3a'; this.style.backgroundColor='#f0f7f1'; this.style.boxShadow='0 2px 8px rgba(40,127,58,0.15)';" 
+                             onmouseout="this.style.borderColor='#d0d0d0'; this.style.backgroundColor='#ffffff'; this.style.boxShadow='none';">
+                            <div style="flex-shrink: 0;">
+                                <span class="t-Icon fa fa-check-circle-o" style="font-size: 48px; color: #287f3a;"></span>
+                            </div>
+                            <div style="flex: 1;">
+                                <div style="font-weight: 600; font-size: 16px; color: #333; margin-bottom: 6px;">
+                                    Mark as Completed
+                                </div>
+                                <div style="color: #707070; font-size: 14px; line-height: 1.5;">
+                                    Mark all steps as "Complete" and move LiveStack to the Completed region. 
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Reset Option -->
+                        <div id="reset-option" class="action-card" style="display: none; align-items: center; gap: 20px; border: 2px solid #d0d0d0; border-radius: 4px; padding: 20px; background-color: #ffffff; cursor: pointer; transition: all 0.2s ease;"
+                             onmouseover="this.style.borderColor='#0572ce'; this.style.backgroundColor='#f0f7ff'; this.style.boxShadow='0 2px 8px rgba(5,114,206,0.15)';" 
+                             onmouseout="this.style.borderColor='#d0d0d0'; this.style.backgroundColor='#ffffff'; this.style.boxShadow='none';">
+                            <div style="flex-shrink: 0;">
+                                <span class="t-Icon fa fa-undo" style="font-size: 48px; color: #0572ce;"></span>
+                            </div>
+                            <div style="flex: 1;">
+                                <div style="font-weight: 600; font-size: 16px; color: #333; margin-bottom: 6px;">
+                                    Reset Progress
+                                </div>
+                                <div style="color: #707070; font-size: 14px; line-height: 1.5;">
+                                    Remove all progress indicators and reset all steps to "Not Started" status. The LiveStack will appear in the "In Progress" region. 
+                                </div>
+                            </div>
+                        </div>
+                
+                        <!-- Unsubscribe Option -->
+                        <div id="unsubscribe-option" class="action-card" style="display: none; align-items: center; gap: 20px; border: 2px solid #d0d0d0; border-radius: 4px; padding: 20px; background-color: #ffffff; cursor: pointer; transition: all 0.2s ease;"
+                             onmouseover="this.style.borderColor='#d44848'; this.style.backgroundColor='#fff5f5'; this.style.boxShadow='0 2px 8px rgba(212,72,72,0.15)';" 
+                             onmouseout="this.style.borderColor='#d0d0d0'; this.style.backgroundColor='#ffffff'; this.style.boxShadow='none';">
+                            <div style="flex-shrink: 0;">
+                                <span class="t-Icon fa fa-minus-circle-o" style="font-size: 48px; color: #d44848;"></span>
+                            </div>
+                            <div style="flex: 1;">
+                                <div style="font-weight: 600; font-size: 16px; color: #333; margin-bottom: 6px;">
+                                    Unsubscribe
+                                </div>
+                                <div style="color: #707070; font-size: 14px; line-height: 1.5;">
+                                    Remove this LiveStack from your subscribed LiveStacks. You can always resubscribe later. 
+                                </div>
+                            </div>
+                        </div>
+                
+                        <!-- Cancel Option -->
+                        <div id="cancel-option" class="action-card" style="display: flex; align-items: center; gap: 20px; border: 2px solid #d0d0d0; border-radius: 4px; padding: 20px; background-color: #ffffff; cursor: pointer; transition: all 0.2s ease;"
+                             onmouseover="this.style.borderColor='#707070'; this.style.backgroundColor='#f9f9f9'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.1)';" 
+                             onmouseout="this.style.borderColor='#d0d0d0'; this.style.backgroundColor='#ffffff'; this.style.boxShadow='none';">
+                            <div style="flex-shrink: 0;">
+                                <span class="t-Icon fa fa-times-circle-o" style="font-size: 48px; color: #707070;"></span>
+                            </div>
+                            <div style="flex: 1;">
+                                <div style="font-weight: 600; font-size: 16px; color: #333; margin-bottom: 6px;">
+                                    Cancel
+                                </div>
+                                <div style="color: #707070; font-size: 14px; line-height: 1.5;">
+                                    Do nothing and return to the My LiveStacks page. 
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+                ```
+        }
+        layout {
+            sequence: 40
+            slot: contentBody
+        }
+    )
+
+    pageItem P435_LIVESTACK_ID (
+        type: hidden
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            sessionStateProtection: checksumRequiredSessionLevel
+            restrictedChars: alphanumWithSpace
+        }
+    )
+
+    pageItem P435_LIVESTACK_REGION (
+        type: hidden
+        layout {
+            sequence: 30
+            slot: contentBody
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            sessionStateProtection: checksumRequiredSessionLevel
+            restrictedChars: alphanumWithSpace
+        }
+    )
+
+    pageItem P435_LIVESTACK_USER_ID (
+        type: hidden
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            sessionStateProtection: checksumRequiredSessionLevel
+            restrictedChars: alphanumWithSpace
+        }
+    )
+
+    dynamicAction cancel (
+        name: Cancel
+        execution {
+            sequence: 70
+        }
+        when {
+            event: click
+            selectionType: jQuerySelector
+            jquerySelector: #cancel-option
+        }
+
+        action native-dialog-cancel (
+            action: cancelDialog
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction mark-completed (
+        name: Mark Completed
+        execution {
+            sequence: 30
+        }
+        when {
+            event: click
+            selectionType: jQuerySelector
+            jquerySelector: #mark-complete-option
+        }
+
+        action native-dialog-close (
+            action: closeDialog
+            execution {
+                sequence: 40
+                fireOnInit: false
+            }
+        )
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    begin
+                    
+                      -- Step 1: Update the user's livestack status to Complete
+                      update ll_livestack_users
+                      set status         = 'Completed',
+                          completed_date = sysdate
+                      where id = :P435_LIVESTACK_USER_ID;
+                    
+                      -- Step 2: Insert progress rows for any entries not already marked complete
+                      insert into ll_livestack_user_progress (entry_id, user_email, completed_flg, completed_date)
+                      select e.id,
+                             :APP_USER,
+                             'Y',
+                             sysdate
+                      from ll_livestack_entries e
+                      where e.livestack_id = :P435_LIVESTACK_ID
+                      and not exists (
+                        select 1
+                        from ll_livestack_user_progress p
+                        where p.entry_id      = e.id
+                        and   p.user_email    = :APP_USER
+                      );
+                    
+                      -- Step 3: Update any existing incomplete rows for this user/livestack
+                      update ll_livestack_user_progress p
+                      set p.completed_flg  = 'Y',
+                          p.completed_date = sysdate
+                      where p.user_email    = :APP_USER
+                      and   p.completed_flg != 'Y'
+                      and   p.entry_id in (
+                        select id from ll_livestack_entries where livestack_id = :P435_LIVESTACK_ID
+                      );
+                    
+                      commit;
+                    
+                    end;
+                    ```
+                itemsToSubmit: [
+                    P435_LIVESTACK_ID
+                    P435_LIVESTACK_USER_ID
+                ]
+            }
+            execution {
+                sequence: 30
+                fireOnInit: false
+            }
+        )
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    var $region = $('#EDIT_LIVESTACK');
+                    var overlay = $('<div class="spinner-overlay"></div>').css({
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        background: 'rgba(255, 255, 255, 0.8)',
+                        zIndex: 10000,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                    }).append('<span class="u-Processing-spinner"></span>');
+                    
+                    $region.css('position', 'relative').append(overlay);
+                    ```
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction reset-progress (
+        name: Reset Progress
+        execution {
+            sequence: 40
+        }
+        when {
+            event: click
+            selectionType: jQuerySelector
+            jquerySelector: #reset-option
+        }
+
+        action native-dialog-close (
+            action: closeDialog
+            execution {
+                sequence: 30
+                fireOnInit: false
+            }
+        )
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    begin
+                      update ll_livestack_users
+                      set status         = 'In Progress',
+                          completed_date = null
+                      where id = :P435_LIVESTACK_USER_ID;
+                    
+                      update ll_livestack_user_progress p
+                      set p.completed_flg  = 'N',
+                          p.completed_date = null
+                      where p.user_email = :APP_USER
+                      and   p.entry_id in (
+                        select id from ll_livestack_entries where livestack_id = :P435_LIVESTACK_ID
+                      );
+                    
+                      commit;
+                    end;
+                    ```
+                itemsToSubmit: [
+                    P435_LIVESTACK_ID
+                    P435_LIVESTACK_USER_ID
+                ]
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    var $region = $('#EDIT_LIVESTACK');
+                    var overlay = $('<div class="spinner-overlay"></div>').css({
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        background: 'rgba(255, 255, 255, 0.8)',
+                        zIndex: 10000,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                    }).append('<span class="u-Processing-spinner"></span>');
+                    
+                    $region.css('position', 'relative').append(overlay);
+                    ```
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction show-options (
+        name: Show options
+        execution {
+            sequence: 10
+        }
+        when {
+            event: ready
+        }
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode: document.getElementById("mark-complete-option").style.display = "flex";
+            }
+            execution {
+                sequence: 10
+            }
+            clientSideCondition {
+                type: itemIsInList
+                item: P435_LIVESTACK_REGION
+                list: IN PROGRESS
+            }
+        )
+
+        action native-javascript-code-2 (
+            action: executeJsCode
+            settings {
+                jsCode: document.getElementById("reset-option").style.display = "flex";
+            }
+            execution {
+                sequence: 20
+            }
+            clientSideCondition {
+                type: itemIsInList
+                item: P435_LIVESTACK_REGION
+                list: [
+                    IN PROGRESS
+                    COMPLETED
+                ]
+            }
+        )
+
+        action native-javascript-code-3 (
+            action: executeJsCode
+            settings {
+                jsCode: document.getElementById("unsubscribe-option").style.display = "flex";
+            }
+            execution {
+                sequence: 50
+            }
+            clientSideCondition {
+                type: itemIsInList
+                item: P435_LIVESTACK_REGION
+                list: SUBSCRIBED
+            }
+        )
+
+    )
+
+    dynamicAction unsubscribe (
+        name: Unsubscribe
+        execution {
+            sequence: 60
+        }
+        when {
+            event: click
+            selectionType: jQuerySelector
+            jquerySelector: #unsubscribe-option
+        }
+
+        action native-dialog-close (
+            action: closeDialog
+            execution {
+                sequence: 30
+                fireOnInit: false
+            }
+        )
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    begin
+                    
+                      -- Step 1: Mark the user as unsubscribed
+                      update ll_livestack_users
+                      set subscribed_flg    = 'N',
+                          unsubscribed_date = sysdate
+                      where id = :P435_LIVESTACK_USER_ID;
+                    
+                    
+                      commit;
+                    
+                    end;
+                    ```
+                itemsToSubmit: [
+                    P435_LIVESTACK_ID
+                    P435_LIVESTACK_USER_ID
+                ]
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    var $region = $('#EDIT_LIVESTACK');
+                    var overlay = $('<div class="spinner-overlay"></div>').css({
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        background: 'rgba(255, 255, 255, 0.8)',
+                        zIndex: 10000,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                    }).append('<span class="u-Processing-spinner"></span>');
+                    
+                    $region.css('position', 'relative').append(overlay);
+                    ```
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+)
+

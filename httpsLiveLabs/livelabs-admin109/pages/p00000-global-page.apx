@@ -1,0 +1,492 @@
+page 0 (
+    name: Global Page - Desktop
+
+    region footer (
+        name: footer
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <div align="center"><span style="color:white">© 2020 Oracle  |  Privacy/Do Not Sell My Info. | Cookie Preferences | Ad Choices</span></div>
+                
+                ```
+        }
+        layout {
+            sequence: 60
+            parentRegion: @footer-with-links
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--scrollBody
+            ]
+            renderComponents: belowContent
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    region footer-with-links (
+        name: Footer with links
+        type: staticContent
+        layout {
+            sequence: 50
+            slot: footer
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--accent14
+                t-Region--noUI
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            htmlDomId: footer_links
+        }
+    )
+
+    region global-search (
+        name: Global Search
+        type: staticContent
+        layout {
+            sequence: 1
+            slot: contentBody
+        }
+        appearance {
+            template: @blank-with-attributes-no-grid
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            htmlDomId: globalSearchRegion
+            customAttributes: width=100%
+            regionDisplaySelector: true
+            excludeTitleFromTranslation: true
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    region infinity-code-dev (
+        name: Infinity Code - Dev
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <!-- Infinity Code - Dev -->
+                
+                <script type="text/javascript">
+                    if ( (oracle.truste.api.getGdprConsentDecision().consentDecision) &&
+                     (oracle.truste.api.getGdprConsentDecision().consentDecision.indexOf(0) != -1 ||
+                      oracle.truste.api.getGdprConsentDecision().consentDecision.indexOf(2) != -1) ) {
+                    document.write('<script src="//c.oracleinfinity.io/acs/account/wh3g12c3gg/js/oraclelabs/odc.js?_ora.config=analytics:development"><\/script>');
+                }
+                </script>
+                ```
+        }
+        layout {
+            sequence: 30
+            slot: footer
+        }
+        appearance {
+            template: @blank-with-attributes-no-grid
+            templateOptions: #DEFAULT#
+        }
+        config {
+            buildOption: @infinity-code-dev
+        }
+    )
+
+    region infinity-code-prod (
+        name: Infinity Code - Prod
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <!-- Infinity Code - Prod -->
+                
+                <script type="text/javascript">
+                    if ( (oracle.truste.api.getGdprConsentDecision().consentDecision) &&
+                     (oracle.truste.api.getGdprConsentDecision().consentDecision.indexOf(0) != -1 ||
+                      oracle.truste.api.getGdprConsentDecision().consentDecision.indexOf(2) != -1) ) {
+                    document.write('<script src="//c.oracleinfinity.io/acs/account/wh3g12c3gg/js/oraclelabs/odc.js"><\/script>');
+                }
+                </script>
+                ```
+        }
+        layout {
+            sequence: 40
+            slot: footer
+        }
+        appearance {
+            template: @blank-with-attributes-no-grid
+            templateOptions: #DEFAULT#
+        }
+        config {
+            buildOption: @infinity-code-prod
+        }
+    )
+
+    region links-col (
+        name: Links_col_3
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <span style="color:white">
+                <h3>Solutions</h3>
+                <a href="https://www.oracle.com/artificial-intelligence/">Artificial Intelligence</a>
+                <br>
+                <a href="https://www.oracle.com/internet-of-things/">Internet of Things</a>
+                <br>
+                <a href="https://www.oracle.com/blockchain/">Blockchain</a>
+                </span>
+                ```
+        }
+        layout {
+            sequence: 30
+            parentRegion: @footer-with-links
+            slot: subRegions
+            startNewRow: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    region links-col-2 (
+        name: Links_col_2
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <span style="color:white">
+                <h3>Partners</h3>
+                <a href="https://www.oracle.com/partnernetwork/">Oracle PartnerNetwork</a>
+                <br>
+                <a href="https://partner-finder.oracle.com/">Find a Partner</a>
+                <br>
+                <a href="https://www.oracle.com/opn/index.html">Log in to OPN</a>
+                </span>
+                ```
+        }
+        layout {
+            sequence: 20
+            parentRegion: @footer-with-links
+            slot: subRegions
+            startNewRow: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    region links-col-3 (
+        name: Links_col_1
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <span style="color:white">
+                <h3>Resources</h3>
+                <a href="https://developer.oracle.com">Developers</a><br>
+                <a href="https://www.oracle.com/startup/">Startups</a><br>
+                <a href="https://academy.oracle.com/en/oa-web-overview.html">Students &amp; Educators</a>
+                </span>
+                ```
+        }
+        layout {
+            sequence: 10
+            parentRegion: @footer-with-links
+            slot: subRegions
+            column: 2
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    region links-col-4 (
+        name: Links_col_4
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <span style="color:white">
+                <h3>What's New</h3>
+                <a href="https://www.oracle.com/corporate/covid-19.html">Oracle’s response to COVID-19</a>
+                <br>
+                <a href="https://www.oracle.com/java/technologies/javase-downloads.html">Java SE download</a>
+                <br>
+                <a href="https://www.oracle.com/cloud/free/">Try Oracle Cloud Free Tier</a>
+                </span>
+                ```
+        }
+        layout {
+            sequence: 40
+            parentRegion: @footer-with-links
+            slot: subRegions
+            startNewRow: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    region links-col-5 (
+        name: Links_col_5
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <span style="color:white">
+                <h3>Contact Us</h3>
+                <a href="tel:18006330738">US Sales: +1.800.633.0738</a>
+                <br>
+                <a href="https://www.oracle.com/corporate/contact/">How can we help?</a>
+                <br>
+                <a href="https://go.oracle.com/subscriptions">Subscribe to emails</a>
+                </span>
+                ```
+        }
+        layout {
+            sequence: 50
+            parentRegion: @footer-with-links
+            slot: subRegions
+            startNewRow: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    region oda (
+        name: ODA
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <!-- <html lang="en-US" class="no-js">
+                <head>   
+                <script src="#APP_FILES#artie/web-sdk.js"></script>
+                <script src="#APP_FILES#artie/artieLocal#MIN#.js" onload="initSdk()"></script>
+                <link rel="stylesheet" href="#APP_FILES#artie/artie.css">
+                </head>
+                </html> -->
+                ```
+        }
+        layout {
+            sequence: 10
+            slot: footer
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    pageItem P0_GLOBAL_SEARCH (
+        type: textFieldWithAutocomplete
+        label {
+            alignment: left
+        }
+        settings {
+            infiniteScroll: false
+            fetchOnType: false
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select  name||' ('||id||')' as display_val, id
+                from ll_workshops where active_flg='Y'
+                order by name
+                ```
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 10
+            region: @global-search
+            slot: body
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            cssClasses: ll-Header-search
+            width: 150
+            valuePlaceholder: Search Workshops and Sprints...
+        }
+        advanced {
+            cssClasses: [
+                ll-Header-searchInput
+                ll-Header-search
+            ]
+            customAttributes: width=100%
+            preText:
+                ```html
+                <label class="ll-Header-searchLabel" for="desktop_search" style="padding: 14px 0px 0px 53px;">
+                    <span class="fa fa-search" aria-hidden="true">
+                        </span><span class="u-VisuallyHidden">Search</span>
+                </label>
+                ```
+            warnOnUnsavedChanges: ignore
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    dynamicAction send-search-to-page (
+        name: Send search to page
+        execution {
+            sequence: 20
+        }
+        when {
+            selectionType: items
+            items: P0_GLOBAL_SEARCH
+        }
+        serverSideCondition {
+            type: never
+        }
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    var kw = apex.item( "P0_GLOBAL_SEARCH" ).getValue(); 
+                      
+                    var init = kw.indexOf('(');
+                    var fin = kw.indexOf(')');
+                    var wsid = kw.substr(init+1,fin-init-1);
+                    
+                    
+                    if (wsid != '')
+                    { 
+                        //we found wsid so lets take to direct page
+                        apex.navigation.redirect( "f?p=" + $v( "pFlowId" ) + ":180:" + $v( "pInstance" ) + '::::wid:' + wsid );
+                    }
+                    else if (kw != '')
+                    {
+                        //lets do regular search 
+                        apex.navigation.redirect( "f?p=" + $v( "pFlowId" ) + ":100:" + $v( "pInstance" ) + '::::SEARCH:' + kw );
+                    }
+                    
+                    if(event.which == 13)
+                    {  
+                       //capture keypress event
+                       apex.navigation.redirect( "f?p=" + $v( "pFlowId" ) + ":100:" + $v( "pInstance" ) + '::::SEARCH:' + kw );
+                    }
+                    
+                    apex.item("P0_GLOBAL_SEARCH").setValue(kw);
+                    ```
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction set-up-global-search (
+        name: Set up global search
+        execution {
+            sequence: 10
+        }
+        when {
+            event: ready
+        }
+        serverSideCondition {
+            type: never
+        }
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    apex.item( "P0_GLOBAL_SEARCH" ).setStyle( { "display": "block",
+                        "box-sizing": "border-box",
+                        "padding": "10px 10px 10px 46px",
+                        "min-width": "12rem",
+                        "width": "100%",
+                        "height": "4rem",
+                        "text-align": "left",
+                        "font-size": "16px",
+                        "line-height": "20px",
+                        "background": "#56504B",
+                        // "color": "#FCFBFA",
+                        "background-clip": "padding-box",
+                        "border": "0",
+                        "border-radius": "40px",
+                        "transition": ".2s ease",
+                        "appearance": "none"}  );  
+                    null;
+                    
+                    //#56504B
+                    ```
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+        action native-javascript-code-2 (
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    $( "#globalSearchRegion" ).insertAfter( ".t-Header-logo" );
+                    $("#PO_GLOBAL_SEARCH").focus();
+                    
+                    ```
+            }
+            execution {
+                sequence: 20
+            }
+        )
+
+    )
+
+)
+

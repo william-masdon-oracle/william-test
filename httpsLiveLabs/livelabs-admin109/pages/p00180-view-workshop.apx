@@ -1,0 +1,3085 @@
+page 180 (
+    name: Workshop Details
+    alias: VIEW-WORKSHOP
+    title: Oracle LiveLabs: &P180_NAME. workshop
+    appearance {
+        pageTemplate: @standard-trustarc
+        templateOptions: #DEFAULT#
+        cssClasses: page-w1280p
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+        warnOnUnsavedChanges: false
+    }
+    javaScript {
+        functionAndGlobalVariableDeclaration:
+            ```javascript-browser
+            var htmldb_delete_message='"DELETE_CONFIRM_MSG"';
+            
+            function shareEmail() {
+                let mailto  = '&APP_USER.',
+                    subject = 'Oracle LiveLabs Workshop: ' + apex.item('P180_NAME').getValue(),
+                    body    = '%0D%0AHere\'s a link to the Oracle LiveLabs workshop "' + apex.item('P180_NAME').getValue() + '":%0D%0A%0D%0A' + apex.item('P180_PAGEURL').getValue() + '%0D%0A%0D%0AMany thanks,%0D%0A%0D%0A';
+                
+                location.href = `mailto:${mailto}?subject=${subject}&body=${body}`;
+            }
+            
+            function shareTwitter(){
+                let url = 'https://twitter.com/intent/tweet?url=' + apex.item('P180_PAGEURL').getValue() + '%2F&text=LiveLabs%20Workshop:%20' + apex.item('P180_NAME').getValue() + '.&hashtags=oracle,oraclecloud,oraclelivelabs';
+            
+                let myWindow = apex.navigation.openInNewWindow( url );
+            }
+            
+            function shareLinkedin(){
+                let url = 'https://www.linkedin.com/sharing/share-offsite/?url=' + apex.item('P180_PAGEURL_ENCODED').getValue();
+            
+                let myWindow = apex.navigation.openInNewWindow( url );
+            }
+            
+            function shareFacebook(){
+                let url = 'https://www.facebook.com/sharer.php?u=' + apex.item('P180_PAGEURL').getValue();
+            
+                let myWindow = apex.navigation.openInNewWindow( url );
+            }
+            ```
+    }
+    css {
+        inline:
+            ```css
+            body  {
+                margin: 0 auto;
+                background-image: url(#APP_IMAGES#ll_bg_tile.png);
+                background-repeat: repeat;
+            }
+            
+            .qr-code-centered img {
+                margin: 0 auto;
+            }
+            
+            
+            #CONTENTPANEL .row {
+                display: flex;
+            }
+            #CONTENTAREA .row {
+                display: flex;
+            }
+            #SIDEBANNER .row{
+                display: flex;
+            }
+            #WAYSTORUN .row{
+                display: flex;
+                width: 100%;
+            }
+            #VIDINFO .row{
+                display: flex;
+                width: 100%;
+            }
+            
+            @media only screen and (max-width: 812px){
+                .t-Body-mainContent  {
+                    min-width: 812px;
+                    margin: 0 auto;
+                }    
+            
+                #SIDEBANNER .row{
+                    display: flex;
+                    margin: 0 auto;
+                    min-width: 40%;
+                    padding: 0px 80px 0px 0px;
+                }
+            
+                #CONTENTPANEL .row {
+                    display: inline-block;
+                    min-width: 100%;
+                    min-height: 100%;        
+                }
+            }
+            
+            @media only screen and (max-width: 768px){
+                .t-Body-mainContent  {
+                    min-width: 768px;
+                    margin: 10px 0px 0px 0px;
+                    padding: 0px 0px 0px 0px;
+                }    
+            
+                #WORKSHOPHEADER .row{
+                    display: inline-block;
+                    padding-right: 50px;
+                }
+                #SIDEBANNER .row{
+                    display: flex;
+                    padding: 0px 0px 0px 0px;
+                    margin: 10px 0px 0px -10px;
+                }
+            
+                #CONTENTPANEL .row {
+                    display: flex;
+                    min-width: 100%;        
+                    min-height: 100%;     
+                    padding: 0px 0px 0px 0px;   
+                }
+            
+                #WAYSTORUN {
+                    display: flex;
+                    width:100%;
+                    padding-right: 00px;
+                }
+            
+                #VIDINFO {
+                    display: flex;
+                    padding-right: 00px;
+                    width: 100%;
+                }
+            }
+            
+            @media only screen and (max-width: 667px){
+                .t-Body-mainContent  {
+                    min-width: 667px;
+                    margin: 0 auto;
+                }    
+            
+                #WORKSHOPHEADER .row{
+                    display: flex;
+                    min-width: 667px;
+                    max-width: 667px;
+                }
+            
+                #SIDEBANNER .row{
+                    display: inline-block;
+                }
+                
+                #CONTENTPANEL .row {
+                    display: flex;    
+                }
+            
+                #VIDINFO .row{
+                    display: inline-block;
+                    padding-left: 30px;
+                }
+            }
+            
+            @media only screen and (max-width: 479px){
+                .t-Body-mainContent  {
+                    min-width: 479px;
+                    margin: 0 auto;
+                }    
+            
+                #CONTENTPANEL .row {
+                    display: inline-block;
+                    min-width: 100%;
+                    min-height: 100%;        
+                }
+            }
+            
+            @media only screen and (max-width: 375px){
+                .t-Body-mainContent  {
+                    min-width: 375px;
+                    margin: 0 auto;
+                }    
+            
+                #WORKSHOPHEADER .row {
+                    display: flex;
+                }
+            
+                #CONTENTPANEL .row {
+                    display: inline-block;
+                    min-width: 100%;
+                    min-height: 100%;        
+                }
+            
+                #WAYSTORUN .row{
+                    display: flex;
+                    width:100%;
+                    padding-right: 30px;
+                }
+            
+                #VIDINFO {
+                    display: flex;
+                    padding-left: -20px;
+                    margin-right: 20px;
+                    width: 100%;
+                }
+            
+                #VIDINFO .row{
+                    padding-left: 0px;
+                }
+            
+            }
+            
+            #WORKSHOPHEADER{
+                color: white;
+                background: url(#APP_IMAGES#ll_region_bg_green.png);
+                min-height: 100%;
+            }
+            #SIDEBANNER{
+                color: white;
+                margin-top: -5px;
+                background: url(#APP_IMAGES#ll_region_bg_orange.png);
+                min-height: 100%;
+            }
+            
+            #GTADVERT{
+                margin: 0px 0px 0px 18px;
+                color: white;
+                background: url(#APP_IMAGES#ll_region_bg.png);
+            }
+            
+            #WKOUTLINE{
+                background-color: #b3c49e;
+            }
+            
+            #WKDETAIL{
+                background-color: #b3c49e;
+            }
+            ```
+    }
+    htmlHeader {
+        htmlHeader:
+            ```html
+            <meta property="og:type" content="website" />
+            <meta property="og:url" content="&P180_PAGEURL." />
+            <meta property="og:title" content="Oracle LiveLabs" />
+            <meta property="og:description" content="&P180_NAME." />
+            <meta property="og:" content />
+            ```
+    }
+    security {
+        authentication: public
+        formAutoComplete: false
+    }
+
+    region about-this-workshop (
+        name: About This Workshop
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <p style="font-size:1.1em;font-weight:600">About This Workshop</p>
+                <p style="font-size:1em">&P180_DESC_LONG.</p>
+                
+                ```
+        }
+        layout {
+            sequence: 10
+            parentRegion: @span-style-font-weight-800-workshop-details-span
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--scrollBody
+                margin-top-none
+                margin-left-md
+            ]
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P180_DESC_LONG
+        }
+    )
+
+    region advert (
+        name: Advert
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <span style="color: white; " >
+                    <table>
+                        <tr>
+                            <td>
+                                <img src="&P180_ADVERT_ICON." width="42px" style="padding-left:10px">
+                            </td>
+                            <td>
+                                <p style="padding:10px 20px 0px 10px">This workshop is also featured in a <span style="font-weight:800">&P180_ADVERT_THEME.</span> event on
+                                    <span style="font-weight:800; color:#fbb03b">&P180_ADVERT_DATE.</span>
+                                </p>
+                                <p style="padding:0px 20px 10px 10px; margin-top: -10px">
+                                    <span style="font-weight:800; color:#fbb03b">&P180_ADVERT_LOCATION.</span>  |  
+                                    <b>&P180_ADVERT_PRESENTER.</b>  |  <i><a href="&P180_ADVERT_LINK." target="_blank" style="color:white;border-bottom:1px dotted">Click here to find out more</a></i>
+                                </p>
+                            </td>
+                        </tr>
+                    </table>
+                </span>
+                ```
+        }
+        layout {
+            sequence: 30
+            parentRegion: @content-area
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--hiddenOverflow
+                t-Form--noPadding
+                margin-bottom-none
+                margin-left-lg
+                margin-right-lg
+            ]
+        }
+        advanced {
+            htmlDomId: GTADVERT
+        }
+        serverSideCondition {
+            type: item=value
+            item: P180_ADVERT
+            value: Y
+        }
+    )
+
+    region alwaysfree (
+        name: AlwaysFree
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <span style="font-size:0.9em;font-weight:400">
+                <i>
+                More about <a href="https://www.oracle.com/cloud/free/#always-free" style="font-weight:800; border-bottom: 1px dotted" target="_blank">
+                Always Free
+                </a>
+                </i>
+                </span>
+                ```
+        }
+        layout {
+            sequence: 70
+            parentRegion: @ways-to-run-this-workshop
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--hiddenOverflow
+                t-Form--noPadding
+                margin-bottom-sm
+            ]
+        }
+        serverSideCondition {
+            type: item=value
+            item: P180_ENABLE_AF
+            value: Y
+        }
+    )
+
+    region asktom-brand (
+        name: AskTom-Brand
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <div style="margin: 20px 30px 20px 30px; color:white">
+                <p>
+                    <img src="#APP_IMAGES#asktom_wht.png" width="100%">
+                </p>
+                    
+                <p style="padding:10px 10px 20px 15px; font-weight: 400; font-size: 1.8em; line-height:1.3em ">
+                <span style="font-weight:800">Event:</span><br>
+                &P180_SPECIAL_TITLE.
+                </p>
+                <p style="padding:0px 10px 10px 15px; font-weight: 400; font-size: 1.3em; line-height:1.3em ">
+                <span style="font-weight:600">Date:</span><br>
+                &P180_EVENT_DATE.
+                </p>
+                <p style="padding:0px 10px 10px 15px; font-weight: 400; font-size: 1.3em; line-height:1.3em ">
+                <span style="font-weight:600">Organizer:</span><br>
+                &P180_EVENT_ORGANIZER.
+                </p>
+                </span>
+                </div>
+                ```
+        }
+        layout {
+            sequence: 40
+            parentRegion: @branded-panel
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--hiddenOverflow
+                t-Form--noPadding
+            ]
+        }
+        serverSideCondition {
+            type: item=value
+            item: P180_DISPLAY_TYPE
+            value: AskTom
+        }
+    )
+
+    region branded-panel (
+        name: Branded Panel
+        type: staticContent
+        layout {
+            sequence: 10
+            parentRegion: @content-panel
+            slot: subRegions
+            columnSpan: 4
+        }
+        appearance {
+            template: @standard-custom
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            htmlDomId: SIDEBANNER
+        }
+        headerAndFooter {
+            headerText: <style height="100%">
+            footerText: </style>
+        }
+    )
+
+    region content-area (
+        name: Content-Area
+        type: staticContent
+        layout {
+            sequence: 20
+            parentRegion: @content-panel
+            slot: subRegions
+            startNewRow: false
+            columnSpan: 8
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--hiddenOverflow
+                t-Form--noPadding
+                margin-bottom-none
+            ]
+        }
+        advanced {
+            htmlDomId: CONTENTAREA
+        }
+    )
+
+    region content-panel (
+        name: Content Panel
+        type: staticContent
+        layout {
+            sequence: 50
+            slot: contentBody
+        }
+        appearance {
+            template: @standard-custom
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            htmlDomId: CONTENTPANEL
+        }
+    )
+
+    region event-brand (
+        name: Event-Brand
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <div style="margin: 20px 30px 20px 30px; color:white">
+                <p style="padding:0px 10px 0px 15px">
+                    <img src="&P180_EVENT_ICON_LINK." width="100%">
+                </p>
+                    
+                <p style="padding:10px 10px 20px 15px; font-weight: 400; font-size: 1.8em; line-height:1.2em ">
+                <span style="font-weight:800">Event:</span><br>
+                &P180_SPECIAL_TITLE.
+                </p>
+                <p style="padding:0px 10px 10px 15px; font-weight: 400; font-size: 1.3em; line-height:1.3em ">
+                <span style="font-weight:600">Date:</span><br>
+                &P180_EVENT_DATE.
+                </p>
+                <p style="padding:0px 10px 10px 15px; font-weight: 400; font-size: 1.3em; line-height:1.3em ">
+                <span style="font-weight:600">Organizer:</span><br>
+                &P180_EVENT_ORGANIZER.
+                </p>
+                </span>
+                </div>
+                ```
+        }
+        layout {
+            sequence: 30
+            parentRegion: @branded-panel
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--hiddenOverflow
+                t-Form--noPadding
+            ]
+        }
+        serverSideCondition {
+            type: item=value
+            item: P180_DISPLAY_TYPE
+            value: Event
+        }
+    )
+
+    region freetrial (
+        name: FreeTrial
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <span style="font-size:0.9em;font-weight:400">
+                <i>
+                More about <a href="https://www.oracle.com/cloud/free/#free-cloud-trial" style="font-weight:800;border-bottom: 1px dotted" target="_blank">Free Trial</a>
+                </i>
+                </span>
+                ```
+        }
+        layout {
+            sequence: 80
+            parentRegion: @ways-to-run-this-workshop
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--hiddenOverflow
+                t-Form--noPadding
+                margin-bottom-sm
+                margin-left-none
+            ]
+        }
+        serverSideCondition {
+            type: item=value
+            item: P180_ENABLE_FT
+            value: Y
+        }
+    )
+
+    region get-togethers-brand (
+        name: Get-Togethers-Brand
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <div style="margin: 20px 30px 20px 30px">
+                <span style="color:#F4F6F7">
+                    <table>
+                        <tr>
+                            <td>
+                                <img src="#APP_IMAGES#GT_icon.png" width="48px">
+                            </td>
+                            <td>
+                                <span style="font-weight: 800; font-size:1.8em; line-height: 1em;">Get-Togethers</span>
+                            </td>
+                        </tr>
+                    </table>
+                    
+                <p style="padding:25px 10px 20px 15px; font-weight: 400; font-size: 1.8em; line-height:1.2em ">
+                <span style="font-weight:800">Event:</span><br>
+                &P180_SPECIAL_TITLE.
+                </p>
+                <p style="padding:0px 10px 10px 15px; font-weight: 400; font-size: 1.3em; line-height:1.3em ">
+                <span style="font-weight:600">Date:</span><br>
+                &P180_EVENT_DATE.
+                </p>
+                <p style="padding:0px 10px 10px 15px; font-weight: 400; font-size: 1.3em; line-height:1.3em ">
+                <span style="font-weight:600">Organizer:</span><br>
+                &P180_EVENT_ORGANIZER.
+                </p>
+                <p style="padding:0px 10px 10px 15px; font-weight: 400; font-size: 1.3em; line-height:1.3em ">
+                <span style="font-weight:600">Location:</span><br>
+                &P180_EVENT_LOCATION.
+                </p>
+                </span>
+                </div>
+                ```
+        }
+        layout {
+            sequence: 20
+            parentRegion: @branded-panel
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--hiddenOverflow
+                t-Form--noPadding
+            ]
+        }
+        serverSideCondition {
+            type: item=value
+            item: P180_DISPLAY_TYPE
+            value: GetTogether
+        }
+    )
+
+    region livelabs-brand (
+        name: LiveLabs-Brand
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <div style="margin: 20px 30px 0px 30px">
+                <span style="color:#F4F6F7">
+                    <table>
+                        <tr>
+                            <td>
+                                <img src="#APP_IMAGES#livelabs_icon_white.png" alt="LiveLabs Icon" width="48px">
+                            </td>
+                            <td width="5px">
+                            </td>
+                            <td>
+                                <span style="font-weight: 800; font-size:1.4em; line-height: 1em;">Other LiveLabs you might like</span>
+                            </td>
+                        </tr>
+                    </table>
+                    
+                <p style="padding:15px 10px 10px 15px; font-weight: 400; font-size: 1.2em; line-height:1.2em "><i>
+                <a href="&P180_REL_WK_LINK_1." style="color:white;border-bottom:none">
+                &P180_REL_WK_TEXT_1.
+                </a></i></p>
+                <hr style="color:#F4F6F7">
+                <p style="padding:15px 10px 10px 15px; font-weight: 400; font-size: 1.2em; line-height:1.2em "><i>
+                <a href="&P180_REL_WK_LINK_2." style="color:white;border-bottom:none">
+                &P180_REL_WK_TEXT_2.
+                </a></i></p>
+                <hr style="color:#F4F6F7">
+                <p style="padding:15px 10px 10px 15px; font-weight: 400; font-size: 1.2em; line-height:1.2em "><i>
+                <a href="&P180_REL_WK_LINK_3." style="color:white;border-bottom:none">
+                &P180_REL_WK_TEXT_3.
+                </a></i></p>
+                
+                </span>
+                </div>
+                ```
+        }
+        layout {
+            sequence: 10
+            parentRegion: @branded-panel
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--hiddenOverflow
+                t-Form--noPadding
+            ]
+        }
+        serverSideCondition {
+            type: item=value
+            item: P180_DISPLAY_TYPE
+            value: Workshop
+        }
+    )
+
+    region non-wk-spacer (
+        name: Non_wk_spacer
+        type: staticContent
+        layout {
+            sequence: 20
+            parentRegion: @vid-and-info-panel
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--hiddenOverflow
+                t-Form--noPadding
+                margin-top-sm
+            ]
+        }
+        serverSideCondition {
+            type: item!=value
+            item: P180_DISPLAY_TYPE
+            value: Workshop
+        }
+    )
+
+    region outline (
+        name: Outline
+        type: staticContent
+        source {
+            htmlCode: &P180_DESC_OUTLINE!RAW.
+        }
+        layout {
+            sequence: 10
+            parentRegion: @span-style-font-weight-800-workshop-outline-span
+            slot: subRegions
+            startNewRow: false
+            newColumn: false
+        }
+        appearance {
+            template: @blank-with-attributes-no-grid
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    region prereq (
+        name: Prereq
+        type: plSqlDynamicContent
+        source {
+            plsqlCode:
+                ```plsql
+                htp.p('<p style="font-size: 1.1em;font-weight:600">Workshop prerequisites:</p>
+                          <div style="font-size:1em;margin-left:0px">'
+                          ||:p180_desc_prerequisites||
+                          '</div>');
+                ```
+        }
+        layout {
+            sequence: 20
+            parentRegion: @span-style-font-weight-800-workshop-details-span
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--scrollBody
+                margin-top-sm
+                margin-left-md
+            ]
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P180_DESC_PREREQUISITES
+        }
+    )
+
+    region runonlivelabs (
+        name: RunOnLiveLabs
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <span style="font-size:0.9em;font-weight:400">
+                <i>
+                You need an Oracle account to run on the free LiveLabs tenancy: <a href="https://www.oracle.com/corporate/contact/help.html" style="font-weight:800;border-bottom: 1px dotted" target="_blank">
+                Oracle account help</a></i>&nbsp;|&nbsp;<i>
+                <a href="https://profile.oracle.com/myprofile/account/create-account.jspx" style="font-weight:800;border-bottom: 1px dotted" target="_blank">Oracle account signup
+                </a>
+                </i>
+                </span>
+                ```
+        }
+        layout {
+            sequence: 100
+            parentRegion: @ways-to-run-this-workshop
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--hiddenOverflow
+                t-Form--noPadding
+                margin-bottom-sm
+            ]
+        }
+        serverSideCondition {
+            type: item=value
+            item: P180_ENABLE_LL
+            value: Enable
+        }
+    )
+
+    region runonlivelabs-maintenance (
+        name: RunOnLiveLabs_maintenance
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <span style="font-size:0.9em;font-weight:400">
+                <i>
+                <span style="font-weight:800;color:darkred">Attention:</span> We are currently performing maintenance on the LiveLabs system. Please try again in 15 minutes. <small>Ref:Maintenance</small></span>
+                </i>
+                </span>
+                ```
+        }
+        layout {
+            sequence: 130
+            parentRegion: @ways-to-run-this-workshop
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--hiddenOverflow
+                t-Form--noPadding
+                margin-bottom-sm
+            ]
+        }
+        serverSideCondition {
+            type: item=value
+            item: P180_ENABLE_LL
+            value: Maintenance
+        }
+    )
+
+    region runonlivelabs-no-resources (
+        name: RunOnLiveLabs_no_resources
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <span style="font-size:0.9em;font-weight:400">
+                <i>
+                <span style="font-weight:800;color:darkred">Attention:</span> Too many attendees are using the same resources as this workshop needs. Please try again in 30 minutes. <small>Ref:TooManyRes</small></span>
+                </i>
+                </span>
+                ```
+        }
+        layout {
+            sequence: 140
+            parentRegion: @ways-to-run-this-workshop
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--hiddenOverflow
+                t-Form--noPadding
+                margin-bottom-sm
+            ]
+        }
+        serverSideCondition {
+            type: item=value
+            item: P180_ENABLE_LL
+            value: NoResources
+        }
+    )
+
+    region runonlivelabs-reservationissue (
+        name: RunOnLiveLabs_ReservationIssue
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <span style="font-size:0.9em;font-weight:400">
+                <i>
+                <span style="font-weight:800;color:darkred">Attention:</span> We currently are facing issues while provisioning this workshop. Please try again in 30 minutes. <small>Ref:ReservationIssue</small></span>
+                </i>
+                </span>
+                ```
+        }
+        layout {
+            sequence: 160
+            parentRegion: @ways-to-run-this-workshop
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--hiddenOverflow
+                t-Form--noPadding
+                margin-bottom-sm
+            ]
+        }
+        serverSideCondition {
+            type: item=value
+            item: P180_ENABLE_LL
+            value: Reservation-issue
+        }
+    )
+
+    region runonlivelabs-toobusy (
+        name: RunOnLiveLabs_toobusy
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <span style="font-size:0.9em;font-weight:400">
+                <i>
+                <span style="font-weight:800;color:darkred">Attention:</span> Too many users are currently using this event code. Please try again later.</span>
+                </i>
+                </span>
+                ```
+        }
+        layout {
+            sequence: 110
+            parentRegion: @ways-to-run-this-workshop
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--hiddenOverflow
+                t-Form--noPadding
+                margin-bottom-sm
+            ]
+        }
+        serverSideCondition {
+            type: item=value
+            item: P180_ENABLE_LL
+            value: Toomany
+        }
+    )
+
+    region runonlivelabs-toomanynonec (
+        name: RunOnLiveLabs_TooManyNonEC
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <span style="font-size:0.9em;font-weight:400">
+                <i>
+                <span style="font-weight:800;color:darkred">Attention:</span> Too many attendees are using the same resources as this workshop needs. Please try again in 30 minutes. <small>Ref:TooManyNonEC</small></span>
+                </i>
+                </span>
+                ```
+        }
+        layout {
+            sequence: 150
+            parentRegion: @ways-to-run-this-workshop
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--hiddenOverflow
+                t-Form--noPadding
+                margin-bottom-sm
+            ]
+        }
+        serverSideCondition {
+            type: item=value
+            item: P180_ENABLE_LL
+            value: TooManyNonEC
+        }
+    )
+
+    region runonlivelabs-toomanyregistered (
+        name: RunOnLiveLabs_toomanyregistered
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <span style="font-size:0.9em;font-weight:400">
+                <i>
+                <span style="font-weight:800;color:darkred">Attention:</span> The maximum number of registrations for this event code has been reached. Please ask your Oracle contact for more information.</span>
+                </i>
+                </span>
+                ```
+        }
+        layout {
+            sequence: 120
+            parentRegion: @ways-to-run-this-workshop
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--hiddenOverflow
+                t-Form--noPadding
+                margin-bottom-sm
+            ]
+        }
+        serverSideCondition {
+            type: item=value
+            item: P180_ENABLE_LL
+            value: Oversubscribed
+        }
+    )
+
+    region share-workshop-link (
+        name: Share Workshop Link
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <span style="font-size:1.2em;">
+                    <p>Share a link to this workshop via:</p>
+                    <p class="u-textCenter">
+                        <button type="button" title="Copy to clipboard" aria-label="Copy to clipboard" class="t-Button t-Button--noLabel t-Button--icon" data-clipboard-source="#P180_PAGEURL">
+                            <span aria-hidden="true" class="t-Icon fa fa-synonym fa-lg"></span>
+                        </button>
+                
+                        <button type="button" title="Share in Email" aria-label="Share in Email" class="t-Button t-Button--noLabel t-Button--icon" onclick="shareEmail();">
+                            <span aria-hidden="true" class="t-Icon fa fa-envelope-o fa-lg"></span>
+                        </button>
+                
+                        <button type="button" title="Share on Twitter" aria-label="Share on Twitter" class="t-Button t-Button--noLabel t-Button--icon" onclick="shareTwitter();">
+                            <span aria-hidden="true" class="t-Icon fa fa-twitter fa-lg"></span>
+                        </button>
+                
+                        <button type="button" title="Share on LinkedIn" aria-label="Share on LinkedIn" class="t-Button t-Button--noLabel t-Button--icon" onclick="shareLinkedin();">
+                            <span aria-hidden="true" class="t-Icon fa fa-linkedin fa-lg"></span>
+                        </button>
+                
+                        <button type="button" title="Share on Facebook" aria-label="Share on Facebook" class="t-Button t-Button--noLabel t-Button--icon" onclick="shareFacebook();">
+                            <span aria-hidden="true" class="t-Icon fa fa-facebook fa-lg"></span>
+                        </button>
+                    </p>
+                    <p><i>The QR code below is the URL for this workshop. Right-click to save the image to share with others.</i></p>
+                </span>
+                ```
+        }
+        layout {
+            sequence: 70
+            slot: contentBody
+        }
+        appearance {
+            template: @inline-dialog
+            templateOptions: [
+                #DEFAULT#
+                js-dialog-autoheight
+                js-dialog-size480x320
+                margin-bottom-none
+                margin-left-lg
+                margin-right-lg
+            ]
+            renderComponents: belowContent
+        }
+        advanced {
+            htmlDomId: SHARE_WK_URL
+        }
+        comments {
+            comments:
+                ```
+                
+                
+                
+                        <a href="javascript:void(0)" class="force-fa-lg" data-clipboard-source="#P180_PAGEURL"><span aria-hidden="true" class="fa fa-synonym"></span></img>
+                        </a>&nbsp;&nbsp;&nbsp;
+                        <a href="mailto:&APP_USER.?subject=Oracle LiveLabs Workshop: &P180_NAME.&body=%0D%0AHere's a link to the Oracle LiveLabs workshop '&P180_NAME.':%0D%0A%0D%0A
+                &P180_PAGEURL.%0D%0A%0D%0AMany thanks,%0D%0A%0D%0A"><img src="#APP_IMAGES#icon_mail.png" alt="Share workshop via mail"></img>
+                        </a>&nbsp;&nbsp;&nbsp;
+                        <a href="
+                https://twitter.com/intent/tweet
+                ?url=&P180_PAGEURL.%2F
+                &text=LiveLabs%20Workshop:%20&P180_NAME..
+                &hashtags=oracle,oraclecloud,oraclelivelabs
+                " target="_blank">
+                            <img src="#APP_IMAGES#icon_tw.png" alt="Share workshop via Twitter"></img>
+                        </a>&nbsp;&nbsp;&nbsp;
+                        <a href="
+                https://www.linkedin.com/sharing/share-offsite/?url=&P180_PAGEURL_ENCODED." target="_blank">
+                            <img src="#APP_IMAGES#icon_li.png" alt="Share workshop via LinkedIn"></img>
+                        </a>&nbsp;&nbsp;&nbsp;
+                        <a href="
+                https://www.facebook.com/sharer.php?u=
+                &P180_PAGEURL.%2F
+                " target="_blank">
+                            <img src="#APP_IMAGES#icon_fb.png" alt="Share workshop via Facebook"></img>
+                        </a>
+                ```
+        }
+    )
+
+    region span-style-font-weight-800-workshop-details-span (
+        name: <span style="font-weight:800">Workshop Details</span>
+        type: staticContent
+        layout {
+            sequence: 50
+            parentRegion: @vid-and-info-panel
+            slot: subRegions
+        }
+        appearance {
+            template: @collapsible-workshop-custom
+            templateOptions: [
+                #DEFAULT#
+                is-collapsed
+                t-Region--scrollBody
+                t-Form--slimPadding
+                margin-bottom-sm
+                margin-left-lg
+                margin-right-lg
+            ]
+        }
+        advanced {
+            htmlDomId: WKDETAIL
+        }
+    )
+
+    region span-style-font-weight-800-workshop-outline-span (
+        name: <span style="font-weight:800">Workshop Outline</span>
+        type: staticContent
+        layout {
+            sequence: 40
+            parentRegion: @vid-and-info-panel
+            slot: subRegions
+        }
+        appearance {
+            template: @collapsible-workshop-custom
+            templateOptions: [
+                #DEFAULT#
+                is-collapsed
+                t-Region--scrollBody
+                t-Form--noPadding
+                margin-bottom-md
+                margin-left-lg
+                margin-right-lg
+            ]
+        }
+        advanced {
+            htmlDomId: WKOUTLINE
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P180_DESC_OUTLINE
+        }
+    )
+
+    region title (
+        name: Title
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <div style="margin-left: 30px; margin-top:20px">
+                <span style="color:white; font-size:2.3em; line-height: 1em; font-weight: 400;">&P180_NAME. <span style="font-weight: 200; font-color:dark-gray"> Workshop</span></span>
+                <p style="padding: 10px 0px 0px 2px;">
+                <span style="color:white; font-weight: 400; font-size:1.0em;">&P180_DESC_SHORT.
+                </p>
+                <p style="margin: -5px 0px 0px 2px; color: white"><b> Workshop length:</b>  &P180_TIME_IN_HOURS.  
+                </span>
+                </p>
+                </div>
+                ```
+        }
+        layout {
+            sequence: 40
+            slot: contentBody
+        }
+        appearance {
+            template: @standard-custom
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--noBorder
+                t-Region--hiddenOverflow
+                margin-right-lg
+            ]
+        }
+        advanced {
+            htmlDomId: WORKSHOPHEADER
+        }
+    )
+
+    region vid-and-info-panel (
+        name: Vid and Info Panel
+        type: staticContent
+        layout {
+            sequence: 20
+            parentRegion: @content-area
+            slot: subRegions
+            startNewRow: false
+            column: 7
+            columnSpan: 6
+        }
+        appearance {
+            template: @standard-custom
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--scrollBody
+                margin-right-lg
+            ]
+        }
+        advanced {
+            htmlDomId: VIDINFO
+        }
+    )
+
+    region video (
+        name: VIDEO
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <div style="display: flex;
+                  justify-content: center; width: 100%">
+                <iframe 
+                width="320"
+                height="180"
+                src="&P180_YOUTUBE_LINK." 
+                allow="accelerometer; 
+                autoplay; 
+                clipboard-write; 
+                encrypted-media; 
+                gyroscope; 
+                picture-in-picture" 
+                allowfullscreen>
+                </iframe>
+                </div>
+                ```
+        }
+        layout {
+            sequence: 30
+            parentRegion: @vid-and-info-panel
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--accent6
+                t-Region--noUI
+                t-Region--scrollBody
+            ]
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P180_YOUTUBE_LINK
+        }
+    )
+
+    region view-workshop (
+        name: View Workshop
+        type: staticContent
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--hiddenOverflow
+                t-Form--noPadding
+            ]
+        }
+    )
+
+    region ways-to-run-this-workshop (
+        name: Ways to run this workshop
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <div style="margin-top:20px">
+                <h3 style="font-weight:800">Ways to run this workshop</h3>
+                <p style="font-size:1em">Choose how you want to run this workshop.<br><br></p>
+                </div>
+                ```
+        }
+        layout {
+            sequence: 10
+            parentRegion: @content-area
+            slot: subRegions
+            startNewRow: false
+            column: 1
+            columnSpan: 6
+        }
+        appearance {
+            template: @standard-custom
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--scrollBody
+                margin-top-md
+                margin-bottom-md
+                margin-left-lg
+                margin-right-lg
+            ]
+        }
+        advanced {
+            htmlDomId: WAYSTORUN
+        }
+    )
+
+    region yourtenancy (
+        name: YourTenancy
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <span style="font-size:0.9em;font-weight:400">
+                <i>
+                More about using Oracle Universal Credits you've purchased: 
+                <a href="https://www.oracle.com/cloud/bring-your-own-license/faq/universal-credit-pricing.html" style="font-weight:800;border-bottom: 1px dotted" target="_blank">
+                Using your credits
+                </a></i>
+                <span style="border-bottom:none">&nbsp;|&nbsp;</span>
+                <i><a href="https://www.oracle.com/cloud/data-regions.html" style="font-weight:800;border-bottom: 1px dotted" target="_blank">
+                Services available
+                </a>
+                </i>
+                </span>
+                ```
+        }
+        layout {
+            sequence: 90
+            parentRegion: @ways-to-run-this-workshop
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--hiddenOverflow
+                t-Form--noPadding
+                margin-bottom-sm
+            ]
+        }
+        serverSideCondition {
+            type: item=value
+            item: P180_ENABLE_PT
+            value: Y
+        }
+    )
+
+    pageItem P180_ACTIVE_FLG (
+        type: hidden
+        layout {
+            sequence: 110
+            region: @view-workshop
+            slot: regionBody
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P180_ADVERT (
+        type: hidden
+        layout {
+            sequence: 130
+            region: @view-workshop
+            slot: regionBody
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P180_ADVERT_DATE (
+        type: hidden
+        layout {
+            sequence: 160
+            region: @view-workshop
+            slot: regionBody
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P180_ADVERT_ICON (
+        type: hidden
+        layout {
+            sequence: 140
+            region: @view-workshop
+            slot: regionBody
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P180_ADVERT_LINK (
+        type: hidden
+        layout {
+            sequence: 190
+            region: @view-workshop
+            slot: regionBody
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P180_ADVERT_LOCATION (
+        type: hidden
+        layout {
+            sequence: 170
+            region: @view-workshop
+            slot: regionBody
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P180_ADVERT_PRESENTER (
+        type: hidden
+        layout {
+            sequence: 180
+            region: @view-workshop
+            slot: regionBody
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P180_ADVERT_THEME (
+        type: hidden
+        layout {
+            sequence: 150
+            region: @view-workshop
+            slot: regionBody
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P180_DESC_LONG (
+        type: hidden
+        layout {
+            sequence: 50
+            region: @view-workshop
+            slot: regionBody
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        sessionState {
+            storage: request
+        }
+    )
+
+    pageItem P180_DESC_OUTLINE (
+        type: hidden
+        layout {
+            sequence: 70
+            region: @view-workshop
+            slot: regionBody
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        sessionState {
+            storage: request
+        }
+    )
+
+    pageItem P180_DESC_PREREQUISITES (
+        type: hidden
+        layout {
+            sequence: 80
+            region: @view-workshop
+            slot: regionBody
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        sessionState {
+            storage: request
+        }
+    )
+
+    pageItem P180_DESC_SHORT (
+        type: hidden
+        layout {
+            sequence: 60
+            region: @view-workshop
+            slot: regionBody
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P180_DISPLAY_TYPE (
+        type: hidden
+        layout {
+            sequence: 120
+            region: @view-workshop
+            slot: regionBody
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P180_ENABLE_AF (
+        type: hidden
+        layout {
+            sequence: 220
+            region: @view-workshop
+            slot: regionBody
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P180_ENABLE_FT (
+        type: hidden
+        layout {
+            sequence: 230
+            region: @view-workshop
+            slot: regionBody
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P180_ENABLE_LL (
+        type: hidden
+        layout {
+            sequence: 250
+            region: @view-workshop
+            slot: regionBody
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P180_ENABLE_PT (
+        type: hidden
+        layout {
+            sequence: 240
+            region: @view-workshop
+            slot: regionBody
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P180_EVENT_DATE (
+        type: hidden
+        layout {
+            sequence: 330
+            region: @view-workshop
+            slot: regionBody
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P180_EVENT_ICON_LINK (
+        type: hidden
+        layout {
+            sequence: 320
+            region: @view-workshop
+            slot: regionBody
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P180_EVENT_ID (
+        type: hidden
+        layout {
+            sequence: 400
+            region: @view-workshop
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P180_EVENT_LOCATION (
+        type: hidden
+        layout {
+            sequence: 350
+            region: @view-workshop
+            slot: regionBody
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P180_EVENT_ORGANIZER (
+        type: hidden
+        layout {
+            sequence: 340
+            region: @view-workshop
+            slot: regionBody
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P180_ID (
+        type: hidden
+        layout {
+            sequence: 360
+            region: @view-workshop
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P180_LAB_URL (
+        type: hidden
+        layout {
+            sequence: 100
+            region: @view-workshop
+            slot: regionBody
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        sessionState {
+            storage: request
+        }
+    )
+
+    pageItem P180_NAME (
+        type: hidden
+        layout {
+            sequence: 40
+            region: @view-workshop
+            slot: regionBody
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        sessionState {
+            storage: request
+        }
+    )
+
+    pageItem P180_PAGEURL (
+        type: textField
+        label {
+            label: New
+            alignment: left
+        }
+        layout {
+            sequence: 380
+            region: @view-workshop
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        advanced {
+            cssClasses: u-vh
+            warnOnUnsavedChanges: ignore
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P180_PAGEURL_ENCODED (
+        type: hidden
+        layout {
+            sequence: 390
+            region: @view-workshop
+            slot: regionBody
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P180_QR (
+        type: plugin/qrCode
+        label {
+            alignment: left
+        }
+        settings {
+            displayType: bmpImage
+            imageSize: 150
+            margines: true
+        }
+        layout {
+            sequence: 60
+            region: @share-workshop-link
+            slot: regionBody
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            cssClasses: qr-code-centered
+        }
+        source {
+            type: expression
+            plsqlExpression: :P180_PAGEURL
+            used: always
+        }
+    )
+
+    pageItem P180_REL_WK_LINK_1 (
+        type: hidden
+        layout {
+            sequence: 270
+            region: @view-workshop
+            slot: regionBody
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P180_REL_WK_LINK_2 (
+        type: hidden
+        layout {
+            sequence: 290
+            region: @view-workshop
+            slot: regionBody
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P180_REL_WK_LINK_3 (
+        type: hidden
+        layout {
+            sequence: 310
+            region: @view-workshop
+            slot: regionBody
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P180_REL_WK_TEXT_1 (
+        type: hidden
+        layout {
+            sequence: 260
+            region: @view-workshop
+            slot: regionBody
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P180_REL_WK_TEXT_2 (
+        type: hidden
+        layout {
+            sequence: 280
+            region: @view-workshop
+            slot: regionBody
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P180_REL_WK_TEXT_3 (
+        type: hidden
+        layout {
+            sequence: 300
+            region: @view-workshop
+            slot: regionBody
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P180_SPECIAL_TITLE (
+        type: hidden
+        layout {
+            sequence: 200
+            region: @view-workshop
+            slot: regionBody
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P180_TIME_IN_HOURS (
+        type: hidden
+        layout {
+            sequence: 90
+            region: @view-workshop
+            slot: regionBody
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        sessionState {
+            storage: request
+        }
+    )
+
+    pageItem P180_USERS_RANK (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 370
+            region: @view-workshop
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P180_VCID (
+        type: hidden
+        layout {
+            sequence: 10
+            region: @runonlivelabs
+            slot: regionBody
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery: select ID from LL_VOUCHERS where VOUCHER_CODE = :WEC
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P180_YOUTUBE_LINK (
+        type: hidden
+        layout {
+            sequence: 210
+            region: @view-workshop
+            slot: regionBody
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem TC (
+        type: hidden
+        layout {
+            sequence: 30
+            region: @view-workshop
+            slot: regionBody
+        }
+        source {
+            used: always
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+        }
+        comments {
+            comments: Tracking Code - to be passed in clear via URL
+        }
+    )
+
+    pageItem WEC (
+        type: hidden
+        layout {
+            sequence: 10
+            region: @view-workshop
+            slot: regionBody
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+        source {
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem WID (
+        type: hidden
+        layout {
+            sequence: 20
+            region: @view-workshop
+            slot: regionBody
+        }
+        advanced {
+            warnOnUnsavedChanges: ignore
+        }
+    )
+
+    button close (
+        buttonName: Close
+        label: Close
+        layout {
+            sequence: 10
+            region: @share-workshop-link
+            slot: create
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button copy-url (
+        buttonName: copy-url
+        label: Share Workshop Link
+        layout {
+            sequence: 10
+            region: @vid-and-info-panel
+            slot: belowBox
+        }
+        appearance {
+            buttonTemplate: @text-with-icon
+            templateOptions: [
+                #DEFAULT#
+                t-Button--noUI
+                t-Button--iconLeft
+                t-Button--padBottom
+            ]
+            icon: fa-copy
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+        serverSideCondition {
+            type: item=value
+            item: P180_DISPLAY_TYPE
+            value: Workshop
+        }
+    )
+
+    button launch-always-free-wk (
+        buttonName: launch-always-free-wk
+        label: <span style="font-weight:400">Launch</span> <span style="font-weight:800">Always Free</span> <span style="font-weight:400">Workshop</span>
+        layout {
+            sequence: 10
+            region: @alwaysfree
+            slot: top
+            horizontalAlignment: left
+        }
+        appearance {
+            buttonTemplate: @text-button-custom
+            templateOptions: [
+                #DEFAULT#
+                t-Button--large
+                t-Button--stretch
+            ]
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 210
+                items: {
+                    P210_WORKSHOP_ID: &P180_ID.
+                    P210_TYPE: 2
+                }
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button launch-free-trial-wk (
+        buttonName: launch-free-trial-wk
+        label: <span style="font-weight:400">Launch</span> <span style="font-weight:800">Free Trial</span> <span style="font-weight:400">Workshop</span>
+        layout {
+            sequence: 10
+            region: @freetrial
+            slot: top
+            horizontalAlignment: left
+        }
+        appearance {
+            buttonTemplate: @text-button-custom
+            templateOptions: [
+                #DEFAULT#
+                t-Button--large
+                t-Button--stretch
+            ]
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 210
+                items: {
+                    P210_WORKSHOP_ID: &P180_ID.
+                    P210_TYPE: 1
+                }
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button launch-your-tenancy-wk (
+        buttonName: launch-your-tenancy-wk
+        label: <span style="font-weight:400">Run On Your</span> <span style="font-weight:800">Tenancy</span>
+        layout {
+            sequence: 10
+            region: @yourtenancy
+            slot: top
+            horizontalAlignment: left
+        }
+        appearance {
+            buttonTemplate: @text-button-custom
+            templateOptions: [
+                #DEFAULT#
+                t-Button--large
+                t-Button--stretch
+            ]
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 210
+                items: {
+                    P210_WORKSHOP_ID: &P180_ID.
+                    P210_TYPE: 3
+                }
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button workshop-reservation (
+        buttonName: Workshop_reservation
+        label: <span style="font-weight:400">Reserve Workshop on</span> <span style="font-weight:800">LiveLabs</span>
+        layout {
+            sequence: 10
+            region: @runonlivelabs
+            slot: top
+            horizontalAlignment: left
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--large
+                t-Button--stretch
+            ]
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 320
+                items: {
+                    P320_WORKSHOP_ID: &P180_ID.
+                    P320_EVENT_ID: &P180_EVENT_ID.
+                    P320_VOUCHER_ID: &P180_VCID.
+                }
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button workshop-reservation-disable (
+        buttonName: Workshop_reservation_disable_1
+        label: <span style="font-weight:400">Reserve Workshop on</span> <span style="font-weight:800">LiveLabs</span>
+        layout {
+            sequence: 10
+            region: @runonlivelabs-toobusy
+            slot: top
+            horizontalAlignment: left
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--large
+                t-Button--stretch
+            ]
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 320
+                items: {
+                    P320_WORKSHOP_ID: &P180_ID.
+                }
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button workshop-reservation-disable-2 (
+        buttonName: Workshop_reservation_disable_2
+        label: <span style="font-weight:400">Reserve Workshop on</span> <span style="font-weight:800">LiveLabs</span>
+        layout {
+            sequence: 10
+            region: @runonlivelabs-toomanyregistered
+            slot: top
+            horizontalAlignment: left
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--large
+                t-Button--stretch
+            ]
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 320
+                items: {
+                    P320_WORKSHOP_ID: &P180_ID.
+                }
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button workshop-reservation-disable-3 (
+        buttonName: Workshop_reservation_disable_3
+        label: <span style="font-weight:400">Reserve Workshop on</span> <span style="font-weight:800">LiveLabs</span>
+        layout {
+            sequence: 10
+            region: @runonlivelabs-maintenance
+            slot: top
+            horizontalAlignment: left
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--large
+                t-Button--stretch
+            ]
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 320
+                items: {
+                    P320_WORKSHOP_ID: &P180_ID.
+                }
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button workshop-reservation-disable-4 (
+        buttonName: Workshop_reservation_disable_4
+        label: <span style="font-weight:400">Reserve Workshop on</span> <span style="font-weight:800">LiveLabs</span>
+        layout {
+            sequence: 10
+            region: @runonlivelabs-no-resources
+            slot: top
+            horizontalAlignment: left
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--large
+                t-Button--stretch
+            ]
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 320
+                items: {
+                    P320_WORKSHOP_ID: &P180_ID.
+                }
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button workshop-reservation-disable-5 (
+        buttonName: Workshop_reservation_disable_5
+        label: <span style="font-weight:400">Reserve Workshop on</span> <span style="font-weight:800">LiveLabs</span>
+        layout {
+            sequence: 10
+            region: @runonlivelabs-toomanynonec
+            slot: top
+            horizontalAlignment: left
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--large
+                t-Button--stretch
+            ]
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 320
+                items: {
+                    P320_WORKSHOP_ID: &P180_ID.
+                }
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button workshop-reservation-disable-6 (
+        buttonName: Workshop_reservation_disable_6
+        label: <span style="font-weight:400">Reserve Workshop on</span> <span style="font-weight:800">LiveLabs</span>
+        layout {
+            sequence: 10
+            region: @runonlivelabs-reservationissue
+            slot: top
+            horizontalAlignment: left
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--large
+                t-Button--stretch
+            ]
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 320
+                items: {
+                    P320_WORKSHOP_ID: &P180_ID.
+                }
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    dynamicAction close-share-popup (
+        name: close share popup
+        execution {
+            sequence: 250
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @close
+        }
+
+        action native-close-region (
+            action: closeRegion
+            affectedElements {
+                selectionType: region
+                region: @share-workshop-link
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction disable-ll-buttons (
+        name: Disable LL buttons
+        execution {
+            sequence: 260
+        }
+        when {
+            event: ready
+        }
+
+        action native-disable (
+            action: disable
+            affectedElements {
+                selectionType: button
+                button: @workshop-reservation-disable
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+        action native-disable-2 (
+            action: disable
+            affectedElements {
+                selectionType: button
+                button: @workshop-reservation-disable-2
+            }
+            execution {
+                sequence: 20
+            }
+        )
+
+        action native-disable-3 (
+            action: disable
+            affectedElements {
+                selectionType: button
+                button: @workshop-reservation-disable-3
+            }
+            execution {
+                sequence: 30
+            }
+        )
+
+        action native-disable-4 (
+            action: disable
+            affectedElements {
+                selectionType: button
+                button: @workshop-reservation-disable-4
+            }
+            execution {
+                sequence: 40
+            }
+        )
+
+        action native-disable-5 (
+            action: disable
+            affectedElements {
+                selectionType: button
+                button: @workshop-reservation-disable-5
+            }
+            execution {
+                sequence: 50
+            }
+        )
+
+        action native-disable-6 (
+            action: disable
+            affectedElements {
+                selectionType: button
+                button: @workshop-reservation-disable-6
+            }
+            execution {
+                sequence: 60
+            }
+        )
+
+    )
+
+    dynamicAction share-popup (
+        name: Share-popup
+        execution {
+            sequence: 240
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @copy-url
+        }
+
+        action native-open-region (
+            action: openRegion
+            affectedElements {
+                selectionType: region
+                region: @share-workshop-link
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    process checkauthforwec (
+        name: CheckAuthForWEC
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                    if APEX_AUTHENTICATION.IS_AUTHENTICATED = false and :WEC is not null then
+                      apex_util.redirect_url(p_url => apex_page.get_url(p_page => 11, p_items => 'P11_WEC', p_values => :WEC ));
+                    end if;
+                ```
+        }
+        execution {
+            sequence: 10
+            point: beforeHeader
+        }
+        advanced {
+            executionMappingIdentifier: 204854280018197773
+        }
+    )
+
+    process count-page-and-workshop (
+        name: Count page and workshop
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                begin
+                  insert into ll_page_visits (page_id, workshop_id, app_session) values (180,:P180_ID, :APP_SESSION);
+                exception
+                  when others then
+                    ll_pkg_log.log(1,'Error during insert on ll_page_visits for page_id 180, workshop_id '||:P180_ID||', app_session '||:APP_SESSION);
+                end;
+                ```
+        }
+        execution {
+            sequence: 20
+            point: afterFooter
+        }
+        advanced {
+            executionMappingIdentifier: 206361326968538607
+        }
+    )
+
+    process insert-voucher-user (
+        name: Insert-Voucher-User
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                declare
+                  cursor c_voucher is select llv.id, llvu.owner1, llv.users_maximum-llv.users_registered as available_seats, llvu.users_rank,
+                                             llv.email_creator, llv.email_requestor
+                                      from ll_vouchers_vw llv, 
+                                           (select voucher_id, owner1, rank() over (order by id) as users_rank
+                                            from ll_voucher_users
+                                            where voucher_id = (select id from ll_vouchers where voucher_code=:WEC)) llvu
+                                      where llv.id = llvu.voucher_id (+)
+                                      and llv.voucher_code = :WEC
+                                      and sysdate between llv.valid_from_gmt and llv.valid_to_gmt
+                                      and :APP_USER = llvu.owner1(+);
+                                      
+                  v_voucher_id       number;
+                  v_owner1           varchar2(100);
+                  v_available_seats  number;
+                  v_email_requestor  varchar2(2000);
+                  v_email_creator    varchar2(2000);
+                
+                begin
+                
+                  ll_pkg_log.log(40, 'P180 - Insert Voucher Code begin');
+                
+                  if :WEC is not null then
+                
+                    ll_pkg_log.log(40,'P180 - EC is not null');
+                  
+                    open c_voucher;
+                    fetch c_voucher into v_voucher_id, v_owner1, v_available_seats, :P180_USERS_RANK, v_email_requestor, v_email_creator;
+                    if    c_voucher%FOUND 
+                      and v_owner1 is null 
+                      and instr(nvl(upper(v_email_creator),'X'), upper(:app_user)) = 0
+                      and instr(nvl(upper(v_email_requestor),'X'), upper(:app_user)) = 0
+                    then
+                      ll_pkg_log.log(40,'P180 - Voucher found but no owner and no creator/requestor');
+                      insert into LL_VOUCHER_USERS ( VOUCHER_ID, OWNER1, DATE_ENTERED) values ( v_voucher_id, :APP_USER, sysdate);
+                    else
+                      ll_pkg_log.log(40,'P180 - No Voucher Found !');
+                    end if;
+                    close c_voucher;
+                    
+                  end if; 
+                  :P180_EVENT_ID := v_voucher_id;
+                  ll_pkg_log.log(40,'P180 - End of call');
+                end;
+                ```
+        }
+        execution {
+            sequence: 20
+            point: beforeHeader
+        }
+        advanced {
+            executionMappingIdentifier: 206360894504538607
+        }
+    )
+
+    process populatefields (
+        name: PopulateFields
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                declare
+                
+                  cursor c_res_issue (p_workshop_id number, p_disable_minutes number) is 
+                                      select 'Y'
+                                      from ll_reservations_vw
+                                      where start_gmt > sysdate - ((1/24/60)*p_disable_minutes)
+                                      and owner1 like 'ERROR-%'
+                                      and workshop_id = p_workshop_id;
+                
+                  cursor c_event   is select *
+                                      from ll_vouchers_vw
+                                      where voucher_code = :WEC
+                                      and active_flg = 'Y'
+                                      and ( ( sysdate between valid_from_gmt and valid_to_gmt 
+                                              and 
+                                              id in (select voucher_id from ll_voucher_users where owner1=:APP_USER)
+                                            )  
+                                            or
+                                            instr(upper(email_requestor),upper(:APP_USER) ) > 0 
+                                            or
+                                            instr(upper(email_creator),upper(:APP_USER) ) > 0 
+                                            or 
+                                            ll_pkg_security.am_i_allowed(p_apex_user => :APP_USER, p_access_type => 'EVENT_CODE_ADMIN', p_access_value => id ) = 'Y'
+                                          ) ;
+                
+                  cursor c_workshop (p_workshop_id number, p_event_admin varchar2)
+                                    is select *
+                                       from ll_workshops
+                                       where id = p_workshop_id
+                                       -- if workshop is active or Unlisted
+                                       and ( active_flg in ('Y', 'U') 
+                                             or
+                                             ll_pkg_security.am_i_allowed(p_apex_user => :APP_USER, 
+                                                                          p_access_type  => 'WORKSHOP_VIEW', 
+                                                                          p_access_value => id ) = 'Y'
+                                             or
+                                             p_event_admin = 'Y'
+                                           );
+                
+                --   cursor c_popular_workshops (p_workshop_id number) is 
+                --                              select e.name,
+                --                                     apex_util.host_url()
+                --                                     || apex_page.get_url(p_page => :APP_PAGE_ID,
+                --                                        p_session => null,
+                --                                        p_items  => 'WID',
+                --                                        p_values => c.workshop_id
+                --                                        ) workshop_link
+                --                              from  (select workshop_id, count(*) as wshits 
+                --                                     from ll_reservations 
+                --                                     group by workshop_id) c,
+                --                                    (select b.workshop_id, sum(case when a.tag_id = b.tag_id then 1 else 0 end) as tags_similar
+                --                                     from ll_workshop_tags a, ll_workshop_tags b 
+                --                                     where a.tag_id = b.tag_id (+)
+                --                                     and a.workshop_id = p_workshop_id
+                --                                     and a.workshop_id <> b.workshop_id
+                --                                     group by b.workshop_id) d,
+                --                                     ll_workshops e 
+                --                              where c.workshop_id = e.id
+                --                              and c.workshop_id = d.workshop_id(+)
+                --                              and exists (select null
+                --                                         from ll_workshops llw 
+                --                                         where active_flg='Y'
+                --                                         and id <> p_workshop_id
+                --                                         and llw.id = c.workshop_id)
+                --                              and not exists (select null
+                --                                              from ll_reservations llr
+                --                                              where llr.workshop_id = d.workshop_id
+                --                                              and owner1=:APP_USER)
+                --                              order by tags_similar desc,wshits desc ;
+                cursor c_popular_workshops (p_workshop_id number) is 
+                                             select d.name,
+                                                    apex_util.host_url()
+                                                    || apex_page.get_url(p_page => :APP_PAGE_ID,
+                                                       p_session => null,
+                                                       p_items  => 'WID',
+                                                       p_values => c.workshop_id
+                                                       ) workshop_link
+                                             from  (select b.workshop_id, sum(case when a.tag_id = b.tag_id then 1 else 0 end) as tags_similar
+                                                    from ll_workshop_tags a,  ll_workshop_tags b, ll_tags lltags 
+                                                    where a.tag_id = b.tag_id (+)
+                                                    and a.workshop_id = p_workshop_id
+                                                    and a.workshop_id <> b.workshop_id
+                                                    and a.tag_id = lltags.id 
+                                                    and lltags.level1 in ('Role', 'Focus', 'Product')
+                                                    group by b.workshop_id) c,
+                                                    ll_workshops d
+                                             where c.workshop_id = d.id
+                                             and exists (select null
+                                                        from ll_workshops llw 
+                                                        where active_flg='Y'
+                                                        and id <> p_workshop_id
+                                                        and llw.id = c.workshop_id)
+                                             order by tags_similar desc ;
+                
+                
+                  cursor c_non_ec is select count(*)
+                                     from ll_reservations_vw
+                                     where sysdate between start_gmt and stop_gmt
+                                     and active_flg='Y'
+                                     and voucher_id is null
+                                     and workshop_id = :WID
+                                     and owner1 not like 'STRESS%';
+                
+                  v_workshop_id  number;
+                
+                  v_event_name                varchar2(4000);
+                  v_event_desc_short          varchar2(4000);
+                  v_event_desc_long           varchar2(4000);
+                  v_event_desc_outline        varchar2(4000);
+                  v_event_desc_prerequisites  varchar2(4000);
+                  v_event_time_in_hours       number;
+                  v_event_lab_url             varchar2(4000);
+                  v_event_reason              varchar2(4000);
+                  v_event_json                clob;
+                  v_event_active_flg          varchar2(1);
+                  v_event_type                varchar2(4000);
+                  v_event_admin               varchar2(1);
+                  v_youtube_link              varchar2(1000);
+                
+                  v_enable_green_button       varchar2(100);
+                  v_max_ws_non_ec_parallel    number;
+                  v_ws_non_ec_parallel        number;
+                  v_reservation_issue         varchar2(1);
+                
+                  v_tenancy_id                number;
+                  v_region_id                 number;
+                  v_dummy_clob                clob;
+                
+                  v_count                     number := 0;
+                  
+                  begin
+                
+                    -- Set global EC value for page 210
+                
+                      :EC_GLOBAL := :WEC;
+                
+                    -- Set default values in case nothing is correct
+                    :P180_NAME := 'Error: We could not locate this ';
+                    :P180_DISPLAY_TYPE := 'Error';
+                
+                    -- If we get to this page through the old call of P180 (where we used P180_ID), make sure the WID is filled with this value
+                    if :P180_ID is not null and :WID is null then
+                      :WID := :P180_ID;
+                    end if;
+                
+                    -- Make sure the values we put into WID are all numbers (to prevent hacking with either injection or bad alpha values)
+                    if :WID is not null and :WID <> regexp_replace(:WID, '[^0-9]', '') then
+                      :WID := regexp_replace(:WID, '[^0-9]', '');
+                    end if;
+                
+                    if :WEC is not null and :WEC <> regexp_replace(:WEC, '[^A-Z0-9-]', '') then
+                      :WEC := regexp_replace(upper(:WEC), '[^A-Z0-9-]', '');
+                    end if;
+                
+                    if :WEC is not null then
+                      for l_event in c_event loop
+                        v_event_desc_short          := l_event.alt_desc_short;
+                        v_event_desc_long           := l_event.alt_desc_long;
+                        v_event_desc_outline        := l_event.alt_desc_outline;
+                        v_event_desc_prerequisites  := l_event.alt_desc_prerequisites;
+                        v_event_time_in_hours       := l_event.alt_time_hours;
+                        v_event_lab_url             := l_event.alt_url;
+                        v_event_reason              := l_event.reason;
+                        v_event_json                := l_event.event_json;
+                        v_workshop_id               := l_event.workshop_id;
+                        v_event_active_flg          := l_event.active_flg;
+                        v_youtube_link              := JSON_VALUE(l_event.event_json, '$.YoutubeLink');
+                
+                
+                        -- Retrieve info from the JSON value in LL_VOUCHERS and LL_WORKSHOP (which is a todo)
+                        :P180_EVENT_ICON_LINK     := JSON_VALUE(l_event.event_json, '$.EventIconLink');
+                        :P180_ADVERT              := JSON_VALUE(l_event.event_json, '$.AdvertEnabled');
+                        :P180_ADVERT_ICON         := JSON_VALUE(l_event.event_json, '$.AdvertIcon');
+                        :P180_ADVERT_THEME        := JSON_VALUE(l_event.event_json, '$.AdvertTheme');
+                        :P180_ADVERT_DATE         := JSON_VALUE(l_event.event_json, '$.AdvertDate');
+                        :P180_ADVERT_LOCATION     := JSON_VALUE(l_event.event_json, '$.AdvertLocation');
+                        :P180_ADVERT_PRESENTER    := JSON_VALUE(l_event.event_json, '$.AdvertPresenter');
+                        :P180_ADVERT_LINK         := JSON_VALUE(l_event.event_json, '$.AdvertLink');
+                        :P180_ENABLE_AF           := JSON_VALUE(l_event.event_json, '$.AlwaysFreeEnabled');
+                        :P180_ENABLE_FT           := JSON_VALUE(l_event.event_json, '$.FreeTierEnabled');
+                        :P180_ENABLE_PT           := JSON_VALUE(l_event.event_json, '$.PaidTenancyEnabled');
+                        :P180_EVENT_DATE          := JSON_VALUE(l_event.event_json, '$.EventDate');
+                        :P180_EVENT_ORGANIZER     := JSON_VALUE(l_event.event_json, '$.EventOrganizer');
+                        :P180_EVENT_LOCATION      := JSON_VALUE(l_event.event_json, '$.EventLocation'); 
+                
+                        -- If there is no event icon then do a default Oracle logo
+                        if :P180_EVENT_ICON_LINK is null then
+                          :P180_EVENT_ICON_LINK := '#APP_IMAGES#ll_orcl_event_icon.png';
+                        end if;
+                
+                        -- If there is no advert icon then do a default Oracle logo
+                        if :P180_ADVERT_ICON is null then
+                          :P180_ADVERT_ICON := '#APP_IMAGES#ll_orcl_ad_icon.png';
+                        end if;
+                
+                        -- If there is no entry in the EVENT_JSON for DATE, then take current date (perhaps specify and onwards)..
+                        if :P180_EVENT_DATE is null then
+                          :P180_EVENT_DATE := to_char(sysdate,'Day DD Month');
+                        end if;
+                
+                        -- If the Event Organizer is empty, default to 'Oracle'
+                        if :P180_EVENT_ORGANIZER is null then
+                          :P180_EVENT_ORGANIZER := 'Oracle';
+                        end if;
+                
+                        -- If Green Button is enabled, determine the status
+                
+                        if nvl(JSON_VALUE(l_event.event_json, '$.LiveLabsGreenEnabled'),'N') <> 'Y' then
+                          :P180_ENABLE_LL := 'Disable';
+                        else
+                          :P180_ENABLE_LL := 'Enable';
+                
+                          if nvl(:P180_USERS_RANK,0) > nvl(l_event.users_maximum,9999) then
+                            if nvl(l_event.users_registered,0) > nvl(l_event.users_maximum,9999) then 
+                              ll_pkg_log.log(1,'WEC '||:WEC||' users registered '||l_event.users_registered||' - users maximum '||l_event.users_maximum||' - Rank is '||:P180_USERS_RANK);
+                              :P180_ENABLE_LL := 'Oversubscribed';
+                            elsif nvl(l_event.users_active,0) >= nvl(l_event.users_concurrent,9999) then
+                              ll_pkg_log.log(1,'WEC '||:WEC||' users active '||l_event.users_active||' - users concurrent '||l_event.users_concurrent);
+                              :P180_ENABLE_LL := 'Toomany';
+                            end if;
+                          end if;
+                        end if;
+                
+                        -- Set the flag that this is indeed an event. 
+                        v_event_type := JSON_VALUE(l_event.event_json, '$.EventType'); 
+                
+                        if v_event_type is not null then
+                          :P180_DISPLAY_TYPE := v_event_type;
+                        else
+                          :P180_DISPLAY_TYPE := 'Event';
+                        end if;
+                
+                        -- If this is a query by an admin, set a flag so that the workshop is retrieved (even if active<>Y)
+                        if instr(upper(l_event.email_requestor),upper(:APP_USER) ) > 0 or 
+                           instr(upper(l_event.email_creator),upper(:APP_USER) ) > 0 or  
+                           ll_pkg_security.am_i_allowed(p_apex_user => :APP_USER, p_access_type => 'EVENT_CODE_ADMIN', p_access_value => l_event.id ) = 'Y' then
+                          v_event_admin := 'Y';
+                        else
+                          v_event_admin := 'N';
+                        end if;
+                
+                      end loop;
+                    end if;
+                
+                    if :WID is not null and v_workshop_id is null then
+                      :P180_DISPLAY_TYPE := 'Workshop';
+                      v_workshop_id := :WID;
+                    end if;    
+                
+                    for l_workshop in c_workshop(v_workshop_id, v_event_admin) loop
+                
+                      :P180_NAME                := nvl(v_event_name                , l_workshop.name);
+                      :P180_DESC_SHORT          := nvl(v_event_desc_short          , l_workshop.desc_short);
+                      :P180_DESC_LONG           := nvl(v_event_desc_long           , l_workshop.desc_long);
+                      :P180_ACTIVE_FLG          := nvl(v_event_active_flg          , l_workshop.active_flg);
+                      :P180_LAB_URL             := nvl(v_event_lab_url             , l_workshop.lab_url);
+                      :P180_DESC_OUTLINE        := nvl(v_event_desc_outline        , l_workshop.desc_outline);
+                      :P180_DESC_PREREQUISITES  := nvl(v_event_desc_prerequisites  , l_workshop.desc_prerequisites);
+                      :P180_YOUTUBE_LINK        := nvl(v_youtube_link              , JSON_VALUE(l_workshop.workshop_json, '$.YoutubeLink')); 
+                      :P180_SPECIAL_TITLE       := v_event_reason;
+                
+                      :P180_TIME_IN_HOURS       := ll_pkg_admin.hours_readable (nvl(v_event_time_in_hours, l_workshop.time_in_hours), 'LONG', 'N');
+                
+                      v_max_ws_non_ec_parallel  := l_workshop.max_parallel_non_ec;
+                
+                      -- For now, since we do not have JSON for workshops yet, here is a work-around
+                
+                      if (:WID is not null and :WEC is null) or (:WEC is not null and v_event_json is null) then
+                        :P180_ENABLE_AF           := nvl(JSON_VALUE(l_workshop.workshop_json, '$.AlwaysFreeEnabled'),'Y');
+                        :P180_ENABLE_FT           := nvl(JSON_VALUE(l_workshop.workshop_json, '$.FreeTierEnabled'),'Y');
+                        :P180_ENABLE_PT           := nvl(JSON_VALUE(l_workshop.workshop_json, '$.PaidTenancyEnabled'),'Y');
+                        :P180_ENABLE_LL           := case nvl(JSON_VALUE(l_workshop.workshop_json, '$.LiveLabsGreenEnabled'),'Y')
+                                                        when 'Y' then 'Enable'
+                                                        else 'Disable' end;
+                      end if;
+                
+                      -- Need to check if there is an URL, even though the flag has been set to Y 
+                      if :P180_ENABLE_AF = 'Y' and JSON_VALUE(nvl(v_event_lab_url,l_workshop.lab_url),'$.ALWAYSFREE_URL') is null then :P180_ENABLE_AF := 'N'; end if;
+                      if :P180_ENABLE_FT = 'Y' and JSON_VALUE(nvl(v_event_lab_url,l_workshop.lab_url),'$.FREETIER_URL') is null then :P180_ENABLE_FT := 'N'; end if;
+                      if :P180_ENABLE_PT = 'Y' and JSON_VALUE(nvl(v_event_lab_url,l_workshop.lab_url),'$.PAID_URL') is null then :P180_ENABLE_PT := 'N'; end if;
+                      if :P180_ENABLE_LL = 'Enable'
+                         and JSON_VALUE(nvl(v_event_lab_url,l_workshop.lab_url),'$.GITHUB_URL') is null
+                         and JSON_VALUE(nvl(v_event_lab_url,l_workshop.lab_url),'$.LIVELABS_URL') is null then :P180_ENABLE_LL := 'Disabled'; end if;
+                
+                    end loop;
+                
+                    -- Following variable is used to build the links to the various workshops and logging
+                    :P180_ID := v_workshop_id;
+                
+                    if :WID is not null then
+                
+                    --   open c_popular_workshops (v_workshop_id);
+                    --   fetch c_popular_workshops into :P180_REL_WK_TEXT_1, :P180_REL_WK_LINK_1;
+                    --   fetch c_popular_workshops into :P180_REL_WK_TEXT_2, :P180_REL_WK_LINK_2;
+                    --   fetch c_popular_workshops into :P180_REL_WK_TEXT_3, :P180_REL_WK_LINK_3;
+                    --   close c_popular_workshops;
+                        v_count := 0;
+                        for workshop in c_popular_workshops(v_workshop_id) loop
+                            v_count := v_count + 1;
+                            if v_count = 1 then
+                                :P180_REL_WK_TEXT_1 := workshop.name;
+                                :P180_REL_WK_LINK_1 := workshop.workshop_link;
+                            elsif v_count = 2 then
+                                :P180_REL_WK_TEXT_2 := workshop.name;
+                                :P180_REL_WK_LINK_2 := workshop.workshop_link;
+                            elsif v_count = 3 then
+                                :P180_REL_WK_TEXT_3 := workshop.name;
+                                :P180_REL_WK_LINK_3 := workshop.workshop_link;
+                            else
+                                exit;
+                            end if;
+                        end loop;
+                
+                    end if;
+                
+                    -- Check if we have enough resources for this setup
+                
+                    if :P180_ENABLE_LL = 'Enable' then
+                      ll_pkg_reservation.find_available_tenancy ( p_workshop_id    => v_workshop_id,
+                                                                  p_event_id       => case when :WEC is not null then to_number(substr(:WEC,1,instr(:WEC,'-')-1)) else null end,
+                                                                  p_tenancy_id     => v_tenancy_id,
+                                                                  p_region_id      => v_region_id ,
+                                                                  p_available_json => v_dummy_clob);
+                
+                      if v_tenancy_id is null or v_region_id is null then
+                        ll_pkg_log.log(1,'No resources available for WSID: '||:WID||' and WEC: '||:WEC);
+                        :P180_ENABLE_LL := 'NoResources';
+                      end if;
+                    end if;
+                
+                    if :P180_ENABLE_LL = 'Enable' and :WID is not null then
+                      open c_non_ec;
+                      fetch c_non_ec into v_ws_non_ec_parallel;
+                      close c_non_ec;
+                
+                      if v_ws_non_ec_parallel is null then 
+                        v_ws_non_ec_parallel := 0; 
+                      end if;
+                
+                      if v_max_ws_non_ec_parallel is null then
+                        v_max_ws_non_ec_parallel := nvl(to_number(ll_pkg_admin.system_parameter (p_name => 'DEFAULT_MAX_WS_PARALLEL')),10);
+                      end if;
+                
+                      if v_ws_non_ec_parallel >= v_max_ws_non_ec_parallel then
+                        ll_pkg_log.log(1,'Too many parallel WS running ('||v_ws_non_ec_parallel||'/'||v_max_ws_non_ec_parallel||') for WSID: '||:WID||' for user '||:app_user);
+                        :P180_ENABLE_LL := 'TooManyNonEC';
+                      end if; 
+                
+                    end if;
+                
+                    -- Check if we are in maintenance mode (and Green Button should be enabled)
+                
+                    if :P180_ENABLE_LL = 'Enable' then
+                      v_enable_green_button := ll_pkg_admin.system_parameter (p_name => 'ENABLE_GREEN_BUTTON');
+                
+                      if nvl(v_enable_green_button,'Y') = 'N' then
+                        :P180_ENABLE_LL := 'Maintenance';
+                      end if;
+                    end if;
+                
+                    -- Check if in the last 30 minutes we have had an error with the setup of this system
+                
+                    if :P180_ENABLE_LL = 'Enable' and ll_pkg_admin.system_parameter('BUILD_ERROR_DISABLE_GREEN') = 'Y' then
+                      open c_res_issue (p_workshop_id     => nvl(:WID, v_workshop_id), 
+                                        p_disable_minutes => to_number(ll_pkg_admin.system_parameter('BUILD_ERROR_DISABLE_GREEN_MINUTES')));
+                      fetch c_res_issue into v_reservation_issue;
+                      if c_res_issue%FOUND then
+                        :P180_ENABLE_LL := 'Reservation-issue';
+                        ll_pkg_log.log(1,'Disabled access to workshop '||v_workshop_id||' for user '||:app_user||' because of previous issues');                        
+                      end if;
+                      close c_res_issue;
+                    end if;                
+                
+                    if :P180_DISPLAY_TYPE = 'Error' or :P180_NAME = 'Error: We could not locate this ' then 
+                      :ENF := '1';
+                      apex_util.redirect_url(p_url => apex_page.get_url(p_page => 100, p_items => 'SENFS', p_values => '1'));
+                    end if;
+                
+                
+                    :P180_PAGEURL := apex_util.host_url()
+                                     || apex_page.get_url(p_page => :APP_PAGE_ID,
+                                                          p_session => null,
+                                                          p_items  => 'WID',
+                                                          p_values => :WID
+                                                          );
+                    
+                    :P180_PAGEURL_ENCODED := apex_util.url_encode(:P180_PAGEURL);
+                end;
+                ```
+        }
+        execution {
+            sequence: 30
+            point: beforeHeader
+        }
+        advanced {
+            executionMappingIdentifier: 206360518122538605
+        }
+    )
+
+    process save-tc-value (
+        name: Save-TC-value
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                if :TC is not null then
+                  ll_pkg_apex.store_tc_info (p_workshop_id => nvl(:P180_ID, :P180_WID), p_wec => :WEC, p_tc_value => :TC);
+                end if;
+                
+                ```
+        }
+        execution {
+            sequence: 40
+            point: beforeHeader
+        }
+        advanced {
+            executionMappingIdentifier: 244172470921825543
+        }
+    )
+
+    branch (
+        execution {
+            sequence: 1
+        }
+        behavior {
+            target: {
+                page: 160
+            }
+        }
+    )
+
+)
+

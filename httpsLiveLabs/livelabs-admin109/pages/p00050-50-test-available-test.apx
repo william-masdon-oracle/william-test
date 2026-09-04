@@ -1,0 +1,3761 @@
+page 50 (
+    name: 50-test available test
+    alias: 50-TEST-AVAILABLE-TEST
+    title: 50-test available test
+    appearance {
+        pageTemplate: @standard-trustarc
+        templateOptions: #DEFAULT#
+        cssClasses: page-w1280p
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+        warnOnUnsavedChanges: false
+    }
+    javaScript {
+        functionAndGlobalVariableDeclaration:
+            ```javascript-browser
+            //Get the button:
+            mybutton = document.getElementById("myBtn");
+            
+            // When the user scrolls down 20px from the top of the document, show the button
+            window.onscroll = function() {scrollFunction()};
+            
+            function scrollFunction() {
+              if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
+                mybutton.style.display = "block";
+              } else {
+                mybutton.style.display = "none";
+              }
+            }
+            
+            // When the user clicks on the button, scroll to the top of the document
+            function topFunction() {
+                $('html, body').animate({scrollTop:0}, 'slow');
+                document.body.scrollTop = 0; // For Safari
+                document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+            }
+            ```
+    }
+    css {
+        inline:
+            ```css
+            body  {
+                margin: 0 auto;
+                background-image: url(#APP_IMAGES#ll_bg_tile.png);
+                background-repeat: repeat;
+            }
+            
+            .t-Card-info { 
+                line-height: unset;
+            }
+            .t-Card-info a {
+                font-size: 12px;
+            }
+            
+            .reserve-W {  
+                font-size:0.9em;
+                font-weight:600;
+                background-color: #8dab86; // #719668;
+                color:#FCFBFA; //JR: was #776f6b; //    color: #4c4642; // #FCFBFA;
+                border:0.5px #776f6b solid;
+                border-radius:5px;
+                padding:5px 10px 5px 10px; //JR: was 5px
+            }
+            
+            a.reserve-W:hover {
+                background:#40553b; //JR: was #eae7e5;
+                color:#FCFBFA; //JR: was #776f6b;
+                font-weight: 600;
+                box-shadow: none;
+            }
+            
+            //.reserve-W {  
+            //    font-size:0.8em;
+            //    font-weight:600;
+            //    background:#eae7e5;
+            //    color:#776f6b;
+            //    border:0.5px #776f6b solid;
+            //    border-radius:5px;
+            //    padding:5px 5px 5px 5px;
+            //}
+            
+            //a.reserve-W:hover {
+            //    background-color: #719668;
+            //    color: #FCFBFA;
+            //    box-shadow: none;
+            //}
+            
+            .details-W {  
+                background-color: gray;
+                color: white;
+                padding: 10px;
+            }
+            
+            a.details-W:hover {
+                background-color: dimgray;
+                color: #FCFBFA;
+                box-shadow: none;
+            }
+            //.reserve-W {  
+            //    background-color: #759C6C;
+            //    color: white;
+            //    padding: 10px;
+            //}
+            //
+            //a.reserve-W:hover {
+            //    background-color: #719668;
+            //    color: #FCFBFA;
+            //    box-shadow: none;
+            //}
+            //
+            //.details-W {  
+            //    background-color: gray;
+            //    color: white;
+            //    padding: 10px;
+            //}
+            //
+            //a.details-W:hover {
+            //    background-color: dimgray;
+            //    color: #FCFBFA;
+            //    box-shadow: none;
+            //}
+            //
+            //*search bar hidden */
+            #SEARCH {
+                display:none;
+            }
+            
+            /* change expand collapse icons
+            .a-icon.a-Collapsible-icon:before{
+                background-image: fa fa-chevron-right;
+            }
+            
+            .a-icon.a-Collapsible-icon:after{
+                background-image: fa fa-chevron-right;    
+            }
+            */
+            
+            /* Set background color for page 
+            body, html{
+                height: 100%;
+                background-color: #46423F;
+                background-image: url(	#APP_IMAGES#rw_dots_bg_wht.png);
+                background-position: center;
+                background-repeat: repeat;
+                background-size: cover;
+            }
+            */
+            
+            .card_ribbon{
+                //style for ribbon
+            }
+            
+            .card_ribbon:empty{
+                display: none;
+            }
+            
+            #TITLEBAR{
+                color: white;
+                background: url(#APP_IMAGES#ll_region_bg_green.png);
+                min-height: 100%;
+                margin: 0px 40px 20px 30px;
+                padding: 20px 40px 20px 20px;
+                border-radius: 0;
+            }
+                
+            #myBtn {
+              display: none; /* Hidden by default */
+              position: fixed; /* Fixed/sticky position */
+              bottom: 20px; /* Place the button at the bottom of the page */
+            //  right: 20px; /* Place the button 30px from the right */
+              right: 50%;
+              z-index: 999999; /* Make sure it does not overlap */
+              border: none; /* Remove borders */
+              outline: none; /* Remove outline */
+              background-color: #46423f; /* Set a background color */
+              color: white; /* Text color */
+              cursor: pointer; /* Add a mouse pointer on hover */
+              padding: 5px 15px 5px 15px; /* Some padding */
+              border-radius: 5px; /* Rounded corners */
+              font-size: 14px; /* Increase font size */
+            }
+            
+            #myBtn:hover {
+              background-color: #719668; /* Add a dark-grey background on hover */
+            }
+            ```
+    }
+    security {
+        authentication: public
+        deepLinking: true
+        formAutoComplete: false
+        browserCache: false
+    }
+    errorHandling {
+        inLineErrorNotificationText: Error - unhanded.
+    }
+
+    region bottom (
+        name: BOTTOM
+        type: staticContent
+        layout {
+            sequence: 130
+            parentRegion: @choose-workshop-tags
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--hiddenOverflow
+                t-Form--noPadding
+                margin-top-none
+                margin-bottom-none
+                margin-left-none
+                margin-right-none
+            ]
+        }
+    )
+
+    region certification (
+        name: Certification
+        type: staticContent
+        layout {
+            sequence: 60
+            parentRegion: @choose-workshop-tags
+            slot: subRegions
+        }
+        appearance {
+            template: @collapsible
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                js-useLocalStorage
+                is-expanded
+                t-Region--noUI
+                t-Region--hiddenOverflow
+                t-Form--noPadding
+                margin-top-none
+                margin-bottom-none
+                margin-left-none
+                margin-right-none
+            ]
+        }
+        advanced {
+            htmlDomId: Certification
+        }
+        serverSideCondition {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                declare
+                    l_select_sql VARCHAR2(4000) := '';
+                
+                    l_splitvars varchar2(4000);
+                    p_tempsearch varchar2(100) := :SEARCH;
+                    p_retsearch varchar2(4000) ;
+                    workshop_id varchar2(4000);
+                    first_loop number :=0;
+                    l_sql varchar2(4000);
+                    sql_cnt number := 0;
+                    l_sql2 varchar2(4000);
+                
+                BEGIN
+                  l_sql2 := '';  
+                  l_sql := 'select count(*) from (select llt.level2 ||'' (''||count(*)||'')'', llt.id
+                    from ll_workshop_tags llwt, ll_workshops llw, ll_tags llt
+                    where llwt.workshop_id = llw.id
+                    and llwt.tag_id = llt.id
+                    and llw.active_flg=''Y''
+                    and llt.active_flg=''Y''
+                    and upper(llt.level1) = ''CERTIFICATION''    
+                    and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, ''' || nvl(:P50_WORKSHOP_TYPE,null) || ''') = ''Y''
+                    and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, ''' || nvl(:P50_WORKSHOP_SERIES,null) || ''') = ''Y''
+                    and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, ''' || nvl(:P50_ROLE,null) || ''') = ''Y''
+                    and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, ''' || nvl(:P50_LEVEL,null) || ''') = ''Y''
+                    and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, ''' || nvl(:P50_FOCUS_AREA,null) || ''') = ''Y''
+                    and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, ''' || nvl(:P50_PRODUCT,null) || ''') = ''Y''
+                    and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, ''' || nvl(:P50_SALES_PLAY,null) || ''') = ''Y''
+                    and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, ''' || nvl(:P50_SALES_FOCUS,null) || ''') = ''Y'' ';
+                    
+                    if (:SEARCH is not null) then
+                      p_tempsearch := REGEXP_REPLACE(p_tempsearch,chr(39),'');
+                      p_tempsearch := REGEXP_REPLACE(p_tempsearch,chr(38),'');
+                       
+                    
+                      p_retsearch := ll_pkg_apex.clean_searchstr(p_tempsearch);
+                      if(p_retsearch is not null) then
+                          
+                      l_splitvars :=  upper(REGEXP_REPLACE ( '' ||p_retsearch|| '',' ',' | ')) ;
+                      l_splitvars := upper(l_splitvars);
+                      l_splitvars := REGEXP_REPLACE(l_splitvars,' ','');
+                
+                      p_retsearch := ltrim(rtrim(p_retsearch));
+                    
+                      p_retsearch := REGEXP_REPLACE(p_retsearch,' ',',');
+                  
+                      first_loop := 0;
+                      l_sql := ''||l_sql||' and ((';
+                    
+                      for x in (select column_value from table(apex_string.split(p_retsearch, ','))) loop
+                    
+                        if(first_loop != 0) then
+                          l_sql := l_sql || ' and ';
+                          l_sql2 := l_sql2 || ' or ';
+                        end if;
+                
+                        l_sql :=  l_sql || '(upper('' '' || llw.NAME || '' '') like  upper(''% '||x.column_value||' %'')   )';
+                        l_sql2 := l_sql2 || '(upper('' '' || b.level1 || '' '') like  upper(''% '||x.column_value||' %'')   ) or';
+                        l_sql2 := l_sql2 || '(upper('' '' || b.level2 || '' '') like  upper(''% '||x.column_value||' %'')   ) or';
+                        l_sql2 := l_sql2 || '(upper('' '' || b.level3 || '' '') like  upper(''% '||x.column_value||' %'')   )';
+                        first_loop := 1;
+                      end loop;
+                
+                      l_sql := l_sql || ') or llw.id in
+                            (select a.workshop_id
+                             from ll_workshop_tags a, ll_tags b 
+                             where a.tag_id = b.id 
+                             and (' || l_sql2 || ')))' ;
+                             
+                    end if;
+                    end if;
+                
+                    
+                        l_sql := l_sql || ' group by llt.level2, llt.id having count(*) > 0)';
+                
+                      
+                       execute immediate l_sql into sql_cnt;
+                       --insert into sql_dump values (l_sql);
+                
+                       if (sql_cnt > 0) then
+                        return true;
+                       else
+                        return false;
+                       end if;
+                END;
+                ```
+        }
+    )
+
+    region choose-workshop-tags (
+        name: Choose workshop tags
+        type: staticContent
+        layout {
+            sequence: 60
+            slot: contentBody
+            startNewRow: false
+            columnSpan: 3
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: [
+                #DEFAULT#
+                margin-left-lg
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        headerAndFooter {
+            headerText: <div style="background: white; opacity: 0.5">
+            footerText: </div>
+        }
+    )
+
+    region clear-search (
+        name: Clear Search
+        type: staticContent
+        layout {
+            sequence: 10
+            parentRegion: @top
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--scrollBody
+                t-Form--noPadding
+                margin-top-none
+                margin-bottom-none
+                margin-left-none
+                margin-right-none
+            ]
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    region current-workshops (
+        name: Current workshops
+        type: cards
+        source {
+            location: localDatabase
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                declare
+                l_search varchar2(100) := :SEARCH;
+                l_queryRet varchar2(4000);
+                
+                
+                begin
+                      l_queryRet :=  ll_pkg_apex.search_sql_new(l_search);
+                      if(:P50_ORDER_BY is not null) then
+                         l_queryRet := l_queryRet || ' order by ' || :P50_ORDER_BY;
+                      end if;
+                  return l_queryRet;
+                end;
+                
+                
+                ```
+            pageItemsToSubmit: [
+                P50_ROLE
+                P50_SALES_FOCUS
+                P50_SALES_PLAY
+                P50_FOCUS_AREA
+                P50_PRODUCT
+                P50_LEVEL
+                P50_WORKSHOP_TYPE
+                P50_CERTIFICATION
+                SEARCH
+                P50_WORKSHOP_SERIES
+                P50_ORDER_BY
+            ]
+        }
+        layout {
+            sequence: 40
+            slot: contentBody
+        }
+        appearance {
+            template: @blank-with-attributes-no-grid
+            templateOptions: [
+                #DEFAULT#
+                t-Form--slimPadding
+                margin-left-md
+                margin-right-md
+            ]
+            icon: fa-button
+        }
+        componentAppearance {
+            gridColumns: 3
+        }
+        card {
+            primaryKeyColumn1: ID
+            primaryKeyColumn2: ID
+        }
+        title {
+            advancedFormatting: true
+            htmlExpression:
+                ```html
+                <div style="float:left;position:absolute">
+                    <p style="font-size:0.8em;font-weight:600;margin:-5px 0px 5px -16px">
+                        <span style="padding:3px 5px 3px 5px;border-radius:0px 5px 5px 0px;background:&CARD_RIBBON_COLOR.;color:white" class="card_ribbon">
+                            &CARD_RIBBON.
+                        </span>
+                    </p>
+                </div>
+                
+                <p style="font-size:1.0em;font-weight:600;line-height:1.3em;padding:20px 0px 0px 0px">
+                    &CARD_TITLE.
+                </p>
+                
+                <p style="font-size:0.85em;font-weight:400;line-height:1.15em;padding:0px 0px 5px 0px">
+                    &CARD_TEXT.
+                </p>
+                
+                <div style="color:darkgrey;font-size:0.9em;position: absolute;top: 15px;right: 10px;">
+                    <span style="float:right;text-align:right;vertical-align:baseline;color: #776f6b">
+                        <!-- <span style="float:right;text-align:right;margin:-10px 0px 20px 0px:10px;color: #776f6b;"> -->
+                        <!-- <span style="margin-top:-20px"><img src=#APP_IMAGES#&STAR_RATING. style="align:top"></span> -->
+                        <span style="font-size:0.9em;font-weight:400;margin:-5px 10px 0px 0px;padding:-10px 0px 0px 0px;vertical-align:top">  &STAR_VOTES.</span>
+                        <span class="&WORKSHOP_ATTENDED." style="color:#719668;"></span>
+                        <span class="&BOOKMARK_ENABLE."></span>
+                    </span>
+                </div>
+                
+                <!-- pre-card facelift
+                <div style="float:left;position:absolute">
+                    <p style="font-size:0.8em;margin:-5px 0px 5px -16px"><span style="padding:3px 5px 3px 5px;border-radius:0px 5px 5px 0px;background:&CARD_RIBBON_COLOR.;color:white" class="card_ribbon">&CARD_RIBBON.</span></p>
+                </div>
+                <p style="font-size:1.0em;font-weight:400;line-height:1.3em;padding:20px 0px 0px 0px">&CARD_TITLE.</p>
+                <p style="font-size:0.85em;font-weight:350;line-height:1.15em;padding:0px 0px 15px 0px">&CARD_TEXT.</p>
+                
+                <div style="color:darkgrey;font-size:0.9em;position: absolute;top: 15px;right: 20px">
+                    <span style="float:right;text-align:right;vertical-align:baseline;color: #c74634 ">
+                        <span class="&WORKSHOP_ATTENDED." style="color:#719668;"></span>
+                        <span class="&BOOKMARK_ENABLE."></span>
+                    </span>
+                </div>
+                -->
+                
+                ```
+        }
+        body {
+            advancedFormatting: true
+            htmlExpression:
+                ```html
+                <div style="color:darkgrey;font-size:0.9em;position: absolute;bottom: 5px;">
+                    <a class="reserve-W" href=&CARD_LINK.>Launch</a> 
+                        <span style="color:black;font-size:0.8em;font-weight:400;line-height:0.7em;margin:-10px 0px 10px 10px;">
+                            <i>
+                                <!-- <span class="&CARD_VIEWS_EYE." style="color:darkgray;padding: 5px 3px 0px 0px"></span> -->
+                                &CARD_VIEWS.
+                            </i>
+                        </span>
+                        <p style="line-height:0.3em;margin:5px 0px 10px 0px;"></p>
+                </div>
+                <div style="font-size:0.9em;position: absolute;bottom: 15px;right: 10px">
+                    <span style="float:right;text-align:right;vertical-align:top">
+                            <span style="font-weight:400;font-size:0.8em;margin:-20px 0px 20px 0px;">
+                                <span class="&TIME_DISPLAY." style="font-size:1em;vertical-align:baseline;"></span>&nbsp;&nbsp;&CARD_SUBTEXT.
+                    </span>
+                </div>
+                
+                <!-- pre-card facelift
+                <div style="color:darkgrey;font-size:0.9em;position: absolute;bottom: 5px;">
+                    <a class="reserve-W" href=&CARD_LINK.>Launch</a> 
+                        <span style="color:black;font-size:0.8em;font-weight:300;line-height:0.7em;margin:-10px 0px 10px 10px;">
+                            <i><span class="&CARD_VIEWS_EYE." style="color:darkgray;padding: 5px 3px 0px 0px"></span>&CARD_VIEWS.</i>
+                        </span>
+                        <p style="line-height:0.3em;margin:5px 0px 10px 0px;"></p>
+                
+                        <span style=";vertical-align:middle;margin:20px 0px 0px 0px:10px;color: #776f6b;font-size:0.7em;font-weight:400">
+                            <span style="margin:3px 0px 0px 0px"><img src="#APP_IMAGES#&STAR_RATING." style="vertical-align:middle"> &STAR_VOTES.</span>
+                        </span>
+                </div>
+                
+                <div style="color:darkgrey;font-size:0.9em;position: absolute;bottom: 5px;right: 20px">
+                    <span style="float:right;text-align:right;">
+                            <span style="font-weight:400;font-size:0.8em;margin:-10px 0px 10px 0px;color:#776f6b">
+                                <span class="&TIME_DISPLAY." style="font-size:1em;vertical-align:baseline;color:#776f6b"></span>&nbsp;&nbsp;&CARD_SUBTEXT.
+                    </span>
+                </div>
+                -->
+                ```
+        }
+        pagination {
+            type: page
+            showTotalCount: true
+            cardsPerPage: 30
+        }
+    )
+
+    region current-workshops-old (
+        name: Current workshops - old
+        type: classicReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select
+                  "ID",
+                  "NAME" CARD_TITLE,
+                 'Workshop Duration: ' || ll_pkg_admin.hours_readable (TIME_IN_HOURS, 'SHORT', 'N') 
+                --     || ' (Lease Time: '|| ll_pkg_admin.hours_readable (TIME_AVAILABLE, 'SHORT', 'N') 
+                --     || ')'  
+                     CARD_SUBTITLE,
+                 "DESC_SHORT" CARD_TEXT,
+                null CARD_EXTRA,
+                --  NVL2(json_value(lab_url,'$.GITHUB_URL'),
+                --    '<a class="reserve-W" href="'
+                --    ||
+                --    APEX_PAGE.GET_URL (
+                --      p_page   => 320,
+                --      p_items  => 'P320_WORKSHOP_ID',
+                --      p_values => ID )
+                --      ||
+                --      '">Reserve</a>', null) 
+                --    ||
+                    '<a class="reserve-W" href="'||
+                    APEX_PAGE.GET_URL (
+                      p_page   => 180,
+                --      p_items  => 'P150_WORKSHOP_ID'||','||'P150_WORKSHOP_NAME',
+                --      p_values => ID||','||NAME ) as CARD_LINK, 
+                      p_clear_cache => '180',
+                      p_items  => 'WID',
+                      p_values => ID )
+                      ||
+                      '">Launch Workshop</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' ||   
+                      (select 
+                           CASE
+                               WHEN count(*) < 10 THEN '<i>New!</i>'
+                               ELSE '<i>' || count(*) || ' Views</i>'
+                            END
+                       from LL_PAGE_VISITS llpv where llpv.WORKSHOP_ID = ID) CARD_SUBTEXT,
+                --  apex_string.get_initials("NAME") CARD_INITIALS, 
+                  '#APP_IMAGES#livelabs_icon_white_heavy.svg' CARD_IMAGE, 
+                  --'fa-star' CARD_ICON,
+                  NULL CARD_LINK, 
+                  null CARD_MODIFIERS,
+                  null CARD_COLOR,
+                  "ACTIVE_FLG",
+                  "TIME_IN_HOURS",
+                  "TIME_IN_HOURS" as WORKSHOP_TIME,
+                  "NAME",
+                  "DESC_LONG"
+                --  "LEVEL_TAG",
+                --  "DEPLOYMENT_TAG",
+                --  "ROLE_TAG",
+                --  "SALESPLAY_TAG",
+                --  "FOCUS_TAG",
+                --  "PRODUCT_TAG"
+                from LL_WORKSHOPS
+                where ACTIVE_FLG='Y'
+                 and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( ID, :P50_ROLE) = 'Y'
+                 and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( ID, :P50_LEVEL) = 'Y'
+                 and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( ID, :P50_SALES_PLAY) = 'Y'
+                 and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( ID, :P50_FOCUS_AREA) = 'Y'
+                 and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( ID, :P50_PRODUCT) = 'Y'
+                 and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( ID, :P50_SALES_FOCUS) = 'Y'
+                 and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( ID, :P50_WORKSHOP_TYPE) = 'Y'
+                 and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( ID, :P50_CERTIFICATION) = 'Y'
+                 AND (:SEARCH IS NULL OR 
+                      (
+                          (UPPER("NAME") LIKE '%' || UPPER(:SEARCH) || '%')
+                           OR
+                          (UPPER("DESC_LONG") LIKE '%' || UPPER(:SEARCH) || '%')
+                           OR
+                          (UPPER("DESC_SHORT") LIKE '%' || UPPER(:SEARCH) || '%')
+                      )
+                          )
+                
+                ```
+            pageItemsToSubmit: [
+                P50_ROLE
+                P50_SALES_FOCUS
+                P50_SALES_PLAY
+                P50_FOCUS_AREA
+                P50_PRODUCT
+                P50_LEVEL
+                P50_WORKSHOP_TYPE
+                P50_CERTIFICATION
+            ]
+        }
+        layout {
+            sequence: 30
+            slot: contentBody
+        }
+        appearance {
+            template: @blank-with-attributes-no-grid
+            templateOptions: [
+                #DEFAULT#
+                t-Form--noPadding
+                margin-left-md
+            ]
+            icon: fa-button
+        }
+        serverSideCondition {
+            type: never
+        }
+        componentAppearance {
+            template: @cards-custom-image
+            templateOptions: [
+                #DEFAULT#
+                u-colors
+                t-Cards--compact
+                t-Cards--displayIcons
+                t-Cards--3cols
+                t-Cards--iconsRounded
+                t-Cards--animColorFill
+            ]
+        }
+        pagination {
+            type: nextAndPreviousLinks
+        }
+        performance {
+            maxRowsToProcess: 500
+        }
+        messages {
+            whenNoDataFound: No workshops match your criteria. Select <b>Clear Filters</b> or enter a different term in the <strong>Search</strong> field and try again.
+        }
+
+        column ACTIVE_FLG (
+            reportColumnQueryId: 11
+            derivedColumn: N
+            heading {
+                heading: Active Flg
+                alignment: center
+            }
+            layout {
+                sequence: 40
+            }
+        )
+
+        column CARD_COLOR (
+            reportColumnQueryId: 10
+            derivedColumn: N
+            heading {
+                heading: CARD_COLOR
+                alignment: center
+            }
+            layout {
+                sequence: 30
+            }
+            sorting {
+                sortable: false
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column CARD_EXTRA (
+            reportColumnQueryId: 5
+            derivedColumn: N
+            heading {
+                heading: Card Extra
+                alignment: center
+            }
+            layout {
+                sequence: 130
+            }
+        )
+
+        column CARD_IMAGE (
+            reportColumnQueryId: 7
+            derivedColumn: N
+            heading {
+                heading: Card Image
+                alignment: center
+            }
+            layout {
+                sequence: 150
+            }
+        )
+
+        column CARD_LINK (
+            reportColumnQueryId: 8
+            derivedColumn: N
+            heading {
+                heading: CARD_LINK
+                alignment: center
+            }
+            layout {
+                sequence: 10
+            }
+            sorting {
+                sortable: false
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column CARD_MODIFIERS (
+            reportColumnQueryId: 9
+            derivedColumn: N
+            heading {
+                heading: CARD_MODIFIERS
+                alignment: center
+            }
+            layout {
+                sequence: 20
+            }
+            sorting {
+                sortable: false
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column CARD_SUBTEXT (
+            reportColumnQueryId: 6
+            derivedColumn: N
+            heading {
+                heading: CARD_SUBTEXT
+                alignment: end
+            }
+            layout {
+                sequence: 140
+                columnAlignment: end
+            }
+            appearance {
+                formatMask: 999G999G999G999G999G999G999G999G999G990
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column CARD_SUBTITLE (
+            reportColumnQueryId: 3
+            derivedColumn: N
+            heading {
+                heading: Card Subtitle
+                alignment: center
+            }
+            layout {
+                sequence: 110
+            }
+        )
+
+        column CARD_TEXT (
+            reportColumnQueryId: 4
+            derivedColumn: N
+            heading {
+                heading: CARD_TEXT
+            }
+            layout {
+                sequence: 120
+            }
+        )
+
+        column CARD_TITLE (
+            reportColumnQueryId: 2
+            derivedColumn: N
+            heading {
+                heading: CARD_TITLE
+            }
+            layout {
+                sequence: 100
+            }
+        )
+
+        column DESC_LONG (
+            reportColumnQueryId: 15
+            derivedColumn: N
+            heading {
+                heading: Desc Long
+                alignment: center
+            }
+            layout {
+                sequence: 80
+            }
+        )
+
+        column ID (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            heading {
+                heading: Id
+                alignment: center
+            }
+            layout {
+                sequence: 90
+            }
+        )
+
+        column NAME (
+            reportColumnQueryId: 14
+            derivedColumn: N
+            heading {
+                heading: Name
+                alignment: center
+            }
+            layout {
+                sequence: 70
+            }
+        )
+
+        column TIME_IN_HOURS (
+            reportColumnQueryId: 12
+            derivedColumn: N
+            heading {
+                heading: Time In Hours
+                alignment: center
+            }
+            layout {
+                sequence: 50
+            }
+        )
+
+        column WORKSHOP_TIME (
+            reportColumnQueryId: 13
+            derivedColumn: N
+            heading {
+                heading: Workshop Time
+                alignment: center
+            }
+            layout {
+                sequence: 60
+            }
+        )
+
+    )
+
+    region focus-area (
+        name: Focus Area
+        type: staticContent
+        layout {
+            sequence: 80
+            parentRegion: @choose-workshop-tags
+            slot: subRegions
+            startNewRow: false
+            newColumn: false
+        }
+        appearance {
+            template: @collapsible
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                js-useLocalStorage
+                is-expanded
+                t-Region--noUI
+                t-Region--hiddenOverflow
+                t-Form--noPadding
+                margin-top-none
+                margin-bottom-none
+                margin-left-none
+                margin-right-none
+            ]
+        }
+        advanced {
+            htmlDomId: Focus_Area
+        }
+        serverSideCondition {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                declare
+                    l_select_sql VARCHAR2(4000) := '';
+                
+                    l_splitvars varchar2(4000);
+                    p_tempsearch varchar2(100) := :SEARCH;
+                    p_retsearch varchar2(4000) ;
+                    workshop_id varchar2(4000);
+                    first_loop number :=0;
+                    l_sql varchar2(4000);
+                    sql_cnt number := 0;
+                    l_sql2 varchar2(4000);
+                
+                BEGIN
+                  l_sql2 := '';  
+                  l_sql := 'select count(*) from (select nvl(llt.level3,llt.level2) ||'' (''||count(*)||'')'', llt.id
+                    from ll_workshop_tags llwt, ll_workshops llw, ll_tags llt
+                    where llwt.workshop_id = llw.id
+                    and llwt.tag_id = llt.id
+                    and llw.active_flg=''Y''
+                    and llt.active_flg=''Y''
+                    and upper(llt.level1) = ''FOCUS''    
+                    and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, ''' || nvl(:P50_WORKSHOP_TYPE,null) || ''') = ''Y''
+                    and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, ''' || nvl(:P50_CERTIFICATION,null) || ''') = ''Y''
+                    and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, ''' || nvl(:P50_ROLE,null) || ''') = ''Y''
+                    and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, ''' || nvl(:P50_LEVEL,null) || ''') = ''Y''
+                    and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, ''' || nvl(:P50_WORKSHOP_SERIES,null) || ''') = ''Y''
+                    and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, ''' || nvl(:P50_PRODUCT,null) || ''') = ''Y''
+                    and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, ''' || nvl(:P50_SALES_PLAY,null) || ''') = ''Y''
+                    and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, ''' || nvl(:P50_SALES_FOCUS,null) || ''') = ''Y'' ';
+                    
+                    if (:SEARCH is not null) then
+                      p_tempsearch := REGEXP_REPLACE(p_tempsearch,chr(39),'');
+                      p_tempsearch := REGEXP_REPLACE(p_tempsearch,chr(38),'');
+                       
+                    
+                      p_retsearch := ll_pkg_apex.clean_searchstr(p_tempsearch);
+                      if(p_retsearch is not null) then
+                          
+                      l_splitvars :=  upper(REGEXP_REPLACE ( '' ||p_retsearch|| '',' ',' | ')) ;
+                      l_splitvars := upper(l_splitvars);
+                      l_splitvars := REGEXP_REPLACE(l_splitvars,' ','');
+                
+                      p_retsearch := ltrim(rtrim(p_retsearch));
+                    
+                      p_retsearch := REGEXP_REPLACE(p_retsearch,' ',',');
+                  
+                      first_loop := 0;
+                      l_sql := ''||l_sql||' and ((';
+                    
+                      for x in (select column_value from table(apex_string.split(p_retsearch, ','))) loop
+                    
+                        if(first_loop != 0) then
+                          l_sql := l_sql || ' and ';
+                          l_sql2 := l_sql2 || ' or ';
+                        end if;
+                
+                        l_sql :=  l_sql || '(upper('' '' || llw.NAME || '' '') like  upper(''% '||x.column_value||' %'')   )';
+                        l_sql2 := l_sql2 || '(upper('' '' || b.level1 || '' '') like  upper(''% '||x.column_value||' %'')   ) or';
+                        l_sql2 := l_sql2 || '(upper('' '' || b.level2 || '' '') like  upper(''% '||x.column_value||' %'')   ) or';
+                        l_sql2 := l_sql2 || '(upper('' '' || b.level3 || '' '') like  upper(''% '||x.column_value||' %'')   )';
+                        first_loop := 1;
+                      end loop;
+                
+                      l_sql := l_sql || ') or llw.id in
+                            (select a.workshop_id
+                             from ll_workshop_tags a, ll_tags b 
+                             where a.tag_id = b.id 
+                             and (' || l_sql2 || ')))' ;
+                             
+                    end if;
+                    end if;
+                
+                    
+                        l_sql := l_sql || ' group by llt.level3, llt.level2, llt.id  having count(*) > 0)';
+                
+                      
+                       execute immediate l_sql into sql_cnt;
+                       --insert into sql_dump values (l_sql);
+                
+                       if (sql_cnt > 0) then
+                        return true;
+                       else
+                        return false;
+                       end if;
+                END;
+                ```
+        }
+    )
+
+    region header-text-before-cards (
+        name: Header text before cards
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                Click <strong>Launch</strong> for a workshop to find out more, or to launch the workshop. Use the search and filters to find just what you need.
+                <button onclick="topFunction()" id="myBtn" title="Go to top">Return to top of page</button>
+                ```
+        }
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--scrollBody
+                t-Form--noPadding
+                margin-top-none
+                margin-bottom-md
+                margin-left-md
+                margin-right-md
+            ]
+            renderComponents: belowContent
+        }
+    )
+
+    region level (
+        name: Level
+        type: staticContent
+        layout {
+            sequence: 120
+            parentRegion: @choose-workshop-tags
+            slot: subRegions
+        }
+        appearance {
+            template: @collapsible
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                js-useLocalStorage
+                is-expanded
+                t-Region--noUI
+                t-Region--hiddenOverflow
+                t-Form--noPadding
+                margin-top-none
+                margin-bottom-none
+                margin-left-none
+                margin-right-none
+            ]
+        }
+        advanced {
+            htmlDomId: Level
+        }
+        serverSideCondition {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                declare
+                    l_select_sql VARCHAR2(4000) := '';
+                
+                    l_splitvars varchar2(4000);
+                    p_tempsearch varchar2(100) := :SEARCH;
+                    p_retsearch varchar2(4000) ;
+                    workshop_id varchar2(4000);
+                    first_loop number :=0;
+                    l_sql varchar2(4000);
+                    sql_cnt number := 0;
+                    l_sql2 varchar2(4000);
+                
+                BEGIN
+                  l_sql2 := '';  
+                  l_sql := 'select count(*) from (select llt.level2 ||'' (''||count(*)||'')'', llt.id
+                    from ll_workshop_tags llwt, ll_workshops llw, ll_tags llt
+                    where llwt.workshop_id = llw.id
+                    and llwt.tag_id = llt.id
+                    and llw.active_flg=''Y''
+                    and llt.active_flg=''Y''
+                    and upper(llt.level1) = ''LEVEL''    
+                    and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, ''' || nvl(:P50_WORKSHOP_TYPE,null) || ''') = ''Y''
+                    and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, ''' || nvl(:P50_CERTIFICATION,null) || ''') = ''Y''
+                    and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, ''' || nvl(:P50_ROLE,null) || ''') = ''Y''
+                    and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, ''' || nvl(:P50_WORKSHOP_SERIES,null) || ''') = ''Y''
+                    and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, ''' || nvl(:P50_FOCUS_AREA,null) || ''') = ''Y''
+                    and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, ''' || nvl(:P50_PRODUCT,null) || ''') = ''Y''
+                    and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, ''' || nvl(:P50_SALES_PLAY,null) || ''') = ''Y''
+                    and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, ''' || nvl(:P50_SALES_FOCUS,null) || ''') = ''Y'' ';
+                    
+                    if (:SEARCH is not null) then
+                      p_tempsearch := REGEXP_REPLACE(p_tempsearch,chr(39),'');
+                      p_tempsearch := REGEXP_REPLACE(p_tempsearch,chr(38),'');
+                       
+                    
+                      p_retsearch := ll_pkg_apex.clean_searchstr(p_tempsearch);
+                      if(p_retsearch is not null) then
+                        
+                      l_splitvars :=  upper(REGEXP_REPLACE ( '' ||p_retsearch|| '',' ',' | ')) ;
+                      l_splitvars := upper(l_splitvars);
+                      l_splitvars := REGEXP_REPLACE(l_splitvars,' ','');
+                
+                      p_retsearch := ltrim(rtrim(p_retsearch));
+                    
+                      p_retsearch := REGEXP_REPLACE(p_retsearch,' ',',');
+                  
+                      first_loop := 0;
+                      l_sql := ''||l_sql||' and ((';
+                    
+                      for x in (select column_value from table(apex_string.split(p_retsearch, ','))) loop
+                    
+                        if(first_loop != 0) then
+                          l_sql := l_sql || ' and ';
+                          l_sql2 := l_sql2 || ' or ';
+                        end if;
+                
+                        l_sql :=  l_sql || '(upper('' '' || llw.NAME || '' '') like  upper(''% '||x.column_value||' %'')   )';
+                        l_sql2 := l_sql2 || '(upper('' '' || b.level1 || '' '') like  upper(''% '||x.column_value||' %'')   ) or';
+                        l_sql2 := l_sql2 || '(upper('' '' || b.level2 || '' '') like  upper(''% '||x.column_value||' %'')   ) or';
+                        l_sql2 := l_sql2 || '(upper('' '' || b.level3 || '' '') like  upper(''% '||x.column_value||' %'')   )';
+                        first_loop := 1;
+                      end loop;
+                
+                      l_sql := l_sql || ') or llw.id in
+                            (select a.workshop_id
+                             from ll_workshop_tags a, ll_tags b 
+                             where a.tag_id = b.id 
+                             and (' || l_sql2 || ')))' ;
+                             
+                    end if;
+                    end if;
+                
+                    
+                        l_sql := l_sql || ' group by llt.level2, llt.id having count(*) > 0)';
+                
+                      
+                       execute immediate l_sql into sql_cnt;
+                       --insert into sql_dump values (l_sql);
+                
+                       if (sql_cnt > 0) then
+                        return true;
+                       else
+                        return false;
+                       end if;
+                END;
+                ```
+        }
+    )
+
+    region order-by (
+        name: Order By
+        type: staticContent
+        layout {
+            sequence: 30
+            parentRegion: @choose-workshop-tags
+            slot: subRegions
+        }
+        appearance {
+            template: @collapsible
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                js-useLocalStorage
+                is-expanded
+                t-Region--noUI
+                t-Region--hiddenOverflow
+                t-Form--noPadding
+                margin-top-none
+                margin-bottom-none
+                margin-left-none
+                margin-right-none
+            ]
+        }
+        advanced {
+            htmlDomId: Order_By
+        }
+    )
+
+    region product (
+        name: Product
+        type: staticContent
+        layout {
+            sequence: 90
+            parentRegion: @choose-workshop-tags
+            slot: subRegions
+        }
+        appearance {
+            template: @collapsible
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                js-useLocalStorage
+                is-expanded
+                t-Region--noUI
+                t-Region--hiddenOverflow
+                t-Form--noPadding
+                margin-top-none
+                margin-bottom-none
+                margin-left-none
+                margin-right-none
+            ]
+        }
+        advanced {
+            htmlDomId: Product
+        }
+        serverSideCondition {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                declare
+                    l_select_sql VARCHAR2(4000) := '';
+                
+                    l_splitvars varchar2(4000);
+                    p_tempsearch varchar2(100) := :SEARCH;
+                    p_retsearch varchar2(4000) ;
+                    workshop_id varchar2(4000);
+                    first_loop number :=0;
+                    l_sql varchar2(4000);
+                    sql_cnt number := 0;
+                    l_sql2 varchar2(4000);
+                
+                BEGIN
+                  l_sql2 := '';  
+                  l_sql := 'select count(*) from (select nvl(llt.level3,llt.level2)||'' (''||count(*)||'')'', llt.id
+                    from ll_workshop_tags llwt, ll_workshops llw, ll_tags llt
+                    where llwt.workshop_id = llw.id
+                    and llwt.tag_id = llt.id
+                    and llw.active_flg=''Y''
+                    and llt.active_flg=''Y''
+                    and upper(llt.level1) = ''PRODUCT''    
+                    and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, ''' || nvl(:P50_WORKSHOP_TYPE,null) || ''') = ''Y''
+                    and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, ''' || nvl(:P50_CERTIFICATION,null) || ''') = ''Y''
+                    and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, ''' || nvl(:P50_ROLE,null) || ''') = ''Y''
+                    and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, ''' || nvl(:P50_LEVEL,null) || ''') = ''Y''
+                    and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, ''' || nvl(:P50_FOCUS_AREA,null) || ''') = ''Y''
+                    and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, ''' || nvl(:P50_WORKSHOP_SERIES,null) || ''') = ''Y''
+                    and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, ''' || nvl(:P50_SALES_PLAY,null) || ''') = ''Y''
+                    and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, ''' || nvl(:P50_SALES_FOCUS,null) || ''') = ''Y'' ';
+                    
+                    if (:SEARCH is not null) then
+                      p_tempsearch := REGEXP_REPLACE(p_tempsearch,chr(39),'');
+                      p_tempsearch := REGEXP_REPLACE(p_tempsearch,chr(38),'');
+                       
+                    
+                      p_retsearch := ll_pkg_apex.clean_searchstr(p_tempsearch);
+                      if(p_retsearch is not null) then
+                          
+                      l_splitvars :=  upper(REGEXP_REPLACE ( '' ||p_retsearch|| '',' ',' | ')) ;
+                      l_splitvars := upper(l_splitvars);
+                      l_splitvars := REGEXP_REPLACE(l_splitvars,' ','');
+                
+                      p_retsearch := ltrim(rtrim(p_retsearch));
+                    
+                      p_retsearch := REGEXP_REPLACE(p_retsearch,' ',',');
+                  
+                      first_loop := 0;
+                      l_sql := ''||l_sql||' and ((';
+                    
+                      for x in (select column_value from table(apex_string.split(p_retsearch, ','))) loop
+                    
+                        if(first_loop != 0) then
+                          l_sql := l_sql || ' and ';
+                          l_sql2 := l_sql2 || ' or ';
+                        end if;
+                
+                        l_sql :=  l_sql || '(upper('' '' || llw.NAME || '' '') like  upper(''% '||x.column_value||' %'')   )';
+                        l_sql2 := l_sql2 || '(upper('' '' || b.level1 || '' '') like  upper(''% '||x.column_value||' %'')   ) or';
+                        l_sql2 := l_sql2 || '(upper('' '' || b.level2 || '' '') like  upper(''% '||x.column_value||' %'')   ) or';
+                        l_sql2 := l_sql2 || '(upper('' '' || b.level3 || '' '') like  upper(''% '||x.column_value||' %'')   )';
+                        first_loop := 1;
+                      end loop;
+                
+                      l_sql := l_sql || ') or llw.id in
+                            (select a.workshop_id
+                             from ll_workshop_tags a, ll_tags b 
+                             where a.tag_id = b.id 
+                             and (' || l_sql2 || ')))' ;
+                             
+                    end if;
+                    end if;
+                
+                    
+                        l_sql := l_sql || ' group by llt.level3, llt.level2, llt.id having count(*) > 0)';
+                
+                      
+                       execute immediate l_sql into sql_cnt;
+                       --insert into sql_dump values (l_sql);
+                
+                       if (sql_cnt > 0) then
+                        return true;
+                       else
+                        return false;
+                       end if;
+                END;
+                ```
+        }
+    )
+
+    region role (
+        name: Role
+        type: staticContent
+        layout {
+            sequence: 70
+            parentRegion: @choose-workshop-tags
+            slot: subRegions
+        }
+        appearance {
+            template: @collapsible
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                js-useLocalStorage
+                is-expanded
+                t-Region--noUI
+                t-Region--hiddenOverflow
+                t-Form--noPadding
+                margin-top-none
+                margin-bottom-none
+                margin-left-none
+                margin-right-none
+            ]
+        }
+        advanced {
+            htmlDomId: Role
+        }
+        serverSideCondition {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                declare
+                    l_select_sql VARCHAR2(4000) := '';
+                
+                    l_splitvars varchar2(4000);
+                    p_tempsearch varchar2(100) := :SEARCH;
+                    p_retsearch varchar2(4000) ;
+                    workshop_id varchar2(4000);
+                    first_loop number :=0;
+                    l_sql varchar2(4000);
+                    sql_cnt number := 0;
+                    l_sql2 varchar2(4000);
+                
+                BEGIN
+                  l_sql2 := '';  
+                  l_sql := 'select count(*) from (select llt.level2 ||'' (''||count(*)||'')'', llt.id
+                    from ll_workshop_tags llwt, ll_workshops llw, ll_tags llt
+                    where llwt.workshop_id = llw.id
+                    and llwt.tag_id = llt.id
+                    and llw.active_flg=''Y''
+                    and llt.active_flg=''Y''
+                    and upper(llt.level1) = ''ROLE''    
+                    and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, ''' || nvl(:P50_WORKSHOP_TYPE,null) || ''') = ''Y''
+                    and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, ''' || nvl(:P50_CERTIFICATION,null) || ''') = ''Y''
+                    and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, ''' || nvl(:P50_WORKSHOP_SERIES,null) || ''') = ''Y''
+                    and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, ''' || nvl(:P50_LEVEL,null) || ''') = ''Y''
+                    and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, ''' || nvl(:P50_FOCUS_AREA,null) || ''') = ''Y''
+                    and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, ''' || nvl(:P50_PRODUCT,null) || ''') = ''Y''
+                    and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, ''' || nvl(:P50_SALES_PLAY,null) || ''') = ''Y''
+                    and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, ''' || nvl(:P50_SALES_FOCUS,null) || ''') = ''Y'' ';
+                    
+                    if (:SEARCH is not null) then
+                      p_tempsearch := REGEXP_REPLACE(p_tempsearch,chr(39),'');
+                      p_tempsearch := REGEXP_REPLACE(p_tempsearch,chr(38),'');
+                       
+                    
+                      p_retsearch := ll_pkg_apex.clean_searchstr(p_tempsearch);
+                      if(p_retsearch is not null) then
+                          
+                      l_splitvars :=  upper(REGEXP_REPLACE ( '' ||p_retsearch|| '',' ',' | ')) ;
+                      l_splitvars := upper(l_splitvars);
+                      l_splitvars := REGEXP_REPLACE(l_splitvars,' ','');
+                
+                      p_retsearch := ltrim(rtrim(p_retsearch));
+                    
+                      p_retsearch := REGEXP_REPLACE(p_retsearch,' ',',');
+                  
+                      first_loop := 0;
+                      l_sql := ''||l_sql||' and ((';
+                    
+                      for x in (select column_value from table(apex_string.split(p_retsearch, ','))) loop
+                    
+                        if(first_loop != 0) then
+                          l_sql := l_sql || ' and ';
+                          l_sql2 := l_sql2 || ' or ';
+                        end if;
+                
+                        l_sql :=  l_sql || '(upper('' '' || llw.NAME || '' '') like  upper(''% '||x.column_value||' %'')   )';
+                        l_sql2 := l_sql2 || '(upper('' '' || b.level1 || '' '') like  upper(''% '||x.column_value||' %'')   ) or';
+                        l_sql2 := l_sql2 || '(upper('' '' || b.level2 || '' '') like  upper(''% '||x.column_value||' %'')   ) or';
+                        l_sql2 := l_sql2 || '(upper('' '' || b.level3 || '' '') like  upper(''% '||x.column_value||' %'')   )';
+                        first_loop := 1;
+                      end loop;
+                
+                      l_sql := l_sql || ') or llw.id in
+                            (select a.workshop_id
+                             from ll_workshop_tags a, ll_tags b 
+                             where a.tag_id = b.id 
+                             and (' || l_sql2 || ')))' ;
+                             
+                    end if;
+                    end if;
+                
+                    
+                        l_sql := l_sql || ' group by llt.level2, llt.id having count(*) > 0)';
+                
+                      
+                       execute immediate l_sql into sql_cnt;
+                       --insert into sql_dump values (l_sql);
+                
+                       if (sql_cnt > 0) then
+                        return true;
+                       else
+                        return false;
+                       end if;
+                END;
+                ```
+        }
+    )
+
+    region sales-focus (
+        name: Sales Focus
+        type: staticContent
+        layout {
+            sequence: 100
+            parentRegion: @choose-workshop-tags
+            slot: subRegions
+        }
+        appearance {
+            template: @collapsible
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                js-useLocalStorage
+                is-collapsed
+                t-Region--noUI
+                t-Region--hiddenOverflow
+                t-Form--noPadding
+                margin-top-none
+                margin-bottom-none
+                margin-left-none
+                margin-right-none
+            ]
+        }
+        advanced {
+            htmlDomId: Sales_Focus
+        }
+        serverSideCondition {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                declare
+                    l_select_sql VARCHAR2(4000) := '';
+                
+                    l_splitvars varchar2(4000);
+                    p_tempsearch varchar2(100) := :SEARCH;
+                    p_retsearch varchar2(4000) ;
+                    workshop_id varchar2(4000);
+                    first_loop number :=0;
+                    l_sql varchar2(4000);
+                    sql_cnt number := 0;
+                    l_sql2 varchar2(4000);
+                
+                BEGIN
+                  l_sql2 := '';  
+                  l_sql := 'select count(*) from (select llt.level2 ||'' (''||count(*)||'')'', llt.id
+                    from ll_workshop_tags llwt, ll_workshops llw, ll_tags llt
+                    where llwt.workshop_id = llw.id
+                    and llwt.tag_id = llt.id
+                    and llw.active_flg=''Y''
+                    and llt.active_flg=''Y''
+                    and upper(llt.level1) = ''SALES FOCUS''    
+                    and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, ''' || nvl(:P50_WORKSHOP_TYPE,null) || ''') = ''Y''
+                    and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, ''' || nvl(:P50_CERTIFICATION,null) || ''') = ''Y''
+                    and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, ''' || nvl(:P50_ROLE,null) || ''') = ''Y''
+                    and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, ''' || nvl(:P50_LEVEL,null) || ''') = ''Y''
+                    and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, ''' || nvl(:P50_FOCUS_AREA,null) || ''') = ''Y''
+                    and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, ''' || nvl(:P50_PRODUCT,null) || ''') = ''Y''
+                    and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, ''' || nvl(:P50_SALES_PLAY,null) || ''') = ''Y''
+                    and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, ''' || nvl(:P50_WORKSHOP_SERIES,null) || ''') = ''Y''
+                    and instr(upper(''' || :app_user || '''),''@ORACLE.COM'')>0 ';
+                    
+                    if (:SEARCH is not null) then
+                      p_tempsearch := REGEXP_REPLACE(p_tempsearch,chr(39),'');
+                      p_tempsearch := REGEXP_REPLACE(p_tempsearch,chr(38),'');
+                       
+                    
+                      p_retsearch := ll_pkg_apex.clean_searchstr(p_tempsearch);
+                      if(p_retsearch is not null) then
+                          
+                      l_splitvars :=  upper(REGEXP_REPLACE ( '' ||p_retsearch|| '',' ',' | ')) ;
+                      l_splitvars := upper(l_splitvars);
+                      l_splitvars := REGEXP_REPLACE(l_splitvars,' ','');
+                
+                      p_retsearch := ltrim(rtrim(p_retsearch));
+                    
+                      p_retsearch := REGEXP_REPLACE(p_retsearch,' ',',');
+                  
+                      first_loop := 0;
+                      l_sql := ''||l_sql||' and ((';
+                    
+                      for x in (select column_value from table(apex_string.split(p_retsearch, ','))) loop
+                    
+                        if(first_loop != 0) then
+                          l_sql := l_sql || ' and ';
+                          l_sql2 := l_sql2 || ' or ';
+                        end if;
+                
+                        l_sql :=  l_sql || '(upper('' '' || llw.NAME || '' '') like  upper(''% '||x.column_value||' %'')   )';
+                        l_sql2 := l_sql2 || '(upper('' '' || b.level1 || '' '') like  upper(''% '||x.column_value||' %'')   ) or';
+                        l_sql2 := l_sql2 || '(upper('' '' || b.level2 || '' '') like  upper(''% '||x.column_value||' %'')   ) or';
+                        l_sql2 := l_sql2 || '(upper('' '' || b.level3 || '' '') like  upper(''% '||x.column_value||' %'')   )';
+                        first_loop := 1;
+                      end loop;
+                
+                      l_sql := l_sql || ') or llw.id in
+                            (select a.workshop_id
+                             from ll_workshop_tags a, ll_tags b 
+                             where a.tag_id = b.id 
+                             and (' || l_sql2 || ')))' ;
+                             
+                    end if;
+                    end if;
+                
+                    
+                        l_sql := l_sql || ' group by llt.level2, llt.id having count(*) > 0)';
+                
+                      
+                       execute immediate l_sql into sql_cnt;
+                       --insert into sql_dump values (l_sql);
+                
+                       if (sql_cnt > 0) then
+                        return true;
+                       else
+                        return false;
+                       end if;
+                END;
+                ```
+        }
+    )
+
+    region sales-play (
+        name: Sales Play
+        type: staticContent
+        layout {
+            sequence: 110
+            parentRegion: @choose-workshop-tags
+            slot: subRegions
+        }
+        appearance {
+            template: @collapsible
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                js-useLocalStorage
+                is-collapsed
+                t-Region--noUI
+                t-Region--hiddenOverflow
+                t-Form--noPadding
+                margin-top-none
+                margin-bottom-none
+                margin-left-none
+                margin-right-none
+            ]
+        }
+        advanced {
+            htmlDomId: Sales_Play
+        }
+        serverSideCondition {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                declare
+                    l_select_sql VARCHAR2(4000) := '';
+                
+                    l_splitvars varchar2(4000);
+                    p_tempsearch varchar2(100) := :SEARCH;
+                    p_retsearch varchar2(4000) ;
+                    workshop_id varchar2(4000);
+                    first_loop number :=0;
+                    l_sql varchar2(4000);
+                    sql_cnt number := 0;
+                    l_sql2 varchar2(4000);
+                
+                BEGIN
+                  l_sql2 := '';  
+                  l_sql := 'select count(*) from (select llt.level2 ||'' (''||count(*)||'')'', llt.id
+                    from ll_workshop_tags llwt, ll_workshops llw, ll_tags llt
+                    where llwt.workshop_id = llw.id
+                    and llwt.tag_id = llt.id
+                    and llw.active_flg=''Y''
+                    and llt.active_flg=''Y''
+                    and upper(llt.level1) = ''SALES PLAY''    
+                    and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, ''' || nvl(:P50_WORKSHOP_TYPE,null) || ''') = ''Y''
+                    and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, ''' || nvl(:P50_CERTIFICATION,null) || ''') = ''Y''
+                    and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, ''' || nvl(:P50_ROLE,null) || ''') = ''Y''
+                    and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, ''' || nvl(:P50_LEVEL,null) || ''') = ''Y''
+                    and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, ''' || nvl(:P50_FOCUS_AREA,null) || ''') = ''Y''
+                    and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, ''' || nvl(:P50_PRODUCT,null) || ''') = ''Y''
+                    and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, ''' || nvl(:P50_WORKSHOP_SERIES,null) || ''') = ''Y''
+                    and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, ''' || nvl(:P50_SALES_FOCUS,null) || ''') = ''Y''
+                    and instr(upper(''' || :app_user || '''),''@ORACLE.COM'')>0 ';
+                    
+                    if (:SEARCH is not null) then
+                      p_tempsearch := REGEXP_REPLACE(p_tempsearch,chr(39),'');
+                      p_tempsearch := REGEXP_REPLACE(p_tempsearch,chr(38),'');
+                       
+                    
+                      p_retsearch := ll_pkg_apex.clean_searchstr(p_tempsearch);
+                      if(p_retsearch is not null) then
+                          
+                      l_splitvars :=  upper(REGEXP_REPLACE ( '' ||p_retsearch|| '',' ',' | ')) ;
+                      l_splitvars := upper(l_splitvars);
+                      l_splitvars := REGEXP_REPLACE(l_splitvars,' ','');
+                
+                      p_retsearch := ltrim(rtrim(p_retsearch));
+                    
+                      p_retsearch := REGEXP_REPLACE(p_retsearch,' ',',');
+                  
+                      first_loop := 0;
+                      l_sql := ''||l_sql||' and ((';
+                    
+                      for x in (select column_value from table(apex_string.split(p_retsearch, ','))) loop
+                    
+                        if(first_loop != 0) then
+                          l_sql := l_sql || ' and ';
+                          l_sql2 := l_sql2 || ' or ';
+                        end if;
+                
+                        l_sql :=  l_sql || '(upper('' '' || llw.NAME || '' '') like  upper(''% '||x.column_value||' %'')   )';
+                        l_sql2 := l_sql2 || '(upper('' '' || b.level1 || '' '') like  upper(''% '||x.column_value||' %'')   ) or';
+                        l_sql2 := l_sql2 || '(upper('' '' || b.level2 || '' '') like  upper(''% '||x.column_value||' %'')   ) or';
+                        l_sql2 := l_sql2 || '(upper('' '' || b.level3 || '' '') like  upper(''% '||x.column_value||' %'')   )';
+                        first_loop := 1;
+                      end loop;
+                
+                      l_sql := l_sql || ') or llw.id in
+                            (select a.workshop_id
+                             from ll_workshop_tags a, ll_tags b 
+                             where a.tag_id = b.id 
+                             and (' || l_sql2 || ')))' ;
+                             
+                    end if;
+                    end if;
+                
+                    
+                        l_sql := l_sql || ' group by llt.level2, llt.id having count(*) > 0)';
+                
+                      
+                       execute immediate l_sql into sql_cnt;
+                       --insert into sql_dump values (l_sql);
+                
+                       if (sql_cnt > 0) then
+                        return true;
+                       else
+                        return false;
+                       end if;
+                END;
+                ```
+        }
+    )
+
+    region search-results (
+        name: search-results
+        type: staticContent
+        source {
+            htmlCode: <strong>Search results</strong>
+        }
+        layout {
+            sequence: 20
+            parentRegion: @header-text-before-cards
+            slot: subRegions
+            startNewRow: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--scrollBody
+                t-Form--noPadding
+                margin-top-none
+                margin-bottom-none
+                margin-left-none
+                margin-right-none
+            ]
+        }
+    )
+
+    region search-spacer (
+        name: Search spacer
+        type: staticContent
+        layout {
+            sequence: 30
+            parentRegion: @header-text-before-cards
+            slot: subRegions
+            startNewRow: false
+            columnSpan: 3
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    region share-url-for-current-filters (
+        name: Share URL for Current Filters
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <span style="font-size:1.3em">
+                <p><strong>The URL for the current search and filter selection has been copied to the clipboard.</strong></p>
+                <p><i>This QR code is the URL for the filters you’ve set.</i></p>
+                <p><i>Share this QR code with others by right-clicking to save the image.</i></p>
+                </span>
+                
+                
+                ```
+        }
+        layout {
+            sequence: 70
+            slot: contentBody
+        }
+        appearance {
+            template: @inline-dialog
+            templateOptions: [
+                #DEFAULT#
+                js-dialog-autoheight
+                js-dialog-size480x320
+                margin-bottom-none
+                margin-right-none
+            ]
+            renderComponents: belowContent
+        }
+        advanced {
+            htmlDomId: SHARE_FLTR_URL
+        }
+    )
+
+    region span-style-font-weight-200-workshops-and-sprints-span-span-style-font-weight-200-p50-pagetitle-span (
+        name: <span style="font-weight: 200">Workshops and Sprints</span> <span style="font-weight:200">&P50_PAGETITLE.</span>
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @title-bar
+            templateOptions: [
+                #DEFAULT#
+                t-BreadcrumbRegion--useRegionTitle
+                t-Form--noPadding
+                margin-bottom-none
+                margin-left-none
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region top (
+        name: TOP
+        type: staticContent
+        layout {
+            sequence: 20
+            parentRegion: @choose-workshop-tags
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader
+                t-Region--noUI
+                t-Region--hiddenOverflow
+                t-Form--noPadding
+                margin-top-none
+                margin-bottom-none
+                margin-left-none
+                margin-right-none
+            ]
+        }
+    )
+
+    region workshop-or-event-not-found (
+        name: Workshop or Event Not Found
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <span style="font-size:1.2em;font-weight: 400">
+                    <table>
+                        <tr>
+                            <td>
+                                <img src="#APP_IMAGES#ll_error.png" width="70px">
+                            </td>
+                            <td width="2px">
+                            </td>
+                            <td>
+                                <p>The workshop or event code you entered could not be found.</p>
+                                <p>Please confirm you have the correct link to the workshop or event, 
+                                    or search for the event on the <b>Available Workshops</b> page.</p><br>
+                            <td>
+                        <tr>
+                    </table>
+                </span>
+                ```
+        }
+        layout {
+            sequence: 80
+            slot: contentBody
+        }
+        appearance {
+            template: @inline-dialog
+            templateOptions: [
+                js-dialog-autoheight
+                js-modal
+                js-dialog-size480x320
+            ]
+        }
+        advanced {
+            htmlDomId: ERROR_DIALOG
+            regionDisplaySelector: true
+        }
+    )
+
+    region workshop-series (
+        name: Workshop Series
+        type: staticContent
+        layout {
+            sequence: 50
+            parentRegion: @choose-workshop-tags
+            slot: subRegions
+        }
+        appearance {
+            template: @collapsible
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                js-useLocalStorage
+                is-expanded
+                t-Region--noUI
+                t-Region--hiddenOverflow
+                t-Form--noPadding
+                margin-top-none
+                margin-bottom-none
+                margin-left-none
+                margin-right-none
+            ]
+        }
+        advanced {
+            htmlDomId: Workshop_Series
+        }
+        serverSideCondition {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                declare
+                    l_select_sql VARCHAR2(4000) := '';
+                
+                    l_splitvars varchar2(4000);
+                    p_tempsearch varchar2(100) := :SEARCH;
+                    p_retsearch varchar2(4000) ;
+                    workshop_id varchar2(4000);
+                    first_loop number :=0;
+                    l_sql varchar2(4000);
+                    sql_cnt number := 0;
+                    l_sql2 varchar2(4000);
+                
+                BEGIN
+                  l_sql2 := '';  
+                  l_sql := 'select count(*) from (select llt.level2 ||'' (''||count(*)||'')'', llt.id
+                    from ll_workshop_tags llwt, ll_workshops llw, ll_tags llt
+                    where llwt.workshop_id = llw.id
+                    and llwt.tag_id = llt.id
+                    and llw.active_flg=''Y''
+                    and llt.active_flg=''Y''
+                    and upper(llt.level1) = ''WORKSHOP SERIES''    
+                    and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, ''' || nvl(:P50_WORKSHOP_TYPE,null) || ''') = ''Y''
+                    and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, ''' || nvl(:P50_CERTIFICATION,null) || ''') = ''Y''
+                    and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, ''' || nvl(:P50_ROLE,null) || ''') = ''Y''
+                    and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, ''' || nvl(:P50_LEVEL,null) || ''') = ''Y''
+                    and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, ''' || nvl(:P50_FOCUS_AREA,null) || ''') = ''Y''
+                    and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, ''' || nvl(:P50_PRODUCT,null) || ''') = ''Y''
+                    and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, ''' || nvl(:P50_SALES_PLAY,null) || ''') = ''Y''
+                    and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, ''' || nvl(:P50_SALES_FOCUS,null) || ''') = ''Y'' ';
+                    
+                    if (:SEARCH is not null) then
+                      p_tempsearch := REGEXP_REPLACE(p_tempsearch,chr(39),'');
+                      p_tempsearch := REGEXP_REPLACE(p_tempsearch,chr(38),'');
+                       
+                    
+                      p_retsearch := ll_pkg_apex.clean_searchstr(p_tempsearch);
+                      if(p_retsearch is not null) then
+                          
+                      l_splitvars :=  upper(REGEXP_REPLACE ( '' ||p_retsearch|| '',' ',' | ')) ;
+                      l_splitvars := upper(l_splitvars);
+                      l_splitvars := REGEXP_REPLACE(l_splitvars,' ','');
+                
+                      p_retsearch := ltrim(rtrim(p_retsearch));
+                    
+                      p_retsearch := REGEXP_REPLACE(p_retsearch,' ',',');
+                  
+                      first_loop := 0;
+                      l_sql := ''||l_sql||' and ((';
+                    
+                      for x in (select column_value from table(apex_string.split(p_retsearch, ','))) loop
+                    
+                        if(first_loop != 0) then
+                          l_sql := l_sql || ' and ';
+                          l_sql2 := l_sql2 || ' or ';
+                        end if;
+                
+                        l_sql :=  l_sql || '(upper('' '' || llw.NAME || '' '') like  upper(''% '||x.column_value||' %'')   )';
+                        l_sql2 := l_sql2 || '(upper('' '' || b.level1 || '' '') like  upper(''% '||x.column_value||' %'')   ) or';
+                        l_sql2 := l_sql2 || '(upper('' '' || b.level2 || '' '') like  upper(''% '||x.column_value||' %'')   ) or';
+                        l_sql2 := l_sql2 || '(upper('' '' || b.level3 || '' '') like  upper(''% '||x.column_value||' %'')   )';
+                        first_loop := 1;
+                      end loop;
+                
+                      l_sql := l_sql || ') or llw.id in
+                            (select a.workshop_id
+                             from ll_workshop_tags a, ll_tags b 
+                             where a.tag_id = b.id 
+                             and (' || l_sql2 || ')))' ;
+                             
+                    end if;
+                    end if;
+                
+                    
+                        l_sql := l_sql || ' group by llt.level2, llt.id having count(*) > 0)';
+                
+                      
+                       execute immediate l_sql into sql_cnt;
+                       --insert into sql_dump values (l_sql);
+                
+                       if (sql_cnt > 0) then
+                        return true;
+                       else
+                        return false;
+                       end if;
+                END;
+                ```
+        }
+    )
+
+    region workshop-type (
+        name: Workshop Type
+        type: staticContent
+        layout {
+            sequence: 40
+            parentRegion: @choose-workshop-tags
+            slot: subRegions
+        }
+        appearance {
+            template: @collapsible
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                js-useLocalStorage
+                is-expanded
+                t-Region--noUI
+                t-Region--hiddenOverflow
+                t-Form--noPadding
+                margin-top-none
+                margin-bottom-none
+                margin-left-none
+                margin-right-none
+            ]
+        }
+        advanced {
+            htmlDomId: Workshop_Type
+        }
+        serverSideCondition {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                declare
+                    l_select_sql VARCHAR2(4000) := '';
+                
+                    l_splitvars varchar2(4000);
+                    p_tempsearch varchar2(100) := :SEARCH;
+                    p_retsearch varchar2(4000) ;
+                    workshop_id varchar2(4000);
+                    first_loop number :=0;
+                    l_sql varchar2(4000);
+                    sql_cnt number := 0;
+                    l_sql2 varchar2(4000);
+                
+                BEGIN
+                  l_sql2 := '';
+                  l_sql := 'select count(*) from (select llt.level2 ||'' (''||count(*)||'')'', llt.id
+                    from ll_workshop_tags llwt, ll_workshops llw, ll_tags llt
+                    where llwt.workshop_id = llw.id
+                    and llwt.tag_id = llt.id
+                    and llw.active_flg=''Y''
+                    and llt.active_flg=''Y''
+                    and upper(llt.level1) = ''WORKSHOP TYPE''    
+                    and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, ''' || nvl(:P50_WORKSHOP_SERIES,null) || ''') = ''Y''
+                    and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, ''' || nvl(:P50_CERTIFICATION,null) || ''') = ''Y''
+                    and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, ''' || nvl(:P50_ROLE,null) || ''') = ''Y''
+                    and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, ''' || nvl(:P50_LEVEL,null) || ''') = ''Y''
+                    and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, ''' || nvl(:P50_FOCUS_AREA,null) || ''') = ''Y''
+                    and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, ''' || nvl(:P50_PRODUCT,null) || ''') = ''Y''
+                    and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, ''' || nvl(:P50_SALES_PLAY,null) || ''') = ''Y''
+                    and LL_PKG_ADMIN.COMPARE_CATEGORY_TAGS ( llw.ID, ''' || nvl(:P50_SALES_FOCUS,null) || ''') = ''Y'' ';
+                    
+                    if (:SEARCH is not null) then
+                      p_tempsearch := REGEXP_REPLACE(p_tempsearch,chr(39),'');
+                      p_tempsearch := REGEXP_REPLACE(p_tempsearch,chr(38),'');
+                       
+                    
+                      p_retsearch := ll_pkg_apex.clean_searchstr(p_tempsearch);
+                      if(p_retsearch is not null) then
+                        
+                      l_splitvars :=  upper(REGEXP_REPLACE ( '' ||p_retsearch|| '',' ',' | ')) ;
+                      l_splitvars := upper(l_splitvars);
+                      l_splitvars := REGEXP_REPLACE(l_splitvars,' ','');
+                
+                      p_retsearch := ltrim(rtrim(p_retsearch));
+                    
+                      p_retsearch := REGEXP_REPLACE(p_retsearch,' ',',');
+                  
+                      first_loop := 0;
+                      l_sql := ''||l_sql||' and ((';
+                    
+                      for x in (select column_value from table(apex_string.split(p_retsearch, ','))) loop
+                    
+                        if(first_loop != 0) then
+                          l_sql := l_sql || ' and ';
+                          l_sql2 := l_sql2 || ' or ';
+                        end if;
+                
+                        l_sql :=  l_sql || '(upper('' '' || llw.NAME || '' '') like  upper(''% '||x.column_value||' %'')   )';
+                        l_sql2 := l_sql2 || '(upper('' '' || b.level1 || '' '') like  upper(''% '||x.column_value||' %'')   ) or';
+                        l_sql2 := l_sql2 || '(upper('' '' || b.level2 || '' '') like  upper(''% '||x.column_value||' %'')   ) or';
+                        l_sql2 := l_sql2 || '(upper('' '' || b.level3 || '' '') like  upper(''% '||x.column_value||' %'')   )';
+                        first_loop := 1;
+                      end loop;
+                
+                      l_sql := l_sql || ') or llw.id in
+                            (select a.workshop_id
+                             from ll_workshop_tags a, ll_tags b 
+                             where a.tag_id = b.id 
+                             and (' || l_sql2 || ')))' ;
+                             
+                    end if;
+                    end if;
+                
+                    
+                        l_sql := l_sql || ' group by llt.level2, llt.id having count(*) > 0)';
+                
+                      
+                       execute immediate l_sql into sql_cnt;
+                       --insert into sql_dump values (l_sql);
+                
+                       if (sql_cnt > 0) then
+                        return true;
+                       else
+                        return false;
+                       end if;
+                END;
+                ```
+        }
+    )
+
+    pageItem 50_C (
+        type: hidden
+        layout {
+            sequence: 50
+            region: @choose-workshop-tags
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem 50_ME (
+        type: hidden
+        layout {
+            sequence: 30
+            region: @choose-workshop-tags
+            slot: regionBody
+        }
+        source {
+            used: always
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem 50_SEARCH (
+        type: hidden
+        layout {
+            sequence: 20
+            region: @header-text-before-cards
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem 50_SENFS (
+        type: hidden
+        layout {
+            sequence: 10
+            region: @header-text-before-cards
+            slot: regionBody
+        }
+        source {
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P50_CERTIFICATION (
+        type: checkboxGroup
+        label {
+            label: Certification
+            alignment: left
+        }
+        lov {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                begin
+                return ll_pkg_apex.filter_sql(:SEARCH, 'CERTIFICATION');
+                end;
+                ```
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 10
+            region: @certification
+            slot: regionBody
+            alignment: left
+            column: 1
+            labelColumnSpan: 0
+        }
+        appearance {
+            template: @optional
+            templateOptions: [
+                #DEFAULT#
+                margin-top-none
+                margin-bottom-none
+                margin-left-none
+                margin-right-none
+            ]
+        }
+        advanced {
+            preText: <div style="overflow: auto; width: 250px; min-height: 0px; max-height: 100px;">
+            postText: </div>
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P50_FOCUS_AREA (
+        type: checkboxGroup
+        label {
+            alignment: left
+        }
+        lov {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                begin
+                return ll_pkg_apex.filter_sql(:SEARCH, 'FOCUS');
+                end;
+                ```
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 10
+            region: @focus-area
+            slot: regionBody
+            alignment: left
+            column: 1
+            labelColumnSpan: 0
+        }
+        appearance {
+            template: @hidden
+            templateOptions: [
+                #DEFAULT#
+                margin-top-none
+                margin-bottom-none
+                margin-left-none
+                margin-right-none
+            ]
+        }
+        advanced {
+            preText: <div style="overflow: auto; width: 250px; min-height: 0px; max-height: 200px;">
+            postText: </div>
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P50_HOST_URL (
+        type: hidden
+        layout {
+            sequence: 20
+            region: @choose-workshop-tags
+            slot: regionBody
+        }
+        source {
+            type: expression
+            plsqlExpression: apex_util.host_url('NULL')
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P50_LEVEL (
+        type: checkboxGroup
+        label {
+            alignment: left
+        }
+        lov {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                begin
+                return ll_pkg_apex.filter_sql(:SEARCH, 'LEVEL');
+                end;
+                ```
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 10
+            region: @level
+            slot: regionBody
+            alignment: left
+            column: 1
+            labelColumnSpan: 0
+        }
+        appearance {
+            template: @hidden
+            templateOptions: [
+                #DEFAULT#
+                margin-left-none
+                margin-right-none
+            ]
+        }
+        advanced {
+            preText: <div style="overflow: auto; width: 250px; min-height: 0px; max-height: 100px;">
+            postText: </div>
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P50_ORDER_BY (
+        type: selectList
+        label {
+            label: Order By
+            alignment: left
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC2:Most Popular;pg_views desc,Alphabetical;card_title
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 10
+            region: @order-by
+            slot: regionBody
+            alignment: left
+            column: 1
+            labelColumnSpan: 1
+        }
+        appearance {
+            template: @hidden
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        default {
+            type: static
+            staticValue: pg_views desc
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P50_PAGETITLE (
+        type: hidden
+        layout {
+            sequence: 40
+            region: @choose-workshop-tags
+            slot: regionBody
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery: select ' ('||nvl(title, item_name)||')' from ll_dynamic_menu where id = :ME
+            used: always
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P50_PRODUCT (
+        type: checkboxGroup
+        label {
+            alignment: left
+        }
+        lov {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                begin
+                return ll_pkg_apex.filter_sql(:SEARCH, 'PRODUCT');
+                end;
+                ```
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 20
+            region: @product
+            slot: regionBody
+            alignment: left
+            column: 1
+            labelColumnSpan: 0
+        }
+        appearance {
+            template: @hidden
+            templateOptions: [
+                #DEFAULT#
+                margin-left-none
+                margin-right-none
+            ]
+        }
+        advanced {
+            preText: <div style="overflow: auto; width: 250px; min-height: 0px; max-height: 200px;">
+            postText: </div>
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P50_QR (
+        type: plugin/qrCode
+        label {
+            alignment: left
+        }
+        settings {
+            displayType: bmpImage
+            imageSize: 150
+            margines: true
+        }
+        layout {
+            sequence: 30
+            region: @bottom
+            slot: regionBody
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: [
+                #DEFAULT#
+                margin-left-sm
+            ]
+        }
+        source {
+            type: expression
+            plsqlExpression: :P50_HOST_URL||:P50_SHARE_URL
+            used: always
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P50_SHARE_URL
+        }
+        help {
+            inlineHelpText:
+                ```html
+                <i>This QR code is the URL for the filters you’ve set.<br/>
+                Share this QR code with others by right-clicking to save the image.</i>
+                ```
+        }
+    )
+
+    pageItem P50_QR_1 (
+        type: plugin/qrCode
+        label {
+            alignment: left
+        }
+        settings {
+            displayType: bmpImage
+            imageSize: 150
+            margines: true
+        }
+        layout {
+            sequence: 250
+            region: @share-url-for-current-filters
+            slot: regionBody
+            column: 4
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        source {
+            type: expression
+            plsqlExpression: :P50_HOST_URL||:P50_SHARE_URL
+            used: always
+        }
+    )
+
+    pageItem P50_ROLE (
+        type: checkboxGroup
+        label {
+            alignment: left
+        }
+        lov {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                begin
+                return ll_pkg_apex.filter_sql(:SEARCH, 'ROLE');
+                end;
+                ```
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 10
+            region: @role
+            slot: regionBody
+            alignment: left
+            column: 1
+            labelColumnSpan: 0
+        }
+        appearance {
+            template: @hidden
+            templateOptions: [
+                #DEFAULT#
+                margin-top-none
+                margin-bottom-none
+                margin-left-none
+                margin-right-none
+            ]
+        }
+        advanced {
+            preText: <div style="overflow: auto; width: 250px; min-height: 0px; max-height: 200px;">
+            postText: </div>
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P50_SALES_FOCUS (
+        type: checkboxGroup
+        label {
+            alignment: left
+        }
+        lov {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                begin
+                return ll_pkg_apex.filter_sql(:SEARCH, 'SALES FOCUS');
+                end;
+                ```
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 10
+            region: @sales-focus
+            slot: regionBody
+            alignment: left
+            column: 1
+            labelColumnSpan: 0
+        }
+        appearance {
+            template: @optional
+            templateOptions: [
+                #DEFAULT#
+                margin-top-none
+                margin-bottom-none
+                margin-left-none
+                margin-right-none
+            ]
+        }
+        advanced {
+            preText: <div style="overflow: auto; width: 250px; min-height: 0px; max-height: 100px;">
+            postText: </div>
+        }
+    )
+
+    pageItem P50_SALES_PLAY (
+        type: checkboxGroup
+        label {
+            label: <strong>Sales Play</strong>
+            alignment: left
+        }
+        lov {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                begin
+                return ll_pkg_apex.filter_sql(:SEARCH, 'SALES PLAY');
+                end;
+                ```
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 10
+            region: @sales-play
+            slot: regionBody
+            alignment: left
+            column: 1
+            labelColumnSpan: 0
+        }
+        appearance {
+            template: @hidden
+            templateOptions: [
+                #DEFAULT#
+                margin-top-none
+                margin-bottom-none
+                margin-left-none
+                margin-right-none
+            ]
+        }
+        advanced {
+            preText: <div style="overflow: auto; width: 250px; min-height: 0px; max-height: 100px;">
+            postText: </div>
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P50_SHARE_URL (
+        type: hidden
+        layout {
+            sequence: 10
+            region: @choose-workshop-tags
+            slot: regionBody
+        }
+        source {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                declare
+                  v_items   clob;
+                  v_values  clob;
+                  v_url     varchar2(4000);
+                  
+                  procedure add_value (p_item varchar2, p_value varchar2) is
+                  begin
+                    if p_value is not null then
+                      if v_items is not null  then
+                        v_items := v_items || ',' || p_item;
+                      else
+                        v_items := p_item;
+                      end if;
+                    
+                      if v_values is not null then
+                        v_values := v_values || ',' || p_value;
+                      else
+                        v_values := p_value;
+                      end if;
+                    end if;
+                  end;
+                    
+                begin
+                
+                  add_value('C', 'y');
+                  add_value('SEARCH',:SEARCH);
+                  add_value('P50_WORKSHOP_TYPE',:P50_WORKSHOP_TYPE);
+                  add_value('P50_CERTIFICATION',:P50_CERTIFICATION);
+                  add_value('P50_ROLE',:P50_ROLE);
+                  add_value('P50_FOCUS_AREA',:P50_FOCUS_AREA);
+                  add_value('P50_PRODUCT',:P50_PRODUCT);
+                  add_value('P50_SALES_FOCUS',:P50_SALES_FOCUS);
+                  add_value('P50_SALES_PLAY',:P50_SALES_PLAY);
+                  add_value('P50_LEVEL',:P50_LEVEL);
+                  
+                  ll_pkg_log.log(10,'v_items: '||v_items);
+                  ll_pkg_log.log(10,'v_values: '||v_values);
+                
+                  v_url := substr( APEX_PAGE.GET_URL ( p_page   => 100,
+                                                       p_items  => v_items,
+                                                       p_values => v_values),2);
+                                                       
+                  v_url := replace(v_url,'%3A',':'); 
+                  v_url := substr(v_url,1,instr(v_url,'&session')-1);
+                
+                  return(v_url);
+                end;
+                ```
+            used: always
+        }
+        sessionState {
+            storage: request
+        }
+        security {
+            sessionStateProtection: checksumRequiredAppLevel
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P50_WORKSHOP_SERIES (
+        type: checkboxGroup
+        label {
+            label: Workshop Series
+            alignment: left
+        }
+        lov {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                begin
+                return ll_pkg_apex.filter_sql(:SEARCH, 'WORKSHOP SERIES');
+                end;
+                ```
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 10
+            region: @workshop-series
+            slot: regionBody
+            alignment: left
+            column: 1
+            labelColumnSpan: 0
+        }
+        appearance {
+            template: @optional
+            templateOptions: [
+                #DEFAULT#
+                margin-top-none
+                margin-bottom-none
+                margin-left-none
+                margin-right-none
+            ]
+        }
+        advanced {
+            preText: <div style="overflow: auto; width: 250px; min-height: 0px; max-height: 100px;">
+            postText: </div>
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P50_WORKSHOP_TYPE (
+        type: checkboxGroup
+        label {
+            label: Workshop Type
+            alignment: left
+        }
+        lov {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                begin
+                return ll_pkg_apex.filter_sql(:SEARCH, 'WORKSHOP TYPE');
+                end;
+                ```
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 10
+            region: @workshop-type
+            slot: regionBody
+            alignment: left
+            column: 1
+            labelColumnSpan: 0
+        }
+        appearance {
+            template: @optional
+            templateOptions: [
+                #DEFAULT#
+                margin-top-none
+                margin-bottom-none
+                margin-left-none
+                margin-right-none
+            ]
+        }
+        advanced {
+            preText: <div style="overflow: auto; width: 250px; min-height: 0px; max-height: 150px;">
+            postText: </div>
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button clear-filters-bottom (
+        buttonName: CLEAR_FILTERS_BOTTOM
+        label: Clear Filters & Search
+        layout {
+            sequence: 10
+            region: @bottom
+            slot: regionBody
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--noUI
+                t-Button--padTop
+            ]
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 50
+                clearCache: 50
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button clear-filters-top (
+        buttonName: CLEAR_FILTERS_TOP
+        label: Clear Filters<br>& Search
+        layout {
+            sequence: 20
+            region: @top
+            slot: regionBody
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--noUI
+                t-Button--stretch
+            ]
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 50
+                clearCache: 50
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button clear-search-btn (
+        buttonName: clear-search-btn
+        label: Clear Search
+        layout {
+            sequence: 10
+            region: @clear-search
+            slot: top
+            horizontalAlignment: left
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--noUI
+            ]
+            icon: fa-dot-circle-o
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 50
+                clearCache: 50
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button close (
+        buttonName: Close
+        label: Close
+        layout {
+            sequence: 10
+            region: @workshop-or-event-not-found
+            slot: belowBox
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button close-share (
+        buttonName: Close-share
+        label: Close
+        layout {
+            sequence: 10
+            region: @share-url-for-current-filters
+            slot: belowBox
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button collapse-all (
+        buttonName: Collapse-All
+        label: Collapse All
+        layout {
+            sequence: 30
+            region: @top
+            slot: regionBody
+            startNewRow: false
+        }
+        appearance {
+            buttonTemplate: @text-with-icon
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--noUI
+                t-Button--iconLeft
+            ]
+            icon: fa-minus-square-o
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button copy-url-for-filter (
+        buttonName: copy-url-for-filter
+        label: Share URL for Current Filters
+        layout {
+            sequence: 20
+            region: @bottom
+            slot: regionBody
+            startNewRow: false
+            newColumn: false
+        }
+        appearance {
+            buttonTemplate: @text-with-icon
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--small
+                t-Button--noUI
+                t-Button--iconLeft
+            ]
+            icon: fa-copy
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button enter-event-code (
+        buttonName: Enter-event-code
+        label: Enter Event Code
+        layout {
+            sequence: 10
+            region: @top
+            slot: regionBody
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--simple
+                t-Button--padLeft
+                t-Button--gapBottom
+            ]
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 150
+                clearCache: 150
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button expand-all (
+        buttonName: Expand-All
+        label: Expand All
+        layout {
+            sequence: 40
+            region: @top
+            slot: regionBody
+            startNewRow: false
+        }
+        appearance {
+            buttonTemplate: @text-with-icon
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--noUI
+                t-Button--iconLeft
+            ]
+            icon: fa-plus-square-o
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    dynamicAction clear-cache (
+        name: Clear Cache
+        execution {
+            sequence: 320
+        }
+        when {
+            event: ready
+        }
+        clientSideCondition {
+            type: item=value
+            item: C
+            value: y
+        }
+
+        action native-set-value (
+            action: setValue
+            settings {
+                value: 100
+            }
+            affectedElements {
+                selectionType: items
+                items: CLEAR
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    dynamicAction click-url-for-filter (
+        name: click URL for filter
+        execution {
+            sequence: 300
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @copy-url-for-filter
+        }
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    function copyToClipboard(text) {
+                        var dummy = document.createElement("textarea");
+                        document.body.appendChild(dummy);
+                        dummy.value = text;
+                        dummy.select();
+                        document.execCommand("copy");
+                        document.body.removeChild(dummy);
+                    }
+                    
+                    javascript:copyToClipboard( $v('P50_HOST_URL') + $v('P50_SHARE_URL') );
+                    
+                    ```
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+        action native-javascript-code-2 (
+            action: executeJsCode
+            settings {
+                jsCode: javascript:openModal('SHARE_FLTR_URL');
+            }
+            execution {
+                sequence: 30
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction close-error-dialog (
+        name: Close error dialog
+        execution {
+            sequence: 330
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @close
+        }
+
+        action native-close-region (
+            action: closeRegion
+            affectedElements {
+                selectionType: region
+                region: @workshop-or-event-not-found
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+        action native-set-value (
+            action: setValue
+            settings {
+                value: 0
+            }
+            affectedElements {
+                selectionType: items
+                items: SENFSWS
+            }
+            execution {
+                sequence: 30
+                fireOnInit: false
+                stopExecutionOnError: false
+            }
+        )
+
+    )
+
+    dynamicAction close-share (
+        name: close share
+        execution {
+            sequence: 310
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @close-share
+        }
+
+        action native-close-region (
+            action: closeRegion
+            affectedElements {
+                selectionType: region
+                region: @share-url-for-current-filters
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction collapse-all-actions (
+        name: collapse all actions
+        execution {
+            sequence: 260
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @collapse-all
+        }
+
+        action native-hide (
+            action: hide
+            affectedElements {
+                selectionType: button
+                button: @collapse-all
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    if ( apex.item( "P50_WORKSHOP_TYPE" ).isEmpty()  ) { try { apex.theme.closeRegion( "Workshop_Type" ); } catch { }; }
+                    if ( apex.item( "P50_WORKSHOP_SERIES" ).isEmpty()) { try { apex.theme.closeRegion( "Workshop_Series" ); } catch { }; }
+                    if ( apex.item( "P50_CERTIFICATION" ).isEmpty()  ) { try { apex.theme.closeRegion( "Certification" ); } catch { }; }
+                    if ( apex.item( "P50_FOCUS_AREA" ).isEmpty()     ) { try { apex.theme.closeRegion( "Focus_Area" );    } catch { }; }
+                    if ( apex.item( "P50_PRODUCT" ).isEmpty()        ) { try { apex.theme.closeRegion( "Product" );       } catch { }; }
+                    if ( apex.item( "P50_SALES_FOCUS" ).isEmpty()    ) { try { apex.theme.closeRegion( "Sales_Focus" );   } catch { }; }
+                    if ( apex.item( "P50_SALES_PLAY" ).isEmpty()     ) { try { apex.theme.closeRegion( "Sales_Play" );    } catch { }; }
+                    if ( apex.item( "P50_LEVEL" ).isEmpty()          ) { try { apex.theme.closeRegion( "Level" );         } catch { }; }
+                    if ( apex.item( "P50_ROLE" ).isEmpty()           ) { try { apex.theme.closeRegion( "Role" );          } catch { }; }
+                    if ( apex.item( "P50_ORDER_BY" ).isEmpty()       ) { try { apex.theme.closeRegion( "Order_By" );      } catch { }; }
+                    ```
+            }
+            execution {
+                sequence: 30
+            }
+        )
+
+        action native-show (
+            action: show
+            affectedElements {
+                selectionType: button
+                button: @expand-all
+            }
+            execution {
+                sequence: 20
+            }
+        )
+
+    )
+
+    dynamicAction expand-all-actions (
+        name: expand all actions
+        execution {
+            sequence: 270
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @expand-all
+        }
+
+        action native-hide (
+            action: hide
+            affectedElements {
+                selectionType: button
+                button: @expand-all
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    try { apex.theme.openRegion( "Workshop_Type" ); } catch { };
+                    try { apex.theme.openRegion( "Workshop_Series" ); } catch { };
+                    try { apex.theme.openRegion( "Certification" ); } catch { };
+                    try { apex.theme.openRegion( "Focus_Area" ); } catch { };
+                    try { apex.theme.openRegion( "Product" ); } catch { };
+                    try { apex.theme.openRegion( "Sales_Focus" ); } catch { };
+                    try { apex.theme.openRegion( "Sales_Play" ); } catch { };
+                    try { apex.theme.openRegion( "Level" ); } catch { };
+                    try { apex.theme.openRegion( "Role" ); } catch { };
+                    try { apex.theme.openRegion( "Order_By" ); } catch { };
+                    ```
+            }
+            execution {
+                sequence: 120
+                fireOnInit: false
+            }
+        )
+
+        action native-show (
+            action: show
+            affectedElements {
+                selectionType: button
+                button: @collapse-all
+            }
+            execution {
+                sequence: 20
+            }
+        )
+
+    )
+
+    dynamicAction expand-all-items (
+        name: Expand all items
+        execution {
+            sequence: 280
+        }
+        when {
+            event: ready
+        }
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    try { apex.theme.openRegion( "Workshop_Type" ); } catch { };
+                    try { apex.theme.openRegion( "Workshop_Series" ); } catch { };
+                    try { apex.theme.openRegion( "Certification" ); } catch { };
+                    try { apex.theme.openRegion( "Focus_Area" ); } catch { };
+                    try { apex.theme.openRegion( "Product" ); } catch { };
+                    try { apex.theme.openRegion( "Sales_Focus" ); } catch { };
+                    try { apex.theme.openRegion( "Sales_Play" ); } catch { };
+                    try { apex.theme.openRegion( "Level" ); } catch { };
+                    try { apex.theme.openRegion( "Role" ); } catch { };
+                    ```
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    dynamicAction hide-expand-all-button-on-load (
+        name: Hide expand all button on load
+        execution {
+            sequence: 250
+        }
+        when {
+            event: ready
+        }
+
+        action native-hide (
+            action: hide
+            affectedElements {
+                selectionType: button
+                button: @expand-all
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    dynamicAction hide-salesfocus-if-null (
+        name: hide Salesfocus if null
+        execution {
+            sequence: 30
+        }
+        when {
+            event: ready
+        }
+        clientSideCondition {
+            type: itemIsNull
+            item: P50_SALES_FOCUS
+        }
+
+        action native-hide (
+            action: hide
+            affectedElements {
+                selectionType: region
+                region: @sales-focus
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    dynamicAction hide-salesplay-if-null (
+        name: hide Salesplay if null
+        execution {
+            sequence: 20
+        }
+        when {
+            event: ready
+        }
+        clientSideCondition {
+            type: itemIsNull
+            item: P50_SALES_PLAY
+        }
+
+        action native-hide (
+            action: hide
+            affectedElements {
+                selectionType: region
+                region: @sales-play
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    dynamicAction hide-search-caption-if-not-search (
+        name: hide search caption if not search
+        execution {
+            sequence: 230
+        }
+        when {
+            event: ready
+        }
+        clientSideCondition {
+            type: itemIsNull
+            item: SENFS
+        }
+
+        action native-hide (
+            action: hide
+            affectedElements {
+                selectionType: region
+                region: @search-results
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+        action native-hide-2 (
+            action: hide
+            affectedElements {
+                selectionType: region
+                region: @search-spacer
+            }
+            execution {
+                sequence: 20
+            }
+        )
+
+        action native-hide-3 (
+            action: hide
+            affectedElements {
+                selectionType: region
+                region: @clear-search
+            }
+            execution {
+                sequence: 30
+            }
+        )
+
+    )
+
+    dynamicAction new (
+        name: New
+        execution {
+            sequence: 360
+        }
+        when {
+            selectionType: items
+            items: P50_ORDER_BY
+        }
+
+        action native-submit-page (
+            action: submitPage
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction refresh-on-certification-check (
+        name: refresh_on_certification_check
+        execution {
+            sequence: 120
+        }
+        when {
+            selectionType: items
+            items: P50_CERTIFICATION
+        }
+
+        action native-submit-page (
+            action: submitPage
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction refresh-on-focus-check (
+        name: refresh_on_focus_check
+        execution {
+            sequence: 90
+        }
+        when {
+            selectionType: items
+            items: P50_FOCUS_AREA
+        }
+
+        action native-submit-page (
+            action: submitPage
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction refresh-on-level-check (
+        name: refresh_on_level_check
+        execution {
+            sequence: 110
+        }
+        when {
+            selectionType: items
+            items: P50_LEVEL
+        }
+
+        action native-submit-page (
+            action: submitPage
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction refresh-on-product-check (
+        name: refresh_on_product_check
+        execution {
+            sequence: 100
+        }
+        when {
+            selectionType: items
+            items: P50_PRODUCT
+        }
+
+        action native-submit-page (
+            action: submitPage
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction refresh-on-role-check (
+        name: refresh_on_role_check
+        execution {
+            sequence: 50
+        }
+        when {
+            selectionType: items
+            items: P50_ROLE
+        }
+
+        action native-submit-page (
+            action: submitPage
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction refresh-on-sales-focus-check (
+        name: refresh_on_sales_focus_check
+        execution {
+            sequence: 60
+        }
+        when {
+            selectionType: items
+            items: P50_SALES_FOCUS
+        }
+
+        action native-submit-page (
+            action: submitPage
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction refresh-on-sales-play-check (
+        name: refresh_on_sales_play_check
+        execution {
+            sequence: 80
+        }
+        when {
+            selectionType: items
+            items: P50_SALES_PLAY
+        }
+
+        action native-submit-page (
+            action: submitPage
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction refresh-on-workshop-series-check (
+        name: refresh_on_workshop_series_check
+        execution {
+            sequence: 370
+        }
+        when {
+            selectionType: items
+            items: P50_WORKSHOP_SERIES
+        }
+
+        action native-submit-page (
+            action: submitPage
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction refresh-on-workshop-type-check (
+        name: refresh_on_workshop_type_check
+        execution {
+            sequence: 70
+        }
+        when {
+            selectionType: items
+            items: P50_WORKSHOP_TYPE
+        }
+
+        action native-submit-page (
+            action: submitPage
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction show-error-dialog (
+        name: Show Error Dialog
+        execution {
+            sequence: 340
+        }
+        when {
+            event: ready
+        }
+        clientSideCondition {
+            type: item=value
+            item: SENFS
+            value: 1
+        }
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode: apex_util.redirect_url(p_url => apex_page.get_url(p_page => 100, p_clear_cache => 100 ));
+            }
+            execution {
+                sequence: 40
+            }
+        )
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode: javascript:openModal('ERROR_DIALOG');
+            }
+            execution {
+                sequence: 30
+            }
+        )
+
+    )
+
+    dynamicAction show-sales-plays-if-oracle-user (
+        name: Show Sales Plays if Oracle user
+        execution {
+            sequence: 40
+        }
+        when {
+            event: ready
+        }
+        serverSideCondition {
+            type: expression
+            plsqlExpression: instr(upper(:app_user),'@ORACLE.COM')>0
+        }
+
+        action native-show (
+            action: show
+            affectedElements {
+                selectionType: region
+                region: @sales-play
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+        action native-show-2 (
+            action: show
+            affectedElements {
+                selectionType: region
+                region: @sales-focus
+            }
+            execution {
+                sequence: 20
+            }
+        )
+
+    )
+
+    dynamicAction update-url-for-filters (
+        name: Update URL for filters
+        execution {
+            sequence: 350
+        }
+        when {
+            selectionType: region
+            region: @current-workshops
+        }
+        serverSideCondition {
+            type: never
+        }
+
+        action native-set-value (
+            action: setValue
+            settings {
+                type: plsqlFunctionBody
+                plsqlFunctionBody:
+                    ```plsql
+                    declare
+                      v_items   clob;
+                      v_values  clob;
+                      v_url     varchar2(4000);
+                      
+                      procedure add_value (p_item varchar2, p_value varchar2) is
+                      begin
+                        if p_value is not null then
+                          if v_items is not null  then
+                            v_items := v_items || ',' || p_item;
+                          else
+                            v_items := p_item;
+                          end if;
+                        
+                          if v_values is not null then
+                            v_values := v_values || ',' || p_value;
+                          else
+                            v_values := p_value;
+                          end if;
+                        end if;
+                      end;
+                        
+                    begin
+                      add_value('SEARCH',:SEARCH);
+                      add_value('P50_WORKSHOP_TYPE',:P50_WORKSHOP_TYPE);
+                      
+                      ll_pkg_log.log(10,'v_items: '||v_items);
+                      ll_pkg_log.log(10,'v_values: '||v_values);
+                    
+                      v_url := substr( APEX_PAGE.GET_URL ( p_page   => 100,
+                                                           p_items  => v_items,
+                                                           p_values => v_values),2);
+                                                           
+                      v_url := replace(v_url,'%3A',':'); 
+                      v_url := substr(v_url,1,instr(v_url,'&session')-1);
+                    
+                    --  v_url := substr(APEX_PAGE.GET_URL(
+                    --                    p_page   => 100,
+                    --                    p_items  => 'SEARCH,P120_WORKSHOP_TYPE,P120_CERTIFICATION,P120_ROLE,P120_FOCUS_AREA,P120_PRODUCT,P120_SALES_FOCUS,P120_SALES_PLAY,P120_LEVEL',
+                    --                    p_values => :SEARCH || ',\' || :P120_WORKSHOP_TYPE || '\,\' ||
+                    --                                :P120_CERTIFICATION || '\,\' || :P120_ROLE || '\,\' || 
+                    --                                :P120_FOCUS_AREA || '\,\' || :P120_PRODUCT || '\,\' || 
+                    --                                :P120_SALES_FOCUS || '\,\' || :P120_SALES_PLAY || '\,\' || 
+                    --                                :P120_LEVEL || '\' ),2) ;
+                    
+                      return(v_url);
+                    end;
+                                                    
+                                                    
+                    ```
+                itemsToSubmit: [
+                    P1_SEARCH
+                    P1_DISPLAY_AS
+                    P1_SHOW_EXTERNAL
+                    P1_SHOW_GOLD
+                    P1_FOCUS_AREAS
+                    P1_PRODUCTS
+                    P1_SALES_FOCUS_AREAS
+                    P1_CONTENT_TYPES
+                    P1_NEWS_CONTENT_TYPES
+                    P1_VERSIONS
+                    P1_POSTED_SINCE
+                    P1_ARCHIVED_CONTENT_YN
+                    P1_DISPLAY_CONTENT SEARCH
+                    P120_WORKSHOP_TYPE
+                    P120_CERTIFICATION
+                    P120_ROLE
+                    P120_FOCUS_AREA
+                    P120_PRODUCT
+                    P120_SALES_FOCUS
+                    P120_SALES_PLAY
+                    P120_LEVEL
+                ]
+                escapeSpecialChars: false
+            }
+            affectedElements {
+                selectionType: items
+                items: P50_SHARE_URL
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    process count-page (
+        name: Count page
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                begin
+                  insert into ll_page_visits (page_id, app_session) values (100, :APP_SESSION);
+                  commit;
+                exception
+                  when others then
+                    ll_pkg_log.log(1,'Error during insert on ll_page_visits for page_id 100, app_session '||:APP_SESSION);
+                end;
+                ```
+        }
+        execution {
+            sequence: 20
+            point: afterFooter
+        }
+        advanced {
+            executionMappingIdentifier: 286981707279531271
+        }
+    )
+
+)
+

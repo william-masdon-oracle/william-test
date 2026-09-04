@@ -1,0 +1,902 @@
+page 9130 (
+    name: OCI Regions and Endpoints
+    alias: OCI-REGIONS-AND-ENDPOINTS
+    title: OCI Regions and Endpoints
+    appearance {
+        pageTemplate: @standard-trustarc
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        authorizationScheme: @superrrrr-user
+        formAutoComplete: false
+    }
+
+    region information-selection (
+        name: Information Selection
+        type: regionDisplaySelector
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        settings {
+            rememberSelection: bySession
+        }
+    )
+
+    region oci-endpoints (
+        name: OCI Endpoints
+        type: interactiveGrid
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select ID,
+                       ENDPOINT_TYPE,
+                       ENDPOINT_URL
+                  from LL_OCI_REGION_ENDPOINTS
+                ```
+        }
+        layout {
+            sequence: 30
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        edit {
+            enabled: true
+            allowedOperations: [
+                add
+                update
+                delete
+            ]
+        }
+        componentAppearance {
+            showNullValuesAs: -
+        }
+        toolbar {
+            controls: [
+                searchCol
+                searchField
+                actionsMenu
+                resetButton
+                saveButton
+            ]
+        }
+        download {
+            formats: [
+                csv
+                html
+                pdf
+            ]
+        }
+        advanced {
+            savedReportMappingIdentifier: 105704745741937908
+        }
+
+        savedReport 1044050 (
+            visibility: primary
+            view {
+                default: grid
+            }
+            singleRowView {
+                displayedColumns: true
+            }
+
+            displayColumn (
+                column: @APEX$ROW_ACTION
+                layout {
+                    sequence: 0
+                }
+            )
+
+            displayColumn (
+                column: @ID
+                layout {
+                    sequence: 1
+                }
+            )
+
+            displayColumn (
+                column: @ENDPOINT_TYPE
+                layout {
+                    sequence: 3
+                }
+            )
+
+            displayColumn (
+                column: @ENDPOINT_URL
+                layout {
+                    sequence: 3
+                }
+            )
+
+            sort (
+                column: @ENDPOINT_TYPE
+                sort {
+                    nulls: last
+                    sequence: 1
+                }
+            )
+
+        )
+
+        column APEX$ROW_ACTION (
+            type: actionsMenu
+            layout {
+                sequence: 20
+            }
+        )
+
+        column APEX$ROW_SELECTOR (
+            type: rowSelector
+            layout {
+                sequence: 10
+            }
+        )
+
+        column ENDPOINT_TYPE (
+            type: textField
+            heading {
+                heading: Endpoint Type
+            }
+            layout {
+                sequence: 40
+            }
+            validation {
+                valueRequired: true
+                maxLength: 50
+            }
+            source {
+                databaseColumn: ENDPOINT_TYPE
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column ENDPOINT_URL (
+            type: textField
+            heading {
+                heading: Endpoint Url
+            }
+            layout {
+                sequence: 50
+            }
+            validation {
+                valueRequired: true
+                maxLength: 100
+            }
+            source {
+                databaseColumn: ENDPOINT_URL
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column ID (
+            type: hidden
+            layout {
+                sequence: 30
+            }
+            source {
+                databaseColumn: ID
+                dataType: number
+                primaryKey: true
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+    )
+
+    region oci-endpoints-view (
+        name: OCI Endpoints view
+        type: interactiveReport
+        source {
+            location: localDatabase
+            tableName: LL_OCI_ENDPOINTS_VW
+        }
+        layout {
+            sequence: 40
+            slot: contentBody
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        componentAppearance {
+            showNullValuesAs: -
+        }
+        pagination {
+            type: rowRangesXToY
+        }
+        messages {
+            whenNoDataFound: No data found.
+            whenMoreDataFound: The maximum row count for this report is #MAX_ROW_COUNT# rows.  Please apply a filter to reduce the number of records in your query.
+        }
+        actionsMenu {
+            subscription: false
+        }
+        advanced {
+            savedReportMappingIdentifier: 105700005893948593
+        }
+
+        column ADS (
+            type: plainText
+            heading {
+                heading: Ads
+                alignment: center
+            }
+            layout {
+                sequence: 17
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: H
+            }
+        )
+
+        column ENDPOINT_TYPE (
+            type: plainText
+            heading {
+                heading: Endpoint Type
+            }
+            layout {
+                sequence: 1
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: A
+            }
+        )
+
+        column ENDPOINT_URL (
+            type: plainText
+            heading {
+                heading: Endpoint Url
+            }
+            layout {
+                sequence: 3
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: C
+            }
+        )
+
+        column MASTER_REGION (
+            type: plainText
+            heading {
+                heading: Master Region
+            }
+            layout {
+                sequence: 4
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: D
+            }
+        )
+
+        column REGION_IDENTIFIER (
+            type: plainText
+            heading {
+                heading: Region Identifier
+            }
+            layout {
+                sequence: 5
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: E
+            }
+        )
+
+        column REGION_KEY (
+            type: plainText
+            heading {
+                heading: Region Key
+            }
+            layout {
+                sequence: 2
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: B
+            }
+        )
+
+        column REGION_LOCATION (
+            type: plainText
+            heading {
+                heading: Region Location
+            }
+            layout {
+                sequence: 6
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: F
+            }
+        )
+
+        column REGION_NAME (
+            type: plainText
+            heading {
+                heading: Region Name
+            }
+            layout {
+                sequence: 7
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: G
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+
+        savedReport 585512 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn ADS (
+                sequence: 8
+            )
+
+            displayColumn ENDPOINT_TYPE (
+                sequence: 1
+            )
+
+            displayColumn ENDPOINT_URL (
+                sequence: 3
+            )
+
+            displayColumn MASTER_REGION (
+                sequence: 4
+            )
+
+            displayColumn REGION_IDENTIFIER (
+                sequence: 5
+            )
+
+            displayColumn REGION_KEY (
+                sequence: 2
+            )
+
+            displayColumn REGION_LOCATION (
+                sequence: 6
+            )
+
+            displayColumn REGION_NAME (
+                sequence: 7
+            )
+
+        )
+
+    )
+
+    region oci-regions (
+        name: OCI Regions
+        type: interactiveGrid
+        source {
+            location: localDatabase
+            tableName: LL_OCI_REGIONS
+        }
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        edit {
+            enabled: true
+            allowedOperations: [
+                add
+                update
+                delete
+            ]
+        }
+        componentAppearance {
+            showNullValuesAs: -
+        }
+        toolbar {
+            controls: [
+                searchCol
+                searchField
+                actionsMenu
+                resetButton
+                saveButton
+            ]
+        }
+        download {
+            formats: [
+                csv
+                html
+                pdf
+            ]
+        }
+        advanced {
+            savedReportMappingIdentifier: 105694034330955261
+        }
+
+        savedReport 387849 (
+            visibility: primary
+            view {
+                default: grid
+            }
+            singleRowView {
+                displayedColumns: true
+            }
+
+            displayColumn (
+                column: @LATITUDE
+                layout {
+                    sequence: 9
+                }
+            )
+
+            displayColumn (
+                column: @LONGITUDE
+                layout {
+                    sequence: 10
+                }
+            )
+
+            displayColumn (
+                column: @ACTIVE_FLG
+                layout {
+                    sequence: 11
+                }
+            )
+
+            displayColumn (
+                column: @APEX$ROW_ACTION
+                layout {
+                    sequence: 0
+                }
+            )
+
+            displayColumn (
+                column: @ID
+                layout {
+                    sequence: 1
+                }
+            )
+
+            displayColumn (
+                column: @MASTER_REGION
+                layout {
+                    sequence: 2
+                }
+            )
+
+            displayColumn (
+                column: @REGION_KEY
+                layout {
+                    sequence: 3
+                }
+            )
+
+            displayColumn (
+                column: @REGION_IDENTIFIER
+                layout {
+                    sequence: 4
+                }
+            )
+
+            displayColumn (
+                column: @REGION_LOCATION
+                layout {
+                    sequence: 5
+                }
+            )
+
+            displayColumn (
+                column: @REGION_NAME
+                layout {
+                    sequence: 6
+                }
+            )
+
+            displayColumn (
+                column: @ADS
+                layout {
+                    sequence: 7
+                }
+            )
+
+            displayColumn (
+                column: @AD_NAME
+                layout {
+                    sequence: 8
+                }
+            )
+
+        )
+
+        column ACTIVE_FLG (
+            type: selectList
+            heading {
+                heading: Active Flg
+            }
+            lov {
+                type: sharedComponent
+                lov: @active-flg
+                displayExtraValues: false
+                displayNullValue: false
+            }
+            layout {
+                sequence: 130
+            }
+            source {
+                databaseColumn: ACTIVE_FLG
+                dataType: varchar2
+            }
+            default {
+                type: static
+                staticValue: Y
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: useLov
+            }
+        )
+
+        column ADS (
+            type: numberField
+            heading {
+                heading: Ads
+            }
+            settings {
+                numberAlignment: end
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 90
+            }
+            source {
+                databaseColumn: ADS
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column AD_NAME (
+            type: textField
+            heading {
+                heading: Ad Name
+            }
+            layout {
+                sequence: 100
+            }
+            validation {
+                maxLength: 50
+            }
+            source {
+                databaseColumn: AD_NAME
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column APEX$ROW_ACTION (
+            type: actionsMenu
+            layout {
+                sequence: 20
+            }
+        )
+
+        column APEX$ROW_SELECTOR (
+            type: rowSelector
+            layout {
+                sequence: 10
+            }
+        )
+
+        column ID (
+            type: displayOnly
+            heading {
+                heading: Region ID
+            }
+            layout {
+                sequence: 30
+            }
+            source {
+                databaseColumn: ID
+                dataType: number
+                primaryKey: true
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column LATITUDE (
+            type: numberField
+            heading {
+                heading: Latitude
+                alignment: end
+            }
+            settings {
+                numberAlignment: end
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 110
+                columnAlignment: end
+            }
+            source {
+                databaseColumn: LATITUDE
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column LONGITUDE (
+            type: numberField
+            heading {
+                heading: Longitude
+                alignment: end
+            }
+            settings {
+                numberAlignment: end
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 120
+                columnAlignment: end
+            }
+            source {
+                databaseColumn: LONGITUDE
+                dataType: number
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        column MASTER_REGION (
+            type: textField
+            heading {
+                heading: Master Region
+            }
+            layout {
+                sequence: 40
+            }
+            validation {
+                maxLength: 50
+            }
+            source {
+                databaseColumn: MASTER_REGION
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column REGION_IDENTIFIER (
+            type: textField
+            heading {
+                heading: Region Identifier
+            }
+            layout {
+                sequence: 60
+            }
+            validation {
+                valueRequired: true
+                maxLength: 50
+            }
+            source {
+                databaseColumn: REGION_IDENTIFIER
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column REGION_KEY (
+            type: textField
+            heading {
+                heading: Region Key
+            }
+            layout {
+                sequence: 50
+            }
+            validation {
+                valueRequired: true
+                maxLength: 50
+            }
+            source {
+                databaseColumn: REGION_KEY
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column REGION_LOCATION (
+            type: textField
+            heading {
+                heading: Region Location
+            }
+            layout {
+                sequence: 70
+            }
+            validation {
+                valueRequired: true
+                maxLength: 50
+            }
+            source {
+                databaseColumn: REGION_LOCATION
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column REGION_NAME (
+            type: textField
+            heading {
+                heading: Region Name
+            }
+            layout {
+                sequence: 80
+            }
+            validation {
+                valueRequired: true
+                maxLength: 50
+            }
+            source {
+                databaseColumn: REGION_NAME
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+    )
+
+    process oci-endpoints-save-interactive-grid-data (
+        name: OCI Endpoints - Save Interactive Grid Data
+        type: interactiveGridAutoRowProcessing
+        editableRegion: @oci-endpoints
+        execution {
+            sequence: 10
+        }
+        advanced {
+            executionMappingIdentifier: 11184433853909009503
+        }
+    )
+
+    process oci-regions-save-interactive-grid-data (
+        name: OCI Regions - Save Interactive Grid Data
+        type: interactiveGridAutoRowProcessing
+        editableRegion: @oci-regions
+        execution {
+            sequence: 10
+        }
+        advanced {
+            executionMappingIdentifier: 11184426706585009492
+        }
+    )
+
+)
+

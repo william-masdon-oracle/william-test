@@ -1,0 +1,520 @@
+page 9163 (
+    name: Voucher Users
+    alias: VOUCHER-USERS
+    title: Voucher Users
+    appearance {
+        pageTemplate: @standard-trustarc
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region event-code-attendees (
+        name: Event Code Attendees
+        type: staticContent
+        layout {
+            sequence: 30
+            slot: contentBody
+        }
+        appearance {
+            template: @tabs-container
+            templateOptions: [
+                #DEFAULT#
+                t-TabsRegion-mod--simple
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region event-code-users-grid (
+        name: Event Code Users (Grid)
+        type: interactiveGrid
+        source {
+            location: localDatabase
+            tableName: LL_VOUCHER_USERS
+            includeRowidColumn: true
+            whereClause: voucher_id = :P9163_VOUCHER_ID_SOURCE
+            orderByClause: owner1
+            pageItemsToSubmit: P9163_VOUCHER_ID_SOURCE
+        }
+        layout {
+            sequence: 10
+            parentRegion: @event-code-attendees
+            slot: tabs
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        edit {
+            enabled: true
+            allowedOperations: [
+                add
+                update
+                delete
+            ]
+        }
+        toolbar {
+            controls: [
+                searchCol
+                searchField
+                actionsMenu
+                resetButton
+                saveButton
+            ]
+        }
+        download {
+            formats: [
+                csv
+                html
+                pdf
+            ]
+        }
+        advanced {
+            savedReportMappingIdentifier: 13377246290876614656
+        }
+
+        savedReport 931000 (
+            visibility: primary
+            view {
+                default: grid
+            }
+            singleRowView {
+                displayedColumns: true
+            }
+
+            displayColumn (
+                column: @APEX$ROW_ACTION
+                layout {
+                    sequence: 0
+                }
+            )
+
+            displayColumn (
+                column: @ROWID
+                layout {
+                    sequence: 1
+                }
+            )
+
+            displayColumn (
+                column: @ID
+                layout {
+                    sequence: 2
+                }
+            )
+
+            displayColumn (
+                column: @VOUCHER_ID
+                layout {
+                    sequence: 3
+                }
+            )
+
+            displayColumn (
+                column: @OWNER1
+                layout {
+                    sequence: 4
+                }
+            )
+
+            displayColumn (
+                column: @DATE_ENTERED
+                layout {
+                    sequence: 5
+                }
+            )
+
+        )
+
+        column APEX$ROW_ACTION (
+            type: actionsMenu
+            layout {
+                sequence: 20
+            }
+        )
+
+        column APEX$ROW_SELECTOR (
+            type: rowSelector
+            layout {
+                sequence: 10
+            }
+        )
+
+        column DATE_ENTERED (
+            type: datePickerJquery
+            heading {
+                heading: Date Entered
+                alignment: center
+            }
+            layout {
+                sequence: 70
+                columnAlignment: center
+            }
+            source {
+                databaseColumn: DATE_ENTERED
+                dataType: date
+            }
+        )
+
+        column ID (
+            type: hidden
+            layout {
+                sequence: 40
+            }
+            source {
+                databaseColumn: ID
+                dataType: number
+                primaryKey: true
+            }
+            default {
+                duplicateCopiesExistingValue: false
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column OWNER1 (
+            type: textField
+            heading {
+                heading: User
+            }
+            layout {
+                sequence: 60
+            }
+            validation {
+                maxLength: 50
+            }
+            source {
+                databaseColumn: OWNER1
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+            }
+        )
+
+        column ROWID (
+            type: hidden
+            layout {
+                sequence: 30
+            }
+            source {
+                databaseColumn: ROWID
+                dataType: rowid
+                primaryKey: true
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column VOUCHER_ID (
+            type: numberField
+            heading {
+                heading: Event Code ID
+                alignment: end
+            }
+            settings {
+                numberAlignment: end
+                virtualKeyboard: text
+            }
+            layout {
+                sequence: 50
+                columnAlignment: end
+            }
+            validation {
+                valueRequired: true
+            }
+            source {
+                databaseColumn: VOUCHER_ID
+                dataType: number
+            }
+            default {
+                type: item
+                item: P9163_VOUCHER_ID_SOURCE
+            }
+            columnFilter {
+                lovType: none
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: Event Code Users (Grid)
+        }
+    )
+
+    region event-code-users-report (
+        name: Event Code Users (Report)
+        type: interactiveReport
+        source {
+            location: localDatabase
+            tableName: LL_VOUCHER_USERS
+            includeRowidColumn: true
+            whereClause: voucher_id = :P9163_VOUCHER_ID_SOURCE_1
+            orderByClause: owner1
+            pageItemsToSubmit: P9163_VOUCHER_ID_SOURCE
+        }
+        layout {
+            sequence: 20
+            parentRegion: @event-code-attendees
+            slot: tabs
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        pagination {
+            type: rowRangesXToY
+        }
+        performance {
+            maxRowsToProcess: 1000000
+        }
+        advanced {
+            savedReportMappingIdentifier: 94974195621255736
+        }
+
+        column DATE_ENTERED (
+            type: plainText
+            heading {
+                heading: Date Entered
+                alignment: center
+            }
+            layout {
+                sequence: 50
+                columnAlignment: center
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: E
+            }
+        )
+
+        column ID (
+            type: plainText
+            heading {
+                heading: Id
+                alignment: center
+            }
+            layout {
+                sequence: 20
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: B
+            }
+        )
+
+        column OWNER1 (
+            type: plainText
+            heading {
+                heading: User
+                alignment: center
+            }
+            layout {
+                sequence: 40
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: D
+            }
+        )
+
+        column ROWID (
+            type: plainText
+            heading {
+                heading: Rowid
+                alignment: center
+            }
+            layout {
+                sequence: 10
+            }
+            source {
+                dataType: OTHER
+            }
+            columnFilter {
+                type: none
+            }
+            advanced {
+                endUserAlias: A
+            }
+            enableUsersTo {
+                sort: false
+                filter: false
+                highlight: false
+                controlBreak: false
+                aggregate: false
+                compute: false
+                chart: false
+                groupBy: false
+                pivot: false
+            }
+        )
+
+        column VOUCHER_ID (
+            type: plainText
+            heading {
+                heading: Event Code Id
+                alignment: center
+            }
+            layout {
+                sequence: 30
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: C
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: Voucher Users (Report)
+        }
+
+        savedReport 1115625 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn DATE_ENTERED (
+                sequence: 5
+            )
+
+            displayColumn ID (
+                sequence: 2
+            )
+
+            displayColumn OWNER1 (
+                sequence: 4
+            )
+
+            displayColumn ROWID (
+                sequence: 1
+            )
+
+            displayColumn VOUCHER_ID (
+                sequence: 3
+            )
+
+        )
+
+    )
+
+    pageItem P9163_VOUCHER_ID_SOURCE (
+        type: selectList
+        label {
+            label: Event Code ID
+            alignment: left
+        }
+        settings {
+            pageActionOnSelection: submitPage
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select to_char(id,'99000')||' - '||Reason||', '||email_requestor||' ('||voucher_code||')', id
+                from ll_vouchers_vw
+                order by case when sysdate between valid_from_gmt and valid_to_gmt then 0 else 1 end asc, id desc
+                ```
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 10
+            region: @event-code-users-grid
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9163_VOUCHER_ID_SOURCE_1 (
+        type: selectList
+        label {
+            label: Event Code ID
+            alignment: left
+        }
+        settings {
+            pageActionOnSelection: submitPage
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select to_char(id,'99000')||' - '||Reason||', '||email_requestor||' ('||voucher_code||')', id
+                from ll_vouchers_vw
+                order by case when sysdate between valid_from_gmt and valid_to_gmt then 0 else 1 end asc, id desc
+                ```
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 10
+            region: @event-code-users-report
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            type: item
+            item: P9163_VOUCHER_ID_SOURCE
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    process voucher-users-save-interactive-grid-data (
+        name: Voucher Users - Save Interactive Grid Data
+        type: interactiveGridAutoRowProcessing
+        editableRegion: @event-code-users-grid
+        execution {
+            sequence: 10
+        }
+        advanced {
+            executionMappingIdentifier: 13709615420760322951
+        }
+    )
+
+)
+

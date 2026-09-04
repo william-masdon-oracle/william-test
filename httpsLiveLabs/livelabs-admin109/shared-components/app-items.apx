@@ -1,0 +1,42 @@
+appItem EC_GLOBAL (
+    security {
+        escapeSpecialChars: false
+    }
+)
+
+appItem F9906_REFRESH (
+    security {
+        escapeSpecialChars: false
+    }
+)
+
+appItem SOURCE (
+    security {
+        sessionStateProtection: unrestricted
+        escapeSpecialChars: false
+    }
+    comments {
+        comments: MRM tracking parameter
+    }
+)
+
+appItem SOURCETYPE (
+    security {
+        sessionStateProtection: unrestricted
+        escapeSpecialChars: false
+    }
+    comments {
+        comments: "MRM tracking parameter "
+    }
+)
+
+appItem SRC1 (
+    security {
+        sessionStateProtection: unrestricted
+        escapeSpecialChars: false
+    }
+    comments {
+        comments: "MRM tracking parameter "
+    }
+)
+

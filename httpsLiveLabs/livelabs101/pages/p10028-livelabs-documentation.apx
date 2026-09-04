@@ -1,0 +1,384 @@
+page 10028 (
+    name: LiveLabs Documentation
+    alias: LIVELABS-DOCUMENTATION
+    title: LiveLabs Documentation
+    appearance {
+        pageTemplate: @standard-trustarc-redesign
+        templateOptions: #DEFAULT#
+        cssClasses: page-w1280p
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    css {
+        inline:
+            ```css
+            body  {
+                margin: 0 auto;
+                background-image: url(#APP_IMAGES#ll_bg_tile.webp);
+                background-repeat: repeat;
+            }
+            
+            .qr-code-centered img {
+                margin: 0 auto;
+            }
+            
+            
+            #CONTENTPANEL .row {
+                display: flex;
+            }
+            #CONTENTAREA .row {
+                display: flex;
+            }
+            #SIDEBANNER .row{
+                display: flex;
+            }
+            #WAYSTORUN .row{
+                display: flex;
+                width: 100%;
+            }
+            #VIDINFO .row{
+                display: flex;
+                width: 100%;
+            }
+            
+            @media only screen and (max-width: 812px){
+                .t-Body-mainContent  {
+                    min-width: 812px;
+                    margin: 0 auto;
+                }    
+            
+                #SIDEBANNER .row{
+                    display: flex;
+                    margin: 0 auto;
+                    min-width: 40%;
+                    padding: 0px 80px 0px 0px;
+                }
+            
+                #CONTENTPANEL .row {
+                    display: inline-block;
+                    min-width: 100%;
+                    min-height: 100%;        
+                }
+            }
+            
+            @media only screen and (max-width: 768px){
+                .t-Body-mainContent  {
+                    min-width: 768px;
+                    margin: 10px 0px 0px 0px;
+                    padding: 0px 0px 0px 0px;
+                }    
+            
+                #WORKSHOPHEADER .row{
+                    display: inline-block;
+                    padding-right: 50px;
+                }
+                #SIDEBANNER .row{
+                    display: flex;
+                    padding: 0px 0px 0px 0px;
+                    margin: 10px 0px 0px -10px;
+                }
+            
+                #CONTENTPANEL .row {
+                    display: flex;
+                    min-width: 100%;        
+                    min-height: 100%;     
+                    padding: 0px 0px 0px 0px;   
+                }
+            
+                #WAYSTORUN {
+                    display: flex;
+                    width:100%;
+                    padding-right: 00px;
+                }
+            
+                #VIDINFO {
+                    display: flex;
+                    padding-right: 00px;
+                    width: 100%;
+                }
+            }
+            
+            @media only screen and (max-width: 667px){
+                .t-Body-mainContent  {
+                    min-width: 667px;
+                    margin: 0 auto;
+                }    
+            
+                #WORKSHOPHEADER .row{
+                    display: flex;
+                    min-width: 667px;
+                    max-width: 667px;
+                }
+            
+                #SIDEBANNER .row{
+                    display: inline-block;
+                }
+                
+                #CONTENTPANEL .row {
+                    display: flex;    
+                }
+            
+                #VIDINFO .row{
+                    display: inline-block;
+                    padding-left: 30px;
+                }
+            }
+            
+            @media only screen and (max-width: 479px){
+                .t-Body-mainContent  {
+                    min-width: 479px;
+                    margin: 0 auto;
+                }    
+            
+                #CONTENTPANEL .row {
+                    display: inline-block;
+                    min-width: 100%;
+                    min-height: 100%;        
+                }
+            }
+            
+            @media only screen and (max-width: 375px){
+                .t-Body-mainContent  {
+                    min-width: 375px;
+                    margin: 0 auto;
+                }    
+            
+                #WORKSHOPHEADER .row {
+                    display: flex;
+                }
+            
+                #CONTENTPANEL .row {
+                    display: inline-block;
+                    min-width: 100%;
+                    min-height: 100%;        
+                }
+            
+                #WAYSTORUN .row{
+                    display: flex;
+                    width:100%;
+                    padding-right: 30px;
+                }
+            
+                #VIDINFO {
+                    display: flex;
+                    padding-left: -20px;
+                    margin-right: 20px;
+                    width: 100%;
+                }
+            
+                #VIDINFO .row{
+                    padding-left: 0px;
+                }
+            
+            }
+            
+            #WORKSHOPHEADER{
+                color: white;
+                background: url(#APP_IMAGES#ll_region_bg_green.webp);
+                min-height: 100%;
+            }
+            #SIDEBANNER{
+                color: white;
+                margin-top: -5px;
+                background: url(#APP_IMAGES#ll_region_bg_orange.webp);
+                min-height: 100%;
+            }
+            
+            #GTADVERT{
+                margin: 0px 0px 0px 18px;
+                color: white;
+                background: url(#APP_IMAGES#ll_region_bg.webp);
+            }
+            
+            #WKOUTLINE{
+                background-color: #b3c49e;
+            }
+            
+            #WKDETAIL{
+                background-color: #b3c49e;
+            }
+            ```
+    }
+    htmlHeader {
+        htmlHeader:
+            ```html
+            <meta property="og:type" content="website" />
+            <meta property="og:title" content="Oracle LiveLabs" />
+            <meta property="og:" content />
+            ```
+    }
+    security {
+        authentication: public
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region application-flow (
+        name: Application Flow
+        type: staticContent
+        source {
+            htmlCode: <img src="#APP_IMAGES#ll_application_flow.webp">
+        }
+        layout {
+            sequence: 20
+            parentRegion: @documentation
+            slot: subRegions
+        }
+        appearance {
+            template: @/collapsible
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                js-useLocalStorage
+                is-expanded
+                t-Region--noUI
+                t-Region--hiddenOverflow
+                t-Form--noPadding
+                margin-top-none
+                margin-bottom-none
+                margin-left-none
+                margin-right-none
+            ]
+        }
+    )
+
+    region documentation (
+        name: Documentation
+        type: staticContent
+        layout {
+            sequence: 50
+            slot: body
+        }
+        appearance {
+            template: @/standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader js-removeLandmark
+                t-Region--noUI
+                t-Region--hiddenOverflow
+                margin-top-none
+                margin-bottom-none
+                margin-left-none
+                margin-right-none
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region environment-provisioning-process (
+        name: Environment Provisioning Process
+        type: staticContent
+        source {
+            htmlCode: <img src="#APP_IMAGES#ll_provisioning.webp">
+        }
+        layout {
+            sequence: 40
+            parentRegion: @documentation
+            slot: subRegions
+        }
+        appearance {
+            template: @/collapsible
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                js-useLocalStorage
+                is-expanded
+                t-Region--noUI
+                t-Region--hiddenOverflow
+                t-Form--noPadding
+                margin-top-none
+                margin-bottom-none
+                margin-left-none
+                margin-right-none
+            ]
+        }
+    )
+
+    region options-for-resource-provisioning (
+        name: Options for Resource Provisioning
+        type: staticContent
+        source {
+            htmlCode: <img src="#APP_IMAGES#ll_resource_types.webp">
+        }
+        layout {
+            sequence: 50
+            parentRegion: @documentation
+            slot: subRegions
+        }
+        appearance {
+            template: @/collapsible
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                js-useLocalStorage
+                is-expanded
+                t-Region--noUI
+                t-Region--hiddenOverflow
+                t-Form--noPadding
+                margin-top-none
+                margin-bottom-none
+                margin-left-none
+                margin-right-none
+            ]
+        }
+    )
+
+    region span-style-font-size-24px-livelabs-documentation-span (
+        name: <span style="font-size: 24px">LiveLabs Documentation</span>
+        type: staticContent
+        layout {
+            sequence: 10
+            parentRegion: @documentation
+            slot: subRegions
+        }
+        appearance {
+            template: @/standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--noUI
+                t-Region--hiddenOverflow
+                t-Form--noPadding
+                margin-top-none
+                margin-bottom-none
+                margin-left-none
+                margin-right-none
+            ]
+        }
+    )
+
+    region user-provisioning-workflow (
+        name: User Provisioning Workflow
+        type: staticContent
+        source {
+            htmlCode: <img src="#APP_IMAGES#ll_user_flow.webp">
+        }
+        layout {
+            sequence: 30
+            parentRegion: @documentation
+            slot: subRegions
+        }
+        appearance {
+            template: @/collapsible
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                js-useLocalStorage
+                is-expanded
+                t-Region--noUI
+                t-Region--hiddenOverflow
+                t-Form--noPadding
+                margin-top-none
+                margin-bottom-none
+                margin-left-none
+                margin-right-none
+            ]
+        }
+    )
+
+)
+

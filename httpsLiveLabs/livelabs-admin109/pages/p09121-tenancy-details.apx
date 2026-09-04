@@ -1,0 +1,1072 @@
+page 9121 (
+    name: Tenancy details
+    alias: TENANCY-DETAILS
+    title: Tenancy details
+    appearance {
+        pageTemplate: @standard-trustarc
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    javaScript {
+        functionAndGlobalVariableDeclaration: var htmldb_delete_message='"DELETE_CONFIRM_MSG"';
+    }
+    css {
+        fileUrls: #APP_IMAGES#css/livelabs#MIN#.css
+    }
+    security {
+        authorizationScheme: @superrrrr-user
+        formAutoComplete: false
+    }
+
+    region tenancy-details (
+        name: Tenancy details
+        type: form
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select ID,
+                       TENANCY_NAME,
+                       TENANCY_OCID,
+                       SWIFT_NAME,
+                       PREFERENCE_WEIGHT,
+                       USER_NAME,
+                       AUTH_TOKEN,
+                       USER_OCID,
+                       USER_FINGERPRINT,
+                       PEM_KEY_PRIV,
+                       PEM_KEY_PUB,
+                       PEM_KEY_RSA,
+                       HOME_REGION,
+                       DEFAULT_COMPARTMENT_NAME,
+                       DEFAULT_COMPARTMENT_OCID,
+                       RECYCLEBIN_OCID,
+                       AVAILABLE_OCID,
+                       AD_PREFIX,
+                       DEFAULT_DYNAMIC_GROUP,
+                       ACTIVE_FLG,
+                       IS_PUBLIC
+                  from LL_TENANCIES
+                ```
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        edit {
+            enabled: true
+            allowedOperations: [
+                add
+                update
+                delete
+            ]
+        }
+    )
+
+    pageItem P9121_ACTIVE_FLG (
+        type: selectList
+        label {
+            label: Active ?
+            alignment: left
+        }
+        lov {
+            type: sharedComponent
+            lov: @active-flg
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 20
+            region: @tenancy-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 1
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            formRegion: @tenancy-details
+            column: ACTIVE_FLG
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9121_AD_PREFIX (
+        type: textField
+        label {
+            label: Ad Prefix
+            alignment: left
+        }
+        layout {
+            sequence: 90
+            region: @tenancy-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 2
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            maxLength: 50
+        }
+        source {
+            formRegion: @tenancy-details
+            column: AD_PREFIX
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9121_AUTH_TOKEN (
+        type: textField
+        label {
+            label: Auth token
+            alignment: left
+        }
+        layout {
+            sequence: 190
+            region: @tenancy-details
+            slot: regionBody
+            alignment: left
+            columnSpan: 2
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            maxLength: 50
+        }
+        source {
+            formRegion: @tenancy-details
+            column: AUTH_TOKEN
+            dataType: varchar2
+        }
+        serverSideCondition {
+            type: expression
+            plsqlExpression: ll_pkg_admin.system_parameter('DISPLAY_TENANCY_KEYS') = 'TRUE'
+        }
+        security {
+            authorizationScheme: @superrrrr-user
+        }
+    )
+
+    pageItem P9121_AVAILABLE_OCID (
+        type: textField
+        label {
+            label: Available Compartment OCID
+            alignment: left
+        }
+        layout {
+            sequence: 140
+            region: @tenancy-details
+            slot: regionBody
+            alignment: left
+            column: 3
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            maxLength: 200
+        }
+        source {
+            formRegion: @tenancy-details
+            column: AVAILABLE_OCID
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9121_CONCURRENT_MOVE (
+        type: selectList
+        label {
+            label: Concurrent Move
+            alignment: left
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC:1;1,2;2,3;3,4;4,5;5,6;6
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 40
+            region: @tenancy-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 1
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: CONCURRENT_MOVE
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9121_DEFAULT_COMPARTMENT_NAME (
+        type: textField
+        label {
+            label: Default Compartment Name
+            alignment: left
+        }
+        settings {
+            trimSpaces: none
+        }
+        layout {
+            sequence: 120
+            region: @tenancy-details
+            slot: regionBody
+            alignment: left
+            columnSpan: 2
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 50
+        }
+        source {
+            formRegion: @tenancy-details
+            column: DEFAULT_COMPARTMENT_NAME
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9121_DEFAULT_COMPARTMENT_OCID (
+        type: textField
+        label {
+            label: Live Compartment OCID
+            alignment: left
+        }
+        layout {
+            sequence: 130
+            region: @tenancy-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 60
+        }
+        validation {
+            maxLength: 200
+        }
+        source {
+            formRegion: @tenancy-details
+            column: DEFAULT_COMPARTMENT_OCID
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9121_DEFAULT_DYNAMIC_GROUP (
+        type: textField
+        label {
+            label: Default Dynamic Group
+            alignment: left
+        }
+        layout {
+            sequence: 100
+            region: @tenancy-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            maxLength: 100
+        }
+        source {
+            formRegion: @tenancy-details
+            column: DEFAULT_DYNAMIC_GROUP
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9121_HOME_REGION (
+        type: selectList
+        label {
+            label: Home Region
+            alignment: left
+        }
+        lov {
+            type: sharedComponent
+            lov: @ll-regions-3
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 110
+            region: @tenancy-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            formRegion: @tenancy-details
+            column: HOME_REGION
+            dataType: number
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9121_ID (
+        type: displayOnly
+        label {
+            label: ID
+            alignment: left
+        }
+        layout {
+            sequence: 10
+            region: @tenancy-details
+            slot: regionBody
+            alignment: left
+            columnSpan: 1
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @tenancy-details
+            column: ID
+            dataType: number
+            primaryKey: true
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9121_IS_PUBLIC (
+        type: selectList
+        label {
+            label: Is Public
+            alignment: left
+        }
+        lov {
+            type: sharedComponent
+            lov: @active-flg
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 30
+            region: @tenancy-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 1
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            formRegion: @tenancy-details
+            column: IS_PUBLIC
+            dataType: varchar2
+        }
+        default {
+            type: static
+            staticValue: Y
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9121_PEM_KEY_PRIV (
+        type: textarea
+        label {
+            label: PEM Key PRIV
+            alignment: left
+        }
+        settings {
+            resizable: false
+            autoHeight: true
+        }
+        layout {
+            sequence: 220
+            region: @tenancy-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 60
+            height: 5
+        }
+        validation {
+            maxLength: 4000
+        }
+        source {
+            formRegion: @tenancy-details
+            column: PEM_KEY_PRIV
+            dataType: varchar2
+        }
+        serverSideCondition {
+            type: expression
+            plsqlExpression: ll_pkg_admin.system_parameter('DISPLAY_TENANCY_KEYS') = 'TRUE'
+        }
+        security {
+            authorizationScheme: @superrrrr-user
+        }
+    )
+
+    pageItem P9121_PEM_KEY_PUB (
+        type: textarea
+        label {
+            label: PEM Key PUB
+            alignment: left
+        }
+        settings {
+            resizable: false
+            autoHeight: true
+        }
+        layout {
+            sequence: 200
+            region: @tenancy-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 60
+            height: 5
+        }
+        validation {
+            maxLength: 4000
+        }
+        source {
+            formRegion: @tenancy-details
+            column: PEM_KEY_PUB
+            dataType: varchar2
+        }
+        serverSideCondition {
+            type: expression
+            plsqlExpression: ll_pkg_admin.system_parameter('DISPLAY_TENANCY_KEYS') = 'TRUE'
+        }
+        security {
+            authorizationScheme: @administration-rights
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9121_PEM_KEY_RSA (
+        type: textarea
+        label {
+            label: PEM Key RSA
+            alignment: left
+        }
+        settings {
+            resizable: false
+            autoHeight: true
+        }
+        layout {
+            sequence: 210
+            region: @tenancy-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 60
+            height: 5
+        }
+        validation {
+            valueRequired: true
+            maxLength: 4000
+        }
+        source {
+            formRegion: @tenancy-details
+            column: PEM_KEY_RSA
+            dataType: varchar2
+        }
+        serverSideCondition {
+            type: expression
+            plsqlExpression: ll_pkg_admin.system_parameter('DISPLAY_TENANCY_KEYS') = 'TRUE'
+        }
+        security {
+            authorizationScheme: @superrrrr-user
+        }
+    )
+
+    pageItem P9121_PREFERENCE_WEIGHT (
+        type: numberField
+        label {
+            label: Preference Weight
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 70
+            region: @tenancy-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        source {
+            formRegion: @tenancy-details
+            column: PREFERENCE_WEIGHT
+            dataType: number
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9121_RECYCLEBIN_OCID (
+        type: textField
+        label {
+            label: Recyclebin compartment OCID
+            alignment: left
+        }
+        layout {
+            sequence: 150
+            region: @tenancy-details
+            slot: regionBody
+            alignment: left
+            column: 3
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 60
+        }
+        validation {
+            maxLength: 200
+        }
+        source {
+            formRegion: @tenancy-details
+            column: RECYCLEBIN_OCID
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9121_SWIFT_NAME (
+        type: textField
+        label {
+            label: Swift Name
+            alignment: left
+        }
+        layout {
+            sequence: 80
+            region: @tenancy-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 50
+        }
+        source {
+            formRegion: @tenancy-details
+            column: SWIFT_NAME
+            dataType: varchar2
+        }
+        security {
+            authorizationScheme: @administration-rights
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9121_TENANCY_NAME (
+        type: textField
+        label {
+            label: Tenancy Name
+            alignment: left
+        }
+        settings {
+            trimSpaces: none
+        }
+        layout {
+            sequence: 50
+            region: @tenancy-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 2
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 50
+        }
+        source {
+            formRegion: @tenancy-details
+            column: TENANCY_NAME
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9121_TENANCY_OCID (
+        type: textField
+        label {
+            label: Tenancy Ocid
+            alignment: left
+        }
+        layout {
+            sequence: 60
+            region: @tenancy-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 60
+        }
+        validation {
+            valueRequired: true
+            maxLength: 200
+        }
+        source {
+            formRegion: @tenancy-details
+            column: TENANCY_OCID
+            dataType: varchar2
+        }
+        security {
+            authorizationScheme: @administration-rights
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9121_USER_FINGERPRINT (
+        type: textField
+        label {
+            label: User Fingerprint
+            alignment: left
+        }
+        layout {
+            sequence: 180
+            region: @tenancy-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 3
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 60
+        }
+        validation {
+            valueRequired: true
+            maxLength: 200
+        }
+        source {
+            formRegion: @tenancy-details
+            column: USER_FINGERPRINT
+            dataType: varchar2
+        }
+        security {
+            authorizationScheme: @administration-rights
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9121_USER_NAME (
+        type: textField
+        label {
+            label: Username
+            alignment: left
+        }
+        layout {
+            sequence: 160
+            region: @tenancy-details
+            slot: regionBody
+            alignment: left
+            columnSpan: 2
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 60
+        }
+        validation {
+            maxLength: 50
+        }
+        source {
+            formRegion: @tenancy-details
+            column: USER_NAME
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P9121_USER_OCID (
+        type: textField
+        label {
+            label: User OCID
+            alignment: left
+        }
+        layout {
+            sequence: 170
+            region: @tenancy-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 60
+        }
+        validation {
+            valueRequired: true
+            maxLength: 200
+        }
+        source {
+            formRegion: @tenancy-details
+            column: USER_OCID
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button cancel (
+        buttonName: CANCEL
+        label: Cancel
+        layout {
+            sequence: 20
+            region: @tenancy-details
+            slot: close
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 9120
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button create (
+        buttonName: CREATE
+        label: Create
+        layout {
+            sequence: 50
+            region: @tenancy-details
+            slot: create
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: insert
+        }
+        serverSideCondition {
+            type: itemIsNull
+            item: P9121_ID
+        }
+    )
+
+    button delete (
+        buttonName: DELETE
+        label: Delete
+        layout {
+            sequence: 30
+            region: @tenancy-details
+            slot: delete
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectUrl
+            targetUrl: javascript:apex.confirm(htmldb_delete_message,'DELETE');
+            executeValidations: false
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: delete
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P9121_ID
+        }
+    )
+
+    button save (
+        buttonName: SAVE
+        label: Apply Changes
+        layout {
+            sequence: 40
+            region: @tenancy-details
+            slot: change
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: update
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P9121_ID
+        }
+    )
+
+    button tenancyprovides (
+        buttonName: TenancyProvides
+        label: Tenancy provides
+        layout {
+            sequence: 10
+            region: @tenancy-details
+            slot: help
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 9122
+                items: {
+                    P9122_TENANCY_ID: &P9121_ID.
+                }
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    dynamicAction changed (
+        name: Changed
+        execution {
+            sequence: 10
+        }
+        when {
+            selectionType: items
+            items: P9121_AUTH_TOKEN_VIRT
+        }
+
+        action native-set-value (
+            action: setValue
+            settings {
+                type: plsqlExpression
+                plsqlExpression: :P9121_AUTH_TOKEN_VIRT
+                itemsToSubmit: P9121_AUTH_TOKEN_VIRT
+                escapeSpecialChars: false
+            }
+            affectedElements {
+                selectionType: items
+                items: P9121_AUTH_TOKEN
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    dynamicAction updateauthtoken (
+        name: UpdateAuthToken
+        execution {
+            sequence: 10
+        }
+        when {
+            selectionType: items
+            items: P9121_AUTH_TOKEN_DISP
+        }
+
+        action native-set-value (
+            action: setValue
+            settings {
+                type: plsqlExpression
+                plsqlExpression: :P9121_AUTH_TOKEN_DISP
+                itemsToSubmit: P9121_AUTH_TOKEN_DISP
+                escapeSpecialChars: false
+                suppressChangeEvent: true
+            }
+            affectedElements {
+                selectionType: items
+                items: P9121_AUTH_TOKEN
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    computation p9121-auth-token (
+        itemName: P9121_AUTH_TOKEN
+        execution {
+            sequence: 10
+        }
+        computation {
+            type: expression
+            plsqlExpression: "ll_pkg_security.decrypt(:P9121_AUTH_TOKEN) "
+        }
+    )
+
+    computation p9121-pem-key-priv (
+        itemName: P9121_PEM_KEY_PRIV
+        execution {
+            sequence: 20
+        }
+        computation {
+            type: expression
+            plsqlExpression: "ll_pkg_security.decrypt(:P9121_PEM_KEY_PRIV) "
+        }
+    )
+
+    computation p9121-pem-key-rsa (
+        itemName: P9121_PEM_KEY_RSA
+        execution {
+            sequence: 30
+        }
+        computation {
+            type: expression
+            plsqlExpression: "ll_pkg_security.decrypt(:P9121_PEM_KEY_RSA) "
+        }
+    )
+
+    process initialize-form-tenancy-details (
+        name: Initialize form Tenancy details
+        type: formInitialization
+        formRegion: @tenancy-details
+        execution {
+            sequence: 10
+            point: beforeHeader
+        }
+        advanced {
+            executionMappingIdentifier: 11184068356762645783
+        }
+    )
+
+    process process-form-tenancy-details (
+        name: Process form Tenancy details
+        type: formAutoRowProcessing
+        formRegion: @tenancy-details
+        execution {
+            sequence: 10
+        }
+        advanced {
+            executionMappingIdentifier: 11184068788768645783
+        }
+    )
+
+    branch (
+        name: Go To Page 9120
+        execution {
+            sequence: 1
+        }
+        behavior {
+            target: {
+                page: 9120
+            }
+        }
+    )
+
+)
+

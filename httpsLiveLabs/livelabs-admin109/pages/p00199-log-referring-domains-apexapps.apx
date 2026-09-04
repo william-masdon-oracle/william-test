@@ -1,0 +1,227 @@
+page 199 (
+    name: Log Referring Domains - APEXAPPS
+    alias: LOG-REFERRING-DOMAINS-APEXAPPS
+    title: Log Referring Domains - APEXAPPS
+    appearance {
+        pageTemplate: @standard-trustarc
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region log-referring-domains-apexapps (
+        name: Log Referring Domains - APEXAPPS
+        type: interactiveReport
+        source {
+            location: localDatabase
+            tableName: LL_APEXAPPS_LOG
+            orderByClause: ENTRY_DATE DESC
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        pagination {
+            type: rowRangesXToY
+        }
+        messages {
+            whenNoDataFound: No data found.
+            whenMoreDataFound: The maximum row count for this report is #MAX_ROW_COUNT# rows.  Please apply a filter to reduce the number of records in your query.
+        }
+        advanced {
+            savedReportMappingIdentifier: 326263674092368303
+        }
+
+        column APP_SESSION (
+            type: plainText
+            heading {
+                heading: App Session
+                alignment: end
+            }
+            layout {
+                sequence: 5
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: E
+            }
+        )
+
+        column ENTRY_DATE (
+            type: plainText
+            heading {
+                heading: Entry Date
+            }
+            layout {
+                sequence: 2
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: B
+            }
+        )
+
+        column ID (
+            type: hidden
+            heading {
+                heading: ID
+            }
+            layout {
+                sequence: 0
+            }
+            source {
+                primaryKey: true
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: A
+            }
+        )
+
+        column PREV_URL (
+            type: plainText
+            heading {
+                heading: Prev URL
+            }
+            layout {
+                sequence: 4
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: D
+            }
+        )
+
+        column URL (
+            type: plainText
+            heading {
+                heading: URL
+            }
+            layout {
+                sequence: 3
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: C
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: Log Referring Domains - APEXAPPS
+        }
+
+        savedReport 3262666 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn APP_SESSION (
+                sequence: 5
+            )
+
+            displayColumn ENTRY_DATE (
+                sequence: 2
+            )
+
+            displayColumn ID (
+                sequence: 1
+            )
+
+            displayColumn PREV_URL (
+                sequence: 4
+            )
+
+            displayColumn URL (
+                sequence: 3
+            )
+
+        )
+
+    )
+
+    button truncate (
+        buttonName: Truncate
+        label: Truncate
+        layout {
+            sequence: 10
+            region: @log-referring-domains-apexapps
+            slot: rightOfInteractiveReportSearchBar
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+            requiresConfirmation: true
+        }
+        confirmation {
+            message: Are you sure you want to truncate this log?
+        }
+    )
+
+    dynamicAction clicked (
+        name: Clicked
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @truncate
+        }
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    BEGIN
+                      EXECUTE IMMEDIATE 'TRUNCATE TABLE LL_APEXAPPS_LOG';
+                    END;
+                    ```
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: eventSource
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+    )
+
+)
+

@@ -1,0 +1,638 @@
+page 23 (
+    name: Batch Provisioning - Review Details
+    alias: BATCH-PROVISIONING-REVIEW-DETAILS
+    title: Review & Submit
+    appearance {
+        pageTemplate: @standard-trustarc
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    css {
+        inline:
+            ```css
+            th {
+                align-content: center;
+            }
+            
+            .t-Region-body {
+                padding-top: 1% !important;
+            }
+            
+            #P23_EVENT_LANDING_PAGE_CONTAINER {
+              display: inline-block !important;
+              width: auto !important;
+              white-space: nowrap;
+            }
+            #P23_EVENT_LANDING_PAGE_DISPLAY {
+              display: inline-block !important;
+              width: auto !important;
+            }
+            
+            
+            #P23_EVENT_DETAILS_CONTAINER {
+              display: inline-block !important;
+              width: auto !important;
+              white-space: nowrap;
+            }
+            #P23_EVENT_DETAILS_DISPLAY {
+              display: inline-block !important;
+              width: auto !important;
+            }
+            
+            ```
+    }
+    security {
+        pageAccessProtection: noArgumentsSupported
+        formAutoComplete: false
+    }
+
+    region batch-provisioning-review-details (
+        name: Batch Provisioning - Review Details
+        type: list
+        source {
+            list: @batch-provision
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @wizard-container
+            templateOptions: [
+                #DEFAULT#
+                t-Wizard--hideStepsXSmall
+            ]
+        }
+        componentAppearance {
+            listTemplate: @wizard-progress
+        }
+    )
+
+    region batch-provisioning-review-details-2 (
+        name: Batch Provisioning - Review Details
+        type: staticContent
+        layout {
+            sequence: 10
+            parentRegion: @batch-provisioning-review-details
+            slot: wizardSubRegions
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    region details (
+        name: Details
+        type: staticContent
+        layout {
+            sequence: 10
+            parentRegion: @batch-provisioning-review-details-2
+            slot: regionBody
+            startNewRow: false
+        }
+    )
+
+    region event-details (
+        name: Event Details
+        type: staticContent
+        layout {
+            sequence: 40
+            parentRegion: @details
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--showIcon
+                t-Region--accent1
+                t-Region--scrollBody
+                margin-right-md
+            ]
+            icon: fa-calendar-o
+        }
+        advanced {
+            htmlDomId: event-details
+        }
+    )
+
+    region provision-details (
+        name: Provision Details
+        type: staticContent
+        layout {
+            sequence: 30
+            parentRegion: @details
+            slot: subRegions
+            startNewRow: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--showIcon
+                t-Region--accent1
+                t-Region--scrollBody
+                margin-right-md
+            ]
+            icon: fa-clock-o
+        }
+    )
+
+    region provision-schedule (
+        name: Provision Schedule
+        type: staticContent
+        layout {
+            sequence: 30
+            parentRegion: @batch-provisioning-review-details-2
+            slot: regionBody
+            startNewRow: false
+        }
+    )
+
+    region schedule (
+        name: Schedule
+        title: Provision Schedule
+        type: classicReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select to_number(batch_number) batch_number,
+                       start_time,
+                       start_date,
+                       batch_size,
+                       (select tenancy_name from ll_tenancies where id = tenancy_id) tenancy,
+                       (select region_name from ll_oci_regions where id = region_id) region,
+                       preference_points
+                from JSON_TABLE (:P20_PROVISION_SCHEDULE_JSON, '$[*]' 
+                        COLUMNS (batch_number, 
+                                start_date,
+                                start_time, 
+                                batch_size, 
+                                tenancy_id,
+                                region_id,  
+                                preference_points));
+                ```
+            pageItemsToSubmit: P20_PROVISION_SCHEDULE_JSON
+        }
+        layout {
+            sequence: 10
+            parentRegion: @provision-schedule
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--showIcon
+                t-Region--accent1
+                t-Region--scrollBody
+            ]
+            icon: fa-table-clock
+        }
+        advanced {
+            htmlDomId: provision-schedule
+        }
+        componentAppearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Report--altRowsDefault
+                t-Report--rowHighlight
+            ]
+        }
+
+        column BATCH_NUMBER (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            heading {
+                heading: Batch Number
+                alignment: center
+            }
+            layout {
+                sequence: 10
+                columnAlignment: center
+            }
+        )
+
+        column BATCH_SIZE (
+            reportColumnQueryId: 4
+            derivedColumn: N
+            heading {
+                heading: Batch Size
+                alignment: center
+            }
+            layout {
+                sequence: 40
+                columnAlignment: center
+            }
+        )
+
+        column PREFERENCE_POINTS (
+            reportColumnQueryId: 7
+            derivedColumn: N
+            heading {
+                heading: Preference Points
+                alignment: center
+            }
+            layout {
+                sequence: 70
+                columnAlignment: center
+            }
+        )
+
+        column REGION (
+            reportColumnQueryId: 6
+            derivedColumn: N
+            heading {
+                heading: Region
+                alignment: center
+            }
+            layout {
+                sequence: 60
+            }
+        )
+
+        column START_DATE (
+            reportColumnQueryId: 3
+            derivedColumn: N
+            heading {
+                heading: Start Date
+            }
+            layout {
+                sequence: 20
+            }
+        )
+
+        column START_TIME (
+            reportColumnQueryId: 2
+            derivedColumn: N
+            heading {
+                heading: Start Time
+                alignment: center
+            }
+            layout {
+                sequence: 30
+                columnAlignment: center
+            }
+            appearance {
+                formatMask: DD-MON-YYYY HH:MIPM
+            }
+        )
+
+        column TENANCY (
+            reportColumnQueryId: 5
+            derivedColumn: N
+            heading {
+                heading: Tenancy
+                alignment: center
+            }
+            layout {
+                sequence: 50
+                columnAlignment: center
+            }
+        )
+
+    )
+
+    pageItem P23_EVENT_CODE (
+        type: hidden
+        layout {
+            sequence: 10
+            region: @event-details
+            slot: regionBody
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery: select voucher_code from ll_vouchers where id = :P19_EVENT_CODE_ID;
+        }
+        sessionState {
+            storage: request
+        }
+    )
+
+    pageItem P23_EVENT_DETAILS (
+        type: displayOnly
+        label {
+            label: "Event Details: "
+            alignment: left
+        }
+        settings {
+            format: html
+        }
+        layout {
+            sequence: 30
+            region: @event-details
+            slot: regionBody
+            alignment: left
+        }
+        source {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                declare
+                    v_html varchar2(1000);
+                    l_url varchar2(2000);
+                    l_app number := v('APP_ID');
+                    l_session number := v('APP_SESSION');
+                BEGIN
+                    l_url := APEX_UTIL.PREPARE_URL(
+                        p_url => 'f?p=' || l_app || ':9161:'||l_session||'::NO::P9161_ID:'||:P19_EVENT_CODE_ID,
+                        p_checksum_type => 'SESSION');
+                    v_html := '<a href="'||l_url||'" target="_blank">'||:P23_EVENT_CODE||'</a>';
+                    return v_html;
+                end;
+                ```
+        }
+        sessionState {
+            storage: request
+        }
+    )
+
+    pageItem P23_EVENT_LANDING_PAGE (
+        type: displayOnly
+        label {
+            label: "Event: "
+            alignment: left
+        }
+        settings {
+            format: html
+        }
+        layout {
+            sequence: 20
+            region: @event-details
+            slot: regionBody
+            alignment: left
+        }
+        source {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                declare
+                    v_event_name varchar2(4000);
+                begin
+                    select reason into v_event_name from ll_vouchers where id = :P19_EVENT_CODE_ID;
+                    return '<a href="https://apexapps.oracle.com/pls/apex/dbpm/r/livelabs/view-workshop?wec='||:P23_EVENT_CODE||'">'|| initcap(v_event_name) ||' (#'||:P19_EVENT_CODE_ID||')</a>';
+                end;
+                ```
+            used: always
+        }
+        sessionState {
+            storage: request
+        }
+    )
+
+    pageItem P23_RESERVATION_SIZE (
+        type: displayOnly
+        label {
+            label: "Reservation Size: "
+            alignment: left
+        }
+        layout {
+            sequence: 40
+            region: @provision-details
+            slot: regionBody
+            alignment: left
+        }
+        source {
+            type: item
+            item: P19_RESERVATION_SIZE
+            used: always
+        }
+        sessionState {
+            storage: request
+        }
+    )
+
+    pageItem P23_START_DATE (
+        type: displayOnly
+        label {
+            label: "Start Date: "
+            alignment: left
+        }
+        layout {
+            sequence: 10
+            region: @provision-details
+            slot: regionBody
+            alignment: left
+        }
+        source {
+            type: item
+            item: P19_START_DATE
+        }
+        sessionState {
+            storage: request
+        }
+    )
+
+    pageItem P23_START_TIME (
+        type: displayOnly
+        label {
+            label: "Start Time: "
+            alignment: left
+        }
+        layout {
+            sequence: 20
+            region: @provision-details
+            slot: regionBody
+            alignment: left
+        }
+        source {
+            type: expression
+            plsqlExpression: to_char(to_date(:P19_start_time, 'HH24:MI'), 'HH:MI AM')
+        }
+        sessionState {
+            storage: request
+        }
+    )
+
+    pageItem P23_TIME_ZONE (
+        type: displayOnly
+        label {
+            label: "Time Zone: "
+            alignment: left
+        }
+        layout {
+            sequence: 30
+            region: @provision-details
+            slot: regionBody
+            alignment: left
+        }
+        source {
+            type: item
+            item: P19_TIME_ZONE
+        }
+        sessionState {
+            storage: request
+        }
+    )
+
+    pageItem P23_WORKSHOP (
+        type: displayOnly
+        label {
+            label: "Workshop: "
+            alignment: left
+        }
+        layout {
+            sequence: 40
+            region: @event-details
+            slot: regionBody
+            alignment: left
+        }
+        default {
+            type: expression
+            plsqlExpression: :P19_WORKSHOP_TITLE || ' (LLID #'||:P19_WORKSHOP_ID||')'
+        }
+        sessionState {
+            storage: request
+        }
+    )
+
+    button cancel (
+        buttonName: CANCEL
+        label: Cancel
+        layout {
+            sequence: 10
+            region: @batch-provisioning-review-details
+            slot: close
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 1
+                clearCache: [
+                    19
+                    20
+                    23
+                ]
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button previous (
+        buttonName: PREVIOUS
+        label: Previous
+        layout {
+            sequence: 20
+            region: @batch-provisioning-review-details
+            slot: previous
+        }
+        appearance {
+            buttonTemplate: @icon
+            templateOptions: #DEFAULT#
+            icon: fa-chevron-left
+        }
+        behavior {
+            executeValidations: false
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button submit (
+        buttonName: Submit
+        label: Submit
+        layout {
+            sequence: 40
+            region: @batch-provisioning-review-details
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            showProcessing: true
+            warnOnUnsavedChanges: doNotCheck
+            requiresConfirmation: true
+        }
+        confirmation {
+            message: Are you sure you want to batch provision &P19_RESERVATION_SIZE. reservations?
+        }
+    )
+
+    process insert-reservations (
+        name: Insert Reservations
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                declare 
+                    v_event_code varchar2(50);
+                begin
+                    select voucher_code into v_event_code from ll_vouchers where id = :P19_EVENT_CODE_ID;
+                
+                    -- For every batch...
+                    for batch in (select * from JSON_TABLE (:P20_PROVISION_SCHEDULE_JSON, '$[*]' COLUMNS (start_date, start_time, batch_size, tenancy_id, region_id))) loop
+                        -- For every reservation in that batch...            
+                        for res in 1 .. batch.batch_size loop
+                            -- Create a new entry in the reservations table.
+                            insert into ll_reservations(workshop_id, owner1, region_id, tenancy_id, voucher_id, start_date, start_time, start_timezone, public_key)
+                            values (:P20_WORKSHOP_ID, v_event_code || '@LIVELABS.COM', batch.region_id, batch.tenancy_id, :P19_EVENT_CODE_ID, to_date(batch.start_date, 'MM/DD/YYYY'), TO_CHAR(TO_TIMESTAMP(batch.start_time, 'HH:MI AM'), 'HH24:MI'), :P19_TIME_ZONE, :P19_SSH_KEY);
+                        end loop;       
+                    end loop;
+                end;
+                
+                ```
+        }
+        execution {
+            sequence: 10
+            point: afterSubmit
+        }
+        successMessage {
+            successMessage: Your reservations are scheduled!
+        }
+        advanced {
+            executionMappingIdentifier: 631149691520577620
+        }
+        serverSideCondition {
+            whenButtonPressed: @submit
+        }
+    )
+
+    branch (
+        name: Go To Page 20
+        execution {
+            sequence: 10
+        }
+        behavior {
+            target: {
+                page: 20
+            }
+        }
+        serverSideCondition {
+            whenButtonPressed: @previous
+        }
+    )
+
+    branch (
+        name: Go To Page 1
+        execution {
+            sequence: 1
+        }
+        behavior {
+            target: {
+                page: 9650
+                clearCache: [
+                    19
+                    20
+                    23
+                ]
+            }
+        }
+        serverSideCondition {
+            whenButtonPressed: @submit
+        }
+    )
+
+)
+

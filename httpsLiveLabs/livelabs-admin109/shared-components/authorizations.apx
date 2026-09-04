@@ -1,0 +1,33 @@
+authorization administration-rights (
+    name: Administration Rights
+    type: plSqlFunctionBody
+    settings {
+        plsqlFunctionBody: return true;
+    }
+    error {
+        errorMessage: Insufficient privileges, user is not an Administrator
+    }
+)
+
+authorization superrrrr-user (
+    name: Superrrrr User
+    type: plSqlFunctionBody
+    settings {
+        plsqlFunctionBody:
+            ```plsql
+            if ll_pkg_security.am_i_allowed (p_apex_user => :APP_USER, 
+                                            p_access_type => 'PAGE', 
+                                            p_access_value => :APP_PAGE_ID) = 'Y'
+            then
+              return (true);
+            else
+              return(false);
+            end if;
+            
+            ```
+    }
+    error {
+        errorMessage: You are NOT a SUPERRRRRRR user !!!
+    }
+)
+

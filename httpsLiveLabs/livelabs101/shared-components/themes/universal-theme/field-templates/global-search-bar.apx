@@ -1,0 +1,41 @@
+fieldTemplate global-search-bar (
+    name: Global Search Bar
+    templateClass: custom1
+    item {
+        before:
+            ```html
+            <style>
+                ##CURRENT_ITEM_NAME# .apex-item-comboselect, .a-combobox {
+                    width: 100% !important;
+                    display: flex !important;
+                }
+                ##CURRENT_ITEM_NAME# .apex-item-comboselect input {
+                    width: 100% !important;
+                    flex: 1 1 auto !important;
+                    display: flex !important;
+                }
+                ##CURRENT_ITEM_NAME# .apex-item-comboselect {
+                    display: grid !important;
+                    grid-template-columns: 1fr auto !important;  
+                    width: 100% !important;                       
+                }
+                ##CURRENT_ITEM_NAME# .apex-item-comboselect input.apex-item-text {
+                    width: 100%  !important;
+                    min-width: 0;  
+                }
+                /* hide dropdown arrow */
+                ##CURRENT_ITEM_NAME# .apex-item-comboselect .a-Button--comboSelect {
+                    display: none;
+                }
+            </style>
+            
+            ```
+    }
+    error {
+        afterLabel: <br/>#ERROR_MESSAGE#
+    }
+    advanced {
+        identifier: GLOBAL_SEARCH_BAR
+    }
+)
+

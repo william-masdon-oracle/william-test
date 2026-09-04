@@ -1,0 +1,225 @@
+page 9501 (
+    name: LL_Dashboard_Workshop
+    alias: LL-DASHBOARD-WORKSHOP
+    title: LL_Dashboard_Workshop
+    appearance {
+        pageTemplate: @standard-trustarc
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region month-wise-details-of-workshop (
+        name: "Month-wise details of Workshop  "
+        type: chart
+        layout {
+            sequence: 20
+            slot: contentBody
+            startNewRow: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        serverSideCondition {
+            type: never
+        }
+        chartLayout {
+            height: 400
+        }
+        legend {
+            show: false
+        }
+
+        series new (
+            name: New
+            execution {
+                sequence: 10
+            }
+            source {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                     select   w.id ,   w.name , count(*) as views  
+                    from LL_PAGE_VISITS lp , ll_workshops w
+                    where  lp.workshop_id is not null
+                    AND w.id=lp.workshop_id 
+                    --AND  lp.entry_date > :P9501_DT
+                    AND to_char(lp.entry_date,'MM/yyyy') = :P9501_DT
+                    group by w.id , w.name;
+                    ```
+                pageItemsToSubmit: P9501_DT
+            }
+            columnMapping {
+                label: NAME
+                value: VIEWS
+            }
+        )
+
+        axis x (
+            name: x
+            minorTicks {
+                show: false
+            }
+        )
+
+        axis y (
+            name: y
+            value {
+                format: decimal
+                decimalPlaces: 0
+                formatScaling: none
+            }
+            minorTicks {
+                show: false
+            }
+        )
+
+    )
+
+    region month-wise-details-of-workshop-views (
+        name: Month-wise details of Workshop Views
+        type: reflowReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                 select   w.id ,   w.name , count(*) as views 
+                from LL_PAGE_VISITS lp , ll_workshops w
+                where  lp.workshop_id is not null
+                AND w.id=lp.workshop_id 
+                --AND  lp.entry_date > :P9501_DT
+                AND to_char(lp.entry_date,'MM/yyyy') = :P9501_DT
+                group by w.id , w.name;
+                ```
+            pageItemsToSubmit: P9501_DT
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        settings {
+            layoutOptions: [
+                stripes
+                stroke
+            ]
+        }
+
+        column ID (
+            show: false
+            source {
+                dataType: NUMBER
+            }
+            layout {
+                sequence: 30
+            }
+        )
+
+        column NAME (
+            settings {
+                type: link
+                target: {
+                    page: 180
+                    items: {
+                        P180_ID: &ID.
+                    }
+                }
+                linkText: &NAME.
+            }
+            source {
+                dataType: VARCHAR2
+            }
+            heading {
+                heading: Name
+            }
+            layout {
+                sequence: 10
+            }
+        )
+
+        column VIEWS (
+            source {
+                dataType: NUMBER
+            }
+            heading {
+                heading: Views
+                alignment: end
+            }
+            layout {
+                sequence: 20
+                columnAlignment: end
+            }
+        )
+
+    )
+
+    pageItem P9501_DT (
+        type: datePickerJquery
+        label {
+            label: Date
+            alignment: left
+        }
+        layout {
+            sequence: 10
+            region: @month-wise-details-of-workshop-views
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        readOnly {
+            type: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button back (
+        buttonName: Back
+        label: Back
+        layout {
+            sequence: 10
+            region: @month-wise-details-of-workshop-views
+            slot: aboveBox
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 9500
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+)
+

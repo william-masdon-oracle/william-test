@@ -1,0 +1,343 @@
+page 9120 (
+    name: Tenancies
+    alias: TENANCIES
+    title: Tenancies
+    appearance {
+        pageTemplate: @standard-trustarc
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        authorizationScheme: @superrrrr-user
+        formAutoComplete: false
+    }
+
+    region tenancies (
+        name: Tenancies
+        type: interactiveReport
+        source {
+            location: localDatabase
+            tableName: LL_TENANCIES
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        link {
+            linkColumn: customTarget
+            target: {
+                page: 9121
+                items: {
+                    P9121_ID: \#ID#\
+                }
+                action: resetPagination
+            }
+            linkIcon: <span aria-label="Edit"><span class="fa fa-edit" aria-hidden="true" title="Edit"></span></span>
+        }
+        componentAppearance {
+            showNullValuesAs: -
+        }
+        pagination {
+            type: rowRangesXToY
+        }
+        messages {
+            whenNoDataFound: No data found.
+            whenMoreDataFound: The maximum row count for this report is #MAX_ROW_COUNT# rows.  Please apply a filter to reduce the number of records in your query.
+        }
+        actionsMenu {
+            subscription: false
+        }
+        download {
+            authorization: @administration-rights
+        }
+        advanced {
+            savedReportMappingIdentifier: 91239462178327453
+        }
+
+        column ACTIVE_FLG (
+            type: plainTextBasedOnLov
+            heading {
+                heading: Active Flg
+                alignment: center
+            }
+            lov {
+                lov: @active-flg
+            }
+            layout {
+                sequence: 164
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: K
+            }
+        )
+
+        column AD_PREFIX (
+            type: plainText
+            heading {
+                heading: Ad Prefix
+                alignment: center
+            }
+            layout {
+                sequence: 274
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: L
+            }
+        )
+
+        column CONCURRENT_MOVE (
+            type: plainText
+            heading {
+                heading: Concurrent Move
+                alignment: center
+            }
+            layout {
+                sequence: 404
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: N
+            }
+        )
+
+        column DEFAULT_COMPARTMENT_NAME (
+            type: plainText
+            heading {
+                heading: Default Compartment Name
+            }
+            layout {
+                sequence: 54
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: I
+            }
+        )
+
+        column HOME_REGION (
+            type: plainTextBasedOnLov
+            heading {
+                heading: Home Region
+            }
+            lov {
+                lov: @ll-regions-3
+            }
+            layout {
+                sequence: 44
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: H
+            }
+        )
+
+        column ID (
+            type: plainText
+            heading {
+                heading: ID
+                alignment: center
+            }
+            layout {
+                sequence: 0
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: A
+            }
+        )
+
+        column IS_PUBLIC (
+            type: plainTextBasedOnLov
+            heading {
+                heading: Is Public
+                alignment: center
+            }
+            lov {
+                lov: @active-flg
+            }
+            layout {
+                sequence: 284
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: M
+            }
+        )
+
+        column PREFERENCE_WEIGHT (
+            type: plainText
+            heading {
+                heading: Preference Weight
+                alignment: center
+            }
+            layout {
+                sequence: 524
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: O
+            }
+        )
+
+        column SWIFT_NAME (
+            type: plainText
+            heading {
+                heading: Swift Name
+            }
+            layout {
+                sequence: 4
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: D
+            }
+        )
+
+        column TENANCY_NAME (
+            type: plainText
+            heading {
+                heading: Tenancy Name
+            }
+            layout {
+                sequence: 2
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: B
+            }
+        )
+
+        column USER_NAME (
+            type: plainText
+            heading {
+                heading: User Name
+                alignment: center
+            }
+            layout {
+                sequence: 14
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: J
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+
+        savedReport 440583 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn ACTIVE_FLG (
+                sequence: 7
+            )
+
+            displayColumn AD_PREFIX (
+                sequence: 8
+            )
+
+            displayColumn CONCURRENT_MOVE (
+                sequence: 10
+            )
+
+            displayColumn DEFAULT_COMPARTMENT_NAME (
+                sequence: 5
+            )
+
+            displayColumn HOME_REGION (
+                sequence: 4
+            )
+
+            displayColumn ID (
+                sequence: 1
+            )
+
+            displayColumn IS_PUBLIC (
+                sequence: 9
+            )
+
+            displayColumn PREFERENCE_WEIGHT (
+                sequence: 11
+            )
+
+            displayColumn SWIFT_NAME (
+                sequence: 3
+            )
+
+            displayColumn TENANCY_NAME (
+                sequence: 2
+            )
+
+            displayColumn USER_NAME (
+                sequence: 6
+            )
+
+        )
+
+    )
+
+    button create (
+        buttonName: CREATE
+        label: Create
+        layout {
+            sequence: 30
+            region: @tenancies
+            slot: rightOfInteractiveReportSearchBar
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 9121
+                clearCache: 121
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+)
+

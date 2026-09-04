@@ -1,0 +1,373 @@
+page 9176 (
+    name: Assets
+    alias: ASSETS
+    title: Assets
+    appearance {
+        pageTemplate: @standard-trustarc
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        authorizationScheme: @superrrrr-user
+        formAutoComplete: false
+    }
+
+    region assets (
+        name: Assets
+        type: interactiveGrid
+        source {
+            location: localDatabase
+            tableName: LL_ASSETS
+        }
+        layout {
+            sequence: 10
+            parentRegion: @assets-admin
+            slot: subRegions
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        edit {
+            enabled: true
+            allowedOperations: [
+                add
+                update
+                delete
+            ]
+        }
+        toolbar {
+            controls: [
+                searchCol
+                searchField
+                actionsMenu
+                resetButton
+                saveButton
+            ]
+        }
+        download {
+            formats: [
+                csv
+                html
+                excel
+                pdf
+            ]
+        }
+        advanced {
+            savedReportMappingIdentifier: 9176001
+        }
+
+        savedReport primary (
+            visibility: primary
+            view {
+                default: grid
+            }
+            singleRowView {
+                displayedColumns: true
+            }
+
+            displayColumn (
+                column: @APEX$ROW_ACTION
+                layout {
+                    sequence: 0
+                }
+            )
+
+            displayColumn (
+                column: @ID
+                layout {
+                    sequence: 1
+                }
+            )
+
+            displayColumn (
+                column: @NAME
+                layout {
+                    sequence: 2
+                }
+            )
+
+            displayColumn (
+                column: @TYPE_ID
+                layout {
+                    sequence: 3
+                }
+            )
+
+            displayColumn (
+                column: @URL
+                layout {
+                    sequence: 4
+                }
+            )
+
+            displayColumn (
+                column: @ACTIVE_FLG
+                layout {
+                    sequence: 5
+                }
+            )
+
+            displayColumn (
+                column: @DATE_ADDED
+                layout {
+                    sequence: 6
+                }
+            )
+
+            displayColumn (
+                column: @DATE_UPDATED
+                layout {
+                    sequence: 7
+                }
+            )
+
+        )
+
+        column ACTIVE_FLG (
+            type: selectList
+            heading {
+                heading: Active
+            }
+            lov {
+                type: sharedComponent
+                lov: @asset-active-flg
+                displayExtraValues: false
+                displayNullValue: false
+            }
+            layout {
+                sequence: 70
+            }
+            source {
+                databaseColumn: ACTIVE_FLG
+                dataType: varchar2
+            }
+            default {
+                type: static
+                staticValue: Y
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: useLov
+            }
+        )
+
+        column APEX$ROW_ACTION (
+            type: actionsMenu
+            layout {
+                sequence: 20
+            }
+        )
+
+        column APEX$ROW_SELECTOR (
+            type: rowSelector
+            layout {
+                sequence: 10
+            }
+        )
+
+        column DATE_ADDED (
+            type: datePicker
+            heading {
+                heading: Date Added
+            }
+            layout {
+                sequence: 80
+            }
+            source {
+                databaseColumn: DATE_ADDED
+                dataType: date
+            }
+            default {
+                type: expression
+                plsqlExpression: sysdate
+            }
+        )
+
+        column DATE_UPDATED (
+            type: datePicker
+            heading {
+                heading: Date Updated
+            }
+            layout {
+                sequence: 90
+            }
+            source {
+                databaseColumn: DATE_UPDATED
+                dataType: date
+            }
+            default {
+                type: expression
+                plsqlExpression: sysdate
+            }
+        )
+
+        column ID (
+            type: displayOnly
+            heading {
+                heading: ID
+            }
+            layout {
+                sequence: 30
+            }
+            source {
+                databaseColumn: ID
+                dataType: number
+                primaryKey: true
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column NAME (
+            type: textField
+            heading {
+                heading: Name
+            }
+            layout {
+                sequence: 40
+            }
+            validation {
+                maxLength: 1000
+            }
+            source {
+                databaseColumn: NAME
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+        )
+
+        column TYPE_ID (
+            type: popupLov
+            heading {
+                heading: Asset Type
+            }
+            lov {
+                type: sharedComponent
+                lov: @asset-types
+                displayExtraValues: false
+            }
+            layout {
+                sequence: 50
+            }
+            source {
+                databaseColumn: TYPE_ID
+                dataType: number
+            }
+            columnFilter {
+                lovType: useLov
+            }
+        )
+
+        column URL (
+            type: textarea
+            heading {
+                heading: URL
+            }
+            layout {
+                sequence: 60
+            }
+            validation {
+                maxLength: 4000
+            }
+            source {
+                databaseColumn: URL
+                dataType: varchar2
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: none
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: Assets
+        }
+    )
+
+    region assets-admin (
+        name: Assets
+        title: Assets
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+    )
+
+    region shared-asset-warning (
+        name: Shared Asset Warning
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <div class="t-Alert t-Alert--warning t-Alert--horizontal">
+                  <div class="t-Alert-wrap">
+                    <div class="t-Alert-icon">
+                      <span class="t-Icon"></span>
+                    </div>
+                    <div class="t-Alert-content">
+                      <div class="t-Alert-title">Shared asset</div>
+                      <div class="t-Alert-body">Changes to an asset apply everywhere that asset is used.</div>
+                    </div>
+                  </div>
+                </div>
+                ```
+        }
+        layout {
+            sequence: 5
+            parentRegion: @assets-admin
+            slot: subRegions
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    process assets-save-interactive-grid-data (
+        name: Assets - Save Interactive Grid Data
+        type: interactiveGridAutoRowProcessing
+        editableRegion: @assets
+        execution {
+            sequence: 10
+        }
+        advanced {
+            executionMappingIdentifier: 9176002
+        }
+    )
+
+)
+
