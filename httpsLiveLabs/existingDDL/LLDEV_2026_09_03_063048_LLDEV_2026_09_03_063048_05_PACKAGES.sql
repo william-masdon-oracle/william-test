@@ -5729,6 +5729,7 @@ end "LL_PKG_BATCH";
 
     update ll_reserved_public_ips
        set reservation_id = p_reservation_id,
+           last_reservation_id = p_reservation_id,
            allocated_on   = systimestamp,
            last_used_on   = systimestamp,
            released_on    = null
@@ -9388,7 +9389,8 @@ END LL_PKG_CREATE;
     update ll_reserved_public_ips
        set last_oci_check_on            = systimestamp,
            last_oci_lifecycle_state     = v_lifecycle_state,
-           last_oci_assigned_entity_id  = v_assigned_entity_id
+           last_oci_assigned_entity_id  = v_assigned_entity_id,
+           last_reservation_id           = p_reservation_id
      where id = v_pool_id
        and reservation_id = p_reservation_id;
 
@@ -9428,7 +9430,8 @@ END LL_PKG_CREATE;
       update ll_reserved_public_ips
          set last_oci_check_on           = systimestamp,
              last_oci_lifecycle_state    = v_lifecycle_state,
-             last_oci_assigned_entity_id = v_assigned_entity_id
+             last_oci_assigned_entity_id = v_assigned_entity_id,
+             last_reservation_id          = x.reservation_id
        where id = x.id
          and reservation_id = x.reservation_id;
 

@@ -7,7 +7,11 @@ Deploy the files in this order:
 3. The updated `LL_PKG_CREATE`, `LL_PKG_DELETE`, and `LL_PKG_TERRAFORM`
    definitions in `../existingDDL/LLDEV_2026_09_03_063048_LLDEV_2026_09_03_063048_05_PACKAGES.sql`
 4. `003_seed_reserved_public_ips.sql`
-5. The two updated admin APEX page exports.
+5. The three updated admin APEX page exports, including page 9253, **Reserved Public IPs**.
+
+For LL Dev or another environment where `LL_RESERVED_PUBLIC_IPS` already
+exists, run `dev/001_add_last_reservation_id.sql` before deploying the updated
+packages and page export. Do not rerun the base table-creation script.
 
 `003_seed_reserved_public_ips.sql` is the reviewed static seed generated from
 the workbook. Run it after `001` and before enabling any script.

@@ -24,6 +24,7 @@ CREATE TABLE ll_reserved_public_ips (
   ca_bundle_ocid   VARCHAR2(4000),
   active_flg       VARCHAR2(1) DEFAULT 'N' NOT NULL,
   reservation_id   NUMBER,
+  last_reservation_id NUMBER,
   last_used_on     TIMESTAMP(6) WITH TIME ZONE,
   allocated_on     TIMESTAMP(6) WITH TIME ZONE,
   released_on      TIMESTAMP(6) WITH TIME ZONE,
