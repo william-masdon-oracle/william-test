@@ -9415,9 +9415,16 @@ END LL_PKG_CREATE;
     v_is_available       boolean;
   begin
     for x in (
-      select id, reservation_id, tenancy_id, region_id, ip_ocid
-        from ll_reserved_public_ips
-       where reservation_id is not null
+      select p.id,
+             p.reservation_id,
+             p.tenancy_id,
+             p.region_id,
+             p.ip_ocid
+        from ll_reserved_public_ips p
+        join ll_reservations_vw r
+          on r.id = p.reservation_id
+       where p.reservation_id is not null
+         and r.stop_gmt < sysdate - (12 / 24)
     ) loop
       v_is_available := https_public_ip_available(
         p_tenancy_id         => x.tenancy_id,

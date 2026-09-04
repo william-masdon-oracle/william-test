@@ -28,7 +28,7 @@ Pool rows must be associated with LiveLabs `TENANCY_ID` and `REGION_ID`. A row m
 
 Allocation is least-recently-used within the reservation's tenancy/region and uses `FOR UPDATE SKIP LOCKED`, so concurrent reservations cannot claim the same endpoint. The unique `RESERVATION_ID` constraint also enforces one endpoint per reservation.
 
-Before an endpoint is released, LiveLabs calls OCI `GET /20160918/publicIps/{ipOcid}` in the row's tenancy and region. Only an OCI result with `lifecycleState = AVAILABLE` and no `assignedEntityId` clears the assignment. The daily scheduled job repeats that check for any in-use pool row, recovering capacity after delayed OCI cleanup while never releasing an IP that OCI still reports as assigned.
+Before an endpoint is released, LiveLabs calls OCI `GET /20160918/publicIps/{ipOcid}` in the row's tenancy and region. Only an OCI result with `lifecycleState = AVAILABLE` and no `assignedEntityId` clears the assignment. The daily scheduled job repeats that check only for in-use pool rows whose reservation ended more than 12 hours earlier, recovering capacity after delayed OCI cleanup without polling endpoints used by active workshops.
 
 `004_github_config_source_parameters.sql` creates parameter names only. Set
 `GITHUB_ACCESS_TOKEN` through the protected system-parameter administration
