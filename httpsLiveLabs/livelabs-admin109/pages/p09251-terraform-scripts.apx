@@ -30,6 +30,7 @@ page 9251 (
                        TERRAFORM_VERSION,
                        DATABASE_VERSION,
                        ACTIVE_FLG,
+                       HTTPS_ENABLED_FLG,
                        MAX_DURATION_MINUTES,
                        SOURCE_URL,
                        SSH_KEY_REQ,
@@ -103,6 +104,24 @@ page 9251 (
             }
             advanced {
                 endUserAlias: L
+            }
+        )
+
+        column HTTPS_ENABLED_FLG (
+            type: plainText
+            heading {
+                heading: HTTPS Endpoint
+                alignment: center
+            }
+            layout {
+                sequence: 85
+                columnAlignment: center
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: M
             }
         )
 
@@ -304,6 +323,10 @@ page 9251 (
                 sequence: 5
             )
 
+            displayColumn HTTPS_ENABLED_FLG (
+                sequence: 7
+            )
+
             displayColumn DESCRIPTION (
                 sequence: 3
             )
@@ -313,7 +336,7 @@ page 9251 (
             )
 
             displayColumn MAX_DURATION_MINUTES (
-                sequence: 7
+                sequence: 8
             )
 
             displayColumn NAME (
@@ -321,15 +344,15 @@ page 9251 (
             )
 
             displayColumn PARALLELS (
-                sequence: 11
+                sequence: 12
             )
 
             displayColumn SOURCE_URL (
-                sequence: 8
+                sequence: 9
             )
 
             displayColumn SSH_KEY_REQ (
-                sequence: 9
+                sequence: 10
             )
 
             displayColumn TERRAFORM_VERSION (
@@ -337,7 +360,7 @@ page 9251 (
             )
 
             displayColumn WORKSHOPS_USING (
-                sequence: 10
+                sequence: 11
             )
 
         )
@@ -368,4 +391,3 @@ page 9251 (
     )
 
 )
-

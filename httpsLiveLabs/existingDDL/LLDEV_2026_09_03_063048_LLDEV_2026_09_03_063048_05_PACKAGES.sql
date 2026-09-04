@@ -262,6 +262,14 @@ end "LL_PKG_BATCH";
   -- Generic
   procedure custom_wait (p_reservation_id IN number, p_res_step_id IN number, p_ocid OUT varchar2, p_status OUT varchar2, p_result OUT varchar2);
   procedure assign_sls_to_subnet (p_reservation_id IN number, p_res_step_id IN number, p_compartment_ocid IN varchar2, p_vcn_ocid IN varchar2);
+  procedure assign_https_public_ip (
+    p_reservation_id IN number,
+    p_ip_address     OUT varchar2,
+    p_dns_entry      OUT varchar2,
+    p_ip_ocid        OUT varchar2,
+    p_cert_ocid      OUT varchar2,
+    p_ca_bundle_ocid OUT varchar2
+  );
   procedure resetImage (p_reservation_id IN number);
   function unique_cidr (p_reservation_id number, p_type varchar2 default '') return varchar2;
   
@@ -283,6 +291,8 @@ END LL_PKG_CREATE;
   procedure deleteAvailableCompartments (p_tenancy_id IN number, p_available_ocid IN varchar2 default null, p_delete_ocid IN varchar2 default null); 
   procedure bulkDeleteCompartments (p_tenancy_id IN number, p_delete_ocid IN varchar2 default null);   -- procedure to delete the compartments fetched from LiveLabs-Delete compartment  
   procedure secure_desktop_user (p_reservation_id IN number, p_res_step_id IN number, p_status OUT varchar2, p_result OUT varchar2);
+  procedure release_https_public_ip (p_reservation_id IN number);
+  procedure reconcile_https_public_ips;
 END LL_PKG_DELETE;
 /
   CREATE OR REPLACE PACKAGE "LL_PKG_EXEC" as 
@@ -5646,6 +5656,95 @@ end "LL_PKG_BATCH";
 --  ##     ## ##    ## ##       ##    ##  
 --   #######   ######  ######## ##     ##
 --
+  procedure assign_https_public_ip (
+    p_reservation_id in number,
+    p_ip_address     out varchar2,
+    p_dns_entry      out varchar2,
+    p_ip_ocid        out varchar2,
+    p_cert_ocid      out varchar2,
+    p_ca_bundle_ocid out varchar2
+  ) is
+    v_tenancy_id ll_reservations.tenancy_id%type;
+    v_region_id  ll_reservations.region_id%type;
+    v_pool_id    ll_reserved_public_ips.id%type;
+
+    cursor c_available is
+      select id,
+             ip_address,
+             dns_entry,
+             ip_ocid,
+             cert_ocid,
+             ca_bundle_ocid
+        from ll_reserved_public_ips
+       where tenancy_id = v_tenancy_id
+         and region_id = v_region_id
+         and active_flg = 'Y'
+         and reservation_id is null
+         and cert_ocid is not null
+         and ca_bundle_ocid is not null
+       order by last_used_on nulls first, id
+       for update skip locked;
+  begin
+    -- Keep the original selection when create_stack is retried.
+    begin
+      select ip_address,
+             dns_entry,
+             ip_ocid,
+             cert_ocid,
+             ca_bundle_ocid
+        into p_ip_address,
+             p_dns_entry,
+             p_ip_ocid,
+             p_cert_ocid,
+             p_ca_bundle_ocid
+        from ll_reserved_public_ips
+       where reservation_id = p_reservation_id;
+      return;
+    exception
+      when no_data_found then
+        null;
+    end;
+
+    select tenancy_id, region_id
+      into v_tenancy_id, v_region_id
+      from ll_reservations
+     where id = p_reservation_id;
+
+    open c_available;
+    fetch c_available into v_pool_id,
+                           p_ip_address,
+                           p_dns_entry,
+                           p_ip_ocid,
+                           p_cert_ocid,
+                           p_ca_bundle_ocid;
+    if c_available%notfound then
+      close c_available;
+      raise_application_error(
+        -20070,
+        'No active HTTPS endpoint is available for tenancy ID ' ||
+        v_tenancy_id || ' and region ID ' || v_region_id
+      );
+    end if;
+    close c_available;
+
+    update ll_reserved_public_ips
+       set reservation_id = p_reservation_id,
+           allocated_on   = systimestamp,
+           last_used_on   = systimestamp,
+           released_on    = null
+     where id = v_pool_id;
+    commit;
+
+    ll_pkg_log.log(30, 'Allocated HTTPS endpoint pool row ' || v_pool_id,
+                   p_reservation_id);
+  exception
+    when others then
+      if c_available%isopen then
+        close c_available;
+      end if;
+      raise;
+  end assign_https_public_ip;
+
   procedure user (p_reservation_id IN number, p_res_step_id IN number, p_ocid OUT varchar2, p_status OUT varchar2, p_result OUT varchar2) AS 
    
     v_host              varchar2(200); 
@@ -9225,6 +9324,126 @@ END LL_PKG_CREATE;
   70 = Sign steps for REST commands 
   80 = Sign details (contains values) 
 */ 
+  function https_public_ip_available (
+    p_tenancy_id          in number,
+    p_region_id           in number,
+    p_ip_ocid             in varchar2,
+    p_lifecycle_state     out varchar2,
+    p_assigned_entity_id  out varchar2
+  ) return boolean is
+    v_response clob;
+    v_host     varchar2(4000);
+  begin
+    v_host := ll_pkg_admin.oci_endpoint(
+      p_type       => 'iaas',
+      p_region_key => ll_pkg_admin.region_key(p_region_id)
+    );
+    v_response := ll_pkg_exec.get(
+      p_tenancy_id     => p_tenancy_id,
+      p_host           => v_host,
+      p_method         => '/20160918/publicIps/' || p_ip_ocid,
+      p_multiple_page  => 'N',
+      p_add_compartment => 'N'
+    );
+    p_lifecycle_state := json_value(v_response, '$.lifecycleState');
+    p_assigned_entity_id := json_value(v_response, '$.assignedEntityId');
+
+    return p_lifecycle_state = 'AVAILABLE'
+       and p_assigned_entity_id is null;
+  exception
+    when others then
+      p_lifecycle_state := null;
+      p_assigned_entity_id := null;
+      ll_pkg_log.log(1, 'Unable to verify HTTPS public IP availability: ' || sqlerrm);
+      return false;
+  end https_public_ip_available;
+
+  procedure release_https_public_ip (p_reservation_id in number) is
+    v_pool_id            ll_reserved_public_ips.id%type;
+    v_tenancy_id         ll_reserved_public_ips.tenancy_id%type;
+    v_region_id          ll_reserved_public_ips.region_id%type;
+    v_ip_ocid            ll_reserved_public_ips.ip_ocid%type;
+    v_lifecycle_state    varchar2(30);
+    v_assigned_entity_id varchar2(4000);
+    v_is_available       boolean;
+  begin
+    begin
+      select id, tenancy_id, region_id, ip_ocid
+        into v_pool_id, v_tenancy_id, v_region_id, v_ip_ocid
+        from ll_reserved_public_ips
+       where reservation_id = p_reservation_id;
+    exception
+      when no_data_found then
+        return;
+    end;
+
+    v_is_available := https_public_ip_available(
+      p_tenancy_id         => v_tenancy_id,
+      p_region_id          => v_region_id,
+      p_ip_ocid            => v_ip_ocid,
+      p_lifecycle_state    => v_lifecycle_state,
+      p_assigned_entity_id => v_assigned_entity_id
+    );
+
+    update ll_reserved_public_ips
+       set last_oci_check_on            = systimestamp,
+           last_oci_lifecycle_state     = v_lifecycle_state,
+           last_oci_assigned_entity_id  = v_assigned_entity_id
+     where id = v_pool_id
+       and reservation_id = p_reservation_id;
+
+    if v_is_available then
+      update ll_reserved_public_ips
+         set reservation_id = null,
+             released_on    = systimestamp
+       where id = v_pool_id
+         and reservation_id = p_reservation_id;
+      ll_pkg_log.log(30, 'Released HTTPS endpoint after OCI availability check',
+                     p_reservation_id);
+    else
+      ll_pkg_log.log(30, 'HTTPS endpoint remains assigned in OCI; retaining pool assignment',
+                     p_reservation_id);
+    end if;
+    commit;
+  end release_https_public_ip;
+
+  procedure reconcile_https_public_ips is
+    v_lifecycle_state    varchar2(30);
+    v_assigned_entity_id varchar2(4000);
+    v_is_available       boolean;
+  begin
+    for x in (
+      select id, reservation_id, tenancy_id, region_id, ip_ocid
+        from ll_reserved_public_ips
+       where reservation_id is not null
+    ) loop
+      v_is_available := https_public_ip_available(
+        p_tenancy_id         => x.tenancy_id,
+        p_region_id          => x.region_id,
+        p_ip_ocid            => x.ip_ocid,
+        p_lifecycle_state    => v_lifecycle_state,
+        p_assigned_entity_id => v_assigned_entity_id
+      );
+
+      update ll_reserved_public_ips
+         set last_oci_check_on           = systimestamp,
+             last_oci_lifecycle_state    = v_lifecycle_state,
+             last_oci_assigned_entity_id = v_assigned_entity_id
+       where id = x.id
+         and reservation_id = x.reservation_id;
+
+      if v_is_available then
+        update ll_reserved_public_ips
+           set reservation_id = null,
+               released_on    = systimestamp
+         where id = x.id
+           and reservation_id = x.reservation_id;
+        ll_pkg_log.log(30, 'Reconciled an available HTTPS endpoint pool row ' || x.id);
+      end if;
+    end loop;
+    commit;
+  end reconcile_https_public_ips;
+
 procedure clean_compartments_used is 
     v_comp_step_id number;
     v_used_comp_wait number;
@@ -10031,6 +10250,7 @@ procedure clean_compartments_used is
     v_delete_retry number;
     
     v_compartment_ocid  varchar2(200);
+    v_incomplete_delete_count number;
   begin
   
     ll_pkg_log.log(20,'Initial call', p_reservation_id);
@@ -10096,6 +10316,18 @@ procedure clean_compartments_used is
     --   ll_pkg_delete.clean_compartment( p_tenancy_id => ll_pkg_reservation.tenancy_id (p_reservation_id => p_reservation_id), 
     --                                    p_comp_ocid  => v_compartment_ocid);
     -- end if;
+    -- Do not make an endpoint available while any reservation resource remains.
+    -- In particular, this waits for the Resource Manager destroy/delete step.
+    select count(*)
+      into v_incomplete_delete_count
+      from ll_reservation_steps
+     where reservation_id = p_reservation_id
+       and delete_order is not null
+       and nvl(delete_success, 'N') <> 'Y';
+
+    if v_incomplete_delete_count = 0 then
+      ll_pkg_delete.release_https_public_ip(p_reservation_id);
+    end if;
   end;
   procedure deleteCompartments (p_tenancy_id IN number, p_compartment IN varchar2, p_dest IN varchar2, p_delete_only IN varchar2, p_permissions IN varchar2 default null, p_owner IN varchar2 default null, p_workshop_id IN varchar2 default null, p_region IN varchar2 default null, p_event_id IN varchar2 default null) is 
   -- if p_delete_only is N then procedure to move selected most recent two compartments from livelabs-available compartment to livelabs-delete compartment, update and delete them. 
@@ -17250,6 +17482,13 @@ END LL_PKG_RESERVATION;
             v_sqlerrm := SQLERRM;
             ll_pkg_log.log(1,'Error during delete compartments: '||v_sqlerrm);
     end;
+    begin
+        ll_pkg_delete.reconcile_https_public_ips;
+        ll_pkg_log.log(1, 'Daily HTTPS public IP reconciliation');
+    exception when others then
+        v_sqlerrm := sqlerrm;
+        ll_pkg_log.log(1, 'Error during HTTPS public IP reconciliation: ' || v_sqlerrm);
+    end;
     ll_pkg_log.log(1,'Daily Package Ended');
   end;
   
@@ -18998,212 +19237,247 @@ end ll_pkg_tenancy_setup;
 --   ######  ##     ## ######## ##     ##    ##    ######## #######  ######     ##    ##     ##  ######  ##    ##                                                                                                                                  
 --                                                                                                                                                                                                                                                 
 procedure create_stack (p_reservation_id IN number, p_res_step_id IN number, p_ocid OUT varchar2, p_status OUT varchar2, p_result OUT varchar2) AS                                                                                                 
-    cursor c_tf (p_tf_id number) is select terraform_text, terraform_version, nvl(directory, source_url), repository_url, branch, 'LiveLabs TF script '||id||' - ' || description as description                                                   
-                                    from ll_tf_scripts                                                                                                                                                                                             
-                                    where id=p_tf_id;                                                                                                                                                                                              
-    cursor c_ssh is select public_key from ll_reservations where id=p_reservation_id;                                                                                                                                                              
-    v_host              varchar2(200);                                                                                                                                                                                                             
-    v_method            varchar2(200);                                                                                                                                                                                                             
-    v_clob              clob;                                                                                                                                                                                                                      
-    v_payload           clob;                                                                                                                                                                                                                      
-    v_tf_id             number;                                                                                                                                                                                                                    
-    v_tf_base64         clob;                                                                                                                                                                                                                      
-    v_tf_zipped         blob;                                                                                                                                                                                                                      
-    v_tf_version        varchar2(10);                                                                                                                                                                                                              
-    v_tf_text           clob;                                                                                                                                                                                                                      
-    v_tf_source_url     varchar2(4000);                                                                                                                                                                                                            
-    v_tf_repository_url varchar2(4000);                                                                                                                                                                                                            
-    v_tf_branch         varchar2(4000);                                                                                                                                                                                                            
-    v_tf_description    varchar2(4000);                                                                                                                                                                                                            
-    v_tenancy_id        number;                                                                                                                                                                                                                    
-    v_tenancy_ocid      varchar2(200);                                                                                                                                                                                                             
-    v_region_key        varchar2(100);                                                                                                                                                                                                             
-    v_region_id         number;                                                                                                                                                                                                                    
-    v_user_ocid         varchar2(500);                                                                                                                                                                                                             
-    v_vcn_ocid          varchar2(500);                                                                                                                                                                                                             
-    -- v_quota_ocid        varchar2(500);                                                                                                                                                                                                          
-    v_pub_subnet_ocid   varchar2(500);                                                                                                                                                                                                             
-    v_region_identifier varchar2(100);                                                                                                                                                                                                             
-    v_compartment_ocid  varchar2(200);                                                                                                                                                                                                             
-    v_object_name       varchar2(200);                                                                                                                                                                                                             
-    v_tf_variables      varchar2(6000);                                                                                                                                                                                                            
-    v_initial_password  varchar2(4000);                                                                                                                                                                                                            
-    v_ssh_public_key    varchar2(4000);                                                                                                                                                                                                            
-    v_source_blob       blob;                                                                                                                                                                                                                      
-    v_csp_ocid          varchar2(4000);                                                                                                                                                                                                            
-    v_priv_subnet_ocid  varchar2(500);                                                                                                                                                                                                             
-    v_genai_region      varchar2(500);                                                                                                                                                                                                             
-    v_live_stack_url    varchar2(1000);                                                                                                                                                                                                            
-    v_repository_url    varchar2(4000);                                                                                                                                                                                                            
-    v_branch_name       varchar2(4000);                                                                                                                                                                                                            
-    v_ll_id             number;                                                                                                                                                                                                                    
-    v_error_message     varchar2(4000);                                                                                                                                                                                                            
+    cursor c_tf (p_tf_id number) is select terraform_text, terraform_version, nvl(directory, source_url), repository_url, branch, 'LiveLabs TF script '||id||' - ' || description as description, nvl(https_enabled_flg, 'N') as https_enabled_flg
+                                    from ll_tf_scripts
+                                    where id=p_tf_id;
+    cursor c_ssh is select public_key from ll_reservations where id=p_reservation_id;
+    v_host              varchar2(200);
+    v_method            varchar2(200);
+    v_clob              clob;
+    v_payload           clob;
+    v_tf_id             number;
+    v_tf_base64         clob;
+    v_tf_zipped         blob;
+    v_tf_version        varchar2(10);
+    v_tf_text           clob;
+    v_tf_source_url     varchar2(4000);
+    v_tf_repository_url varchar2(4000);
+    v_tf_branch         varchar2(4000);
+    v_tf_description    varchar2(4000);
+    v_tenancy_id        number;
+    v_tenancy_ocid      varchar2(200);
+    v_region_key        varchar2(100);
+    v_region_id         number;
+    v_user_ocid         varchar2(500);
+    v_vcn_ocid          varchar2(500);
+    -- v_quota_ocid        varchar2(500);
+    v_pub_subnet_ocid   varchar2(500);
+    v_region_identifier varchar2(100);
+    v_compartment_ocid  varchar2(200);
+    v_object_name       varchar2(200);
+    v_tf_variables      clob;
+    v_initial_password  varchar2(4000);
+    v_ssh_public_key    varchar2(4000);
+    v_source_blob       blob;
+    v_csp_ocid          varchar2(4000);
+    v_priv_subnet_ocid  varchar2(500);
+    v_genai_region      varchar2(500);
+    v_live_stack_url    varchar2(1000);
+    v_repository_url    varchar2(4000);
+    v_branch_name       varchar2(4000);
+    v_ll_id             number;
+    v_error_message     varchar2(4000);
+    v_https_enabled_flg varchar2(1);
+    v_https_ip_address  varchar2(45);
+    v_https_dns_entry   varchar2(255);
+    v_https_ip_ocid     varchar2(4000);
+    v_https_cert_ocid   varchar2(4000);
+    v_https_ca_ocid     varchar2(4000);
+    v_https_allocated   boolean := false;
 
-  begin                                                                                                                                                                                                                                            
-    ll_pkg_log.log(20,'Initial call');                                                                                                                                                                                                             
-    ll_pkg_log.log(30,'Waiting 15 seconds to make sure compartment info is available');                                                                                                                                                            
-    apex_util.pause(15);                                                                                                                                                                                                                           
-    ll_pkg_log.log(30,'End of waiting; continuing with STACK creation');                                                                                                                                                                           
+  begin
+    ll_pkg_log.log(20,'Initial call');
+    ll_pkg_log.log(30,'Waiting 15 seconds to make sure compartment info is available');
+    apex_util.pause(15);
+    ll_pkg_log.log(30,'End of waiting; continuing with STACK creation');
 
-    select workshop_id into v_ll_id from ll_reservations where id = p_reservation_id;                                                                                                                                                              
-    v_region_key := ll_pkg_reservation.region_key(p_reservation_id);                                                                                                                                                                               
-    v_region_identifier := ll_pkg_admin.region_identifier (p_region_id => ll_pkg_reservation.region_id(p_reservation_id));                                                                                                                         
-    v_host := ll_pkg_admin.oci_endpoint( p_type => 'resourcemanager', p_region_key => v_region_key);                                                                                                                                               
-    v_tenancy_id := ll_pkg_reservation.tenancy_id (p_reservation_id);                                                                                                                                                                              
-    v_tenancy_ocid := ll_pkg_admin.tenancy_ocid (p_tenancy_id => v_tenancy_id);                                                                                                                                                                    
-    v_region_id := ll_pkg_reservation.region_id (p_reservation_id);                                                                                                                                                                                
+    select workshop_id into v_ll_id from ll_reservations where id = p_reservation_id;
+    v_region_key := ll_pkg_reservation.region_key(p_reservation_id);
+    v_region_identifier := ll_pkg_admin.region_identifier (p_region_id => ll_pkg_reservation.region_id(p_reservation_id));
+    v_host := ll_pkg_admin.oci_endpoint( p_type => 'resourcemanager', p_region_key => v_region_key);
+    v_tenancy_id := ll_pkg_reservation.tenancy_id (p_reservation_id);
+    v_tenancy_ocid := ll_pkg_admin.tenancy_ocid (p_tenancy_id => v_tenancy_id);
+    v_region_id := ll_pkg_reservation.region_id (p_reservation_id);
 
-    v_compartment_ocid := ll_pkg_reservation.user_object_ocid(p_reservation_id => p_reservation_id,                                                                                                                                                
-                                                              p_param_type     => 'ociCompartment');                                                                                                                                               
-    v_user_ocid := ll_pkg_reservation.user_object_ocid(p_reservation_id => p_reservation_id,                                                                                                                                                       
-                                                       p_param_type     => 'ociUser');                                                                                                                                                             
-    v_vcn_ocid := ll_pkg_reservation.user_object_ocid(p_reservation_id => p_reservation_id,                                                                                                                                                        
-                                                       p_param_type     => 'ociVcn' );                                                                                                                                                             
-    v_pub_subnet_ocid := ll_pkg_reservation.user_object_ocid(p_reservation_id => p_reservation_id,                                                                                                                                                 
-                                                       p_param_type     => 'ociVcnSubPub' );                                                                                                                                                       
-    v_priv_subnet_ocid := ll_pkg_reservation.user_object_ocid(p_reservation_id => p_reservation_id,                                                                                                                                                
-                                                       p_param_type     => 'ociVcnSubPriv' );                                                                                                                                                      
-    v_genai_region := ll_pkg_reservation.user_object_ocid(p_reservation_id => p_reservation_id,                                                                                                                                                    
-                                                       p_param_type     => 'ociGenAI' );                                                                                                                                                           
-    -- v_quota_ocid := ll_pkg_reservation.user_object_ocid(p_reservation_id => p_reservation_id,                                                                                                                                                   
-    --                                                    p_param_type     => 'ociQuota' );                                                                                                                                                        
-    v_object_name := ll_pkg_reservation.step_details(p_reservation_id => p_reservation_id,                                                                                                                                                         
-                                                     p_res_step_id   => p_res_step_id,                                                                                                                                                             
-                                                     p_json_name     => 'name');                                                                                                                                                                   
-    v_tf_id := ll_pkg_reservation.step_details (p_reservation_id => p_reservation_id,                                                                                                                                                              
-                                                p_res_step_id    => p_res_step_id,                                                                                                                                                                 
-                                                p_json_name      => 'param1');                                                                                                                                                                     
+    v_compartment_ocid := ll_pkg_reservation.user_object_ocid(p_reservation_id => p_reservation_id,
+                                                              p_param_type     => 'ociCompartment');
+    v_user_ocid := ll_pkg_reservation.user_object_ocid(p_reservation_id => p_reservation_id,
+                                                       p_param_type     => 'ociUser');
+    v_vcn_ocid := ll_pkg_reservation.user_object_ocid(p_reservation_id => p_reservation_id,
+                                                       p_param_type     => 'ociVcn' );
+    v_pub_subnet_ocid := ll_pkg_reservation.user_object_ocid(p_reservation_id => p_reservation_id,
+                                                       p_param_type     => 'ociVcnSubPub' );
+    v_priv_subnet_ocid := ll_pkg_reservation.user_object_ocid(p_reservation_id => p_reservation_id,
+                                                       p_param_type     => 'ociVcnSubPriv' );
+    v_genai_region := ll_pkg_reservation.user_object_ocid(p_reservation_id => p_reservation_id,
+                                                       p_param_type     => 'ociGenAI' );
+    -- v_quota_ocid := ll_pkg_reservation.user_object_ocid(p_reservation_id => p_reservation_id,
+    --                                                    p_param_type     => 'ociQuota' );
+    v_object_name := ll_pkg_reservation.step_details(p_reservation_id => p_reservation_id,
+                                                     p_res_step_id   => p_res_step_id,
+                                                     p_json_name     => 'name');
+    v_tf_id := ll_pkg_reservation.step_details (p_reservation_id => p_reservation_id,
+                                                p_res_step_id    => p_res_step_id,
+                                                p_json_name      => 'param1');
 
-    v_initial_password := ll_pkg_reservation.user_object_ocid(p_reservation_id => p_reservation_id,                                                                                                                                                
-                                                       p_param_type     => 'ociUserPassword');                                                                                                                                                     
+    v_initial_password := ll_pkg_reservation.user_object_ocid(p_reservation_id => p_reservation_id,
+                                                       p_param_type     => 'ociUserPassword');
 
-    -- Get the LiveStack Demo URL for this workshop.                                                                                                                                                                                               
-    BEGIN                                                                                                                                                                                                                                          
-        SELECT lw.livestack_demo_url                                                                                                                                                                                                               
-          INTO v_live_stack_url                                                                                                                                                                                                                    
-          FROM ll_workshops lw                                                                                                                                                                                                                     
-          JOIN ll_types lt                                                                                                                                                                                                                         
-            ON lt.id = lw.type_id                                                                                                                                                                                                                  
-         WHERE lw.id = v_ll_id                                                                                                                                                                                                                     
-           AND lt.name = 'LiveStack Demo';                                                                                                                                                                                                         
-    EXCEPTION                                                                                                                                                                                                                                      
-        WHEN NO_DATA_FOUND THEN                                                                                                                                                                                                                    
-            NULL;                                                                                                                                                                                                                                  
-    END;                                                                                                                                                                                                                                           
+    -- Get the LiveStack Demo URL for this workshop.
+    BEGIN
+        SELECT lw.livestack_demo_url
+          INTO v_live_stack_url
+          FROM ll_workshops lw
+          JOIN ll_types lt
+            ON lt.id = lw.type_id
+         WHERE lw.id = v_ll_id
+           AND lt.name = 'LiveStack Demo';
+    EXCEPTION
+        WHEN NO_DATA_FOUND THEN
+            NULL;
+    END;
 
 
-    open c_ssh;                                                                                                                                                                                                                                    
-    fetch c_ssh into v_ssh_public_key;                                                                                                                                                                                                             
-    close c_ssh;                                                                                                                                                                                                                                   
-    ll_pkg_log.log(30,'Retrieved all parameters required');                                                                                                                                                                                        
+    open c_ssh;
+    fetch c_ssh into v_ssh_public_key;
+    close c_ssh;
+    ll_pkg_log.log(30,'Retrieved all parameters required');
 
-    -- Get the Terraform text and version.                                                                                                                                                                                                         
-    open c_tf (v_tf_id);                                                                                                                                                                                                                           
-    fetch c_tf into v_tf_text, v_tf_version, v_tf_source_url, v_tf_repository_url, v_tf_branch, v_tf_description;                                                                                                                                  
-    close c_tf;                                                                                                                                                                                                                                    
-    v_repository_url := nvl(                                                                                                                                                                                                                       
-      ll_pkg_reservation.step_details(                                                                                                                                                                                                             
-        p_reservation_id => p_reservation_id,                                                                                                                                                                                                      
-        p_res_step_id    => p_res_step_id,                                                                                                                                                                                                         
-        p_json_name      => 'repositoryUrl'                                                                                                                                                                                                        
-      ),                                                                                                                                                                                                                                           
-      nvl(v_tf_repository_url, 'https://github.com/oracle-livelabs/terraform-stage.git')                                                                                                                                                           
-    );                                                                                                                                                                                                                                             
-    v_tf_source_url := nvl(                                                                                                                                                                                                                        
-      ll_pkg_reservation.step_details(                                                                                                                                                                                                             
-        p_reservation_id => p_reservation_id,                                                                                                                                                                                                      
-        p_res_step_id    => p_res_step_id,                                                                                                                                                                                                         
-        p_json_name      => 'directory'                                                                                                                                                                                                            
-      ),                                                                                                                                                                                                                                           
-      v_tf_source_url                                                                                                                                                                                                                              
-    );                                                                                                                                                                                                                                             
-    v_branch_name := nvl(                                                                                                                                                                                                                          
-      ll_pkg_reservation.step_details(                                                                                                                                                                                                             
-        p_reservation_id => p_reservation_id,                                                                                                                                                                                                      
-        p_res_step_id    => p_res_step_id,                                                                                                                                                                                                         
-        p_json_name      => 'branchName'                                                                                                                                                                                                           
-      ),                                                                                                                                                                                                                                           
-      nvl(v_tf_branch, 'main')                                                                                                                                                                                                                     
-    );                                                                                                                                                                                                                                             
-    -- if v_tf_source_url is null then                                                                                                                                                                                                             
-    --   -- Put the text in a zipfile                                                                                                                                                                                                              
-    --   ll_pkg_zip.add1file  ( v_tf_zipped, 'll_terraform.tf',  ll_pkg_admin.clob_to_blob(v_tf_text) );                                                                                                                                           
-    --   ll_pkg_zip.finish_zip( v_tf_zipped );                                                                                                                                                                                                     
-    --   ll_pkg_log.log(30,'Created the zipfile for the Terraform');                                                                                                                                                                               
+    -- Get the Terraform text and version.
+    open c_tf (v_tf_id);
+    fetch c_tf into v_tf_text, v_tf_version, v_tf_source_url, v_tf_repository_url, v_tf_branch, v_tf_description, v_https_enabled_flg;
+    close c_tf;
+    if v_https_enabled_flg = 'Y' then
+      ll_pkg_create.assign_https_public_ip(
+        p_reservation_id => p_reservation_id,
+        p_ip_address     => v_https_ip_address,
+        p_dns_entry      => v_https_dns_entry,
+        p_ip_ocid        => v_https_ip_ocid,
+        p_cert_ocid      => v_https_cert_ocid,
+        p_ca_bundle_ocid => v_https_ca_ocid
+      );
+      v_https_allocated := true;
+    end if;
+    v_repository_url := nvl(
+      ll_pkg_reservation.step_details(
+        p_reservation_id => p_reservation_id,
+        p_res_step_id    => p_res_step_id,
+        p_json_name      => 'repositoryUrl'
+      ),
+      nvl(v_tf_repository_url, 'https://github.com/oracle-livelabs/terraform-stage.git')
+    );
+    v_tf_source_url := nvl(
+      ll_pkg_reservation.step_details(
+        p_reservation_id => p_reservation_id,
+        p_res_step_id    => p_res_step_id,
+        p_json_name      => 'directory'
+      ),
+      v_tf_source_url
+    );
+    v_branch_name := nvl(
+      ll_pkg_reservation.step_details(
+        p_reservation_id => p_reservation_id,
+        p_res_step_id    => p_res_step_id,
+        p_json_name      => 'branchName'
+      ),
+      nvl(v_tf_branch, 'main')
+    );
+    -- if v_tf_source_url is null then
+    --   -- Put the text in a zipfile
+    --   ll_pkg_zip.add1file  ( v_tf_zipped, 'll_terraform.tf',  ll_pkg_admin.clob_to_blob(v_tf_text) );
+    --   ll_pkg_zip.finish_zip( v_tf_zipped );
+    --   ll_pkg_log.log(30,'Created the zipfile for the Terraform');
 
-    -- else                                                                                                                                                                                                                                        
-    --   v_tf_zipped := ll_pkg_exec.get_blob_from_url( p_url => v_tf_source_url);                                                                                                                                                                  
+    -- else
+    --   v_tf_zipped := ll_pkg_exec.get_blob_from_url( p_url => v_tf_source_url);
 
-    -- end if;                                                                                                                                                                                                                                     
-    -- Create Base64 from the file                                                                                                                                                                                                                 
-    -- v_tf_base64 := ll_pkg_admin.Base64encode( v_tf_zipped);                                                                                                                                                                                     
+    -- end if;
+    -- Create Base64 from the file
+    -- v_tf_base64 := ll_pkg_admin.Base64encode( v_tf_zipped);
 
-    ll_pkg_log.log(30,'Adding parameter to the Terraform request');                                                                                                                                                                                
-    v_tf_variables := JSON_OBJECT ( 'ociTenancyOcid'       value v_tenancy_ocid,                                                                                                                                                                   
-                                    'ociRegionKey'         value v_region_key,                                                                                                                                                                     
-                                    'ociRegionIdentifier'  value v_region_identifier,                                                                                                                                                              
-                                    'ociUserOcid'          value v_user_ocid,                                                                                                                                                                      
-                                    'ociCompartmentOcid'   value v_compartment_ocid,                                                                                                                                                               
-                                    'ociVcnOcid'           value v_vcn_ocid,                                                                                                                                                                       
-                                    'ociPublicSubnetOcid'  value v_pub_subnet_ocid,                                                                                                                                                                
-                                    'ociPrivateSubnetOcid' value v_priv_subnet_ocid,                                                                                                                                                               
-                                    -- 'ociQuotaOcid'         value v_quota_ocid,                                                                                                                                                                  
-                                    'ociUserPassword'      value v_initial_password,                                                                                                                                                               
-                                    'ociGenAiRegion'       value v_genai_region,                                                                                                                                                                   
-                                    'resUserPublicKey'     value v_ssh_public_key,                                                                                                                                                                 
-                                    'resId'                value p_reservation_id,                                                                                                                                                                 
-                                    'liveStackURL'         value v_live_stack_url                                                                                                                                                                  
-                                    ABSENT ON NULL);                                                                                                                                                                                               
-    ll_pkg_log.log(40,'Parameters added: '||v_tf_variables);                                                                                                                                                                                       
-    -- Create the OCI Resource Manager stack.                                                                                                                                                                                                      
-    ll_pkg_log.log(30,'Uploading file to OCI Stack');                                                                                                                                                                                              
-    v_method := '/20180917/stacks';                                                                                                                                                                                                                
-    if v_tf_source_url is null then                                                                                                                                                                                                                
-        v_payload := JSON_OBJECT( 'compartmentId'    value v_compartment_ocid,                                                                                                                                                                     
-                                  'displayName'      value v_object_name||'-'||to_char(sysdate,'YYYYMMDD-HH24MISS'),                                                                                                                               
-                                  'description'      value v_tf_description,                                                                                                                                                                       
-                                  'terraformVersion' value v_tf_version,                                                                                                                                                                           
-                                  'configSource'     value JSON_OBJECT( 'configSourceType'     value 'ZIP_UPLOAD',                                                                                                                                 
-                                                                        'zipFileBase64Encoded' value v_tf_base64 ),                                                                                                                                
-                                  'variables'        value '@TFvar@'                                                                                                                                                                               
-                                  ABSENT ON NULL);                                                                                                                                                                                                 
-    else                                                                                                                                                                                                                                           
-        select config_source_ocid into v_csp_ocid from ll_config_source_providers where tenancy_id = v_tenancy_id and region_key = v_region_key;                                                                                                   
-        v_payload := JSON_OBJECT( 'compartmentId'    value v_compartment_ocid,                                                                                                                                                                     
-                                  'displayName'      value v_object_name||'-'||to_char(sysdate,'YYYYMMDD-HH24MISS'),                                                                                                                               
-                                  'description'      value v_tf_description,                                                                                                                                                                       
-                                  'terraformVersion' value v_tf_version,                                                                                                                                                                           
-                                  'configSource'     value JSON_OBJECT( 'configSourceType'  value 'GIT_CONFIG_SOURCE',                                                                                                                             
-                                                                        'configurationSourceProviderId'            value v_csp_ocid,                                                                                                               
-                                                                        'workingDirectory'  value v_tf_source_url,                                                                                                                                 
-                                                                        'branchName'         value v_branch_name,                                                                                                                                  
-                                                                        'repositoryUrl'        value v_repository_url),                                                                                                                            
-                                  'variables'        value '@TFvar@'                                                                                                                                                                               
-                                  ABSENT ON NULL);                                                                                                                                                                                                 
-    end if;                                                                                                                                                                                                                                        
-    v_payload := replace(v_payload ,'"@TFvar@"', v_tf_variables);                                                                                                                                                                                  
-    v_clob := ll_pkg_exec.put_post ( p_tenancy_id => v_tenancy_id,                                                                                                                                                                                 
-                                     p_type       => 'POST',                                                                                                                                                                                       
-                                     p_host       => v_host,                                                                                                                                                                                       
-                                     p_method     => v_method,                                                                                                                                                                                     
-                                     p_body       => v_payload);                                                                                                                                                                                   
-    p_ocid := ll_pkg_admin.get_id(v_clob);                                                                                                                                                                                                         
-    ll_pkg_log.log(40,'Stack request completed, OCID is '||p_ocid);                                                                                                                                                                                
-    if p_ocid is null then                                                                                                                                                                                                                         
-      p_status := 'N';                                                                                                                                                                                                                             
-      p_result := v_clob;                                                                                                                                                                                                                          
-    else                                                                                                                                                                                                                                           
-      p_status := 'Y';                                                                                                                                                                                                                             
-    end if;                                                                                                                                                                                                                                        
+    ll_pkg_log.log(30,'Adding parameter to the Terraform request');
+    v_tf_variables := JSON_OBJECT ( 'ociTenancyOcid'       value v_tenancy_ocid,
+                                    'ociRegionKey'         value v_region_key,
+                                    'ociRegionIdentifier'  value v_region_identifier,
+                                    'ociUserOcid'          value v_user_ocid,
+                                    'ociCompartmentOcid'   value v_compartment_ocid,
+                                    'ociVcnOcid'           value v_vcn_ocid,
+                                    'ociPublicSubnetOcid'  value v_pub_subnet_ocid,
+                                    'ociPrivateSubnetOcid' value v_priv_subnet_ocid,
+                                    -- 'ociQuotaOcid'         value v_quota_ocid,
+                                    'ociUserPassword'      value v_initial_password,
+                                    'ociGenAiRegion'       value v_genai_region,
+                                    'resUserPublicKey'     value v_ssh_public_key,
+                                    'resId'                value p_reservation_id,
+                                    'liveStackURL'         value v_live_stack_url,
+                                    'llIpAddress'          value v_https_ip_address,
+                                    'llDnsEntry'           value v_https_dns_entry,
+                                    'llIpOcid'             value v_https_ip_ocid,
+                                    'llCertOcid'           value v_https_cert_ocid,
+                                    'llCertCAOcid'         value v_https_ca_ocid
+                                    ABSENT ON NULL);
+    ll_pkg_log.log(40,'Terraform parameters added');
+    -- Create the OCI Resource Manager stack.
+    ll_pkg_log.log(30,'Uploading file to OCI Stack');
+    v_method := '/20180917/stacks';
+    if v_tf_source_url is null then
+        v_payload := JSON_OBJECT( 'compartmentId'    value v_compartment_ocid,
+                                  'displayName'      value v_object_name||'-'||to_char(sysdate,'YYYYMMDD-HH24MISS'),
+                                  'description'      value v_tf_description,
+                                  'terraformVersion' value v_tf_version,
+                                  'configSource'     value JSON_OBJECT( 'configSourceType'     value 'ZIP_UPLOAD',
+                                                                        'zipFileBase64Encoded' value v_tf_base64 ),
+                                  'variables'        value '@TFvar@'
+                                  ABSENT ON NULL);
+    else
+        select config_source_ocid into v_csp_ocid from ll_config_source_providers where tenancy_id = v_tenancy_id and region_key = v_region_key;
+        v_payload := JSON_OBJECT( 'compartmentId'    value v_compartment_ocid,
+                                  'displayName'      value v_object_name||'-'||to_char(sysdate,'YYYYMMDD-HH24MISS'),
+                                  'description'      value v_tf_description,
+                                  'terraformVersion' value v_tf_version,
+                                  'configSource'     value JSON_OBJECT( 'configSourceType'  value 'GIT_CONFIG_SOURCE',
+                                                                        'configurationSourceProviderId'            value v_csp_ocid,
+                                                                        'workingDirectory'  value v_tf_source_url,
+                                                                        'branchName'         value v_branch_name,
+                                                                        'repositoryUrl'        value v_repository_url),
+                                  'variables'        value '@TFvar@'
+                                  ABSENT ON NULL);
+    end if;
+    v_payload := replace(v_payload ,'"@TFvar@"', v_tf_variables);
+    v_clob := ll_pkg_exec.put_post ( p_tenancy_id => v_tenancy_id,
+                                     p_type       => 'POST',
+                                     p_host       => v_host,
+                                     p_method     => v_method,
+                                     p_body       => v_payload);
+    p_ocid := ll_pkg_admin.get_id(v_clob);
+    ll_pkg_log.log(40,'Stack request completed, OCID is '||p_ocid);
+    if p_ocid is null then
+      p_status := 'N';
+      p_result := v_clob;
+      if v_https_allocated then
+        ll_pkg_delete.release_https_public_ip(p_reservation_id);
+        v_https_allocated := false;
+      end if;
+    else
+      p_status := 'Y';
+    end if;
 
-  EXCEPTION                                                                                                                                                                                                                                        
-    WHEN others THEN                                                                                                                                                                                                                               
-      v_error_message := SQLERRM;                                                                                                                                                                                                                  
-      p_status := 'N';                                                                                                                                                                                                                             
-      p_result := v_error_message;                                                                                                                                                                                                                 
-  end;                                                                                                                                                                                                                                             
---                                                                                                                                                                                                                                                 
---     ###    ########  ########  ##       ##    ##               ##  #######  ########                                                                                                                                                            
+  EXCEPTION
+    WHEN others THEN
+      v_error_message := SQLERRM;
+      if v_https_allocated then
+        begin
+          ll_pkg_delete.release_https_public_ip(p_reservation_id);
+        exception
+          when others then
+            ll_pkg_log.log(1, 'Unable to release HTTPS endpoint after stack creation failure: ' || SQLERRM, p_reservation_id);
+        end;
+      end if;
+      p_status := 'N';
+      p_result := v_error_message;
+  end;
+--
+--     ###    ########  ########  ##       ##    ##               ##  #######  ########
 --    ## ##   ##     ## ##     ## ##        ##  ##                ## ##     ## ##     ##                                                                                                                                                           
 --   ##   ##  ##     ## ##     ## ##         ####                 ## ##     ## ##     ##                                                                                                                                                           
 --  ##     ## ########  ########  ##          ##                  ## ##     ## ########                                                                                                                                                            
@@ -19353,7 +19627,7 @@ procedure create_stack (p_reservation_id IN number, p_res_step_id IN number, p_o
       p_status := 'N';                                                                                                                                                                                                                             
       p_result := v_clob;                                                                                                                                                                                                                          
       ll_pkg_log.log(1,'Apply job failed, output is '||v_clob);                                                                                                                                                                                    
-    else                                                                                                                                                                                                                                           
+    else
       update ll_reservation_steps set object_ocid = p_ocid where id = p_res_step_id;                                                                                                                                                               
       ll_pkg_log.log(30,'Apply job succesfully launched, waiting for result');                                                                                                                                                                     
       v_job_result := wait_job_complete (p_tenancy_id => v_tenancy_id, p_host => v_host, p_job_id => p_ocid, p_max_minutes => v_max_minutes );                                                                                                     
@@ -19372,11 +19646,15 @@ procedure create_stack (p_reservation_id IN number, p_res_step_id IN number, p_o
         p_result := 'JOB result is '||v_job_result;                                                                                                                                                                                                
       end if;                                                                                                                                                                                                                                      
     end if;                                                                                                                                                                                                                                        
+    if p_status = 'N' then
+      ll_pkg_delete.release_https_public_ip(p_reservation_id);
+    end if;
   EXCEPTION                                                                                                                                                                                                                                        
-    WHEN others THEN                                                                                                                                                                                                                               
+    WHEN others THEN
       p_status := 'N';                                                                                                                                                                                                                             
       store_failed_tf_log(p_reservation_id);
       p_result := upload_failed_job_log(p_reservation_id);
+      ll_pkg_delete.release_https_public_ip(p_reservation_id);
   end;                                                                                                                                                                                                                                             
 --                                                                                                                                                                                                                                                 
 -- ===================================================================================================================                                                                                                                             
@@ -19710,18 +19988,35 @@ procedure create_stack (p_reservation_id IN number, p_res_step_id IN number, p_o
   procedure create_config_source_provider (p_tenancy_id in number, p_region_key in varchar2) is                                                                                                                                                    
     v_root_ocid varchar2(4000);                                                                                                                                                                                                                    
     v_body clob;                                                                                                                                                                                                                                   
-    v_response clob;                                                                                                                                                                                                                               
-    v_id varchar2(4000);                                                                                                                                                                                                                           
+    v_response clob;
+    v_id varchar2(4000);
     v_tenancy_name varchar2(200);                                                                                                                                                                                                                  
+    v_github_access_token varchar2(4000);
+    v_github_api_endpoint varchar2(4000);
+    v_github_display_name varchar2(4000);
   begin                                                                                                                                                                                                                                            
     v_root_ocid := ll_pkg_admin.tenancy_ocid(p_tenancy_id);                                                                                                                                                                                        
-    select tenancy_name into v_tenancy_name from ll_tenancies where id = p_tenancy_id;                                                                                                                                                             
+    select tenancy_name into v_tenancy_name from ll_tenancies where id = p_tenancy_id;
+    v_github_access_token := ll_pkg_admin.system_parameter('GITHUB_ACCESS_TOKEN');
+    v_github_api_endpoint := ll_pkg_admin.system_parameter('GITHUB_API_ENDPOINT');
+    v_github_display_name := ll_pkg_admin.system_parameter('GITHUB_CSP_DISPLAY_NAME');
+
+    if v_github_access_token is null or v_github_access_token = 'EMPTY' then
+      raise_application_error(-20071, 'GITHUB_ACCESS_TOKEN must be set before creating a GitHub configuration source provider.');
+    end if;
+    if v_github_api_endpoint is null or v_github_api_endpoint = 'EMPTY' then
+      raise_application_error(-20072, 'GITHUB_API_ENDPOINT must be set before creating a GitHub configuration source provider.');
+    end if;
+    if v_github_display_name is null or v_github_display_name = 'EMPTY' then
+      raise_application_error(-20073, 'GITHUB_CSP_DISPLAY_NAME must be set before creating a GitHub configuration source provider.');
+    end if;
+
     v_body := json_object(                                                                                                                                                                                                                         
         'compartmentId'             value   v_root_ocid,                                                                                                                                                                                           
         'configSourceProviderType'  value   'GITHUB_ACCESS_TOKEN',                                                                                                                                                                                 
-        'displayName'               value   'Github Access for Terraform Files',                                                                                                                                                                   
-        'accessToken'               value   'XXXXX',                                                                                                                                                            
-        'apiEndpoint'               value   'https://github.com/oracle-livelabs/'                                                                                                                                                                  
+        'displayName'               value   v_github_display_name,
+        'accessToken'               value   v_github_access_token,
+        'apiEndpoint'               value   v_github_api_endpoint
     );                                                                                                                                                                                                                                             
     v_response := ll_pkg_exec.put_post ( p_tenancy_id => p_tenancy_id,                                                                                                                                                                             
                                      p_type       => 'POST',                                                                                                                                                                                       

@@ -588,6 +588,47 @@ page 9252 (
         }
     )
 
+    pageItem P9252_HTTPS_ENABLED_FLG (
+        type: selectList
+        label {
+            label: Enable HTTPS endpoint
+            alignment: left
+        }
+        lov {
+            type: sharedComponent
+            lov: @active-flg
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 35
+            region: @terraform-script-details
+            slot: regionBody
+            alignment: left
+            columnSpan: 2
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            formRegion: @terraform-script-details
+            column: HTTPS_ENABLED_FLG
+            dataType: varchar2
+        }
+        default {
+            type: static
+            staticValue: N
+        }
+        help {
+            inlineHelpText: Enable only for Terraform scripts that accept the managed HTTPS endpoint variables. A compatible reserved IP, DNS name, OCI Certificate, and CA Bundle will then be allocated for each reservation.
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
     pageItem P9252_DATABASE_VERSION (
         type: selectList
         label {
@@ -1306,4 +1347,3 @@ page 9252 (
     )
 
 )
-
