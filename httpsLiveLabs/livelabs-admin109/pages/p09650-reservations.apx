@@ -46,6 +46,7 @@ page 9650 (
                        case
                            when llr.stop_gmt < sysdate then 'Closed'
                            when llr.start_gmt > sysdate then 'Future'
+                           when nvl(step_summary.terminal_create_error, 0) > 0 then 'Failed'
                            when nvl(step_summary.total_steps, 0) > 0
                             and nvl(step_summary.completed_steps, 0) = step_summary.total_steps then 'Active'
                            else to_char(nvl(step_summary.completed_steps, 0)) || '/' ||
@@ -60,6 +61,10 @@ page 9650 (
                              count(*) as total_steps,
                              sum(case when create_success = 'Y' then 1 else 0 end) as completed_steps,
                              sum(case when create_order is not null and create_success = 'N' then 1 else 0 end) as create_error,
+                             sum(case when create_order is not null
+                                       and create_success = 'N'
+                                       and nvl(create_retry, 0) = 5
+                                      then 1 else 0 end) as terminal_create_error,
                              sum(case when delete_order is not null and delete_success = 'N' then 1 else 0 end) as delete_error
                         from ll_reservation_steps
                        group by reservation_id
