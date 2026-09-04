@@ -21,35 +21,50 @@ page 9650 (
             type: sqlQuery
             sqlQuery:
                 ```sql
-                select ID,
-                       ID as ID_DISPLAY,
-                       TITLE,
-                       REASON,
-                       FOCUS_AREA,
-                       OWNER1,
-                       REGION_ID,
-                       WORKSHOP_ID,
-                       voucher_id,
-                       START_DATE,
-                       START_TIME,
-                       START_TIMEZONE,
-                       STOP_DATE,
-                       STOP_TIME,
-                       EXTENDED,
-                       ENVIRONMENTS,
-                       TENANCY_ID, 
-                       REMARKS,
-                       ACTIVE_FLG,
-                       PUBLIC_KEY,
-                       START_GMT,
-                       STOP_GMT,
-                       case abs(sysdate-start_gmt) when sysdate-start_gmt then 
-                         case abs(stop_gmt - sysdate) when stop_gmt-sysdate then 'Active' else 'Closed' end 
-                           else 'Future' end as Reservation_status,
-                       (select count(*) from ll_reservation_steps where reservation_id = llr.id) as Steps,
-                       (select count(*) from ll_reservation_steps where reservation_id = llr.id and create_order is not null and create_success='N') as Create_error,
-                       (select count(*) from ll_reservation_steps where reservation_id = llr.id and delete_order is not null and delete_success='N') as Delete_error
-                  from LL_RESERVATIONS_VW llr
+                select llr.id,
+                       llr.id as id_display,
+                       llr.title,
+                       llr.reason,
+                       llr.focus_area,
+                       llr.owner1,
+                       llr.region_id,
+                       llr.workshop_id,
+                       llr.voucher_id,
+                       llr.start_date,
+                       llr.start_time,
+                       llr.start_timezone,
+                       llr.stop_date,
+                       llr.stop_time,
+                       llr.extended,
+                       llr.environments,
+                       llr.tenancy_id,
+                       llr.remarks,
+                       llr.active_flg,
+                       llr.public_key,
+                       llr.start_gmt,
+                       llr.stop_gmt,
+                       case
+                           when llr.stop_gmt < sysdate then 'Closed'
+                           when llr.start_gmt > sysdate then 'Future'
+                           when nvl(step_summary.total_steps, 0) > 0
+                            and nvl(step_summary.completed_steps, 0) = step_summary.total_steps then 'Active'
+                           else to_char(nvl(step_summary.completed_steps, 0)) || '/' ||
+                                to_char(nvl(step_summary.total_steps, 0))
+                       end as reservation_status,
+                       nvl(step_summary.total_steps, 0) as steps,
+                       nvl(step_summary.create_error, 0) as create_error,
+                       nvl(step_summary.delete_error, 0) as delete_error
+                  from ll_reservations_vw llr
+                  left join (
+                      select reservation_id,
+                             count(*) as total_steps,
+                             sum(case when create_success = 'Y' then 1 else 0 end) as completed_steps,
+                             sum(case when create_order is not null and create_success = 'N' then 1 else 0 end) as create_error,
+                             sum(case when delete_order is not null and delete_success = 'N' then 1 else 0 end) as delete_error
+                        from ll_reservation_steps
+                       group by reservation_id
+                  ) step_summary
+                    on step_summary.reservation_id = llr.id
                 
                 ```
         }
@@ -705,7 +720,7 @@ page 9650 (
                 sequence: 280
             }
             validation {
-                maxLength: 6
+                maxLength: 30
             }
             source {
                 databaseColumn: RESERVATION_STATUS
@@ -1034,4 +1049,3 @@ page 9650 (
     )
 
 )
-
