@@ -25,4 +25,11 @@ WHEN NOT MATCHED THEN
   INSERT (name, value)
   VALUES (source.name, 'GitHub Access for Terraform Files');
 
+MERGE INTO ll_system_parameters target
+USING (SELECT 'RECONCILE_HTTPS_IPS' AS name FROM dual) source
+ON (target.name = source.name)
+WHEN NOT MATCHED THEN
+  INSERT (name, value)
+  VALUES (source.name, 'N');
+
 COMMIT;
